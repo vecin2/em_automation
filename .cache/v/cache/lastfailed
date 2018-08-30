@@ -1,0 +1,6 @@
+{
+  "sql_gen/test/test_ast.py": true, 
+  "sql_gen/test/test_prompter.py": true, 
+  "sql_gen/test/test_sql_module.py": true, 
+  "sql_gen/test/test_template_source.py": true
+}

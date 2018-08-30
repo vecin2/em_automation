@@ -1,0 +1,9 @@
+[
+  "test/test_ast.py::test_include_templates",
+  "test/test_ast.py::test_list_variable_names",
+  "test/test_ast.py::test_fields",
+  "test/test_ast.py::test_template_body_structure",
+  "test/test_ast.py::test_get_description_value",
+  "test/test_ast.py::test_pipe_default_descripion_filters",
+  "test/test_ast.py::test_anytree_node"
+]

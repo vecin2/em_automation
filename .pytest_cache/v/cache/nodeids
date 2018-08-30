@@ -1,0 +1,10 @@
+[
+  "sql_gen/test/test_jinja_node.py::test_template_with_no_variables",
+  "sql_gen/test/test_jinja_node.py::test_template_with_one_variable",
+  "sql_gen/test/test_jinja_node.py::test_one_variable_with_default_filter",
+  "sql_gen/test/test_jinja_node.py::test_one_variable_with_description_filter",
+  "sql_gen/test/test_jinja_node.py::test_one_variable_with_default_pipe_with_description_filter",
+  "sql_gen/test/test_jinja_node.py::test_find_by_node_type_one_stmt_output",
+  "sql_gen/test/test_jinja_node.py::test_iterate_nodes_one_output_node",
+  "sql_gen/test/test_jinja_node.py::test_iterate_nodes"
+]

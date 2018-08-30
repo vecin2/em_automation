@@ -1,0 +1,9 @@
+
+
+----basic distribution 
++Print output to a a file
+fix work around of running set_env_vars.sh to make test pass
+logging
+tidy up imports
+remove em_dev_tools from classpath
+
