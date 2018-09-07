@@ -44,7 +44,7 @@ class TemplateSelector():
 
     def build_template_source(self, template_name, env):
         source = env.loader.get_source(env,template_name)[0]
-        template_source = TemplateSource(env.parse(source))
+        template_source = TemplateSource(source)
         template_source.template_name = template_name
         return template_source
 

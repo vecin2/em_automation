@@ -14,7 +14,6 @@ def run_app():
     sql_task_path = args.dir
 
     env = EMTemplatesEnv().get_env()
-    print("hola" + str(env.get_template("add_process_descriptor.sql")))
     templates_path =os.environ['SQL_TEMPLATES_PATH']
     print(templates_path)
     template_selector = TemplateSelector()

@@ -48,9 +48,7 @@ class TemplateSource(object):
         return
 
     def find_undeclared_variables(self):
-        all_variables_in_order
-        undeclare_variables = meta.find_undeclared_variables(self.ast)
-    result = sorted(list_b, key=lambda x: list_a.index(x))
+        return meta.find_undeclared_variables(self.ast)
 
     def get_filters(self, node_name):
         node = self.get_tree_node_by_name(self.root,node_name)
