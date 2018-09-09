@@ -1,20 +1,21 @@
-#from sql_gen.sql_gen.filters import *
 from sql_gen.sql_gen.template_source import TemplateSource
+from jinja2 import meta
+
 
 class Prompter(object):
     def __init__(self, env):
         self.env = env
 
     def get_prompts(self, template_source_text):
-        ast = self.env.parse(template_source_text)
-        self.template_source = TemplateSource(ast)
         result=[]
-        for undeclared_var in self.get_ordered_undefined_variables(template_source_text):
-            result.append(Prompt(undeclared_var,self.template_source.get_filters(undeclared_var)))
+        ast = self.env.parse(template_source_text)
+        template_source = TemplateSource(ast)
+        for undeclared_var in self.__get_ordered_undefined_variables(template_source_text,ast):
+            result.append(Prompt(undeclared_var,template_source.get_filters(undeclared_var)))
         return result
     
-    def get_ordered_undefined_variables(self, template_source_text):
-        undeclare_variables = self.template_source.find_undeclared_variables()
+    def __get_ordered_undefined_variables(self, template_source_text,ast):
+        undeclare_variables = meta.find_undeclared_variables(ast)
         list_a = template_source_text.split()
         return sorted(undeclare_variables, key=lambda x: list_a.index(x))
 
