@@ -8,8 +8,8 @@
 logging
 refactor to model/view/controller design (do not prompt on the model)
 
-template with default prompt
-template with description prompt
-tempalte with both
++template with default prompt
++template with description prompt
++tempalte with both
 tempalte with include
 

@@ -4,6 +4,7 @@ from sql_gen.sql_gen.template_source import TemplateSource
 class Prompter(object):
     def __init__(self, env):
         self.env = env
+
     def get_prompts(self, template_source_text):
         ast = self.env.parse(template_source_text)
         self.template_source = TemplateSource(ast)

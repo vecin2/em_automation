@@ -1,4 +1,5 @@
 from jinja2 import nodes,meta
+from jinja2.nodes import Name
 from anytree import Node
 from filters.default import DefaultFilter
 import importlib
@@ -11,10 +12,31 @@ class TemplateSource(object):
         self.root = self.get_root_node()
         self.template_name=""
 
-    def get_template(self):
-        return self.template;
+    def children(self,node):
+        result=[]
+        for child in node.iter_child_nodes():
+            result.append(child)
+        return result
+
+    def child(node, index):
+        return children(node)[index]
+
+    def number_of_children(node):
+        return len(children(node))
+        def get_template(self):
+            return self.template;
+
+    def set_parent(self, node,parent):
+        node.parent = parent
+
+        for child in node.iter_child_nodes():
+            self.set_parent(child, node)
+        return
 
     def get_root_node(self):
+        self.set_parent(self.ast, None)
+        return self.ast
+        assert self.children(self.ast)[0].parent == self.ast
         self.root=""
         if self.root:
             return self.root
@@ -36,10 +58,8 @@ class TemplateSource(object):
 
 
     def get_tree_node_by_name(self,parent,name):
-        if not parent.children:
-            return None
-        for node in parent.children:
-            if(node.name == name):
+        for node in parent.iter_child_nodes():
+            if(isinstance(node,Name) and node.name == name):
                 return node
             else:
                 child = self.get_tree_node_by_name(node, name)
@@ -50,14 +70,21 @@ class TemplateSource(object):
     def find_undeclared_variables(self):
         return meta.find_undeclared_variables(self.ast)
 
+    def ancestors(self, node):
+        result=[]
+        orig_node  = node
+        while node.parent is not None:
+            result.append(node.parent)
+            node = node.parent
+        return result
+
     def get_filters(self, node_name):
         node = self.get_tree_node_by_name(self.root,node_name)
         result=[]
-        for current_node in node.ancestors:
-            if (hasattr(current_node, "value")) and\
-                isinstance(current_node.value, nodes.Filter):
-                    DynamicFilter = self.get_filter_definition(current_node.value) 
-                    template_filter = DynamicFilter(current_node.value)
+        for current_node in self.ancestors(node):
+            if (isinstance(current_node, nodes.Filter)):
+                    DynamicFilter = self.get_filter_definition(current_node) 
+                    template_filter = DynamicFilter(current_node)
                     result.append(template_filter)
 
         return result

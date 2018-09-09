@@ -284,6 +284,7 @@ def convert_to_any_tree(jinja_node):
 
 #print("before is "+str(template.body[0].parent))
 print("then after")
+print("Include is "+ str(template.body[0]))
 any_tree_template = convert_to_any_tree(template)
 print(str(any_tree_template))
 print(str(template.body[0].parent))
