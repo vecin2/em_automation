@@ -2,6 +2,7 @@
   "sql_gen/test/test_ast.py::test_find_by_node_type": true,
   "sql_gen/test/test_ast.py::test_iterate_nodes": true,
   "sql_gen/test/test_jinja_node.py::test_include_templates": true,
+  "sql_gen/test/test_prompter.py": true,
   "sql_gen/test/test_python_ast.py::test_parse": true,
   "sql_gen/test/test_template_source.py::test_traverse_template_nodes": true
 }

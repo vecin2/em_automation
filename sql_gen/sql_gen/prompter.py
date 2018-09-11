@@ -9,8 +9,8 @@ class Prompter(object):
     def get_prompts(self, template_source_text):
         result=[]
         ast = self.env.parse(template_source_text)
-        template_source = TemplateSource(ast)
-        for undeclared_var in self.__get_ordered_undefined_variables(template_source_text,ast):
+        template_source = TemplateSource(template_source_text,self.env)
+        for undeclared_var in template_source.get_ordered_undefined_variables():
             result.append(Prompt(undeclared_var,template_source.get_filters(undeclared_var)))
         return result
     

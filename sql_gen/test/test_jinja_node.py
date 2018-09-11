@@ -1,6 +1,6 @@
 from jinja2 import Environment, meta, Template, nodes,FileSystemLoader, select_autoescape
 from jinja2.nodes import Stmt,Template,Output,Node
-from jinja2.visitor import NodeTransformer
+from jinja2.visitor import NodeTransformer,NodeVisitor
 from anytree import Node as AnyTreeNode
 import pytest
 from sql_gen.sql_gen.filter_loader import load_filters
@@ -273,6 +273,50 @@ def draw(tree):
 
 print('***')
 draw(template)
+class TreeDrawer(object):
+    def __init__(self):
+        self.draw =""
+
+    def get_drawer(self, node):
+        """Return the visitor function for this node or `None` if no visitor
+        exists for this node.  In that case the generic visit function is
+        used instead.
+        """
+        method = 'draw_' + node.__class__.__name__
+        return getattr(self, method, None)
+
+    def draw_Include(self,node):
+        return "Include("+node.template.value+")"
+
+    def draw_Filter(self,node):
+        return "Filter("+node.name+")"
+    
+    def draw_node(self,node):
+        draw_func = self.get_drawer(node) 
+        if draw_func is not None:
+            return draw_func(node)
+        return self.generic_draw(node)
+
+    def generic_draw(self,node):
+        return str(node)
+
+    def visit(self,node):
+        self.generic_visit(node,"+--")
+
+    def print_node(self,node):
+        self.visit(node)
+        print(self.draw)
+
+    def generic_visit(self,node,spacer):
+        self.draw += spacer + self.draw_node(node) +"\n"
+        spacer = "    " + spacer
+        for node in node.iter_child_nodes():
+            self.generic_visit(node,spacer)
+
+print ("**********hiaaa*********")
+draw_visitor =TreeDrawer()
+draw_visitor.print_node(template)
+print (draw_visitor.draw)
 class RewriteAsAnyTree(NodeTransformer):
     def visit_Include(self,node):
         node.parent = node
@@ -281,6 +325,7 @@ class RewriteAsAnyTree(NodeTransformer):
 def convert_to_any_tree(jinja_node):
     r = RewriteAsAnyTree()
     return r.visit(jinja_node)
+
 
 #print("before is "+str(template.body[0].parent))
 print("then after")
