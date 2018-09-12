@@ -7,11 +7,6 @@ from jinja2 import Environment, meta, Template, nodes, FileSystemLoader, select_
 
 env=test_env()
 
-def run_test(display_msgs, template_source_text):
-    prompter = Prompter(env)
-    prompts = prompter.get_prompts(template_source_text)
-    assert_equals_prompt_text_list(display_msgs, prompts)
-
 def run_test_file(expected_msgs, template_name):
     prompter = Prompter(env)
     prompts = prompter.get_template_prompts(template_name+".sql")
@@ -21,12 +16,21 @@ def run_test_file(expected_msgs, template_name):
 def assert_equals_prompt_text_list(questions, prompts):
     assert len(questions) == len(prompts)
     counter =0
-    for question in questions:
-        assert_equal_prompt_text(question,prompts[counter])
+    for key in prompts:
+        assert_equal_prompt_text(questions[counter],prompts[key])
         counter+=1
 
 def assert_equal_prompt_text(expected_text, prompt):
     assert expected_text+ ": " == prompt.get_diplay_text()
+
+def test_duplicate_var_name_prompts_only_once():
+    run_test_file(["name"],
+              "duplicate_var_name")
+
+def test_should_not_prompt_var_which_has_value_assigned():
+    # {% set process_descriptor_ref_id = process_descriptor_id %}
+    run_test_file(["process_descriptor_id"],
+              "one_var_equal_to_other_var")
 
 def test_default():
     run_test_file(["name (default is Mundo)"],
@@ -50,3 +54,12 @@ def test_include_should_prompt_vars_from_included_template_before_current_ones()
 def test_include_should_prompt_vars_from_included_template_after_current_one():
     run_test_file(["last_name","name"],
               "var_plus_include")
+
+def test_should_not_prompt_var_which_is_set_to_a_var_within_included_template():
+    #{% include 'hello_world.sql' %}
+    #{{last_name}}
+    #{% set full_name = name + last_name %}
+    #I {{full_name}}
+    run_test_file(["name","last_name"],
+              "include_reuse_var_value")
+

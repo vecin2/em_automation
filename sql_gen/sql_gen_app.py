@@ -1,5 +1,4 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape, meta, Template
-from sql_gen.template_source import TemplateSource
 from sql_gen.prompter import Prompter
 from sql_gen.environment_selection import TemplateSelector, EMTemplatesEnv
 import argparse
@@ -17,10 +16,10 @@ def run_app():
     templates_path =os.environ['SQL_TEMPLATES_PATH']
     print(templates_path)
     template_selector = TemplateSelector()
-    template_source= template_selector.select_template(env)
-    prompter = Prompter(template_source)
-    context = prompter.build_context()
-    template = env.get_template(template_source.template_name)
+    template_name = template_selector.select_template(env)
+    prompter = Prompter(env)
+    context = prompter.build_context(template_name)
+    template = env.get_template(template_name)
 
     template_parsed =template.render(context)
 

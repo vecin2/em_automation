@@ -1,5 +1,4 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from sql_gen.template_source import TemplateSource
 from sql_gen.filter_loader import load_filters
 import os
 
@@ -15,8 +14,7 @@ class TemplateSelector():
         self.show_options()
 
         template_number = self.prompt_to_select_template()    
-        template_name = self.get_option_by_id(template_number).name
-        return self.build_template_source(template_name,env)
+        return self.get_option_by_id(template_number).name
     
     def create_options(self, template_list):
         self.template_option_list=[]
@@ -41,12 +39,6 @@ class TemplateSelector():
             if template_number == str(template_option.id):
                 return template_option
         return None
-
-    def build_template_source(self, template_name, env):
-        source = env.loader.get_source(env,template_name)[0]
-        template_source = TemplateSource(source)
-        template_source.template_name = template_name
-        return template_source
 
 class EMTemplatesEnv():
     def __init__(self):
