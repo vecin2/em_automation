@@ -20,6 +20,13 @@
   "sql_gen/test/test_order_list.py::test_order_list_by_list_b",
   "sql_gen/test/test_order_list.py::test_order_list_by_list_b_with_different_elements",
   "sql_gen/test/test_order_list.py::test_order_list_of_words_by_the_order_they_appear_in_a_text",
+  "sql_gen/test/test_prompter.py::test_default",
+  "sql_gen/test/test_prompter.py::test_description",
+  "sql_gen/test/test_prompter.py::test_pipe_default_descripion_filters",
+  "sql_gen/test/test_prompter.py::test_include_should_prompt_vars_from_included_template",
+  "sql_gen/test/test_prompter.py::test_include_should_prompt_vars_from_included_template_before_current_ones",
+  "sql_gen/test/test_prompter.py::test_include_should_prompt_vars_from_included_template_after_current_one",
+  "sql_gen/test/test_prompter.py::test_env",
   "sql_gen/test/test_sql_module.py::test_creates_update_sequence",
   "sql_gen/test/test_sql_module.py::test_image_file",
   "sql_gen/test/test_sql_module.py::test_create_sql_task"

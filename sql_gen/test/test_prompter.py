@@ -4,24 +4,19 @@ import pytest
 from test.util_test_template_env import test_env
 import os
 from jinja2 import Environment, meta, Template, nodes, FileSystemLoader, select_autoescape
-from sql_gen.sql_gen.filter_loader import load_filters
 
 env=test_env()
-#dirname = os.path.dirname(__file__)
-#templates_path = "./"+os.path.join(dirname, 'templates')
-#env = Environment(
-#loader=FileSystemLoader("/home/dgarcia/dev/python/em_automation/sql_gen/test/templates"),
-#autoescape=select_autoescape(['html', 'xml']))
-load_filters(env)
-#print("**********************"+templates_path)
-print("********************"+ str(env.list_templates(".sql")))
-source = env.loader.get_source(env,"hello_world.sql")[0]
-print("sdfjsdfsd")
 
 def run_test(display_msgs, template_source_text):
     prompter = Prompter(env)
     prompts = prompter.get_prompts(template_source_text)
     assert_equals_prompt_text_list(display_msgs, prompts)
+
+def run_test_file(expected_msgs, template_name):
+    prompter = Prompter(env)
+    prompts = prompter.get_template_prompts(template_name+".sql")
+    assert_equals_prompt_text_list(expected_msgs, prompts)
+
 
 def assert_equals_prompt_text_list(questions, prompts):
     assert len(questions) == len(prompts)
@@ -34,24 +29,24 @@ def assert_equal_prompt_text(expected_text, prompt):
     assert expected_text+ ": " == prompt.get_diplay_text()
 
 def test_default():
-    run_test(["name (default is Mundo)"],
-              "Hello {{ name | default ('Mundo') }}!")
-
+    run_test_file(["name (default is Mundo)"],
+              "one_var_default_filter")
 def test_description():
-    run_test(["customer name"],
-              "Hello {{ name | description ('customer name') }}")
+    run_test_file(["customer name"],
+              "one_var_description_filter")
 
 
 def test_pipe_default_descripion_filters():
-    template_text = "Hello {{ prename }} {{ name | description ('World in english') | default ('Mundo')}}!"
-    run_test(["prename","World in english (default is Mundo)"],
-              template_text)
+    run_test_file(["prename","World in english (default is Mundo)"],
+              "pipe_description_default_filter")
 
-def test_get_description_value_when_multiple_vars():
-    run_test(["prename","first name"],
-              "Hello {{ prename }} {{ name | description ('first name') }}!")
-
-@pytest.mark.skip
 def test_include_should_prompt_vars_from_included_template():
-    run_test(["name"],
-              "{% include 'hello_world.sql' %}.  I am Juan")
+    run_test_file(["name"],
+              "include_plus_data")
+
+def test_include_should_prompt_vars_from_included_template_before_current_ones():
+    run_test_file(["name","last_name"],
+              "include_plus_var")
+def test_include_should_prompt_vars_from_included_template_after_current_one():
+    run_test_file(["last_name","name"],
+              "var_plus_include")

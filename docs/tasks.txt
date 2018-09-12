@@ -12,4 +12,5 @@ refactor to model/view/controller design (do not prompt on the model)
 +template with description prompt
 +tempalte with both
 tempalte with include
++parse an included template which top node is not output
 

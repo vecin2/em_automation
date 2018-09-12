@@ -1,7 +1,8 @@
-from jinja2 import nodes,meta
-from jinja2.nodes import Name
+from jinja2 import nodes,meta, Template
+from jinja2.nodes import Name, Filter
 import importlib
-from jinja2.visitor import NodeTransformer
+from jinja2.visitor import NodeTransformer,NodeVisitor
+from sql_gen.sql_gen.prompter import Prompt
 
 class TreeDrawer(object):
     def __init__(self):
@@ -53,16 +54,51 @@ class TemplateJoiner(NodeTransformer):
         #swap the include for the actual template source tree
         return self.env.parse(source).body[0]
 
+class PromptVisitor(NodeVisitor):
+    def generic_visit(self, node, *args, **kwargs):
+        result=[]
+        """Called if no explicit visitor function exists for a node."""
+        for node in node.iter_child_nodes():
+            result.extend(self.visit(node, *args, **kwargs))
+        return result
+
+    def visit_Filter(self, node):
+        result=self.generic_visit(node)
+        for prompt in result:
+            DynamicFilter = self.__get_filter_definition(node) 
+            template_filter = DynamicFilter(node)
+            prompt.append_filter(template_filter)
+
+        return result
+
+    def __get_filter_definition(self,jinja2_filter):
+        filter_name=jinja2_filter.name
+        return getattr(importlib.import_module("sql_gen.filters."+filter_name), filter_name.capitalize()+"Filter") 
+
+    def visit_Name(self,node):
+        result=[]
+        if node.ctx == "load":
+            result.append(Prompt(node.name, []))
+        for child in node.iter_child_nodes():
+            self.generic_visit(child)
+        return result
+
 class TemplateSource(object):
-    def __init__(self,template_source_text,env):
-        self.template_source_text = template_source_text
-        self.ast = env.parse(template_source_text)
+    def __init__(self,template_name, env):
+        t = self.__get_template_with_source(env, template_name)
+        self.template_source_text = t.source
+        self.ast = env.parse(self.template_source_text)
+        parsed_template = t.render({})
        # TreeDrawer().print_node(self.ast)
        # print("**********************************************")
         self.__set_parent(self.ast,None)
         TemplateJoiner(env).visit(self.ast)
        # TreeDrawer().print_node(self.ast)
 
+    def __get_template_with_source(self, env, template_name):
+        t = env.get_template(template_name)
+        t.source = env.loader.get_source(env,template_name)[0]
+        return t    
 
     def __set_parent(self, node,parent):
         node.parent = parent
@@ -70,40 +106,41 @@ class TemplateSource(object):
             self.__set_parent(child, node)
         return
 
+    def get_prompts(self):
+        return PromptVisitor().visit(self.ast)
+
+    def __get_undeclared_variables(self,prompts):
+        result=[]
+        for prompt in prompts:
+            result.append(prompt.variable_name)
+        return result
+    def __get_display_text(self,prompts):
+        result=[]
+        for prompt in prompts:
+            result.append(prompt.get_diplay_text())
+        return result
+    def __sort_by_order_of_appearance(self,prompts):
+        undeclare_variables = self.__get_undeclared_variables(prompts)
+        display_msgs = self.__get_display_text(prompts)
+        list_a = self.template_source_text.split()
+        print("*********** undeclare_variables"+ str(undeclare_variables))
+        print("*********** display_msgs"+ str(display_msgs))
+        #sorted_vars =sorted(undeclare_variables, key=lambda x: list_a.index(x))
+        return self.__sort_prompts_by_var_names(prompts, list_a)
+
+    def __sort_prompts_by_var_names(self, prompts, sorted_vars):
+        result =[]
+        dictionary = {}
+        for prompt in prompts:
+            dictionary[prompt.variable_name] = prompt
+        for variable in sorted_vars:
+            if dictionary.get(variable) is not None:
+                result.append(dictionary[variable])
+
+        return result
+
     def get_ordered_undefined_variables(self):
         undeclare_variables = meta.find_undeclared_variables(self.ast)
         list_a = self.template_source_text.split()
         return sorted(undeclare_variables, key=lambda x: list_a.index(x))
 
-    def get_filters(self, node_name):
-        node = self.__get_tree_node_by_name(self.ast,node_name)
-        result=[]
-        for current_node in self.__ancestors(node):
-            if (isinstance(current_node, nodes.Filter)):
-                    DynamicFilter = self.__get_filter_definition(current_node) 
-                    template_filter = DynamicFilter(current_node)
-                    result.append(template_filter)
-
-        return result
-
-    def __get_tree_node_by_name(self,parent,name):
-        for node in parent.iter_child_nodes():
-            if(isinstance(node,Name) and node.name == name):
-                return node
-            else:
-                child = self.__get_tree_node_by_name(node, name)
-                if child:
-                    return child
-        return
-
-    def __ancestors(self, node):
-        result=[]
-        while node.parent is not None:
-            result.append(node.parent)
-            node = node.parent
-        return result
-
-
-    def __get_filter_definition(self,jinja2_filter):
-        filter_name=jinja2_filter.name
-        return getattr(importlib.import_module("sql_gen.filters."+filter_name), filter_name.capitalize()+"Filter") 
