@@ -22,7 +22,7 @@
   "sql_gen/test/test_order_list.py::test_order_list_by_list_b",
   "sql_gen/test/test_order_list.py::test_order_list_by_list_b_with_different_elements",
   "sql_gen/test/test_order_list.py::test_order_list_of_words_by_the_order_they_appear_in_a_text",
-  "sql_gen/test/test_prompter.py::test_duplicate_var_name_prompts_only_once",
+  "sql_gen/test/test_prompter.py::test_duplicate_var_name_prompts_only_once_and_it_uses_first_one",
   "sql_gen/test/test_prompter.py::test_should_not_prompt_var_which_has_value_assigned",
   "sql_gen/test/test_prompter.py::test_default",
   "sql_gen/test/test_prompter.py::test_description",

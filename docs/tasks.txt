@@ -5,12 +5,14 @@
 + fix work around of running set_env_vars.sh to make test pass
 + tidy up imports
 + remove em_dev_tools from classpath
-logging
-refactor to model/view/controller design (do not prompt on the model)
-
 +template with default prompt
 +template with description prompt
 +tempalte with both
 tempalte with include
 +parse an included template which top node is not output
+logging
+refactor to model/view/controller design (do not prompt on the model)
+lstrip to strip code lines (template design doc)
+when same variable apper multiple times use first appereance
+set as default a variable
 

@@ -23,8 +23,8 @@ def assert_equals_prompt_text_list(questions, prompts):
 def assert_equal_prompt_text(expected_text, prompt):
     assert expected_text+ ": " == prompt.get_diplay_text()
 
-def test_duplicate_var_name_prompts_only_once():
-    run_test_file(["name"],
+def test_duplicate_var_name_prompts_only_once_and_it_uses_first_one():
+    run_test_file(["name (default is Marco)"],
               "duplicate_var_name")
 
 def test_should_not_prompt_var_which_has_value_assigned():

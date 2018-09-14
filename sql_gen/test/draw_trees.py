@@ -1,16 +1,4 @@
-from jinja2 import Environment, meta, Template, nodes, FileSystemLoader, select_autoescape
-from sql_gen.sql_gen.filter_loader import load_filters
-import os
-
-def test_env():
-    dirname = os.path.dirname(__file__)
-    templates_path = "./"+os.path.join(dirname, 'templates')
-    env = Environment(
-    loader=FileSystemLoader("/home/dgarcia/dev/python/em_automation/sql_gen/test/templates"),
-    autoescape=select_autoescape(['html', 'xml']))
-    load_filters(env)
-    return env
-
+from jinja2 import Template
 class TreeDrawer(object):
     def __init__(self):
         self.draw =""
@@ -50,4 +38,39 @@ class TreeDrawer(object):
         spacer = "    " + spacer
         for node in node.iter_child_nodes():
             self.generic_visit(node,spacer)
+
+#text="""
+#{% set entity_id ="123d" %}
+#{% set query = "SELECT CONFIG_ID FROM EVA_PROCESS_DESCRIPTOR WHERE ENTITY_DEF_ID =" + entity_id %}
+#this is the query  {{query}}
+#{{ config_dd | default(query+"jesus") }} is --config_id
+#{{ name | default("david")}}
+#"""
+text= """
+{% set query ="jesus"%}
+{{ config_id | default ("hola"+query)}}
+"""
+
+t = Template(text)
+print("***printing template rendered****")
+print(t.render({}))
+import ast
+from jinja2.compiler import generate
+from jinja2.nodes import Name
+ast 
+
+tree = t.environment.parse(text)
+print(str(tree))
+print("***printing tree****")
+TreeDrawer().print_node(tree)
+print("***rendering template****")
+print(t.render())
+add_exp =tree.body[2].nodes[1].args[0]
+print("this is "+ generate(tree, t.environment, "pedro", "<<ast>>"))
+#def generate(node, environment, name, filename, stream=None,
+#             defer_init=False, optimized=True):
+#add_exp = ast.parse(add_exp)
+#exec(compile(add_exp,filename="<ast>",mode="exec"))
+#print(str(add_exp))
+#exec(t.environment.compile(ast,
 
