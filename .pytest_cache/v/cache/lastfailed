@@ -1,9 +1,0 @@
-{
-  "sql_gen/test/test_ast.py::test_find_by_node_type": true,
-  "sql_gen/test/test_ast.py::test_iterate_nodes": true,
-  "sql_gen/test/test_default_filter.py::test_visit_ad_query_returns_query_result": true,
-  "sql_gen/test/test_em_run_query_filter.py::test_visit_Default_add_default_val_to_display_text_is_param_is_a_constant": true,
-  "sql_gen/test/test_jinja_node.py::test_include_templates": true,
-  "sql_gen/test/test_python_ast.py::test_parse": true,
-  "sql_gen/test/test_template_source.py::test_traverse_template_nodes": true
-}
