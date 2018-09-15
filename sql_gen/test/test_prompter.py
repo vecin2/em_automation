@@ -1,4 +1,3 @@
-from sql_gen.sql_gen.template_source import TemplateSource
 from sql_gen.sql_gen.prompter import Prompter
 import pytest
 from test.util_test_template_env import test_env
