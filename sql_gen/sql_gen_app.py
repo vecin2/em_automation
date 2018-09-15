@@ -1,9 +1,8 @@
-from jinja2 import Environment, FileSystemLoader, select_autoescape, meta, Template
+from jinja2 import Environment
 from sql_gen.prompter import Prompter
 from sql_gen.environment_selection import TemplateSelector, EMTemplatesEnv
 import argparse
 from sql_module.em_project import SQLTask
-import os
 
 
 ##main
@@ -13,8 +12,6 @@ def run_app():
     sql_task_path = args.dir
 
     env = EMTemplatesEnv().get_env()
-    templates_path =os.environ['SQL_TEMPLATES_PATH']
-    print(templates_path)
     template_selector = TemplateSelector()
     template_name = template_selector.select_template(env)
     prompter = Prompter(env)
@@ -24,7 +21,7 @@ def run_app():
     template_parsed =template.render(context)
 
     if sql_task_path:
-        sql_task = SQLTask.make().path(sql_task_path).with_table_data(template_parsed);
+        sql_task = SQLTask.make().with_path(sql_task_path).with_table_data(template_parsed);
         sql_task.write()
     else:
         print(template_parsed)

@@ -13,6 +13,11 @@ tempalte with include
 +when same variable appear multiple times use first appereance
 strip to strip code lines (template design doc)
 set as default a variable (p3 highly complex not much funcionality)
+refactoring:
+  use templates instead of template_names, as it allows to take advantage of on the fly created templates
+  Use relative path when creating environment (util_test_template_env.py)
+  review loop counter (assert_equals_prompt_text_list test_prompter)
+  fix nerdtree
 
 release v1.0
 	- prompts all variables within template
@@ -24,6 +29,9 @@ release v1.0
   release one version
   install version
   test version
+
+errors:
+	- when passing module starting with / it tries to create it in top folder and fails becouse not permission. It should not let you go through all the flow and fail at the end. It should check before if it has permissions.
 
 other features:
 	- dynamic/decision based prompts

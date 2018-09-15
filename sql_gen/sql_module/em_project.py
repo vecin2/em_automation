@@ -8,11 +8,8 @@ class EMProject(object):
     def core_home():
         return os.environ['EM_CORE_HOME']
 
-    def write_sql_task(self, sql_task):
-        self.name = sql_task
 
 class SQLTask(object):
-
     def __init__(self):
         self.update_sequence="PROJECT $Revision: 0 $"
 
@@ -21,7 +18,7 @@ class SQLTask(object):
         sql_task = SQLTask()
         return sql_task
     
-    def path(self, task_path):
+    def with_path(self, task_path):
         self.task_path = task_path
         return self
 

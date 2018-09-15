@@ -52,7 +52,7 @@ def test_include_should_prompt_vars_from_included_template_after_current_one():
     run_test_file(["last_name","name"],
               "var_plus_include")
 
-def test_should_not_prompt_var_which_is_set_to_a_var_within_included_template():
+def test_should_not_prompt_var_which_is_set_within_included_template():
     #{% include 'hello_world.sql' %}
     #{{last_name}}
     #{% set full_name = name + last_name %}
