@@ -9,6 +9,5 @@ pluggy==0.7.1
 py==1.5.4
 pyfakefs==3.4.3
 pytest==3.7.2
-pytest-sugar==0.9.1
 six==1.11.0
 termcolor==1.1.0
