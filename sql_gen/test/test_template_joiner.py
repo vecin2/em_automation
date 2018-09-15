@@ -1,6 +1,6 @@
 from sql_gen.sql_gen.prompter import Prompter, TemplateJoiner
 from jinja2 import Template,meta
-from test.util_test_template_env import test_env
+from test.utils.util_test_template_env import test_env
 
 env = test_env()
 def test_d():

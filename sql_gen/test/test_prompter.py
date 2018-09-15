@@ -1,8 +1,6 @@
-from sql_gen.sql_gen.prompter import Prompter
 import pytest
-from test.util_test_template_env import test_env
-import os
-from jinja2 import Environment, meta, Template, nodes, FileSystemLoader, select_autoescape
+from sql_gen.sql_gen.prompter import Prompter
+from test.utils.util_test_template_env import test_env
 
 env=test_env()
 
