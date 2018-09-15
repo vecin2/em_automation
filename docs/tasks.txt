@@ -10,9 +10,24 @@
 +tempalte with both
 tempalte with include
 +parse an included template which top node is not output
-logging
-refactor to model/view/controller design (do not prompt on the model)
-lstrip to strip code lines (template design doc)
-when same variable apper multiple times use first appereance
-set as default a variable
++when same variable appear multiple times use first appereance
+strip to strip code lines (template design doc)
+set as default a variable (p3 highly complex not much funcionality)
 
+release v1.0
+	- prompts all variables within template
+	- Filters: default and description
+	- include templates
+	- create db module with manual svn rev number
+
+  clean code
+  release one version
+  install version
+  test version
+
+other features:
+	- dynamic/decision based prompts
+	- Filters: db filters
+	- Code refactorings:
+		- refactor to model/view/controller design (do not prompt on the model)
+		- logging
