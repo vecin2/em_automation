@@ -25,7 +25,7 @@ release v1.0
 	- include templates
 	- create db module with manual svn rev number
 
-  clean code
+  +clean code
   release one version
   install version
   test version
