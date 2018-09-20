@@ -2,6 +2,7 @@ from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 import importlib
 from collections import OrderedDict
+from ui.cli_ui_util import input_with_validation
 
 class Prompter(object):
     def __init__(self, env):
@@ -38,7 +39,7 @@ class Prompt:
         self.filter_list.append(prompt_filter)
 
     def populate_value(self,context):
-        var =input(self.get_diplay_text())
+        var =input_with_validation(self.get_diplay_text())
         if var:
             context[self.variable_name] = var
 

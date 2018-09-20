@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.sql_gen.filter_loader import load_filters
-import os
+from ui.cli_ui_util import input_with_validation
+import os,sys
 
 class TemplateOption(object):
     def __init__(self,id, name):
@@ -28,9 +29,10 @@ class TemplateSelector():
             print(str(template_option.id) + ". " +template_option.name)
 
     def prompt_to_select_template(self):
-        template_number = input("Please select template to parse: ")
+        template_number = input_with_validation("Please select template to parse: ")
         while self.get_option_by_id(template_number) is None:
-            template_number = input("Please select template to parse: ")
+            template_number = input_with_validation("Please select template to parse: ")
+            sys.stdout.write('\n')
             self.show_options()
         return template_number
 
