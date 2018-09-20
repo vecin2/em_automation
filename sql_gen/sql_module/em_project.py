@@ -1,9 +1,6 @@
 import os
 
 class EMProject(object):
-    def __init__(self):
-        self.core_home = os.environ['EM_CORE_HOME']
-
     @staticmethod
     def core_home():
         return os.environ['EM_CORE_HOME']
@@ -19,7 +16,7 @@ class SQLTask(object):
         return sql_task
     
     def with_path(self, task_path):
-        self.task_path = task_path
+        self.task_path = task_path.strip(os.path.sep)
         return self
 
     def with_table_data(self, table_data):
@@ -27,17 +24,17 @@ class SQLTask(object):
         return self
 
     def write(self):
-        print("writing to disk sql_task under: "+ self.__get_full_path())
+        print("writing to disk sql_task under: "+ self.fs_location())
         self.__write_file(self.table_data, "tableData.sql")
         self.__write_file(self.update_sequence, "update.sequence")
 
     def __write_file(self, content, file_full_name):
-        final_path = os.path.join(self.__get_full_path(),file_full_name)
-        if not os.path.exists(self.__get_full_path()):
-                os.makedirs(self.__get_full_path())
+        final_path = os.path.join(self.fs_location(),file_full_name)
+        if not os.path.exists(self.fs_location()):
+                os.makedirs(self.fs_location())
         f = open(final_path, "w+")
         f.write(content)
         f.close()
 
-    def __get_full_path(self):
+    def fs_location(self):
         return os.path.join(EMProject.core_home(), self.task_path)

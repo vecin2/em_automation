@@ -76,5 +76,7 @@ will print the output in the console
 
 `em_sql -d modules/GSCCoreEntities/sqlScripts/oracle/updates/Project_R1_0_0/test_rewire_verb # will create that sql task including "update.sequence"`
 
+-d indicates the directory where the sql task will be written to. The EM_CORE_HOME will be prefixed to this path
+
  
   
