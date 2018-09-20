@@ -6,6 +6,7 @@
 + tidy up imports
 + remove em_dev_tools from classpath
 +template with default prompt
+  +install version
 +template with description prompt
 +tempalte with both
 tempalte with include
@@ -26,9 +27,11 @@ release v1.0
 	- create db module with manual svn rev number
 
   +clean code
-  release one version
-  install version
+  +release one version
+  ***document install
   test version
+	rewire_verb
+	add sql templates
 
 errors:
 	- when passing module starting with / it tries to create it in top folder and fails becouse not permission. It should not let you go through all the flow and fail at the end. It should check before if it has permissions.

@@ -6,6 +6,6 @@ VALUES (@PD.{{ process_descriptor_id }}, --ID
  {{ config_id | default('NULL') }} , --config_id
  'N',
  {{ process_descriptor_type |
-    default ('0') |
-    description('type_id (0=regular process, 2=action, 3=sla)') }} --type
+    description('type_id (0=regular process, 2=action, 3=sla)'|
+    default ('0') ) }} --type
 );

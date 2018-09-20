@@ -1,5 +1,5 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from sql_gen.filter_loader import load_filters
+from sql_gen.sql_gen.filter_loader import load_filters
 import os
 
 class TemplateOption(object):

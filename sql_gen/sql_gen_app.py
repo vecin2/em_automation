@@ -1,8 +1,8 @@
 from jinja2 import Environment
-from sql_gen.prompter import Prompter
-from sql_gen.environment_selection import TemplateSelector, EMTemplatesEnv
+from sql_gen.sql_gen.prompter import Prompter
+from sql_gen.sql_gen.environment_selection import TemplateSelector, EMTemplatesEnv
 import argparse
-from sql_module.em_project import SQLTask
+from sql_gen.sql_module.em_project import SQLTask
 
 
 ##main

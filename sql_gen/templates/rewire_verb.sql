@@ -8,10 +8,6 @@ AND PDR.PROCESS_DESCRIPTOR_ID = PD.ID
 AND V.ENTITY_DEF_ID = 850
 AND V.NAME = 'inlineSearch'
 #}
-{#{{ config_id | ad_run_query (query)}} #}
-{#{{ set old_pd = find_pd_by_verb_name_and_path(verb_name,repository_path)}} #}
-{#{{ type_id | default(old_pd=pd['TYPE_ID'}}) #}
-
 {# We set compute descriptor id #}
 {% set process_descriptor_id = "GSC"+ entity_def_id  + verb_name%}
 {% include 'add_process_descriptor.sql' %}

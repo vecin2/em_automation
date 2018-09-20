@@ -4,3 +4,6 @@
 *.pyc
 **/.cache/
 **/.pytest_cache/
+**/dist/
+**/build/
+**/*.egg-info/
