@@ -4,13 +4,19 @@ from ui.cli_ui_util import input_with_validation
 import os,sys
 
 class TemplateOption(object):
-    def __init__(self,id, name):
+    MENU_FOLDER="menu/"
+    def __init__(self,id, template_path):
         self.id =id
-        self.name =name
+        self.name =template_path.replace(self.MENU_FOLDER,'')
 
+def list_menu_templates(template_name):
+    if TemplateOption.MENU_FOLDER in template_name:
+        return True
+    return False
 class TemplateSelector():
+    
     def select_template(self, env):
-        template_list = env.list_templates(".sql")
+        template_list = env.list_templates(None,list_menu_templates)
         self.create_options(template_list)
         self.show_options()
 
@@ -19,8 +25,8 @@ class TemplateSelector():
     
     def create_options(self, template_list):
         self.template_option_list=[]
-        for counter, template in enumerate(template_list):
-            template_option =TemplateOption(counter, template)
+        for counter, template_path in enumerate(template_list):
+            template_option =TemplateOption(counter, template_path)
             self.template_option_list.append(template_option)
         return self.template_option_list
 
@@ -29,9 +35,9 @@ class TemplateSelector():
             print(str(template_option.id) + ". " +template_option.name)
 
     def prompt_to_select_template(self):
-        template_number = input_with_validation("Please select template to parse: ")
+        template_number = input_with_validation("\nPlease select template to parse: ")
         while self.get_option_by_id(template_number) is None:
-            template_number = input_with_validation("Please select template to parse: ")
+            template_number = input_with_validation("\nPlease select template to parse: ")
             sys.stdout.write('\n')
             self.show_options()
         return template_number
@@ -45,7 +51,7 @@ class TemplateSelector():
 class EMTemplatesEnv():
     def __init__(self):
         templates_path =os.environ['SQL_TEMPLATES_PATH']
-        print("Loading templates from:" + templates_path)
+        print("\nLoading templates from '" + templates_path+"':")
         self.env = Environment(
                             loader=FileSystemLoader(templates_path),
                             autoescape=select_autoescape(['html', 'xml']),

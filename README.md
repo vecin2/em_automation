@@ -80,10 +80,23 @@ will print the output in the console
 
 To specify the path in windows is a bit harder if there is no folder autocomplate. You c
 
+If the path provide already exist the user will prompt for confirmation to override that path.
+
 # Template Design
 By convention the all the SQL should be written in uppercase. 
 Variables and lower case and in snake case (variable_names)
 
+For easy reading add comments next the field when inserting into a table. Use lowercase and snake case:
+```sql
+INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
+VALUES (
+        @PDR.{{ process_descriptor_ref_id }} --process_descriptor_ref_name,
+        @PD.{{ process_descriptor_id }}, --process_descriptor_id
+	@ENV.Dflt, --env_idd
+	NULL, --config_id
+       	'N' --is_shared
+       );
+```
 
 # Other Windows tools
 When runnig it in windows to get autocomplete features and easier command line navigation it is recommenced to install one the following:
