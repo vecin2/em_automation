@@ -5,7 +5,6 @@ import argparse
 from sql_gen.sql_module.em_project import SQLTask
 from ui.cli_ui_util import do_not_print_stack_trace_on_ctrl_c
 
-#Handles Ctrl+C enter in all the inputs
 do_not_print_stack_trace_on_ctrl_c()
 
 ##main
@@ -13,6 +12,11 @@ def run_app():
  # construct the argument parse and parse the arguments
     args = parse_args();
     sql_task_path = args.dir
+    if sql_task_path:
+        try:
+            sql_task = SQLTask.make().with_path(sql_task_path)
+        except Exception:
+            exit()
 
     env = EMTemplatesEnv().get_env()
     template_selector = TemplateSelector()
@@ -23,8 +27,8 @@ def run_app():
 
     template_parsed =template.render(context)
 
-    if sql_task_path:
-        sql_task = SQLTask.make().with_path(sql_task_path).with_table_data(template_parsed);
+    if sql_task:
+        sql_task.with_table_data(template_parsed);
         sql_task.write()
     else:
         print(template_parsed)

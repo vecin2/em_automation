@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="em_sql",
-        version="0.0.1",
+        version="0.0.2a0",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -13,6 +13,7 @@ setuptools.setup(
         long_description_content_type="text/markdown",
         url="https://github.com/vecin2/em_automation",
         packages=setuptools.find_packages(),
+        install_requires=['Jinja2','gnureadline'],
         classifiers=[
             "Programming Language :: Python :: 3.6",
             "License :: OSI Approved :: MIT License",

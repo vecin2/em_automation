@@ -1,4 +1,5 @@
 import os
+from ui.cli_ui_util import input_with_validation,InputRequester
 
 class EMProject(object):
     @staticmethod
@@ -6,17 +7,25 @@ class EMProject(object):
         return os.environ['EM_CORE_HOME']
 
 
+
 class SQLTask(object):
-    def __init__(self):
+    def __init__(self, input_requester=InputRequester()):
         self.update_sequence="PROJECT $Revision: 0 $"
+        self.input_requester = input_requester
 
     @staticmethod
-    def make():
-        sql_task = SQLTask()
+    def make(input_requester=InputRequester()):
+        sql_task = SQLTask(input_requester)
         return sql_task
     
+    def __ask_override_file(self):
+        text= "Are you sure you want to override the path"+ self.fs_location() + " (y/n): " 
+        return self.input_requester.request_value(text,"y","n") == "y"
+
     def with_path(self, task_path):
         self.task_path = task_path.strip(os.path.sep)
+        if os.path.exists(self.fs_location()) and not self.__ask_override_file():
+            raise FileExistsError("Duplicate sql task")
         return self
 
     def with_table_data(self, table_data):
@@ -38,3 +47,4 @@ class SQLTask(object):
 
     def fs_location(self):
         return os.path.join(EMProject.core_home(), self.task_path)
+

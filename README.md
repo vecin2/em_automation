@@ -78,5 +78,16 @@ will print the output in the console
 
 -d indicates the directory where the sql task will be written to. The EM_CORE_HOME will be prefixed to this path
 
- 
+To specify the path in windows is a bit harder if there is no folder autocomplate. You c
+
+# Template Design
+By convention the all the SQL should be written in uppercase. 
+Variables and lower case and in snake case (variable_names)
+
+
+# Other Windows tools
+When runnig it in windows to get autocomplete features and easier command line navigation it is recommenced to install one the following:
+[Clink]( http://mridgers.github.io/clink/): gives you Bash-style autocompletion in Windows Cmd
+[git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well. 
+[cygwin](https://www.cygwin.com/): a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. 
   

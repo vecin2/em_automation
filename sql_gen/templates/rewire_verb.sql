@@ -14,6 +14,7 @@ AND V.NAME = 'inlineSearch'
 {% set process_descriptor_ref_id = process_descriptor_id %}
 {% include 'add_process_descriptor_ref.sql' %}
 
-update eva_verb 
-set (PROCESS_DESC_REF_ID) = (@PDR.{{process_descriptor_id}})
-where ENTITY_DEF_ID = @ED.{{entity_def_id}} and name ='{{verb_name}}';
+
+UPDATE EVA_VERB 
+SET (process_desc_ref_id) = (@PDR.{{PROCESS_DESCRIPTOR_ID}})
+WHERE ENTITY_DEF_ID = @ED.{{entity_def_id}} AND NAME ='{{verb_name}}';
