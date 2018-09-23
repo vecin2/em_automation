@@ -82,6 +82,12 @@ To specify the path in windows is a bit harder if there is no folder autocomplat
 
 If the path provide already exist the user will prompt for confirmation to override that path.
 
+# Menu
+To be able to select a template a file with same name as template must exist under the folder `menu` which is a subfolder of `SQL_TEMPLATESPATH`.
+
+Windows users can create a template shortcut within the `menu` folder, although the must ensure the names match. 
+
+For windows shortcuts to work the application removes `.lnk` from files put into the `menu` folder. 
 # Template Design
 By convention the all the SQL should be written in uppercase. 
 Variables and lower case and in snake case (variable_names)

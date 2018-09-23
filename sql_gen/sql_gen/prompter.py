@@ -2,7 +2,7 @@ from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 import importlib
 from collections import OrderedDict
-from ui.cli_ui_util import input_with_validation
+from sql_gen.ui.cli_ui_util import input_with_validation
 
 class Prompter(object):
     def __init__(self, env):

@@ -1,5 +1,5 @@
 import os
-from ui.cli_ui_util import input_with_validation,InputRequester
+from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
 
 class EMProject(object):
     @staticmethod

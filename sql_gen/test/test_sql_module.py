@@ -1,7 +1,7 @@
 import pytest
 import os
-from sql_module.em_project import SQLTask, EMProject
-from ui.cli_ui_util import InputRequester
+from sql_gen.sql_module.em_project import SQLTask, EMProject
+from sql_gen.ui.cli_ui_util import InputRequester
 
 #set em core home as it used as based to write sql modules
 os.environ['EM_CORE_HOME'] = '/em/home' 

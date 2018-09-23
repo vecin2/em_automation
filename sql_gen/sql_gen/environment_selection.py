@@ -1,13 +1,16 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.sql_gen.filter_loader import load_filters
-from ui.cli_ui_util import input_with_validation
+from sql_gen.ui.cli_ui_util import input_with_validation
 import os,sys
 
 class TemplateOption(object):
     MENU_FOLDER="menu/"
+    WINDOWS_LINK=".lnk"
     def __init__(self,id, template_path):
+        #when creating windos links it adds '.lnk'. 
+        #we want to remove so template can still be loaded by name
         self.id =id
-        self.name =template_path.replace(self.MENU_FOLDER,'')
+        self.name =template_path.replace(self.MENU_FOLDER,'').replace(self.WINDOWS_LINK,'')
 
 def list_menu_templates(template_name):
     if TemplateOption.MENU_FOLDER in template_name:
@@ -20,8 +23,7 @@ class TemplateSelector():
         self.create_options(template_list)
         self.show_options()
 
-        template_number = self.prompt_to_select_template()    
-        return self.get_option_by_id(template_number).name
+        return self.prompt_to_select_template(env)    
     
     def create_options(self, template_list):
         self.template_option_list=[]
@@ -34,13 +36,26 @@ class TemplateSelector():
         for template_option in self.template_option_list:
             print(str(template_option.id) + ". " +template_option.name)
 
-    def prompt_to_select_template(self):
+    def prompt_to_select_template(self,env):
         template_number = input_with_validation("\nPlease select template to parse: ")
-        while self.get_option_by_id(template_number) is None:
+        template = self.get_template(template_number, env)
+        while template is None:
             template_number = input_with_validation("\nPlease select template to parse: ")
             sys.stdout.write('\n')
             self.show_options()
-        return template_number
+            template = self.get_template(template_number, env)
+        return template
+
+
+    def get_template(self, template_number,env):
+        template_name = self.get_option_by_id(template_number).name
+        try:
+            env.loader.get_source(env,template_name)
+        except Exception:
+            print ("This template does not exist. Make sure there is a matchin template under the configured templates folder")
+            return None
+
+        return template_name
 
     def get_option_by_id(self, template_number):
         for template_option in self.template_option_list:
