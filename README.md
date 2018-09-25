@@ -2,8 +2,19 @@
 Remember to source pipenv to source all the python libs: . bin/activate
 Source as well the local file "set_env_vars.sh" which is a work around to fix an issue importing modules.
 
-The application be executing by running: python sql_gen.py
-Test can run with pytest: pytest sql_gent/test
+The application be executing by running: `python .` from project top folder
+Test can run with pytest: py.test from the project top folder
+
+#Introductions
+Standarize sql scripts including formatting a redability
+Iterative improvement of templates towards a minimal enter of data
+
+# Distribution
+Three steps:
+- update the setup.py file, change version name, new dependencies, etc.
+- From the project root, run `python3 setup.py sdits bdist_wheel` to create the wheel file within `/dist/`
+- Run `twine upload --repository-url https://test.pypi.org/legacy/ dist/*` to upload to pypi test.
+
 
 # User installation
 https://test.pypi.org/project/sql-gen/
@@ -16,9 +27,9 @@ Make sure the system variable "PATH" contains the folder where you install Pytho
 PYTHON_HOME should be set to the folder when python has been intalled.
 
 Open the command line and run:
-python3 -m pip install --index-url https://test.pypi.org/simple/ sql_gen 
+python3 -m pip install --index-url https://test.pypi.org/simple/ em_sql
 Or use extra index url to look for the dependencies within the pypi real repository as well. Thas would allow download jinja2 as well.
-python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sql_gen 
+python3 -m pip install --extra-index-url https://test.pypi.org/simple/ em_sql
 
 Install Jinja2
 We rely on a package Jinja2. If you are installing from the test repository that package will not be found there and youll have to install it with a different command:
@@ -82,6 +93,8 @@ To specify the path in windows is a bit harder if there is no folder autocomplat
 
 If the path provide already exist the user will prompt for confirmation to override that path.
 
+# Exit
+At any point press `Ctrl+c` or `Ctrl+d` to exit.
 # Menu
 To be able to select a template a file with same name as template must exist under the folder `menu` which is a subfolder of `SQL_TEMPLATESPATH`.
 

@@ -21,7 +21,7 @@ class InputRequester(object):
     def __init__(self):
         self.task_already_exists=False
 
-    def request_value(text, *args):
+    def request_value(self, text, *args):
         value = input_with_validation(text) 
         if args is not None:
             while value not in args:

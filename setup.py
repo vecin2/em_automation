@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-        name="em_sql",
-        version="0.0.2a1",
+        name="emsql",
+        version="0.0.2a4",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -13,7 +13,7 @@ setuptools.setup(
         long_description_content_type="text/markdown",
         url="https://github.com/vecin2/em_automation",
         packages=setuptools.find_packages(),
-        install_requires=['Jinja2'],
+        install_requires=['Jinja2','pymssql'],
         extra_require={
             ':"linux" in sys_platform':[
                 'gnureadline'
@@ -26,7 +26,7 @@ setuptools.setup(
             ],
         entry_points = {
             'console_scripts': [
-                'em_sql =sql_gen.__main__:main'
+                'emsql =sql_gen.__main__:main'
                 ],
             }
         )

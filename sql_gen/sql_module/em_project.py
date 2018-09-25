@@ -18,15 +18,15 @@ class SQLTask(object):
         sql_task = SQLTask(input_requester)
         return sql_task
     
-    def __ask_override_file(self):
-        text= "Are you sure you want to override the path"+ self.fs_location() + " (y/n): " 
-        return self.input_requester.request_value(text,"y","n") == "y"
-
     def with_path(self, task_path):
         self.task_path = task_path.strip(os.path.sep)
-        if os.path.exists(self.fs_location()) and not self.__ask_override_file():
+        if os.path.exists(self.fs_location()) and not self._ask_override_file():
             raise FileExistsError("Duplicate sql task")
         return self
+
+    def _ask_override_file(self):
+        text= "Are you sure you want to override the path"+ self.fs_location() + " (y/n): " 
+        return self.input_requester.request_value(text,"y","n") == "y"
 
     def with_table_data(self, table_data):
         self.table_data = table_data

@@ -49,7 +49,10 @@ class TemplateSelector():
 
 
     def get_template(self, template_number,env):
-        template_name = self.get_option_by_id(template_number).name
+        option = self.get_option_by_id(template_number)
+        if option is None:
+            return option
+        template_name = option.name
         try:
             env.loader.get_source(env,template_name)
         except Exception:
@@ -71,12 +74,10 @@ class EMTemplatesEnv():
         print("\nLoading templates from '" + templates_path+"':")
         self.env = Environment(
                             loader=FileSystemLoader(templates_path),
-                            autoescape=select_autoescape(['html', 'xml']),
                             trim_blocks=True,
                             lstrip_blocks=True,
                             keep_trailing_newline=False #default
                             )
-        self.env = Environment(loader= FileSystemLoader(templates_path))
         self.env.globals['camelcase'] = camelcase
         self.env.globals['dbquery'] = dbquery
         load_filters(self.env)

@@ -1,5 +1,6 @@
-from jinja2 import Environment, meta, Template, nodes
+from jinja2 import Environment, meta, Template, nodes,FileSystemLoader
 import pytest
+import os
 from sql_gen.sql_gen.filter_loader import load_filters
 
 env = Environment()
@@ -29,3 +30,58 @@ Hello {{ name }}. Welcome {{name_with_title}}!"""
     result = t.render(name="Juan")
 
     assert "\nHello Juan. Welcome Mr Juan!" == result
+
+def test_does_not_strip_block_spaces_by_default():
+    env = Environment()
+    text='''Hola juan
+    {% set name = "pedro" %}
+    hola {{name}}
+    '''
+    t = env.from_string(text)
+    assert "Hola juan\n    \n    hola pedro\n    " == t.render({})
+
+def test_strip_block_spaces():
+    env = Environment(trim_blocks=True,
+                      lstrip_blocks=True,
+                      keep_trailing_newline=False #default
+                      )
+    text='''Hola juan
+    {% set name = "pedro" %}
+    hola {{name}}
+    '''
+    
+    t = env.from_string(text)
+    rendered_text = t.render({})
+    print(rendered_text)
+    assert "Hola juan\n    hola pedro\n    " == rendered_text
+
+def test_keep_trailing_newline_doesnot_work():
+    env = Environment(trim_blocks=True,
+                      lstrip_blocks=True,
+                      keep_trailing_newline=False #default
+                      )
+    text='''Hola juan
+    {% set name = "pedro" %}
+
+    hola {{name}}
+    '''
+    
+    t = env.from_string(text)
+    rendered_text = t.render({})
+    print(rendered_text)
+    assert "Hola juan\n    \n    hola pedro\n    " == rendered_text
+
+def test_replicate_issue():
+    templates_path =os.environ['SQL_TEMPLATES_PATH']
+    env = Environment( trim_blocks=True,
+                        lstrip_blocks=True
+                        )
+    #env.globals['camelcase'] = camelcase
+    #env.globals['dbquery'] = dbquery
+    load_filters(env)
+    text='''Hola juan
+    {% set name = "pedro" %}
+    hola {{name}}
+    '''
+    t = env.from_string(text)
+    assert "Hola juan\n    hola pedro\n    " == t.render({})
