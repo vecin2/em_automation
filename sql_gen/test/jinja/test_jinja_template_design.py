@@ -63,13 +63,12 @@ def test_keep_trailing_newline_doesnot_work():
     text='''Hola juan
     {% set name = "pedro" %}
 
-    hola {{name}}
-    '''
+    hola {{name}}'''
     
     t = env.from_string(text)
     rendered_text = t.render({})
     print(rendered_text)
-    assert "Hola juan\n    \n    hola pedro\n    " == rendered_text
+    assert "Hola juan\n\n    hola pedro" == rendered_text
 
 def test_replicate_issue():
     templates_path =os.environ['SQL_TEMPLATES_PATH']

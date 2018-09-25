@@ -1,7 +1,10 @@
-
+from sql_gen.sql_module.em_project import EMProject
 def camelcase(st):
     output = ''.join(x for x in st.title() if x.isalnum())
     return output[0].lower() + output[1:]
+
+def prj_prefix():
+    return EMProject.prefix()
 
 import pymssql
 import sys

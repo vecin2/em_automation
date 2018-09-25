@@ -1,7 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.sql_gen.filter_loader import load_filters
 from sql_gen.ui.cli_ui_util import input_with_validation
-from sql_gen.globals import camelcase, dbquery
+from sql_gen.globals import camelcase, dbquery,prj_prefix
 import os,sys
 
 class TemplateOption(object):
@@ -80,6 +80,7 @@ class EMTemplatesEnv():
                             )
         self.env.globals['camelcase'] = camelcase
         self.env.globals['dbquery'] = dbquery
+        self.env.globals['prj_prefix'] = prj_prefix
         load_filters(self.env)
     
     def get_env(self):

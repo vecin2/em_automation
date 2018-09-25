@@ -1,5 +1,5 @@
 {# We compute descriptor id #}
-{% set process_descriptor_id = "GSC"+ entity_def_id.capitalize() + verb_name.capitalize() -%}
+{% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
 
 {% include 'add_process_descriptor.sql' %}
 {% set process_descriptor_ref_id = process_descriptor_id %}
