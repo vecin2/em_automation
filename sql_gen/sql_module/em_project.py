@@ -28,7 +28,7 @@ class SQLTask(object):
         return self
 
     def _ask_override_file(self):
-        text= "Are you sure you want to override the path"+ self.fs_location() + " (y/n): " 
+        text= "Are you sure you want to override the path '"+ self.fs_location() + "' (y/n): " 
         return self.input_requester.request_value(text,"y","n") == "y"
 
     def with_table_data(self, table_data):
