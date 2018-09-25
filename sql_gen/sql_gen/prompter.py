@@ -1,5 +1,6 @@
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
+from jinja2.nodes import Call,Name
 import importlib
 from collections import OrderedDict
 from sql_gen.ui.cli_ui_util import input_with_validation
@@ -56,6 +57,13 @@ class TemplateJoiner(NodeTransformer):
 class PromptVisitor(NodeVisitor):
     def __init__(self,ast):
         self.ast = ast
+        self._set_parent(self.ast,None)
+
+    def _set_parent(self,node, parent):
+        node.parent =parent
+        for child in node.iter_child_nodes():
+            self._set_parent(child, node)
+
     def generic_visit(self, node, *args, **kwargs):
         result=OrderedDict()
         """Called if no explicit visitor function exists for a node."""
@@ -83,9 +91,11 @@ class PromptVisitor(NodeVisitor):
     def visit_Name(self,node):
         result=OrderedDict()
         #if node.ctx == "load":
+        #camel() --> Call(node=Name(name='camel', ctx='load'),args...
+        #Creat a prompt for Name nodes which are in part of the undeclare vars
+        #and they are not the node value of CallNode
         if node.name in meta.find_undeclared_variables(self.ast):
-            result[node.name] =Prompt(node.name, [])
-        for child in node.iter_child_nodes():
-            self.generic_visit(child)
+            if not isinstance(node.parent,Call) or node.parent.node != node:
+                result[node.name] =Prompt(node.name, [])
         return result
 

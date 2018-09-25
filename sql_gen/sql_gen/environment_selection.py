@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.sql_gen.filter_loader import load_filters
 from sql_gen.ui.cli_ui_util import input_with_validation
+from sql_gen.globals import camelcase, dbquery
 import os,sys
 
 class TemplateOption(object):
@@ -63,6 +64,7 @@ class TemplateSelector():
                 return template_option
         return None
 
+
 class EMTemplatesEnv():
     def __init__(self):
         templates_path =os.environ['SQL_TEMPLATES_PATH']
@@ -74,6 +76,9 @@ class EMTemplatesEnv():
                             lstrip_blocks=True,
                             keep_trailing_newline=False #default
                             )
+        self.env = Environment(loader= FileSystemLoader(templates_path))
+        self.env.globals['camelcase'] = camelcase
+        self.env.globals['dbquery'] = dbquery
         load_filters(self.env)
     
     def get_env(self):

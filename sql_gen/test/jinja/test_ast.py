@@ -87,6 +87,18 @@ def test_pipe_default_descripion_filters():
 
     assert body_string ==str(ast.body[0])
 
+def test_globals():
+    ast = env.parse("{% set name = camel()%}Name is {{name}}")
+    body_string= "Assign(target=Name(name='name', ctx='store'), "+\
+                 "node=Call(node=Name(name='camel', ctx='load'), "+\
+                            "args=[], "+\
+                            "kwargs=[], "+\
+                            "dyn_args=None, "+\
+                            "dyn_kwargs=None)"+\
+                          ")"
+
+    assert body_string ==str(ast.body[0])
+
 def test_anytree_node():
     ast = env.parse("Hello {{ name | default ('Mundo') | description ('World in english') }}!")
     filter_node =ast.body[0].nodes[1]

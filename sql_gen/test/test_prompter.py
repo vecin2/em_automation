@@ -3,6 +3,9 @@ from sql_gen.sql_gen.prompter import Prompter
 from test.utils.util_test_template_env import test_env
 
 env=test_env()
+def pedro():
+    return "Pedro Alvarez"
+env.globals['camel']=pedro
 
 def run_test_file(expected_msgs, template_name):
     prompter = Prompter(env)
@@ -36,6 +39,13 @@ def test_description():
     run_test_file(["customer name"],
               "one_var_description_filter")
 
+def test_does_not_prompt_globals():
+    run_test_file([],
+              "invoke_global")
+
+def test_prompts_var_passed_global_callables():
+    run_test_file(["a_var"],
+              "invoke_global_with_vars")
 
 def test_pipe_default_descripion_filters():
     run_test_file(["prename","World in english (default is Mundo)"],

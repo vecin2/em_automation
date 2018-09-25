@@ -103,7 +103,17 @@ VALUES (
        	'N' --is_shared
        );
 ```
+# Filters
+DefaultFilter
+DescriptionFilter
 
+# Adding new Filters
+Filters are picked up automatically when they created under `filters` folder. 
+
+# Global functions
+camelcase(string), it will came case the string passed. A variable can be passed in that case if the variable has not been defined yet it should prompt to enter the value.
+# Adding Functions
+New functions can easily added to templates. 
 # Other Windows tools
 When runnig it in windows to get autocomplete features and easier command line navigation it is recommenced to install one the following:
 [Clink]( http://mridgers.github.io/clink/): gives you Bash-style autocompletion in Windows Cmd
