@@ -22,7 +22,8 @@ class SQLTask(object):
         return sql_task
     
     def with_path(self, task_path):
-        self.task_path = task_path.strip(os.path.sep)
+        #strip as well "/" as we could run in windows within GitBash or CygWin
+        self.task_path = task_path.strip(os.path.sep).strip("/")
         if os.path.exists(self.fs_location()) and not self._ask_override_file():
             raise FileExistsError("Duplicate sql task")
         return self
