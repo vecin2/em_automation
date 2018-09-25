@@ -27,7 +27,7 @@ def run_app():
         print ("\nWARNING: SQL generated will NOT be saved. It only prints to screen. Check --help for options on how to save to a file")
 
     env = EMTemplatesEnv().get_env()
-    template_selector = TemplateSelector()
+    template_selector = TemplateSelector() 
     template_name = template_selector.select_template(env)
     prompter = Prompter(env)
     context = prompter.build_context(template_name)

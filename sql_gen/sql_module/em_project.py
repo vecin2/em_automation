@@ -36,7 +36,7 @@ class SQLTask(object):
         return self
 
     def write(self):
-        print("writing to disk sql_task under: "+ self.fs_location())
+        print("\nWriting to disk sql_task under: "+ self.fs_location())
         self.__write_file(self.table_data, "tableData.sql")
         self.__write_file(self.update_sequence, "update.sequence")
 
