@@ -4,14 +4,17 @@ from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
 class EMProject(object):
     @staticmethod
     def core_home():
-        return os.environ['EM_CORE_HOME']
-
-
+        try:
+            return os.environ['EM_CORE_HOME']
+        except Exception:
+            raise AttributeError("EM_CORE_HOME must added to environment variables and it should contain the path of your current em project")
 
 class SQLTask(object):
     def __init__(self, input_requester=InputRequester()):
         self.update_sequence="PROJECT $Revision: 0 $"
         self.input_requester = input_requester
+        #make sure em_core_home is setup
+        EMProject.core_home()
 
     @staticmethod
     def make(input_requester=InputRequester()):

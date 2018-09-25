@@ -15,8 +15,13 @@ def run_app():
     sql_task = None
     if sql_task_path:
         try:
-            sql_task = SQLTask.make().with_path(sql_task_path)
-        except Exception:
+            sql_task = SQLTask.make()
+            sql_task.with_path(sql_task_path)
+        except AttributeError as e:
+            print(str(e))
+            exit()
+        except FileExistsError as e:
+            print("Exiting application")
             exit()
     else:
         print ("\nWARNING: SQL generated will NOT be saved. It only prints to screen. Check --help for options on how to save to a file")
