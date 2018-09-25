@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="emsql",
-        version="0.0.2a4",
+        version="0.0.2a6",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
