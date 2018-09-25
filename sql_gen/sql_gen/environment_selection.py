@@ -56,7 +56,7 @@ class TemplateSelector():
         try:
             env.loader.get_source(env,template_name)
         except Exception:
-            print ("This template does not exist. Make sure there is a matchin template under the configured templates folder")
+            print ("This template does not exist. Make sure there is a matching template under the configured templates folder")
             return None
 
         return template_name
