@@ -1,3 +1,5 @@
+![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
+
 # Developer Installation and Execution
 Remember to source pipenv to source all the python libs: . bin/activate
 Source as well the local file "set_env_vars.sh" which is a work around to fix an issue importing modules.
