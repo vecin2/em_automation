@@ -1,137 +1,141 @@
-![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 
-# Developer Installation and Execution
-Remember to source pipenv to source all the python libs: . bin/activate
-Source as well the local file "set_env_vars.sh" which is a work around to fix an issue importing modules.
+# sqltask - an sql generator for EM projects
 
-The application be executing by running: `python .` from project top folder
+sqktask is command line application which allows users to easily generate SQL scripts commonly needed within EM developement. 
+
+It uses a set of SQL script templates and it prompts the user for the template values. Then it renders the template and creates the corresponding SQSL task under the current project -defined by `EM_CORE_HOME` path. A SQL task contains a `tableData.sql` and `update.sequence` files.
+ 
+ SQL templates are meant to evolve overtime and to provide and to server as a model when creating sql tasks.
+
+# Table Of Contents
+
+## Basic Usage
+This section gives you a run through creating a sql template and running it:
+- Create a simple SQL template `change_verb_context.sql` under your `SQL_TEMPLATES_PATH`:
+```sql
+UPDATE EVA_CONTEXT_VERB_ENTRY
+SET (CONFIG_ID)= (@CC.{{new_config_id | description("new_config_id (e.g. Home, CustomerPostIdentify, ...)")}})
+where CONFIG_ID = @CC.{{old_config_id} | default(}
+and VERB = '{{verb_name}} ';
+```
+- Create a shorcut with the same name under `SQL_TEMPLATES_PATH/menu/`:
+- Run the application by simply typing `sqltask` in the comand line. Your template should be display as one of the options.
+-  Select you template and the system will prompt to enter:
+```bash
+	new_config_id (e.g. Home, CustomerPostIdentify, ...): Customer
+	old_config_id: Home
+	verb_name: identifyCustomer
+```
+- The system will print in the screen the following SQL:
+```sql
+	UPDATE EVA_CONTEXT_VERB_ENTRY
+	SET (CONFIG_ID)= (@CC.Customer)
+	where CONFIG_ID = @CC.Home
+	and VERB = 'identifyCustomer';
+```
+
+#### Redirect output to SQLTask
+Running sqltask with the parameter directory pass will generate and SQL task under the current `EM_CORE_HOME`:
+
+`sql task -d modules/ABCustomer/sqlScripts/oracle/updates/Project_R1_0_0/add_policy_to_Customer_table`
+
+#### Run help:
+Running `sqltask -h`  produces help text on how run the command
+```optional arguments:
+  -h, --help         show this help message and exit
+  -d DIR, --dir DIR  Its the directory where the sql task will be written to.
+                     Its a relative path from $EM_CORE_HOME to, e.g.
+                     modules/GSCCoreEntites...
+```
+#### Exiting the application
+At any point press `Ctrl+c` or `Ctrl+d` to exit - if you are using Gitbash you might have to press `Enter` as well.
+
+## User installation
+
+Install [python3](https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe). 
+
+Add Python installation folder to you system path and make sure the env variable `PYTHON_HOME` is set to the  installation folder.
+
+If you have multiple versions of python installed make sure you are using verion 3. 
+
+Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the command line:
+```python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask```
+
+The command above intalls all the require packages including [jinja2 templates](http://jinja.pocoo.org/).  If you get issues when running sqltask where it can find this package you can install manually by running 
+`python3 -m pip install Jinja2`.
+
+ 
+### Environment variables
+The following env variables need to be setup:
+- `EM_CORE_HOME`it should point to your project, e.g. `/opt/em/projects/gsc` 
+- `SQL_TEMPLATES_PATH` it should point to the folder containing the sql templates, e.g. `/opt/em/projects/gsc/sql_templates `
+
+### Windows Console
+Windows console its vary basic and it doesn't provide many feature as easy path autocompletion, easy copy and paste, etc. You can  look at installing one the following:
+- [Clink]( http://mridgers.github.io/clink/): very light weight tool which add a set features yo you Windows console.
+- [git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well and several linux commands. 
+- [cygwin](https://www.cygwin.com/): a large collection of GNU and Open - Source tools which provide functionality similar to a Linux distribution on Windows. 
+  
+# Developer Setup
+Create a branch for the [master branch](https://bfs-eng-can05.kana-test.com/dgarcia/em_automation)
+
+Consider create a virtual pyhon  envioronment for this project.   As well, it is recomended to user [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) to  manage your virtual environment. 
+
+Make user the sql_gen folder is added to you `PYTHONPATH`:
+`export PYTHONPATH=${PYTHONPATH}:/home/dgarcia/dev/python/em_automation/sql_gen`
+
+If you are using virtual environment you can set the `PYTHONPATH` within the `$vitualevns/bin/postactivate` so it only runs when you activate this environment.
+
+The application can be executing by running: `python .` from project top folder.
+
+#### Running tests
 Test can run with pytest: py.test from the project top folder
 
-#Introductions
-Standarize sql scripts including formatting a redability
-Iterative improvement of templates towards a minimal enter of data
 
-# Distribution
-Three steps:
-- update the setup.py file, change version name, new dependencies, etc.
-- From the project root, run `python3 setup.py sdits bdist_wheel` to create the wheel file within `/dist/`
-- Run `twine upload --repository-url https://test.pypi.org/legacy/ dist/*` to upload to pypi test.
+## Adding SQL Templates
+New templates can be added by creating a file under `$SQL_TEMPLATES_PATH` and create a shortcut with the same name pointing to that file under `$SQL_TEMPLATES_PATH/menu`
+Its important that the shorcut name matches the template name otherwise it will not show up in the menu when running sqltask. 
+
+#### Adding hidden templates
+Some templates might not be wanted to display within the menu. For example some scenarios will create a template which include other templates and the included template do not want to be shown. This can be achieve by simply not creating the shorcut. 
 
 
-# User installation
-https://test.pypi.org/project/sql-gen/
+## Template Design
+Template are  Standarize sql scripts including formatting a redability
+As new filters are available they can be incorporate to existing templates. It is expected this is an iteractive process whith the goal of providing a better user experience when populating template values.
 
-Download [git-bash](https://git-scm.com/download/win)
-Downlaod [python3.7](https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe)
-When running the installer make sure you check the box to add python to the system path.
+### Filters
 
-Make sure the system variable "PATH" contains the folder where you install Python.
-PYTHON_HOME should be set to the folder when python has been intalled.
-
-Open the command line and run:
-python3 -m pip install --index-url https://test.pypi.org/simple/ em_sql
-Or use extra index url to look for the dependencies within the pypi real repository as well. Thas would allow download jinja2 as well.
-python3 -m pip install --extra-index-url https://test.pypi.org/simple/ em_sql
-
-Install Jinja2
-We rely on a package Jinja2. If you are installing from the test repository that package will not be found there and youll have to install it with a different command:
-python3 -m pip install Jinja2
-
-If you have multiple versions of python install make sure you install the python3 Jinja2 version.
- 
-
-Environment variables
-The following env variables need to be setup:
-EM_CORE_HOME=/opt/em/projects/gsc #it should point to your project home
-SQL_TEMPLATES_PATH=/opt/em/projects/gsc/sql_templates # it should point to the folder containing the sql templates
-
-# em-dev-tools
- The main pacakge is sql_gen
- 
- ## sql_gen
-  Its a command line application that reads from a folder of sql_templates, and let the user select which one he like to fill. Then it prompts the user to enter the values and finally renders the template and write it to the given place in the fylesystem.
-  Some of the values can be computed based on what the use enters, so to create a set of "filters" which will allow writting templates using in a way that minimizes the user action and it provides good feedback on how to fill the values.
- 
-For example a template like the following:
-
-
-```sql
-INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED, TYPE) 
-VALUES 
-(
- @PD.{{ process_descriptor_name }}, --ID
- @ENV.Dflt, --ENV_ID,
- '{{ process_descriptor_name }}', --process_descriptor_name
- '{{ repository_path }}', --repository_path 
- {{ config_id | default('NULL') }} , --config_id
- 'N',
- {{ process_descriptor_type |
-    description('type id (0=regular process, 2=action, 3=sla)') |
-    default ('0')}} --type
-);
-```
-
-
-It should prompt the user the following:
- repository_path:
- 
- process_descriptor_name:
- 
- config_id (default is NULL):
- 
- type id (0=regular protype id (0=regular process, 2=action, 3=sla) (default is 0):
-  
-# Running application  
-
-`em_sql # no parameters`
-
-will print the output in the console
-
-`em_sql -d modules/GSCCoreEntities/sqlScripts/oracle/updates/Project_R1_0_0/test_rewire_verb # will create that sql task including "update.sequence"`
-
--d indicates the directory where the sql task will be written to. The EM_CORE_HOME will be prefixed to this path
-
-To specify the path in windows is a bit harder if there is no folder autocomplate. You c
-
-If the path provide already exist the user will prompt for confirmation to override that path.
-
-# Exit
-At any point press `Ctrl+c` or `Ctrl+d` to exit.
-# Menu
-To be able to select a template a file with same name as template must exist under the folder `menu` which is a subfolder of `SQL_TEMPLATESPATH`.
-
-Windows users can create a template shortcut within the `menu` folder, although the must ensure the names match. 
-
-For windows shortcuts to work the application removes `.lnk` from files put into the `menu` folder. 
-# Template Design
-By convention the all the SQL should be written in uppercase. 
-Variables and lower case and in snake case (variable_names)
-
-For easy reading add comments next the field when inserting into a table. Use lowercase and snake case:
-```sql
-INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
-VALUES (
-        @PDR.{{ process_descriptor_ref_id }} --process_descriptor_ref_name,
-        @PD.{{ process_descriptor_id }}, --process_descriptor_id
-	@ENV.Dflt, --env_idd
-	NULL, --config_id
-       	'N' --is_shared
-       );
-```
-# Filters
 DefaultFilter
 DescriptionFilter
 
-# Adding new Filters
+#### Adding new Filters
 Filters are picked up automatically when they created under `filters` folder. 
 
 # Global functions
 camelcase(string), it will came case the string passed. A variable can be passed in that case if the variable has not been defined yet it should prompt to enter the value.
 # Adding Functions
 New functions can easily added to templates. 
-# Other Windows tools
-When runnig it in windows to get autocomplete features and easier command line navigation it is recommenced to install one the following:
-[Clink]( http://mridgers.github.io/clink/): gives you Bash-style autocompletion in Windows Cmd
-[git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well. 
-[cygwin](https://www.cygwin.com/): a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. 
-  
+
+
+
+
+###  Fomatting and Naming Convention 
+All SQL scripts are written in uppercase with the variables in lower case and snake case. 
+
+#### Inserts
+For easy reading the values inserted are indented within the brackets and a comment with fiel naem is added next to each value.
+```sql
+INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
+VALUES (
+        @PDR.{{process_descriptor_ref_id}} --process_descriptor_ref_name,
+        @PD.{{process_descriptor_id}}, --process_descriptor_id
+		@ENV.Dflt, --env_id
+		NULL, --config_id
+       	'N' --is_shared
+       );
+```
+
+
+
+
