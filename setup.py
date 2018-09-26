@@ -11,7 +11,6 @@ setuptools.setup(
         description="A helper to populate jinja templates",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        url="https://github.com/vecin2/em_automation",
         packages=setuptools.find_packages(),
         install_requires=['Jinja2','pymssql'],
         extra_require={
