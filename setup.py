@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-        name="emsql",
-        version="0.0.2a6",
+        name="sqltask",
+        version="0.0.1a1",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -26,7 +26,7 @@ setuptools.setup(
             ],
         entry_points = {
             'console_scripts': [
-                'emsql =sql_gen.__main__:main'
+                'sqltask =sql_gen.__main__:main'
                 ],
             }
         )
