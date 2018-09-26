@@ -1,4 +1,4 @@
-![img](https://github.com/vecin2/em_automation/blob/master/docs/rewiring_verb.gif)
+![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 
 # Developer Installation and Execution
 Remember to source pipenv to source all the python libs: . bin/activate
