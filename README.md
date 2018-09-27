@@ -71,7 +71,8 @@ Running sqltask with the parameter directory pass will generate and SQL task und
 
 ### Show help
 Running `sqltask -h`  produces help text on how run the command
-```optional arguments:
+```
+optional arguments:
   -h, --help         show this help message and exit
   -d DIR, --dir DIR  Its the directory where the sql task will be written to.
                      Its a relative path from $EM_CORE_HOME to, e.g.
@@ -103,6 +104,9 @@ The command above intalls all the require packages including [jinja2 templates](
 The following env variables need to be setup:
 - `EM_CORE_HOME`it should point to your project, e.g. `/opt/em/projects/gsc` 
 - `SQL_TEMPLATES_PATH` it should point to the folder containing the sql templates, e.g. `/opt/em/projects/gsc/sql_templates `
+
+### Initial Set of Templates
+You can copy the templates folder within this project under you em project folder which will provide with the initial set of templates.
 
 ### Windows Console
 Windows console its vary basic and it doesn't provide many feature as easy path autocompletion, easy copy and paste, etc. You can  look at installing one the following:
@@ -198,7 +202,7 @@ For example with a set modules like
 				|__ ...
 
 #A Template
- {% set process_desc_id = prj_prefix()+ entity_def_name %}`
+ {% set process_desc_id = prj_prefix()+ entity_def_name %}
 Process descriptor id is {{process_desc_id }}
 
 #It renders to
@@ -270,7 +274,8 @@ Globals functions can easily implemented by adding the function to the `globals.
 
 #Searches for class named "DefaultFilter" under the folder /filters
  ```
-There are two main two types of filters:
+### Imlementing new Filters
+There are two main two of filters:
 - Filters that wrap existing builtin jinja filters
 - Completely new filters
 

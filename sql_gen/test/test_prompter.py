@@ -32,7 +32,7 @@ def test_should_not_prompt_var_which_has_value_assigned():
     run_test_file(["process_descriptor_id"],
               "one_var_equal_to_other_var")
 
-def test_default():
+def test_default(): 
     run_test_file(["name (default is Mundo)"],
               "one_var_default_filter")
 def test_description():
