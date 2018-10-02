@@ -9,14 +9,15 @@ It works from a set of SQL templates, prompting users with the neccesary values 
 Templates are written using <a href="http://jinja.pocoo.org/">jinja templates sintax</a>  and they should be designed to provide good information to users when entering values and to minimize user interactions. So if a value can computed, it should not be prompted.</p>
 <h1 id="table-of-contents">Table Of Contents</h1>
 <ul>
+<li><a href="#sqltask---an-sql-generator-for-em-projects">sqltask - an sql generator for EM projects</a></li>
 <li><a href="#basic-usage">Basic Usage</a>
 <ul>
-<li><a href="#exiting-the-application">Exiting the application</a></li>
 <li><a href="#redirect-output-to-sqltask">Redirect output to SQLTask</a></li>
+<li><a href="#exiting-the-application">Exiting the application</a></li>
 <li><a href="#show-help">Show help</a></li>
-<li><a href="#inserting-new-sql-templates">Inserting New SQL Templates</a>
+<li><a href="#adding-new-templates">Adding New Templates</a>
 <ul>
-<li><a href="#adding-hidden-templates">Adding hidden templates</a></li>
+<li><a href="#hidden-templates">Hidden templates</a></li>
 </ul>
 </li>
 </ul>
@@ -24,16 +25,18 @@ Templates are written using <a href="http://jinja.pocoo.org/">jinja templates si
 <li><a href="#user-installation">User installation</a>
 <ul>
 <li><a href="#environment-variables">Environment variables</a></li>
+<li><a href="#initial-set-of-templates">Initial Set of Templates</a></li>
 <li><a href="#windows-console">Windows Console</a></li>
 </ul>
 </li>
 <li><a href="#template-design">Template Design</a>
 <ul>
-<li><a href="#filters">Filters</a></li>
+<li><a href="#filters">Filters</a>
+<ul>
 <li><a href="#concatenate-multiple-filters">Concatenate multiple filters</a></li>
 <li><a href="#list-of-builtin-filters">List of Builtin filters</a></li>
 </ul>
-<ul>
+</li>
 <li><a href="#globals-functions">Globals Functions</a></li>
 <li><a href="#list-of-global-functions">List of Global Functions</a></li>
 <li><a href="#string-python-builtin-functions">String Python Builtin Functions</a></li>
@@ -52,14 +55,12 @@ Templates are written using <a href="http://jinja.pocoo.org/">jinja templates si
 </ul>
 </li>
 <li><a href="#imlementing-new-global-functions">Imlementing new Global functions</a></li>
-<li><a href="#implementing-new-filters-filters">Implementing new Filters Filters</a></li>
+<li><a href="#implementing-new--filters">Implementing new  Filters</a></li>
 </ul>
 </li>
 </ul>
 <h1 id="basic-usage">Basic Usage</h1>
-<p>This section runs through different user cases.</p>
-<h2 id="first-example">First Example</h2>
-<p>It provides a list of steps to a template and run the application so the template is rendered:</p>
+<p>This section runs through a basic use case:</p>
 <ul>
 <li><a href="#adding-new-templates">Add a new template</a> called <code>change_verb_context2.sql</code>:</li>
 </ul>
@@ -147,7 +148,7 @@ If you have multiple versions of python installed make sure you are using verion
 </ul>
 <p>To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates.<br>
 You can check as well the existing templates for a goo understanding on how these elements are applied.</p>
-<h3 id="filters">Filters</h3>
+<h2 id="filters">Filters</h2>
 <p>Jinja Templates use <a href="http://jinja.pocoo.org/docs/2.10/templates/#filters">filters</a>,  which can modify variables when rendering the template. For example <code>{{ name|default('NULL') }}</code>  will use <code>NULL</code> if the user doesn’t enter any value.</p>
 <p>The issue is that in some cases the application should notify users that a filter or a set of piped filters is apply to that value otherwise the user will not benefit from it.  For example  <code>{{ name|default('NULL') }}</code> should show a display message  like <code>name (default is NULL):</code>, rather than simply <code>name:</code></p>
 <p>Not all the jinja filters have an equivalent filter that modifies the displays text, to understand which ones are available check the <a href="#list-of-builtin-filters">list of builtin filters</a></p>
