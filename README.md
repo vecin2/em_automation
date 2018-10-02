@@ -6,7 +6,7 @@
 <h1 id="sqltask---an-sql-generator-for-em-projects">sqltask - an sql generator for EM projects</h1>
 <p>sqktask is command line application which helps users generating SQL scripts commonly needed within EM developement.<br>
 It works from a set of SQL templates, prompting users with the neccesary values to render the template.<br>
-Templates are written using <a href="http://jinja.pocoo.org/">jinja templates sintax</a>  and they should be designed to provide good information to users when entering values and to minimize user interactions. So if a value can computed, it should not be prompted.</p>
+Templates are written using <a href="http://jinja.pocoo.org/">jinja templates syntax</a>  and they should be designed to provide good information to users when entering values and to minimize user interactions. So if a value can computed, it should not be prompted.</p>
 <h1 id="table-of-contents">Table Of Contents</h1>
 <ul>
 <li><a href="#sqltask---an-sql-generator-for-em-projects">sqltask - an sql generator for EM projects</a></li>
