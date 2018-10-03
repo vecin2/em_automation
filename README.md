@@ -1,4 +1,4 @@
-# sqltask - an sql generator for EM projects
+# sqltask - an SQL generator for EM projects
 
 sqktask is command line application that helps users generating templates, in particular, SQL scripts which are commonly used within EM developement. 
 
