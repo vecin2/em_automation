@@ -2,7 +2,7 @@
 
 sqktask is command line application that helps users generating templates, in particular, SQL scripts which are commonly used within EM developement. 
 
-It allows the user to select from a list of templates and once the template is selected it will start prompting to enter the template values.
+Users pick from a list of templates the one that they would like to generate. The system  then prompts them to enter each value within the template. Finally it retrieves the template rendered with those values.  
  
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed to provide good information to users when entering values and to minimize user interactions, avoiding asking for values that could be computed.
 
