@@ -1,6 +1,6 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 # sqltask - an sql generator for EM projects
-
+Ho
 sqktask is command line application that helps users generating SQL scripts. Each script is create as a template, then the application parses the template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
 
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values and they should minimize user interactions, avoiding asking for values that could be computed.
