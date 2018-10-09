@@ -91,7 +91,7 @@ It is a good practice to reuse templates to avoid duplicating SQL code. Therefor
 
 # User installation
 
-- Install [python3](https://www.python.org/downloads/). 
+- Install [python3](https://www.python.org/downloads/) - make sure you select box to add python3 to your system path
 - Add the python installation folder to the system path
 -  Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
