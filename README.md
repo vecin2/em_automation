@@ -48,7 +48,7 @@ and VERB = '{{verb_name}} ';
 -  Select the template, and starting filling the values as they are prompted:
 ```bash
 	new_config_id (e.g. Home, CustomerPostIdentify, ...): 
-	old_config_id: 
+	old_config_id (default is NULL): 
 	verb_name: 
 ```
 - Assuming `Customer`, `Home` and `indentifyCustomer` are entered as values the template will be render and printed out as following:
