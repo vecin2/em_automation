@@ -18,14 +18,14 @@ def list_menu_templates(template_name):
         return True
     return False
 class TemplateSelector():
-    
+
     def select_template(self, env):
         template_list = env.list_templates(None,list_menu_templates)
         self.create_options(template_list)
         self.show_options()
 
-        return self.prompt_to_select_template(env)    
-    
+        return self.prompt_to_select_template(env)
+
     def create_options(self, template_list):
         self.template_option_list=[]
         for counter, template_path in enumerate(template_list):
@@ -82,6 +82,6 @@ class EMTemplatesEnv():
         self.env.globals['dbquery'] = dbquery
         self.env.globals['prj_prefix'] = prj_prefix
         load_filters(self.env)
-    
+
     def get_env(self):
         return self.env

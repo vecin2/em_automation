@@ -90,21 +90,43 @@ It is a good practice to reuse templates to avoid duplicating SQL code. Therefor
 
 # User installation
 
-- Install [python3](https://www.python.org/downloads/) - make sure you select box to add python3 to your system path
-- Add the python installation folder to the system path
+- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
+ - When running the installation make sure to select the checkbox to add python3 to your system path
+- Check the python installation folder was added to the the system path. If is not added you can added manually:
+ - In windows add the following to you path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
+ - 
 -  Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
-	-  `PYTHON_HOME` is the python installation folder. 
+	- `PYTHON_HOME` is the python installation folder. 
 	- `EM_CORE_HOME` is the current EM project, e.g. `/opt/em/projects/gsc` 
 	- `SQL_TEMPLATES_PATH` is the folder containing the sql templates. e.g. `/opt/em/projects/my_project/sql_templates `
 
 - Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
-```python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask```
-**Note**: if you have multiple versions of python installed make sure you are using version 3
-
+```
+python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
+```
+ 
 This should install all the required packages including [jinja2 templates](http://jinja.pocoo.org/).  If you find issues when running sqltask where it can't find jinja you can install it manually by running 
 `python3 -m pip install Jinja2`.
  
+###  Upgrading
+The application can be updated by running `python3 -m pip install --upgrade sqltask` 
+Otherwise uninstall and intall  by running:
+
+```
+python3 -m  pip  uninstall sqltask
+python3 -m  pip  install sqltask
+``` 
+### Having multiple versions of python 
+ If you have multiple versions of python installed make sure you are using version 3 by running instead:
+```
+python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
+```
+
+That applies as well for  running upgrades and any python command it should be using python3, e.g `python3 -m pip  install update sqltask`
+
+
+
 ### Windows Console Tools
 If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
 - [Clink]( http://mridgers.github.io/clink/): very light weight tool which add a set features to the Windows console.
