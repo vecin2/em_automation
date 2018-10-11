@@ -1,14 +1,13 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 # sqltask - an sql generator for EM projects
-Ho
-sqktask is command line application that helps users generating SQL scripts. Each script is create as a template, then the application parses the template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
+sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse th template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
 
-Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values and they should minimize user interactions, avoiding asking for values that could be computed.
+Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values, and they should minimize user interactions, avoiding asking for values that could be computed.
 
 
 # Table Of Contents
 
-- [sqltask - an sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
+- [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
 - [Basic Usage](#basic-usage)
     + [Creating  a SQL Task](#creating--a-sql-task)
@@ -304,7 +303,6 @@ When creating new filter we need to implement  not only `apply` but  `get_templa
 _class_ sql_gen.filters.**DescriptionFilter**()
 		func :: **get_template_filter**()
 It returns the function which implements the jinja filter.
-
 
 
 
