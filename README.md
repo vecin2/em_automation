@@ -109,7 +109,7 @@ python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 This should install all the required packages including [jinja2 templates](http://jinja.pocoo.org/).  If you find issues when running sqltask where it can't find jinja you can install it manually by running 
 `python3 -m pip install Jinja2`.
  
-###  Upgrading
+###  Upgrade
 The application can be updated by running `python3 -m pip install --upgrade sqltask` 
 Otherwise uninstall and intall  by running:
 
@@ -117,15 +117,18 @@ Otherwise uninstall and intall  by running:
 python3 -m  pip  uninstall sqltask
 python3 -m  pip  install sqltask
 ``` 
-### Having multiple versions of python 
+
+### Multiple versions of python 
  If you have multiple versions of python installed make sure you are using version 3 by running instead:
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
 
-That applies as well for  running upgrades and any python command it should be using python3, e.g `python3 -m pip  install update sqltask`
+This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
-
+###  Install builtin Templates
+A set of builtin templates are downloaded when running pip install. They are located under `%PYTHON_HOME%/Lib\site-packages\sql_gen\templates`
+Copy this folder under your `%EM_HOME_CORE%` so new creates templates are not lost when upgrading. As well committing in the project folder will allow commit it so other developers can benefit from it.
 
 ### Windows Console Tools
 If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
