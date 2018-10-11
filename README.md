@@ -47,7 +47,7 @@ and VERB = '{{verb_name}} ';
 -  Select the template, and starting filling the values as they are prompted:
 ```bash
 	new_config_id (e.g. Home, CustomerPostIdentify, ...): 
-	old_config_id: 
+	old_config_id (default is NULL): 
 	verb_name: 
 ```
 - Assuming `Customer`, `Home` and `indentifyCustomer` are entered as values the template will be render and printed out as following:
@@ -90,7 +90,7 @@ It is a good practice to reuse templates to avoid duplicating SQL code. Therefor
 
 # User installation
 
-- Install [python3](https://www.python.org/downloads/). 
+- Install [python3](https://www.python.org/downloads/) - make sure you select box to add python3 to your system path
 - Add the python installation folder to the system path
 -  Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
