@@ -81,7 +81,7 @@ optional arguments:
 To create a new template:
 
 - Create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
-- Create a shortcut with the same name pointing to the previous file under `$SQL_TEMPLATES_PATH/menu`. Make sure the shorcut name matches the template name otherwise it will not show up in the menu when running the application. 
+- Create an empty file with the same name pointing to the previous file under `$SQL_TEMPLATES_PATH/menu` - make sure the names match otherwise it will not show up in the menu when running the application.
 
 #### Hide a Template
 Template can be hidden by simply not creating the shorcut
