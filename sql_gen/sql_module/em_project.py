@@ -1,4 +1,8 @@
 import os
+import pyperclip
+
+
+
 from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
 
 class EMProject(object):
@@ -15,7 +19,6 @@ class EMProject(object):
         custom_repo_modules = em_project._get_repo_custom_modules()
         if not custom_repo_modules:
             raise ValueError("To compute project prefix custom modules must exist under ${em_core_home}/repository/default/, starting with at least three capital letters")
-            
         return em_project._extract_module_prefix(custom_repo_modules[0])
 
     def _extract_module_prefix(self, repo_module):
@@ -77,6 +80,7 @@ class SQLTask(object):
     def write(self):
         print("\nWriting to disk sql_task under: "+ self.fs_location())
         self.__write_file(self.table_data, "tableData.sql")
+        pyperclip.copy(os.path.join(self.fs_location(), "tableData.sql"))
         self.__write_file(self.update_sequence, "update.sequence")
 
     def __write_file(self, content, file_full_name):
