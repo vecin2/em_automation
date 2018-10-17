@@ -1,4 +1,4 @@
-from sql_gen.sql_module.em_project import EMProject
+from sql_gen.emproject.em_project import EMProject
 import pymssql
 import sys
 

@@ -1,0 +1,27 @@
+import svn.local, svn.remote
+from sql_gen.emproject import emproject_home
+
+class SvnClientFactory(object):
+    def LocalClient(self, url):
+        return svn.local.LocalClient(url)
+
+    def RemoteClient(self, url):
+        return svn.remote.RemoteClient(url)
+
+class EMSvn(object):
+    def __init__(self,svnclient_factory=SvnClientFactory()):
+        self.svnclient_factory = svnclient_factory
+        self.remote_client_var=None
+
+    def local_client(self):
+        return self.svnclient_factory.LocalClient(emproject_home())
+
+    def remote_client(self):
+        #cache remote client
+        if self.remote_client_var is None:
+            self.remote_client_var =self.svnclient_factory.RemoteClient(self.local_client().info()['url'])
+        return self.remote_client_var
+
+    def revision_number(self):
+        info = self.remote_client().info()
+        return info['entry_revision']
