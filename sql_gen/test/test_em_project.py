@@ -49,7 +49,6 @@ def test_write_creates_table_data_and_update_sequence_file(fs):
     sql_task = SQLTask.make().with_path(sql_task_path).with_table_data("some data");
 
     sql_task.write()
-    
     table_data_path = os.path.join("/em/home/modules/CoreEntity/rewire_search", "tableData.sql")
     assert_file_exist(table_data_path, "some data")
 
@@ -76,8 +75,9 @@ def test_set_path_asks_to_override_if_path_already_exists(fs):
 
     sql_task = SQLTask(stub_input_requester)
     sql_task.with_path("/my_module")
-   
+
     assert "override" in stub_input_requester.prompted_text
+
 
 def test_set_path_throws_exception_if_user_does_not_want_to_override(fs):
     with pytest.raises(FileExistsError) as excinfo:

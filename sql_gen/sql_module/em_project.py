@@ -70,7 +70,7 @@ class SQLTask(object):
         return self
 
     def _ask_override_file(self):
-        text= "Are you sure you want to override the path '"+ self.fs_location() + "' (y/n): " 
+        text= "Are you sure you want to override the path '"+ self.fs_location() + "' (y/n): "
         return self.input_requester.request_value(text,"y","n") == "y"
 
     def with_table_data(self, table_data):
@@ -80,7 +80,9 @@ class SQLTask(object):
     def write(self):
         print("\nWriting to disk sql_task under: "+ self.fs_location())
         self.__write_file(self.table_data, "tableData.sql")
-        pyperclip.copy(os.path.join(self.fs_location(), "tableData.sql"))
+        file_path=os.path.join(self.fs_location(), "tableData.sql")
+        pyperclip.copy(file_path)
+        print("\nFile path '"+file_path+"' copied to clipboard")
         self.__write_file(self.update_sequence, "update.sequence")
 
     def __write_file(self, content, file_full_name):
