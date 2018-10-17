@@ -1,8 +1,6 @@
 import os
 import pyperclip
-
-
-
+import svn.local
 from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
 
 class EMProject(object):
@@ -20,6 +18,7 @@ class EMProject(object):
         if not custom_repo_modules:
             raise ValueError("To compute project prefix custom modules must exist under ${em_core_home}/repository/default/, starting with at least three capital letters")
         return em_project._extract_module_prefix(custom_repo_modules[0])
+
 
     def _extract_module_prefix(self, repo_module):
         result = ''
@@ -50,16 +49,40 @@ class EMProject(object):
         return [name for name in os.listdir(repo_modules_path)
            if os.path.isdir(os.path.join(repo_modules_path, name))]
 
+#extract emproject_home to avoid importing the full EMProject
+#which can cause a double dependency issue
+def emproject_home():
+    return EMProject.core_home()
+
+class Clipboard():
+    def on_write(self, sqltask):
+        file_path=os.path.join(sqltask.fs_location(), "tableData.sql")
+        print("\nFile path '"+file_path+"' copied to clipboard")
+        pyperclip.copy(file_path)
+
+class EMSvn(object):
+    def __init__(self,svnclient=None):
+        self.svnclient = svnclient
+        if(self.svnclient is None):
+            self.svnclient = svn.local.LocalClient(EMProject.core_home())
+
+
+    def revision_number(self):
+        #os.environ['EM_CORE_HOME'] = '/opt/em/projects/GSC/gsc_phase1' 
+        info = self.svnclient.info()
+        return info['commit_revision']
+
 class SQLTask(object):
-    def __init__(self, input_requester=InputRequester()):
-        self.update_sequence="PROJECT $Revision: 0 $"
+    def __init__(self, input_requester=InputRequester(),listener=Clipboard(),svnclient=EMSvn()):
         self.input_requester = input_requester
+        self.svnclient =svnclient
         #make sure em_core_home is setup
         EMProject.core_home()
+        self.listener = listener
 
     @staticmethod
-    def make(input_requester=InputRequester()):
-        sql_task = SQLTask(input_requester)
+    def make(input_requester=InputRequester(),listener=Clipboard(),svnclient=EMSvn()):
+        sql_task = SQLTask(input_requester,listener,svnclient)
         return sql_task
     
     def with_path(self, task_path):
@@ -80,10 +103,8 @@ class SQLTask(object):
     def write(self):
         print("\nWriting to disk sql_task under: "+ self.fs_location())
         self.__write_file(self.table_data, "tableData.sql")
-        file_path=os.path.join(self.fs_location(), "tableData.sql")
-        pyperclip.copy(file_path)
-        print("\nFile path '"+file_path+"' copied to clipboard")
-        self.__write_file(self.update_sequence, "update.sequence")
+        self.__write_file(self.__update_sequence_content(), "update.sequence")
+        self.listener.on_write(self)
 
     def __write_file(self, content, file_full_name):
         final_path = os.path.join(self.fs_location(),file_full_name)
@@ -92,7 +113,10 @@ class SQLTask(object):
         f = open(final_path, "w+")
         f.write(content)
         f.close()
-
+    def __update_sequence_content(self):
+        rev_number =self.svnclient.revision_number()
+        #rev_number ="0"
+        return "PROJECT $Revision: "+str(rev_number)+" $"
     def fs_location(self):
         return os.path.join(EMProject.core_home(), self.task_path)
 

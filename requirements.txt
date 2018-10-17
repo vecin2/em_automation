@@ -19,8 +19,6 @@ defer==1.0.6
 dirspec==13.10
 dnspython==1.15.0
 duplicity==0.7.17
-em-sql==0.0.2a3
-emsql==0.0.2a7
 enum34==1.1.6
 fasteners==0.12.0
 feedparser==5.2.1
