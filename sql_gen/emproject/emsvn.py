@@ -23,5 +23,9 @@ class EMSvn(object):
         return self.remote_client_var
 
     def revision_number(self):
-        info = self.remote_client().info()
-        return info['entry_revision']
+        try:
+            info = self.remote_client().info()
+            return info['entry_revision']
+        except:
+            print("Unable to access svn repository to compute revision number")
+            return -1
