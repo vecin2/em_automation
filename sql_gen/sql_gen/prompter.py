@@ -6,19 +6,20 @@ from collections import OrderedDict
 from sql_gen.ui.cli_ui_util import input_with_validation
 
 class Prompter(object):
-    def __init__(self, env):
-        self.env = env
+    def __init__(self, template):
+        self.template_name = template.name
+        self.env =template.environment
 
-    def get_template_prompts(self, template_name):
+    def get_template_prompts(self):
         result=[]
-        template_source_text = self.env.loader.get_source(self.env,template_name)[0]
+        template_source_text = self.env.loader.get_source(self.env,self.template_name)[0]
         ast = self.env.parse(template_source_text)
         TemplateJoiner(self.env).visit(ast)
         return PromptVisitor(ast).visit(ast)
         #return sorted(undeclare_variables, key=lambda x: list_a.index(x))
 
-    def build_context(self,template_name):
-        prompts = self.get_template_prompts(template_name)
+    def build_context(self):
+        prompts = self.get_template_prompts()
         context ={}
 
         for key, prompt in prompts.items() :

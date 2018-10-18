@@ -7,8 +7,9 @@ def run_with_multiple_templates(display_msgs,templates):
     env = Environment(
         loader=DictLoader(templates))
     populate_filters(env)
-    prompter = Prompter(env)
-    prompts = prompter.get_template_prompts(next(iter(templates)))
+    template_name =next(iter(templates))
+    prompter = Prompter(env.get_template(template_name))
+    prompts = prompter.get_template_prompts()
     assert_equals_prompt_text_list(display_msgs, prompts)
 
 def run_with_one_template(display_msgs, template_text):

@@ -7,6 +7,13 @@ from sql_gen.ui.cli_ui_util import do_not_print_stack_trace_on_ctrl_c
 
 do_not_print_stack_trace_on_ctrl_c()
 
+class TemplateRenderer(object):
+
+    def render(self,template):
+        prompter = Prompter(template)
+        context = prompter.build_context()
+        return template.render(context)
+
 ##main
 def run_app():
  # construct the argument parse and parse the arguments
@@ -26,20 +33,15 @@ def run_app():
     else:
         print ("\nWARNING: SQL generated will NOT be saved. It only prints to screen. Check --help for options on how to save to a file")
 
-    env = EMTemplatesEnv().get_env()
-    template_selector = TemplateSelector() 
-    template_name = template_selector.select_template(env)
-    prompter = Prompter(env)
-    context = prompter.build_context(template_name)
-    template = env.get_template(template_name)
-
-    template_parsed =template.render(context)
-
+    template_selector = TemplateSelector()
+    template = template_selector.select_template()
+    templateRenderer = TemplateRenderer()
+    rendered_text = templateRenderer.render(template)
     if sql_task:
-        sql_task.with_table_data(template_parsed);
+        sql_task.with_table_data(rendered_text);
         sql_task.write()
     else:
-        print("\n"+template_parsed+"\n")
+        print("\n"+rendered_text+"\n")
 
 def parse_args():
     ap = argparse.ArgumentParser()

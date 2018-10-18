@@ -23,7 +23,8 @@ def list_menu_templates(template_name):
     return False
 class TemplateSelector():
 
-    def select_template(self, env):
+    def select_template(self):
+        env = EMTemplatesEnv().get_env()
         template_list = env.list_templates(None,list_menu_templates)
         self.create_options(template_list)
         self.show_options()
@@ -43,16 +44,16 @@ class TemplateSelector():
 
     def prompt_to_select_template(self,env):
         template_number = input_with_validation("\nPlease select template to parse: ")
-        template = self.get_template(template_number, env)
-        while template is None:
+        template_name = self.get_template_name(template_number, env)
+        while template_name is None:
             template_number = input_with_validation("\nPlease select template to parse: ")
             sys.stdout.write('\n')
             self.show_options()
-            template = self.get_template(template_number, env)
-        return template
+            template_name = self.get_template_name(template_number, env)
+        return env.get_template(template_name)
 
 
-    def get_template(self, template_number,env):
+    def get_template_name(self, template_number,env):
         option = self.get_option_by_id(template_number)
         if option is None:
             return option
