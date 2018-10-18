@@ -17,11 +17,11 @@ def dbquery():
     database = 'pp'
     conn = pymssql.connect(host, username, password, database)
     cursor = conn.cursor(as_dict=True)
-    query ='''SELECT * FROM CCADMIN_IDMAP where KEYSET = %s ''' 
+    query ='''SELECT * FROM CCADMIN_IDMAP where KEYSET = %s '''
     releaseName= 'Project_R1_0_0'
     keyset ='CC'
-    
-    cursor.execute(query,(keyset)) 
+
+    cursor.execute(query,(keyset))
     result=[]
     for row in cursor:
         result.append(row['KEYNAME'])

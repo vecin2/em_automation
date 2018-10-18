@@ -3,7 +3,6 @@ from jinja2.nodes import Stmt,Template,Output,Node
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from anytree import Node as AnyTreeNode
 import pytest
-from sql_gen.sql_gen.filter_loader import load_filters
 
 env = Environment()
 
@@ -11,7 +10,6 @@ env = Environment(
     loader=FileSystemLoader("templates"),
     autoescape=select_autoescape(['html', 'xml']))
 
-load_filters(env)
 hello_welcome_output ="Output(nodes=[TemplateData(data='Hello '), "+\
                           "Name(name='name', ctx='load'), "+\
                           "TemplateData(data=', welcome to '), "+\

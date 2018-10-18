@@ -2,12 +2,10 @@ import sys,os
 from jinja2 import Environment, meta, Template, nodes
 from jinja2.nodes import Stmt,Template
 from anytree import Node
-from sql_gen.sql_gen.filter_loader import load_filters
 import pytest
 
 
 env = Environment()
-load_filters(env)
 
 def test_include_templates():
     ast = env.parse("{% include 'add_process_descriptor.sql' %} hola marco")

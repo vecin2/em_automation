@@ -1,10 +1,7 @@
 from jinja2 import Environment, meta, Template, nodes,FileSystemLoader
 import pytest
 import os
-from sql_gen.sql_gen.filter_loader import load_filters
-
 env = Environment()
-load_filters(env)
 
 
 def test_one_undefined_variable_it_renders_as_empty():
@@ -77,7 +74,6 @@ def test_replicate_issue():
                         )
     #env.globals['camelcase'] = camelcase
     #env.globals['dbquery'] = dbquery
-    load_filters(env)
     text='''Hola juan
     {% set name = "pedro" %}
     hola {{name}}

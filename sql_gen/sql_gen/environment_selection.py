@@ -1,8 +1,12 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from sql_gen.sql_gen.filter_loader import load_filters
 from sql_gen.ui.cli_ui_util import input_with_validation
 from sql_gen.globals import camelcase, dbquery,prj_prefix
+import sql_gen.globals as template_globals
+import sql_gen.filters as template_filters
 import os,sys
+import inspect
+import pkgutil
+import importlib
 
 class TemplateOption(object):
     MENU_FOLDER="menu/"
@@ -67,6 +71,29 @@ class TemplateSelector():
                 return template_option
         return None
 
+def populate_globals(env,globals_module=template_globals):
+    all_functions = inspect.getmembers(globals_module, inspect.isfunction)
+    for name, function in all_functions:
+        env.globals[name]=function
+    return env
+def extract_module_names(package):
+    package_path = package.__path__
+    prefix = package.__name__+"."
+    modules=[]
+    for _, name, _ in pkgutil.iter_modules(package_path, prefix):
+        modules.append(name)
+    return modules
+
+def populate_filters(env,filters_package=template_filters):
+    module_names = extract_module_names(filters_package)
+    for module_name in module_names:
+        filter_module =importlib.import_module(module_name)
+        #filters which are built in  jinja do not need to be added
+        if hasattr(filter_module, "get_template_filter"):
+            get_filter_func=getattr(filter_module, "get_template_filter")
+            filter_func =get_filter_func()
+            env.filters[filter_func.__name__]=filter_func
+    return env
 
 class EMTemplatesEnv():
     def __init__(self):
@@ -78,10 +105,7 @@ class EMTemplatesEnv():
                             lstrip_blocks=True,
                             keep_trailing_newline=False #default
                             )
-        self.env.globals['camelcase'] = camelcase
-        self.env.globals['dbquery'] = dbquery
-        self.env.globals['prj_prefix'] = prj_prefix
-        load_filters(self.env)
-
+        populate_globals(self.env)
+        populate_filters(self.env)
     def get_env(self):
         return self.env

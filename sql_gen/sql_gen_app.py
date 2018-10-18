@@ -45,7 +45,6 @@ def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("-d", "--dir", help="Its the directory where the sql task will be written to. Its a relative path from  $CORE_HOME to, e.g. modules/GSCCoreEntites...")
     return ap.parse_args()
-    
 
 if __name__ == '__main__':
     main()

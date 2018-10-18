@@ -1,13 +1,13 @@
 import pytest
 from sql_gen.sql_gen.prompter import Prompter
 from jinja2 import DictLoader,Environment
-from sql_gen.sql_gen.filter_loader import load_filters
+from sql_gen.sql_gen.environment_selection import populate_filters
 
 def run_with_multiple_templates(display_msgs,templates):
-    env1 = Environment(
+    env = Environment(
         loader=DictLoader(templates))
-    load_filters(env1)
-    prompter = Prompter(env1)
+    populate_filters(env)
+    prompter = Prompter(env)
     prompts = prompter.get_template_prompts(next(iter(templates)))
     assert_equals_prompt_text_list(display_msgs, prompts)
 
