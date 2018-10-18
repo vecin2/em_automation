@@ -14,6 +14,14 @@ class TemplateRenderer(object):
         context = prompter.build_context()
         return template.render(context)
 
+def render_sql_task():
+    template_selector = TemplateSelector()
+    template = template_selector.select_template()
+    if template is not None:
+        templateRenderer = TemplateRenderer()
+        return templateRenderer.render(template)
+    return ""
+
 ##main
 def run_app():
  # construct the argument parse and parse the arguments
@@ -33,10 +41,13 @@ def run_app():
     else:
         print ("\nWARNING: SQL generated will NOT be saved. It only prints to screen. Check --help for options on how to save to a file")
 
-    template_selector = TemplateSelector()
-    template = template_selector.select_template()
-    templateRenderer = TemplateRenderer()
-    rendered_text = templateRenderer.render(template)
+    rendered_text=""
+    current_parsed_template = render_sql_task()
+    rendered_text +=current_parsed_template+"\n\n"
+    while current_parsed_template is not "":
+        current_parsed_template = render_sql_task()
+        rendered_text +=current_parsed_template+"\n\n"
+
     if sql_task:
         sql_task.with_table_data(rendered_text);
         sql_task.write()

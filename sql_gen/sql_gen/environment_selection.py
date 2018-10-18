@@ -28,7 +28,6 @@ class TemplateSelector():
         template_list = env.list_templates(None,list_menu_templates)
         self.create_options(template_list)
         self.show_options()
-
         return self.prompt_to_select_template(env)
 
     def create_options(self, template_list):
@@ -41,15 +40,21 @@ class TemplateSelector():
     def show_options(self):
         for template_option in self.template_option_list:
             print(str(template_option.id) + ". " +template_option.name)
+        no_of_options=str(len(self.template_option_list)-1)
+        print("\n[0 to "+no_of_options+"]. Create SQLTask\t\tx. Exit")
 
     def prompt_to_select_template(self,env):
-        template_number = input_with_validation("\nPlease select template to parse: ")
-        template_name = self.get_template_name(template_number, env)
+        option_key = input_with_validation("\nEnter option: ")
+        if option_key =="x":
+            return
+        template_name = self.get_template_name(option_key, env)
         while template_name is None:
-            template_number = input_with_validation("\nPlease select template to parse: ")
+            option_key = input_with_validation("\nEnter option: ")
+            if option_key =="x":
+                return
             sys.stdout.write('\n')
             self.show_options()
-            template_name = self.get_template_name(template_number, env)
+            template_name = self.get_template_name(option_key, env)
         return env.get_template(template_name)
 
 
