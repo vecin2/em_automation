@@ -1,6 +1,6 @@
 import pyperclip
 from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
-from sql_gen.emproject import emproject_home
+from sql_gen.emproject import current_emproject
 from sql_gen.emproject.emsvn import EMSvn
 import os
 
@@ -11,17 +11,12 @@ class Clipboard():
         pyperclip.copy(file_path)
 
 class SQLTask(object):
-    def __init__(self, input_requester=InputRequester(),listener=Clipboard(),svnclient=EMSvn()):
+    task_path=""
+    def __init__(self, root=current_emproject.root,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester()):
+        self.root=root
         self.input_requester = input_requester
         self.svnclient =svnclient
-        #make sure em_core_home is setup
-        emproject_home()
         self.listener = listener
-
-    @staticmethod
-    def make(input_requester=InputRequester(),listener=Clipboard(),svnclient=EMSvn()):
-        sql_task = SQLTask(input_requester,listener,svnclient)
-        return sql_task
 
     def with_path(self, task_path):
         #strip as well "/" as we could run in windows within GitBash or CygWin
@@ -59,4 +54,4 @@ class SQLTask(object):
         return "PROJECT $Revision: "+str(update_sequence_no)+" $"
 
     def fs_location(self):
-        return os.path.join(emproject_home(), self.task_path)
+        return os.path.join(self.root, self.task_path)

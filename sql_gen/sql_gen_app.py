@@ -30,7 +30,7 @@ def run_app():
     sql_task = None
     if sql_task_path:
         try:
-            sql_task = SQLTask.make()
+            sql_task = SQLTask()
             sql_task.with_path(sql_task_path)
         except AttributeError as e:
             print(str(e))
