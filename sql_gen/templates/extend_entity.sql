@@ -3,7 +3,7 @@ To extend entity we create a new entity with same object path and interface as t
 This will be the base entity.
 Then we update the current entity to inherit from the  new created entity
 #}
-{%set result = dbquery("SELECT * FROM EVA_ENTITY_DEFINITION WHERE LOGICAL_OBJ_PATH = '"+logical_object+"'")
+
 {{ base_entity_name | description("Entity name you would like to extend(e.g CustomerED)")}}
 {% set entity_name = "Base"+base_entity_name %}
 {{ interface_path | description("Interface path you would like to override (e.g. CoreEntities.API.Interfaces.EICustomer)")}}

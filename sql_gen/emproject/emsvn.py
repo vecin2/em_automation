@@ -9,12 +9,13 @@ class SvnClientFactory(object):
         return svn.remote.RemoteClient(url)
 
 class EMSvn(object):
-    def __init__(self,svnclient_factory=SvnClientFactory()):
+    def __init__(self,local_url=emproject_home(),svnclient_factory=SvnClientFactory()):
         self.svnclient_factory = svnclient_factory
         self.remote_client_var=None
+        self.local_url = local_url
 
     def local_client(self):
-        return self.svnclient_factory.LocalClient(emproject_home())
+        return self.svnclient_factory.LocalClient(self.local_url)
 
     def remote_client(self):
         #cache remote client

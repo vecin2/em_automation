@@ -7,8 +7,47 @@ def emproject_home():
         raise AttributeError("EM_CORE_HOME must added to environment variables and it should contain the path of your current em project")
 
 class EMProject(object):
-    def __init__(self,root=emproject_home()):
+    CONFIG_PATH_AD_LOCAL='work/config/show-config-txt/localdev-localhost-ad.txt'
+    EMAUTOMATION_CONFIG_PATH='config/local.properties'
+
+    def __init__(self,root=emproject_home(),ccadmin_client=None):
         self.root = root
+        self.ccadmin_client =ccadmin_client
+        self.emautomation_props={}
+
+    def _emautomation_config(self):
+        if not self.emautomation_props:
+            self.emautomation_props = self._read_properties(self.EMAUTOMATION_CONFIG_PATH)
+        return self.emautomation_props
+
+    def config_path(self):
+        env_name= self._emautomation_config()['emautomation.environment.name']
+        machine_name= self._emautomation_config()['emautomation.machine.name']
+        container_name= self._emautomation_config()['emautomation.container.name']
+        return "work/config/show-config-txt/"+env_name+"-"+machine_name+"-"+container_name+".txt" 
+
+    def config(self):
+        if not self._exists(self.config_path()):
+            self.ccadmin_client.show_config()
+        config_content = self._read_properties(self.config_path())
+        return config_content
+
+    def _exists(self,relative_path):
+        full_path = os.path.join(self.root, relative_path)
+        return os.path.exists(full_path)
+
+    def _read_properties(self,relative_path):
+        full_path = os.path.join(self.root, relative_path)
+        myprops = {}
+        with open(full_path, 'r') as f:
+            for line in f:
+                line = line.rstrip() #removes trailing whitespace and '\n' 
+
+                if "=" not in line: continue #skips blanks and comments w/o =
+                if line.startswith("#"): continue #skips comments which contain =
+                k, v = line.split("=", 1)
+                myprops[k] = v
+        return myprops
 
     def prefix(self):
         custom_repo_modules = self._get_repo_custom_modules()
