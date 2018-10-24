@@ -3,8 +3,7 @@ from jinja2 import meta
 from jinja2.nodes import Call,Name
 import importlib
 from collections import OrderedDict
-from sql_gen.ui.cli_ui_util import input_with_validation
-
+from sql_gen.sql_gen.prompt import Prompt
 class Prompter(object):
     def __init__(self, template):
         self.template_name = template.name
@@ -26,24 +25,6 @@ class Prompter(object):
             prompt.populate_value(context)
         return context
 
-class Prompt:
-    def __init__(self, variable_name, filter_list):
-        self.variable_name =variable_name
-        self.filter_list = filter_list
-
-    def get_diplay_text(self):
-        self.display_text = self.variable_name
-        for template_filter in self.filter_list:
-            self.display_text = template_filter.apply(self.display_text);
-        return self.display_text+": "
-
-    def append_filter(self, prompt_filter):
-        self.filter_list.append(prompt_filter)
-
-    def populate_value(self,context):
-        var =input_with_validation(self.get_diplay_text())
-        if var:
-            context[self.variable_name] = var
 
 class TemplateJoiner(NodeTransformer):
     def __init__(self,env):

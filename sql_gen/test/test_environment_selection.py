@@ -14,7 +14,6 @@ import os
 
 
 def test_extract_function_from_module():
-    #assert str(dir(sql_gen.globals))+"d" == str(dir(sql_gen.globals))
     all_functions = inspect.getmembers(module_example, inspect.isfunction)
     title_function_name =all_functions[0][0]
     title_function =all_functions[0][1]
@@ -54,5 +53,4 @@ def test_environment_contains_all_filters_defined_in_filters_module():
 def test_it_uses_default_filters_package_if_not_specified():
     env = Environment()
     populate_filters(env)
-    #env  = env_builder.build()
     assert "description" in list(env.filters.keys())

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="sqltask",
-        version="0.0.1a5",
+        version="0.0.1a9",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -15,7 +15,7 @@ setuptools.setup(
         packages=setuptools.find_packages(),
         include_package_data=True,
         package_data = {'sql_gen': ['template/*.*', 'template/*/*.*']},
-        install_requires=['Jinja2','pymssql'],
+        install_requires=['Jinja2','pymssql','fuzzyfinder','prompt_toolkit','svn','pyperclip'],
         extra_require={
             ':"linux" in sys_platform':[
                 'gnureadline'
