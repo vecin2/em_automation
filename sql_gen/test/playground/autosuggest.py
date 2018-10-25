@@ -6,7 +6,7 @@ from prompt_toolkit.completion import Completer, Completion
 from fuzzyfinder import fuzzyfinder
 from sql_gen.emproject import addb
 
-result =addb.query("SELECT NAME FROM EVA_ENTITY_DEFINITION")
+result =addb().query("SELECT NAME FROM EVA_ENTITY_DEFINITION")
 entity_names=[]
 for key in result:
     print(entity_names.append(key['NAME']))

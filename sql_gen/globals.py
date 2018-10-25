@@ -1,4 +1,4 @@
-from sql_gen.emproject import current_emproject#,addb
+from sql_gen.emproject import current_emproject,addb
 import pymssql
 import sys
 
@@ -10,4 +10,4 @@ def prj_prefix():
     return EMProject.prefix()
 
 def adquery(query):
-    return addb.query(query)
+    return addb().query(query)

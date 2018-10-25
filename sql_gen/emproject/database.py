@@ -22,16 +22,17 @@ class EMDatabase(object):
             result.append(row)
         return result
 
-emconfig = current_emproject.config()
-host = emconfig['database.host']
-username = emconfig['database.admin.user']
-password = emconfig['database.admin.pass']
-database = emconfig['database.logical-schema']
+def addb():
+    emconfig = current_emproject.config()
+    host = emconfig['database.host']
+    username = emconfig['database.admin.user']
+    password = emconfig['database.admin.pass']
+    database = emconfig['database.logical-schema']
 
-addb =EMDatabase(host,
-                 username,
-                 password,
-                 database)
+    return EMDatabase(host,
+                     username,
+                     password,
+                     database)
 
 def dbquery_example():
     host = 'windows'
