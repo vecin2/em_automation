@@ -46,6 +46,7 @@ class FakeEMProjectBuilder():
         self._create_file(self.emproject.config_path(),\
                             contents=config_content)
         return self
+
     def with_ccadmin(self, ccadmin_client):
         self.ccadmin_client = ccadmin_client
         self.ccadmin_client.fake_emproject_builder=self

@@ -3,12 +3,20 @@ import pymssql
 
 class EMDatabase(object):
     def __init__(self,host,username,password, database):
-        self.conn = pymssql.connect(host,
-                                    username,
-                                    password,
-                                    database)
+        self.host = host
+        self.username = username
+        self.password = password
+        self.database = database
+
+    def _conn(self):
+        return pymssql.connect(self.host,
+                                self.username,
+                                self.password,
+                                self.database)
+
     def query(self, query):
-        conn = pymssql.connect(host, username, password, database)
+        #conn = pymssql.connect(host, username, password, database)
+        conn = self._conn()
         cursor = conn.cursor(as_dict=True)
         cursor.execute(query)
         result = self._extract_rowlist(cursor)

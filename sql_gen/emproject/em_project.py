@@ -6,11 +6,33 @@ def emproject_home():
     except Exception:
         raise AttributeError("EM_CORE_HOME must added to environment variables and it should contain the path of your current em project")
 
+class CCAdmin(object):
+    show_config_content=""
+    fake_emproject_builder = None
+
+    def show_config(self):
+        self._run_ccadmin("show-config -Dformat=txt")
+
+    def _run_ccadmin(self, command_and_args):
+        os.system(self._ccadmin_file() +" "+command_and_args)
+
+    def _ccadmin_file(self):
+        prj_bin_path=os.path.join(emproject_home(),"bin")
+        ccadmin_file_name ="ccadmin."+self._ccadmin_file_ext()
+        ccadmin_path=os.path.join(prj_bin_path, ccadmin_file_name)
+        return ccadmin_path
+
+    def _ccadmin_file_ext(self):
+        if os.name == 'nt':
+            return "bat"
+        else:
+            return "sh"
+
 class EMProject(object):
     CONFIG_PATH_AD_LOCAL='work/config/show-config-txt/localdev-localhost-ad.txt'
     EMAUTOMATION_CONFIG_PATH='config/local.properties'
 
-    def __init__(self,root=emproject_home(),ccadmin_client=None):
+    def __init__(self,root=emproject_home(),ccadmin_client=CCAdmin()):
         self.root = root
         self.ccadmin_client =ccadmin_client
         self.emautomation_props={}
@@ -25,6 +47,15 @@ class EMProject(object):
         machine_name= self._emautomation_config()['emautomation.machine.name']
         container_name= self._emautomation_config()['emautomation.container.name']
         return "work/config/show-config-txt/"+env_name+"-"+machine_name+"-"+container_name+".txt" 
+
+    def clear_config(self):
+        self._remove(self.config_path())
+
+    def _remove(self,relative_path):
+        try:
+            os.remove(os.path.join(self.root, relative_path))
+        except OSError:
+            pass
 
     def config(self):
         if not self._exists(self.config_path()):
