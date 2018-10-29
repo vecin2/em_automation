@@ -8,40 +8,37 @@ class Prompt:
     def __init__(self, variable_name, filter_list):
         self.variable_name =variable_name
         self.filter_list = filter_list
-        self.display_text = ""
+        self.display_text = variable_name
         self.suggestions =[]
 
     def add_suggestions(self,suggestions):
         for suggestion in suggestions:
             self.suggestions.append(suggestion)
 
-    def get_diplay_text(self):
-        self.display_text =self.variable_name
-        self._apply_filters()
+    def get_display_text(self,context={}):
         return self.display_text+": "
 
-    def get_suggestions(self):
-        self.suggestions =[]
-        self._apply_filters()
+    def get_suggestions(self,context={}):
         return self.suggestions
 
-    def _apply_filters(self):
+    def resolve(self, eval_context):
+        self._apply_filters(eval_context)
+        return self
+
+    def _apply_filters(self,context):
         for template_filter in self.filter_list:
-            template_filter.apply(self);
+            template_filter.apply(self,context);
 
     def append_filter(self, prompt_filter):
         self.filter_list.append(prompt_filter)
 
     def populate_value(self,context):
-        var =self.run()
+        var =self.run(context)
         if var:
             context[self.variable_name] = var
 
-    def run(self):
-           # user_input = prompt(question,
-           #                     completer=SQLCompleter(suggestions)
-           #                     )
-        user_input = prompt(self.get_diplay_text(),
+    def run(self,context):
+        user_input = prompt(self.get_display_text(),
                                 completer=SuggestionCompleter(self.suggestions))
         return user_input
 

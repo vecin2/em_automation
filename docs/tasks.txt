@@ -43,3 +43,8 @@ other features:
 	- Code refactorings:
 		- refactor to model/view/controller design (do not prompt on the model)
 		- logging
+
+
+Raul
+	Iterate within instead of ugly while: build_context within prompter
+	

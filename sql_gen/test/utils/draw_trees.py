@@ -39,38 +39,3 @@ class TreeDrawer(object):
         for node in node.iter_child_nodes():
             self.generic_visit(node,spacer)
 
-#text="""
-#{% set entity_id ="123d" %}
-#{% set query = "SELECT CONFIG_ID FROM EVA_PROCESS_DESCRIPTOR WHERE ENTITY_DEF_ID =" + entity_id %}
-#this is the query  {{query}}
-#{{ config_dd | default(query+"jesus") }} is --config_id
-#{{ name | default("david")}}
-#"""
-text= """
-{% set query ="jesus"%}
-{{ config_id | default ("hola"+query)}}
-"""
-
-t = Template(text)
-print("***printing template rendered****")
-print(t.render({}))
-import ast
-from jinja2.compiler import generate
-from jinja2.nodes import Name
-ast 
-
-tree = t.environment.parse(text)
-print(str(tree))
-print("***printing tree****")
-TreeDrawer().print_node(tree)
-print("***rendering template****")
-print(t.render())
-add_exp =tree.body[2].nodes[1].args[0]
-print("this is "+ generate(tree, t.environment, "pedro", "<<ast>>"))
-#def generate(node, environment, name, filename, stream=None,
-#             defer_init=False, optimized=True):
-#add_exp = ast.parse(add_exp)
-#exec(compile(add_exp,filename="<ast>",mode="exec"))
-#print(str(add_exp))
-#exec(t.environment.compile(ast,
-

@@ -99,6 +99,9 @@ def populate_filters(env,filters_package=template_filters):
             filter_func =get_filter_func()
             env.filters[filter_func.__name__]=filter_func
     return env
+def populate_filters_and_globals(env):
+    populate_filters(env)
+    populate_globals(env)
 
 class EMTemplatesEnv():
     def __init__(self):
