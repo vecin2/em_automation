@@ -1,6 +1,7 @@
+{%set config_ids = _keynames.list("CC") %}
 INSERT INTO EVA_CONTEXT_VERB_ENTRY (CONFIG_ID,CONFIG_ENV_ID,VERB,ENTITY_DEF_TYPE_ID,ENTITY_DEF_TYPE_ENV_ID,SEQUENCE_NUMBER,RELEASE_ID) 
 VALUES (
-	 @CC.{{config_id | 
+	 @CC.{{config_id | suggest(config_ids) |
 	          description("config_id (e.g. Home, CustomerPostIdentify, Customer)" )}},--config_id
   	 @ENV.Dflt, --config_env_id
   	 {{verb_name |

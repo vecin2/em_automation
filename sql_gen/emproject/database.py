@@ -24,6 +24,13 @@ class EMDatabase(object):
         conn.close()
         return result
 
+    def list(self,query):
+        table = self.query(query)
+        if not table:
+            return table
+        first_column_name = next(iter(table[0]))
+        return [row[first_column_name] for row in table]
+
     def _extract_rowlist(self,cursor):
         result=[]
         for row in cursor:

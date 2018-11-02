@@ -36,7 +36,7 @@ class TestPromptBuilder(object):
 
     def should_suggest(self,suggestions):
         prompt = self._parser().next_prompt(self.template_values)
-        assert suggestions == prompt.get_suggestions()
+        assert suggestions == prompt.completer.suggestions
         return self
 
     def does_not_prompt(self):
@@ -63,15 +63,27 @@ def test_should_prompt_vars_until_all_values_are_filled():
             .with_values({"name":"John", "last_name":"Smith"})\
             .does_not_prompt()
 
+def test_default_none_should_default_to_NULL():
+    template("{{name | default (None)}}").with_values({})\
+                                       .should_prompt_next("name (default is NULL)")
 
-def test_default_displays_default_value(): 
+def test_default_zero_should_default_to_zero():
+    template("{{name | default (0)}}").with_values({})\
+                                       .should_prompt_next("name (default is 0)")
+
+def test_default_displays_default_value():
     template("{{name | default ('World')}}").with_values({})\
                                        .should_prompt_next("name (default is World)")
 
-def test_default_should_resolve_var(): 
+def test_default_should_resolve_var():
     template("{% set my_name = 'David'%}{{ name | default(my_name)}}")\
             .with_values({})\
             .should_prompt_next("name (default is David)")
+
+def test_default_should_resolve_dict():
+    template("{%set dict = {'name':'Pedro'}%} {{name | default(dict['name'])}}")\
+            .with_values({})\
+            .should_prompt_next("name (default is Pedro)")
 
 def test_default_throws_exception_if_parameter_is_a_function():
     with pytest.raises(ValueError) as e_info:
@@ -83,6 +95,9 @@ def test_default_throws_exception_if_parameter_is_a_function():
 def test_description_prompts_description_intead_of_var_name():
     template("{{name | description ('Customer name')}}").with_values({})\
                                        .should_prompt_next("Customer name")
+def test_descrioption_resolve_vars():
+    template("{%set my_name = 'Victor'%}{{name | description(my_name)}}%}").with_values({})\
+                                        .should_prompt_next("Victor")
 
 def test_default_piped_with_description_then_desc_overrides_default():
     template("{{ name | default ('Mundo') | description ('World in english')}}").with_values({})\
@@ -127,3 +142,4 @@ def test_suggest_should_resolve_vars():
             .with_values({})\
             .should_prompt_next("name")\
             .should_suggest([1,2,3])
+

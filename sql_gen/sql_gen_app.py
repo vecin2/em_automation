@@ -12,6 +12,7 @@ class TemplateRenderer(object):
     def render(self,template):
         prompter = Prompter(template)
         context = prompter.build_context()
+        #context={}
         return template.render(context)
 
 def render_sql_task():

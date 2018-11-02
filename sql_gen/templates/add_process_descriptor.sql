@@ -3,7 +3,7 @@ VALUES (
 	 @PD.{{ process_descriptor_id }}, --id
 	 @ENV.Dflt, --env_id,
 	 '{{ process_descriptor_id }}', --process_descriptor_name
-	 '{{ repository_path }}', --repository_path 
+	 '{{ repository_path | codepath() }}', --repository_path 
 	 {{ config_id | default('NULL') }} , --config_id
 	 'N', --is_deleted
 	 {{ process_descriptor_type |

@@ -5,14 +5,14 @@ from prompt_toolkit.completion import Completer, Completion
 #import click
 from fuzzyfinder import fuzzyfinder
 from sql_gen.emproject import addb
+from sql_gen.sql_gen.completer import PathCompleter
+#result =addb.query("SELECT NAME FROM EVA_ENTITY_DEFINITION")
+#suggestions=[]
+#for key in result:
+#    print(suggestions.append(key['NAME']))
 
-result =addb.query("SELECT NAME FROM EVA_ENTITY_DEFINITION")
-suggestions=[]
-for key in result:
-    print(suggestions.append(key['NAME']))
-
-print (str(suggestions))
-SQLKeywords = ['select', 'from', 'insert', 'update', 'delete', 'drop']
+#print (str(suggestions))
+suggestions = ['select', 'from', 'insert', 'update', 'delete', 'drop']
 
 class SQLCompleter(Completer):
     def __init__(self,suggestions):
@@ -25,11 +25,13 @@ class SQLCompleter(Completer):
 
 def cool_prompt(question):
     while 1:
-       # user_input = prompt(question,
-       #                     completer=SQLCompleter(suggestions)
-       #                     )
-        user_input = prompt(question)
+        user_input = prompt(question,
+                            #completer=SQLCompleter(suggestions)
+                            completer= PathCompleter()
+                            )
     return user_input
+
+cool_prompt("hello: ")
 
 class Prompt:
     def __init__(self, variable_name, filter_list):

@@ -1,5 +1,5 @@
 from sql_gen.filters import PromptFilter
-
+from sql_gen.sql_gen.completer import SuggestionCompleter
 def suggest(value, suggestions):
     return value
 
@@ -12,6 +12,14 @@ class SuggestFilter(PromptFilter):
 
     def apply(self, prompt,context):
         args=self._render_args(context)
-        suggestions = args[0]
-        prompt.add_suggestions(suggestions)
+        suggestions = self._extract_list_from_arg(args[0])
+        prompt.completer=SuggestionCompleter(suggestions)
         return prompt.display_text
+
+    def _extract_list_from_arg(self, suggestions):
+        result=[]
+        for suggestion in suggestions:
+            result.append(suggestion)
+        return result
+
+        #this is to handle escenarios like range(1,4)

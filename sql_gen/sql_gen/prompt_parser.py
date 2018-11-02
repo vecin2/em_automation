@@ -5,6 +5,7 @@ from jinja2.utils import concat
 import importlib
 from collections import OrderedDict
 from sql_gen.sql_gen.prompt import Prompt
+from sql_gen.sql_gen.sql_eval_context import prepare_eval_context
 import sys
 
 class PromptParser(object):
@@ -25,11 +26,12 @@ class PromptParser(object):
         return self.env.parse(template_source_text)
 
     def next_prompt(self,template_values={}):
-        eval_context =self._prepare_eval_context(template_values)
+        eval_context =prepare_eval_context(self.template,template_values)
         return self.prompt_visitor.next_prompt(eval_context)
 
     def _prepare_eval_context(self,*args, **kwargs):
         vars = dict(*args, **kwargs)
+        vars['_keynames']=Keynames()
         try:
             context =self.template.new_context(vars)
             s =concat(self.template.root_render_func(context))
@@ -37,7 +39,9 @@ class PromptParser(object):
             return  {**vars, **context.vars}
         except Exception:
             exc_info = sys.exc_info()
-        return self.template.environment.handle_exception(exc_info, True)
+            #return vars
+            return  {**vars, **context.vars}
+            #return self.template.environment.handle_exception(exc_info, True)
 
     def build_context(self):
         prompts = self.get_template_prompts()

@@ -63,6 +63,13 @@ class EMProject(object):
         config_content = self._read_properties(self.config_path())
         return config_content
 
+    def prop_val(self,prop_name):
+        return self.config()[prop_name]
+
+    def product_prj(self):
+        return EMProject(self.prop_val('product.home'))
+
+
     def _exists(self,relative_path):
         full_path = os.path.join(self.root, relative_path)
         return os.path.exists(full_path)
@@ -105,10 +112,13 @@ class EMProject(object):
                 result.append(module)
         return result
 
+    def repo_modules_path(self):
+        full_path= self.root +",repository,default"
+        repo_modules_arr= full_path.split(",") 
+        return os.path.join(*repo_modules_arr)
+
     def _get_repo_modules(self):
-        comm_sep_path =self.root+",repository,default"
-        repo_modules_arr= comm_sep_path.split(",") 
-        repo_modules_path= os.path.join(*repo_modules_arr)
+        repo_modules_path= self.repo_modules_path()
         if not os.path.exists(repo_modules_path) or not os.listdir(repo_modules_path):
             return []
         #if there is at least one module created

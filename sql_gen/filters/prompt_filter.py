@@ -1,4 +1,4 @@
-from jinja2.nodes import List,Name,Const
+from jinja2.nodes import List,Name,Const,Getitem
 class PromptFilter:
     def _render_args(self,context):
         result=[]
@@ -13,6 +13,10 @@ class PromptFilter:
             return context[arg.name]
         elif isinstance(arg,Const):
             return arg.value
+        elif isinstance(arg,Getitem):
+            dict = self._render_arg(arg.node,context)
+            key = self._render_arg(arg.arg,context)
+            return dict[key]
         else:
             raise ValueError("Default Filters at the moment only support "+\
                     "constant values, a variable was passed "+str(arg))

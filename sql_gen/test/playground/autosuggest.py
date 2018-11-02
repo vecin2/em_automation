@@ -26,3 +26,9 @@ while 1:
                         history=FileHistory('history.txt'),
                         completer=SQLCompleter(),
                         )
+
+def testing_tags():
+    print("hi")
+
+testing_tags
+

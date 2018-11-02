@@ -1,4 +1,5 @@
 from sql_gen.filters import PromptFilter
+
 def description(value, description):
     return value
 
