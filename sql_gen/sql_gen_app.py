@@ -1,27 +1,12 @@
-from jinja2 import Environment
-from sql_gen.sql_gen.prompter import Prompter
-from sql_gen.sql_gen.environment_selection import TemplateSelector, EMTemplatesEnv
+from sql_gen.sql_gen.template_renderer import TemplateRenderer
+from sql_gen.sql_gen.environment_selection import TemplateSelector
 import argparse
 from sql_gen.emproject import SQLTask
 from sql_gen.ui.cli_ui_util import do_not_print_stack_trace_on_ctrl_c
 
 do_not_print_stack_trace_on_ctrl_c()
 
-class TemplateRenderer(object):
 
-    def render(self,template):
-        prompter = Prompter(template)
-        context = prompter.build_context()
-        #context={}
-        return template.render(context)
-
-def render_sql_task():
-    template_selector = TemplateSelector()
-    template = template_selector.select_template()
-    if template is not None:
-        templateRenderer = TemplateRenderer()
-        return templateRenderer.render(template)
-    return ""
 
 ##main
 def run_app():
@@ -43,10 +28,11 @@ def run_app():
         print ("\nWARNING: SQL generated will NOT be saved. It only prints to screen. Check --help for options on how to save to a file")
 
     rendered_text=""
-    current_parsed_template = render_sql_task()
+    template_renderer = TemplateRenderer()
+    current_parsed_template = template_renderer.run()
     rendered_text +=current_parsed_template+"\n\n"
     while current_parsed_template is not "":
-        current_parsed_template = render_sql_task()
+        current_parsed_template = template_renderer.run()
         rendered_text +=current_parsed_template+"\n\n"
 
     if sql_task:

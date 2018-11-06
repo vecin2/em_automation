@@ -1,7 +1,6 @@
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call,Name
-from jinja2.utils import concat
 import importlib
 from collections import OrderedDict
 from sql_gen.sql_gen.prompt import Prompt
@@ -29,29 +28,6 @@ class PromptParser(object):
         eval_context =prepare_eval_context(self.template,template_values)
         return self.prompt_visitor.next_prompt(eval_context)
 
-    def _prepare_eval_context(self,*args, **kwargs):
-        vars = dict(*args, **kwargs)
-        vars['_keynames']=Keynames()
-        try:
-            context =self.template.new_context(vars)
-            s =concat(self.template.root_render_func(context))
-            #merge tempalte_vals with resolve vars at render time
-            return  {**vars, **context.vars}
-        except Exception:
-            exc_info = sys.exc_info()
-            #return vars
-            return  {**vars, **context.vars}
-            #return self.template.environment.handle_exception(exc_info, True)
-
-    def build_context(self):
-        prompts = self.get_template_prompts()
-        context ={}
-
-        for key, prompt in prompts.items() :
-            prompt.populate_value(context)
-        return {k: v for k, v in context.items() if v is not None}
-
-
 class TemplateJoiner(NodeTransformer):
     def __init__(self,env):
         self.env = env
@@ -59,14 +35,14 @@ class TemplateJoiner(NodeTransformer):
     def visit_Include(self,node):
         template_name = node.template.value
         source = self.env.loader.get_source(self.env,template_name)[0]
-        #swap the include for the actual template source tree
+        #swap the include nodor for the template tree
         return self.env.parse(source).body[0]
 
 class PromptVisitor(NodeVisitor):
     def __init__(self,ast):
         self.ast = ast
         self._set_parent(self.ast,None)
-        self.nodes_visited = []
+        self.names_visited = []
 
     def _set_parent(self,node, parent):
         node.parent =parent
@@ -100,16 +76,16 @@ class PromptVisitor(NodeVisitor):
         return getattr(importlib.import_module("sql_gen.filters."+filter_name), filter_name.capitalize()+"Filter") 
 
     def visit_Name(self,node,template_values={}):
-        #Creat a prompt for Name nodes which are in part of the undeclare vars
+        #Create a prompt for Name nodes which are in part of the undeclare vars
         #and they are not the node value of CallNode
         if node.name not in template_values \
                 and node.name in meta.find_undeclared_variables(self.ast)\
                 and (not isinstance(node.parent,Call) or node.parent.node != node)\
-                and not self._has_been_returned(node.name):
-                self.nodes_visited.append(node.name)
+                and not self._has_been_visit(node.name):
+                self.names_visited.append(node.name)
                 return Prompt(node.name, [])
         return None
 
-    def _has_been_returned(self,node_name):
-        return node_name in self.nodes_visited
+    def _has_been_visit(self,node_name):
+        return node_name in self.names_visited
 
