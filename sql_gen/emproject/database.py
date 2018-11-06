@@ -1,6 +1,15 @@
 from sql_gen.emproject import current_emproject
 import pymssql
 
+class SQLRow(dict):
+    def __init(self, dict_row):
+        dict.__init__(self,dict_row)
+
+    def __getitem__(self,key):
+        if dict.__getitem__(self,key) is None:
+            return "NULL"
+        return dict.__getitem__(self,key)
+
 class EMDatabase(object):
     def __init__(self,host,username,password, database):
         self.host = host
@@ -34,7 +43,7 @@ class EMDatabase(object):
     def _extract_rowlist(self,cursor):
         result=[]
         for row in cursor:
-            result.append(row)
+            result.append(SQLRow(row))
         return result
 
 def addb():

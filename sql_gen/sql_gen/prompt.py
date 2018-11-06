@@ -27,7 +27,8 @@ class Prompt:
 
     def populate_value(self,context):
         var =self.run(context)
-        context[self.variable_name] = var
+        if var:
+            context[self.variable_name] = var
 
     def run(self,context):
         user_input = prompt(self.get_display_text(),

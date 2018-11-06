@@ -20,7 +20,7 @@ def _add_builtin_objects(*args,**kwargs):
 def _create_eval_context(template,template_vars): 
     context =template.new_context(template_vars)
     try:
-        concat(template.root_render_func(context))
+        s= concat(template.root_render_func(context))
         #merge template_vals with resolve vars at render time
     except Exception:
         #catch the exception as some vars might not be populated yet

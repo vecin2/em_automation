@@ -49,7 +49,7 @@ class PromptParser(object):
 
         for key, prompt in prompts.items() :
             prompt.populate_value(context)
-        return context
+        return {k: v for k, v in context.items() if v is not None}
 
 
 class TemplateJoiner(NodeTransformer):
@@ -66,6 +66,7 @@ class PromptVisitor(NodeVisitor):
     def __init__(self,ast):
         self.ast = ast
         self._set_parent(self.ast,None)
+        self.nodes_visited = []
 
     def _set_parent(self,node, parent):
         node.parent =parent
@@ -92,7 +93,6 @@ class PromptVisitor(NodeVisitor):
             DynamicFilter = self.__get_filter_definition(node) 
             template_filter = DynamicFilter(node)
             prompt.append_filter(template_filter)
-
         return prompt
 
     def __get_filter_definition(self,jinja2_filter):
@@ -103,8 +103,13 @@ class PromptVisitor(NodeVisitor):
         #Creat a prompt for Name nodes which are in part of the undeclare vars
         #and they are not the node value of CallNode
         if node.name not in template_values \
-          and node.name in meta.find_undeclared_variables(self.ast):
-            if not isinstance(node.parent,Call) or node.parent.node != node:
+                and node.name in meta.find_undeclared_variables(self.ast)\
+                and (not isinstance(node.parent,Call) or node.parent.node != node)\
+                and not self._has_been_returned(node.name):
+                self.nodes_visited.append(node.name)
                 return Prompt(node.name, [])
         return None
+
+    def _has_been_returned(self,node_name):
+        return node_name in self.nodes_visited
 

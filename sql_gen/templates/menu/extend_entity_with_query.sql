@@ -1,1 +1,0 @@
-../extend_entity_with_query.sql

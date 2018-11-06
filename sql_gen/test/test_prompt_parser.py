@@ -7,10 +7,14 @@ class TestPromptBuilder(object):
     def __init__(self, source):
         self.source = source
         self.templates = {"one_template":source}
+        self.parser = None
+        self.last_prompt =None
 
     def _parser(self):
-        self.template = self._template()
-        return PromptParser(self.template)
+        if not self.parser:
+            template = self._template()
+            self.parser= PromptParser(template)
+        return self.parser
 
     def _template(self):
         return self._env().get_template("one_template")
@@ -30,13 +34,13 @@ class TestPromptBuilder(object):
         return self
 
     def should_prompt_next(self,msg):
-        prompt = self._parser().next_prompt(self.template_values)
-        self.assert_display_msg(msg, prompt)
+        self.last_prompt = self._parser().next_prompt(self.template_values)
+        self.assert_display_msg(msg, self.last_prompt)
         return self
 
-    def should_suggest(self,suggestions):
-        prompt = self._parser().next_prompt(self.template_values)
-        assert suggestions == prompt.completer.suggestions
+    def should_prompt_next_suggesting(self,msg,suggestions):
+        self.should_prompt_next(msg)
+        assert suggestions == self.last_prompt.completer.suggestions
         return self
 
     def does_not_prompt(self):
@@ -62,10 +66,6 @@ def test_should_prompt_vars_until_all_values_are_filled():
             .should_prompt_next("last_name")\
             .with_values({"name":"John", "last_name":"Smith"})\
             .does_not_prompt()
-
-def test_default_none_should_default_to_NULL():
-    template("{{name | default (None)}}").with_values({})\
-                                       .should_prompt_next("name (default is NULL)")
 
 def test_default_zero_should_default_to_zero():
     template("{{name | default (0)}}").with_values({})\
@@ -134,12 +134,10 @@ def test_should_not_prompt_var_which_is_set_within_included_template():
 def test_suggest_should_populate_prompt_suggestions():
     template("{{ name | suggest([1,2])}}")\
             .with_values({})\
-            .should_prompt_next("name")\
-            .should_suggest([1,2])
+            .should_prompt_next_suggesting("name",[1,2])
 
 def test_suggest_should_resolve_vars():
     template("{% set suggestions = range(1,4)%}{{ name | suggest(suggestions)}}")\
             .with_values({})\
-            .should_prompt_next("name")\
-            .should_suggest([1,2,3])
+            .should_prompt_next_suggesting("name",[1,2,3])
 

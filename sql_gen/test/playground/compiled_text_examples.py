@@ -50,13 +50,13 @@ from jinja2.compiler import generate
 from jinja2.nodes import Name
 ast 
 
-tree = t.environment.parse(text)
+tree = t.environment.parse("{{name | default('julio')}}")
 print(str(tree))
 print("***printing tree****")
 TreeDrawer().print_node(tree)
 print("***rendering template****")
 print(t.render())
-add_exp =tree.body[2].nodes[1].args[0]
+#add_exp =tree.body[2].nodes[1].args[0]
 print("this is "+ generate(tree, t.environment, "pedro", "<<ast>>"))
 #def generate(node, environment, name, filename, stream=None,
 #             defer_init=False, optimized=True):
