@@ -2,6 +2,7 @@ import pytest
 import os
 from sql_gen.emproject import EMProject
 from sql_gen.emproject import emproject_home
+from sql_gen.exceptions import ConfigFileNotFound
 
 class FakeCCAdminClient (object):
     show_config_content=""
@@ -39,7 +40,8 @@ class FakeEMProjectBuilder():
             "\nemautomation.container.name="+container_name+\
             "\nemautomation.machine.name="+machine_name
 
-        self._create_file("config/local.properties",config_content)
+        self._create_file(EMProject.EMAUTOMATION_CONFIG_PATH,\
+                          config_content)
         return self
 
     def add_config(self, config_content):
@@ -125,7 +127,7 @@ def test_computes_project_prefix_skip_modules_without_3_uppercase(fs):
                                 .build()
     assert "SPEN" == em_project.prefix()
 
-def test_config_return_dict_containing_all_properties(fs):
+def test_emautomation_config_return_dict_containing_all_properties(fs):
     emautomation_config_content="""\n
 emautomation.environment.name=local
 emautomation.container.name=ad
@@ -142,6 +144,12 @@ database.user=sa
     config = em_project.config()
     assert "ad" == config['database.admin.user']
     assert "sa" == config['database.user']
+
+def test_emautomation_config_throws_exception_if_file_not_there(fs):
+    em_project  = EMProject("/home/em/my_project")
+    with pytest.raises(ConfigFileNotFound) as excinfo:
+        em_project._emautomation_config()
+    assert "Config file" in str(excinfo.value)
 
 def test_config_path_depends_on_container_machine_and_env_names(fs):
     em_project  = FakeEMProjectBuilder(fs,

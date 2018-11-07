@@ -1,6 +1,6 @@
 import os
 from sql_gen.logger import logger
-from sql_gen.exceptions import CCAdminException
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFound
 
 def emproject_home():
     try:
@@ -43,7 +43,7 @@ def to_path(filesystem_path):
 
 class EMProject(object):
     CONFIG_PATH_AD_LOCAL=to_path('work,config,show-config-txt,localdev-localhost-ad.txt')
-    EMAUTOMATION_CONFIG_PATH=to_path('config,local.properties')
+    EMAUTOMATION_CONFIG_PATH=to_path('config,em_automation.properties')
 
     def __init__(self,root=emproject_home(),ccadmin_client=CCAdmin()):
         self.root = root
@@ -94,14 +94,18 @@ class EMProject(object):
     def _read_properties(self,relative_path):
         full_path = os.path.join(self.root, relative_path)
         myprops = {}
-        with open(full_path, 'r') as f:
-            for line in f:
-                line = line.rstrip() #removes trailing whitespace and '\n' 
+        try:
+            with open(full_path, 'r') as f:
+                for line in f:
+                    line = line.rstrip() #removes trailing whitespace and '\n' 
 
-                if "=" not in line: continue #skips blanks and comments w/o =
-                if line.startswith("#"): continue #skips comments which contain =
-                k, v = line.split("=", 1)
-                myprops[k] = v
+                    if "=" not in line: continue #skips blanks and comments w/o =
+                    if line.startswith("#"): continue #skips comments which contain =
+                    k, v = line.split("=", 1)
+                    myprops[k] = v
+        except FileNotFoundError:
+            logger.error("something")
+            raise ConfigFileNotFound("Config file '"+full_path+"' does not exist")
         return myprops
 
     def prefix(self):
