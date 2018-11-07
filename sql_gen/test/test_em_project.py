@@ -7,7 +7,7 @@ class FakeCCAdminClient (object):
     show_config_content=""
     fake_emproject_builder = None
 
-    def show_config(self):
+    def show_config(self,params):
         self.fake_emproject_builder.add_config(self.show_config_content)
 
 

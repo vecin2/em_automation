@@ -27,9 +27,9 @@ class TemplateSelector():
         logger.debug("Entering select_template")
         env = EMTemplatesEnv().get_env()
         template_list = env.list_templates(None,list_menu_templates)
-        logger.list_templates("List templated returned "+ len(template_list)+" templates")
+        logger.debug("List templated returned "+ str(len(template_list))+" templates")
         self.create_options(template_list)
-        logger.debug("Option list created with "+len(self.template_option_list)+" options")
+        logger.debug("Option list created with "+str(len(self.template_option_list))+" options")
         self.show_options()
         return self.prompt_to_select_template(env)
 

@@ -1,4 +1,6 @@
 import os
+from sql_gen.logger import logger
+from sql_gen.exceptions import CCAdminException
 
 def emproject_home():
     try:
@@ -10,27 +12,38 @@ class CCAdmin(object):
     show_config_content=""
     fake_emproject_builder = None
 
-    def show_config(self):
-        self._run_ccadmin("show-config -Dformat=txt")
+    def show_config(self, params):
+        logger.debug("Running ccadmin show-config "+params)
+        result = self._run_ccadmin("show-config "+params)
+        logger.debug("End Running ccadmin show-config")
+        return result
 
     def _run_ccadmin(self, command_and_args):
-        os.system(self._ccadmin_file() +" "+command_and_args)
-
+        result = os.system(self._ccadmin_file() +" "+command_and_args)
+        if result ==0:
+            return result
+        raise CCAdminException("Failed when running 'ccadmin "+ command_and_args+"'") 
     def _ccadmin_file(self):
         prj_bin_path=os.path.join(emproject_home(),"bin")
         ccadmin_file_name ="ccadmin."+self._ccadmin_file_ext()
         ccadmin_path=os.path.join(prj_bin_path, ccadmin_file_name)
+        logger.debug("ccadmin found under: "+ ccadmin_path)
         return ccadmin_path
 
     def _ccadmin_file_ext(self):
+        logger.debug("Checking OS name: "+ os.name)
         if os.name == 'nt':
             return "bat"
         else:
             return "sh"
 
+def to_path(filesystem_path):
+    repo_modules_arr= filesystem_path.split(",") 
+    return os.path.join(*repo_modules_arr)
+
 class EMProject(object):
-    CONFIG_PATH_AD_LOCAL='work/config/show-config-txt/localdev-localhost-ad.txt'
-    EMAUTOMATION_CONFIG_PATH='config/local.properties'
+    CONFIG_PATH_AD_LOCAL=to_path('work,config,show-config-txt,localdev-localhost-ad.txt')
+    EMAUTOMATION_CONFIG_PATH=to_path('config,local.properties')
 
     def __init__(self,root=emproject_home(),ccadmin_client=CCAdmin()):
         self.root = root
@@ -39,6 +52,7 @@ class EMProject(object):
 
     def _emautomation_config(self):
         if not self.emautomation_props:
+            logger.info("Returning EM_AUTOMATION_CONFIG_PATH: "+self.EMAUTOMATION_CONFIG_PATH)
             self.emautomation_props = self._read_properties(self.EMAUTOMATION_CONFIG_PATH)
         return self.emautomation_props
 
@@ -46,7 +60,10 @@ class EMProject(object):
         env_name= self._emautomation_config()['emautomation.environment.name']
         machine_name= self._emautomation_config()['emautomation.machine.name']
         container_name= self._emautomation_config()['emautomation.container.name']
-        return "work/config/show-config-txt/"+env_name+"-"+machine_name+"-"+container_name+".txt" 
+        file_name =env_name+"-"+machine_name+"-"+container_name+".txt" 
+        result =to_path("work,config,show-config-txt,"+file_name)
+        logger.info("Returning  em config path: "+ result)
+        return result 
 
     def clear_config(self):
         self._remove(self.config_path())
@@ -59,7 +76,7 @@ class EMProject(object):
 
     def config(self):
         if not self._exists(self.config_path()):
-            self.ccadmin_client.show_config()
+            self.ccadmin_client.show_config("-Dformat=txt")
         config_content = self._read_properties(self.config_path())
         return config_content
 
@@ -114,8 +131,7 @@ class EMProject(object):
 
     def repo_modules_path(self):
         full_path= self.root +",repository,default"
-        repo_modules_arr= full_path.split(",") 
-        return os.path.join(*repo_modules_arr)
+        return to_path(full_path)
 
     def _get_repo_modules(self):
         repo_modules_path= self.repo_modules_path()
