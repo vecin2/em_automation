@@ -8,7 +8,8 @@ _builtin_objects={'_keynames':Keynames(),
                   '_pd'      :ProcessDescriptor()
                  }
 def initialContext():
-    return _builtin_objects
+    #build a copy 
+    return dict(_builtin_objects)
 
 #The eval context keeps a  spcial key "__exception" whih setting up an exception
 #which then can be rethrow instead of throwing keyError

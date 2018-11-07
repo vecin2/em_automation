@@ -23,6 +23,7 @@ class TemplateRenderer(object):
     def build_context(self,template):
         template_values = initialContext()
         parser = PromptParser(template)
+        logger.debug("About to build context starting with initial context:\n"+str(template_values))
         prompt =parser.next_prompt(template_values) 
         while prompt:
             prompt.populate_value(template_values)
