@@ -47,7 +47,7 @@ def test_default_throws_exception_if_parameter_is_a_function():
         template("{% set my_name = 'David'%}{{ name | default(camelcase('david'))}}")\
                 .with_values({})\
                 .should_prompt_next("")
-    assert "Default Filters at the moment only support constant values" in str(e_info.value)
+    assert "Filters at the moment only support" in str(e_info.value)
 
 def test_description_prompts_description_intead_of_var_name():
     template("{{name | description ('Customer name')}}").with_values({})\

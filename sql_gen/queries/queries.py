@@ -12,6 +12,7 @@ class EntityDefinition(object):
     def verb_names(self):
         query="SELECT V.NAME FROM EVA_VERB V,CCADMIN_IDMAP IDMAP where IDMAP.ID = V.ENTITY_DEF_ID and IDMAP.KEYSET ='ED' and IDMAP.KEYNAME = '"+self.keyname+"'"
         return addb.list(query)
+
     def with_keyname(self,keyname):
         self.keyname=keyname
         return self

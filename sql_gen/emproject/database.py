@@ -1,6 +1,7 @@
 from sql_gen.emproject import current_emproject
 import pymssql
 from sql_gen.logger import logger
+from sql_gen.exceptions import DBConnectionException
 
 class SQLRow(dict):
     def __init(self, dict_row):
@@ -11,27 +12,9 @@ class SQLRow(dict):
             return "NULL"
         return dict.__getitem__(self,key)
 
-class Query(object):
-    query = None
-    def __init__(self):
-        self._cache = {}
-    #def __call__(self, query):
-    #    if query not in self._cache: 
-    #        self._cache[a] = self.do_query(query)
-    #    return self._cache[query]
-    def query(self, query):
-
-        return # a real answer
-    @staticmethod
-    def get_instance():
-        return Query()
-        if not Query.query:
-            Query.query = Query()
-        return Query.query
-
 class EMDatabase(object):
     ad_singleton = None
-    
+
     def __init__(self,host,username,password, database):
         self.host = host
         self.username = username
@@ -72,12 +55,16 @@ class EMDatabase(object):
     def _conn(self):
         #we cache connection as it takes 3 seconds to run in windows
         if not self.__conn:
-            logger.debug("Opening connection with params: ["+self.host +", "+self.username+", "+self.database+"]")
-            self.__conn = pymssql.connect(self.host,
-                                    self.username,
-                                    self.password,
-                                    self.database)
-            logger.debug("Open connection Succeed")
+            try:
+                logger.debug("Opening connection with params: ["+self.host +", "+self.username+", "+self.database+"]")
+                self.__conn = pymssql.connect(self.host,
+                                        self.username,
+                                        self.password,
+                                        self.database)
+                logger.debug("Open connection Succeed")
+            except Exception:
+                raise DBConnectionException("Unable to connecto to database")
+
         return self.__conn
 
     def _extract_rowlist(self,cursor):
