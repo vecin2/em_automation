@@ -1,4 +1,6 @@
 from jinja2.nodes import List,Name,Const,Getitem
+from sql_gen.logger import logger
+
 class PromptFilter:
     def _render_args(self,context):
         result=[]
@@ -7,19 +9,22 @@ class PromptFilter:
         return result
 
     def _render_arg(self,arg,context):
+        logger.debug("Render argument '"+str(arg)+"' within filter "+self.filter.name)
         if isinstance(arg,List):
-            return self._render_list(arg,context)
+            result = self._render_list(arg,context)
         elif isinstance(arg, Name):
-            return context[arg.name]
+            result = context[arg.name]
         elif isinstance(arg,Const):
-            return arg.value
+            result = arg.value
         elif isinstance(arg,Getitem):
             dict = self._render_arg(arg.node,context)
             key = self._render_arg(arg.arg,context)
-            return dict[key]
+            result = dict[key]
         else:
-            raise ValueError("Default Filters at the moment only support "+\
-                    "constant values, a variable was passed "+str(arg))
+            raise ValueError("Filters at the moment only support collections,contants and vairables."+\
+                    "But you passed something that is none of that, maybe a function? "+str(arg))
+        logger.debug("Argument resolved to: "+ str(result))
+        return result
 
     def _render_list(self,arg,context):
             result=[]

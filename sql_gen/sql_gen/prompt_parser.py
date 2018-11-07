@@ -1,3 +1,4 @@
+from sql_gen.logger import logger
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call,Name
@@ -9,13 +10,16 @@ import sys
 
 class PromptParser(object):
     def __init__(self,template):
+        logger.debug("Instantiating PromptParser for template '"+ template.name+"'")
         self.template =template
         ast = self._join_included_templates(template)
         self.prompt_visitor = PromptVisitor(ast)
 
     def _join_included_templates(self,template):
+        logger.debug("Joining included templates under one single AST")
         ast =self._extract_template_ast(template)
         TemplateJoiner(self.env).visit(ast)
+        logger.debug("Finishing joining templates")
         return ast
 
     def _extract_template_ast(self,template):
@@ -40,9 +44,11 @@ class TemplateJoiner(NodeTransformer):
 
 class PromptVisitor(NodeVisitor):
     def __init__(self,ast):
+        logger.debug("Instantiating Prompt visitor")
         self.ast = ast
         self._set_parent(self.ast,None)
         self.names_visited = []
+        logger.debug("Finish Prompt visitor instantion")
 
     def _set_parent(self,node, parent):
         node.parent =parent
@@ -50,9 +56,13 @@ class PromptVisitor(NodeVisitor):
             self._set_parent(child, node)
 
     def next_prompt(self,eval_context):
+        logger.debug("Starting next prompt")
         prompt = self.visit(self.ast, eval_context)
+        logger.debug("Prompt returned: "+ str(prompt))
         if prompt:
+            logger.debug("Resolving prompt")
             prompt.resolve(eval_context)
+        logger.debug("Returning prompt")
         return prompt
 
     def generic_visit(self, node, template_values={}):

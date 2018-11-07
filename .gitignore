@@ -11,3 +11,4 @@ build/
 *.egg-info/
 **/*.egg-info/
 .ycm_extra_conf.py
+*.log

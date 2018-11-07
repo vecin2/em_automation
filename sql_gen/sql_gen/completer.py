@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from prompt_toolkit.completion import Completer, Completion
 from fuzzyfinder import fuzzyfinder
+from sql_gen.logger import logger
 import os
 
 __all__ = [
@@ -14,10 +15,12 @@ class SuggestionCompleter(Completer):
         self.suggestions = suggestions
 
     def get_completions(self, document, complete_event):
+        logger.debug("Running get_completing within SuggestionCompleter")
         word_before_cursor = document.get_word_before_cursor(WORD=True)
         matches = fuzzyfinder(word_before_cursor, self.suggestions)
         for m in matches:
             yield Completion(m, start_position=-len(word_before_cursor))
+        logger.debug("Finished get_completing within SuggestionCompleter")
 
 #This is o copy of  prompt_toolkit.completion.filsystem
 class PathCompleter(Completer):
@@ -44,6 +47,7 @@ class PathCompleter(Completer):
         self.expanduser = expanduser
 
     def get_completions(self, document, complete_event):
+        logger.debug("Running get_completing within PathCompleter")
         text = document.text_before_cursor
         text =text.replace(".", "/")
 
@@ -100,6 +104,7 @@ class PathCompleter(Completer):
                 yield Completion(completion, 0, display=filename)
         except OSError:
             pass
+        logger.debug("Finished get_completing within PathCompleter")
 
 
 class ExecutableCompleter(PathCompleter):

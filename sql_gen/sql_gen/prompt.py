@@ -1,6 +1,6 @@
 from sql_gen.ui.cli_ui_util import input_with_validation
+from sql_gen.logger import logger
 from prompt_toolkit import prompt
-#from prompt_toolkit.history import FileHistory
 from prompt_toolkit.completion import Completer, Completion
 from sql_gen.sql_gen.completer import SuggestionCompleter
 
@@ -11,8 +11,11 @@ class Prompt:
         self.display_text = variable_name
         self.completer = None
 
+    def __str__(self):
+         return self.variable_name
+
     def get_display_text(self,context={}):
-        return self.display_text+": "
+            return self.display_text+": "
 
     def resolve(self, eval_context):
         self._apply_filters(eval_context)
@@ -31,8 +34,10 @@ class Prompt:
             context[self.variable_name] = var
 
     def run(self,context):
+        logger.debug("Running prompt :'"+self.get_display_text()+"'")
         user_input = prompt(self.get_display_text(),
                                 completer=self.completer)
+        logger.debug("User entered: "+ user_input)
         return user_input
 
 
