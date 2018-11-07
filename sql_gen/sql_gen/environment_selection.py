@@ -6,6 +6,7 @@ import os,sys
 import inspect
 import pkgutil
 import importlib
+from sql_gen.logger import logger
 
 class TemplateOption(object):
     MENU_FOLDER="menu/"
@@ -23,9 +24,12 @@ def list_menu_templates(template_name):
 class TemplateSelector():
 
     def select_template(self):
+        logger.debug("Entering select_template")
         env = EMTemplatesEnv().get_env()
         template_list = env.list_templates(None,list_menu_templates)
+        logger.list_templates("List templated returned "+ len(template_list)+" templates")
         self.create_options(template_list)
+        logger.debug("Option list created with "+len(self.template_option_list)+" options")
         self.show_options()
         return self.prompt_to_select_template(env)
 
@@ -58,6 +62,7 @@ class TemplateSelector():
 
 
     def get_template_name(self, template_number,env):
+        logger.debug("Getting template for option number"+ template_number)
         option = self.get_option_by_id(template_number)
         if option is None:
             return option
@@ -68,6 +73,7 @@ class TemplateSelector():
             print ("This template does not exist. Make sure there is a matching template under the configured templates folder")
             return None
 
+        logger.debug("Template returned"+ template_name)
         return template_name
 
     def get_option_by_id(self, template_number):
