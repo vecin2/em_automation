@@ -1,6 +1,6 @@
 import os
 from sql_gen.logger import logger
-from sql_gen.exceptions import CCAdminException,ConfigFileNotFound
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFound,ConfigException
 
 def emproject_home():
     try:
@@ -41,6 +41,15 @@ def to_path(filesystem_path):
     repo_modules_arr= filesystem_path.split(",") 
     return os.path.join(*repo_modules_arr)
 
+class EMConfigID(object):
+    def __init__(self,
+                 env_name,
+                 machine_name,
+                 container_name):
+        self.env_name = env_name
+        self.machine_name = machine_name
+        self.container_name = container_name
+
 class EMProject(object):
     CONFIG_PATH_AD_LOCAL=to_path('work,config,show-config-txt,localdev-localhost-ad.txt')
     EMAUTOMATION_CONFIG_PATH=to_path('config,em_automation.properties')
@@ -49,6 +58,13 @@ class EMProject(object):
         self.root = root
         self.ccadmin_client =ccadmin_client
         self.emautomation_props={}
+        self.default_config_id =None
+
+    def set_default_config_id(self,config_id):
+        self.default_config_id =config_id
+
+    def emautomation_config_path(self):
+        return self.EMAUTOMATION_CONFIG_PATH
 
     def _emautomation_config(self):
         if not self.emautomation_props:
@@ -56,17 +72,18 @@ class EMProject(object):
             self.emautomation_props = self._read_properties(self.EMAUTOMATION_CONFIG_PATH)
         return self.emautomation_props
 
-    def config_path(self):
-        env_name= self._emautomation_config()['emautomation.environment.name']
-        machine_name= self._emautomation_config()['emautomation.machine.name']
-        container_name= self._emautomation_config()['emautomation.container.name']
+    def config_path(self,config_id=None):
+        actual_config_id=self._actual_config_id(config_id) 
+        env_name= actual_config_id.env_name
+        machine_name= actual_config_id.machine_name
+        container_name= actual_config_id.container_name
         file_name =env_name+"-"+machine_name+"-"+container_name+".txt" 
         result =to_path("work,config,show-config-txt,"+file_name)
         logger.info("Returning  em config path: "+ result)
         return result 
 
-    def clear_config(self):
-        self._remove(self.config_path())
+    def clear_config(self,config_id=None):
+        self._remove(self.config_path(config_id))
 
     def _remove(self,relative_path):
         try:
@@ -74,11 +91,28 @@ class EMProject(object):
         except OSError:
             pass
 
-    def config(self):
-        if not self._exists(self.config_path()):
-            self.ccadmin_client.show_config("-Dformat=txt")
-        config_content = self._read_properties(self.config_path())
+    def config(self,config_id=None):
+        if not self._exists(self.config_path(config_id)):
+            self._create_config()
+        config_content = self._read_properties(self.config_path(config_id))
         return config_content
+
+    def _actual_config_id(self,config_id):
+        if not config_id and not self.default_config_id:
+            error_msg ="Try to retrieve configuration but not config_id was specified. You can specify the config by either passing a config_id or by setting a default config_id (environment.name, machine.name and container.name)"
+            raise ConfigException(error_msg)
+        elif config_id:
+            return config_id
+        else:
+            return self.default_config_id
+
+    def _create_config(self):
+        try:
+            self.ccadmin_client.show_config("-Dformat=txt")
+        except CCAdminException as info:
+            error_msg ="Unable to configure project:\n  "+str(info)
+            raise ConfigException(error_msg)
+
 
     def prop_val(self,prop_name):
         return self.config()[prop_name]
@@ -145,5 +179,8 @@ class EMProject(object):
         return [name for name in os.listdir(repo_modules_path)
            if os.path.isdir(os.path.join(repo_modules_path, name))]
 
-
 current_emproject = EMProject()
+current_emproject.set_default_config_id(EMConfigID("localdev",
+                                                "localhost",
+                                                "ad"))
+
