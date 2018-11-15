@@ -5,7 +5,7 @@ from sql_gen.emproject.em_project import EMConfigID
 from sql_gen.emproject.em_project import current_emproject
 from sql_gen.emproject.em_project import emproject_home
 from sql_gen.emproject.em_project import CCAdmin
-from sql_gen.emproject.query_runner import QueryRunner
+from sql_gen.database import QueryRunner
 from sql_gen.emproject.sqltask import SQLTask, Clipboard
 from sql_gen.emproject.emsvn import EMSvn
 

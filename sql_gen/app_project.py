@@ -1,6 +1,6 @@
 from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID
-from sql_gen.emproject.query_runner import QueryRunner
+from sql_gen.database import QueryRunner
 from sql_gen.config import ConfigFile
 from sql_gen.utils.filesystem import RelativePath
 import sys
