@@ -1,11 +1,11 @@
 from sql_gen.logger import logger
+from sql_gen.sql_gen.template_context import TemplateContext
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call,Name
 import importlib
 from collections import OrderedDict
 from sql_gen.sql_gen.prompt import Prompt
-from sql_gen.sql_gen.sql_eval_context import prepare_eval_context
 import sys
 
 class PromptParser(object):
@@ -29,8 +29,9 @@ class PromptParser(object):
         return self.env.parse(template_source_text)
 
     def next_prompt(self,template_values={}):
-        eval_context =prepare_eval_context(self.template,template_values)
-        return self.prompt_visitor.next_prompt(eval_context)
+        #eval_context =prepare_eval_context(self.template,template_values)
+        context =TemplateContext(self.template,template_values)
+        return self.prompt_visitor.next_prompt(context)
 
 class TemplateJoiner(NodeTransformer):
     def __init__(self,env):

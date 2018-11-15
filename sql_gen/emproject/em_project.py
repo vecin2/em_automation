@@ -1,6 +1,6 @@
 import os
 from sql_gen.logger import logger
-from sql_gen.exceptions import CCAdminException,ConfigFileNotFound,ConfigException
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException
 
 def emproject_home():
     try:
@@ -22,9 +22,9 @@ class CCAdmin(object):
         result = os.system(self._ccadmin_file() +" "+command_and_args)
         if result ==0:
             return result
-        raise CCAdminException("Failed when running 'ccadmin "+ command_and_args+"'") 
+        raise CCAdminException("Failed when running 'ccadmin "+ command_and_args+"'")
     def _ccadmin_file(self):
-        prj_bin_path=os.path.join(emproject_home(),"bin")
+        prj_bin_path=os.path.join(self.root,"bin")
         ccadmin_file_name ="ccadmin."+self._ccadmin_file_ext()
         ccadmin_path=os.path.join(prj_bin_path, ccadmin_file_name)
         logger.debug("ccadmin found under: "+ ccadmin_path)
@@ -51,9 +51,6 @@ class EMConfigID(object):
         self.container_name = container_name
 
 class EMProject(object):
-    CONFIG_PATH_AD_LOCAL=to_path('work,config,show-config-txt,localdev-localhost-ad.txt')
-    EMAUTOMATION_CONFIG_PATH=to_path('config,em_automation.properties')
-
     def __init__(self,root=emproject_home(),ccadmin_client=CCAdmin()):
         self.root = root
         self.ccadmin_client =ccadmin_client
@@ -63,24 +60,15 @@ class EMProject(object):
     def set_default_config_id(self,config_id):
         self.default_config_id =config_id
 
-    def emautomation_config_path(self):
-        return self.EMAUTOMATION_CONFIG_PATH
-
-    def _emautomation_config(self):
-        if not self.emautomation_props:
-            logger.info("Returning EM_AUTOMATION_CONFIG_PATH: "+self.EMAUTOMATION_CONFIG_PATH)
-            self.emautomation_props = self._read_properties(self.EMAUTOMATION_CONFIG_PATH)
-        return self.emautomation_props
-
     def config_path(self,config_id=None):
-        actual_config_id=self._actual_config_id(config_id) 
+        actual_config_id=self._actual_config_id(config_id)
         env_name= actual_config_id.env_name
         machine_name= actual_config_id.machine_name
         container_name= actual_config_id.container_name
-        file_name =env_name+"-"+machine_name+"-"+container_name+".txt" 
+        file_name =env_name+"-"+machine_name+"-"+container_name+".txt"
         result =to_path("work,config,show-config-txt,"+file_name)
         logger.info("Returning  em config path: "+ result)
-        return result 
+        return result
 
     def clear_config(self,config_id=None):
         self._remove(self.config_path(config_id))

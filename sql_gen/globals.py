@@ -19,5 +19,4 @@ def adquery(query):
 
 def adlist(query):
     return addb().list(query)
-_keynames = Keynames()
 

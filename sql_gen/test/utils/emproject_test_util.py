@@ -34,9 +34,6 @@ class FakeEMProjectBuilder():
         self.ccadmin_client =FakeCCAdminClient(None)
         self.ccadmin_client.fake_emproject_builder=self
         self.emproject =EMProject(self.root,self.ccadmin_client)
-        self._config_env_machine_container(env_name=env_name,
-                                      machine_name=machine_name,
-                                      container_name=container_name)
         self.config_map={}
 
     def add_config_settings(self, config_id, settings_map):

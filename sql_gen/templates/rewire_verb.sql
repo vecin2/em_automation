@@ -1,9 +1,9 @@
 {# Compute variables for add_process_descriptor#}
  {# Compute current pd #}
-	{% set entity_ids = _keynames.list("ED") %}
-	{% set verb_names =_ed.with_keyname(entity_def_id | suggest(entity_ids)).verb_names%}
+	{% set entity_ids = _keynames.ED %}
+	{% set verb_names= _addb.list.v_names__by_ed(entity_def_id | suggest(entity_ids)) %}
 	{% set verb_name_tmp = verb_name | suggest(verb_names) %}
-	{% set old_pd = _pd.load(entity_def_id,verb_name)%}
+	{% set old_pd = _addb.find.pd__by_ed_n_vname(entity_def_id,verb_name) %}
 
  {# Request add_process_desc_variables using old pd #}
  {% set tmp_pd_config = 	  config_id        | description("config_id, default fetched from current value")

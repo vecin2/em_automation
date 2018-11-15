@@ -5,7 +5,7 @@ class DBConnectionException(Exception):
 class CCAdminException(Exception):
     """This exception is raised when ccadmin command failed
     """
-class ConfigFileNotFound(Exception):
+class ConfigFileNotFoundException(Exception):
     """This exception is raised when reading configuration file but the file does not exists.
     """
 class ConfigPropNotFoundException(Exception):

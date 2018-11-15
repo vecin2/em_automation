@@ -1,7 +1,7 @@
 import pytest
 import os
 from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.exceptions import ConfigFileNotFound,ConfigPropNotFoundException,NoDefaultEnvFoundException,ConfigException
+from sql_gen.exceptions import ConfigFileNotFoundException,ConfigPropNotFoundException,NoDefaultEnvFoundException,ConfigException
 from sql_gen.test.utils.emproject_test_util import FakeCCAdminClient,FakeEMProjectBuilder
 
 def prj_builder(fs, root='/home/em'):

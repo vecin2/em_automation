@@ -13,7 +13,7 @@ class PromptFilter:
         if isinstance(arg,List):
             result = self._render_list(arg,context)
         elif isinstance(arg, Name):
-            result = context[arg.name]
+            result = context.resolve(arg.name)
         elif isinstance(arg,Const):
             result = arg.value
         elif isinstance(arg,Getitem):
@@ -28,7 +28,7 @@ class PromptFilter:
 
     def _render_list(self,arg,context):
             result=[]
-            items = [item.value for item in arg.items]
+            items = [self._render_arg(item,context) for item in arg.items]
             for item in items:
                 result.append(item)
             return result
