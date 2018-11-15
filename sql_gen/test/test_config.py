@@ -1,10 +1,7 @@
 from sql_gen.exceptions import ConfigFileNotFoundException
 from sql_gen.config import ConfigFile
 import pytest
-#from sql_gen.config import current_config
-#
-#config_id=EMConfigID(current_config["container.name"])
-#addb = EMProject.database(config_id)
+
 class FakeLogger(object):
     def __init__(self):
         self.debug_text=""

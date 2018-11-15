@@ -1,4 +1,4 @@
-from sql_gen.emproject import addb
+from sql_gen.database import addb
 
 class Keynames(object):
     @property

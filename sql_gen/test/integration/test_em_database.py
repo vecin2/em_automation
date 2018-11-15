@@ -1,4 +1,4 @@
-from sql_gen.emproject.database import EMDatabase
+from sql_gen.database import EMDatabase
 import cx_Oracle
 import pymssql
 import pytest

@@ -1,4 +1,4 @@
-from sql_gen.emproject.database import EMDatabase
+from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID
 from sql_gen.emproject.query_runner import QueryRunner
 from sql_gen.config import ConfigFile

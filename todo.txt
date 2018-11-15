@@ -28,8 +28,10 @@ sqltask handles configuration file not exist or configuration settings not set.
 
 sqltask bootstrap will create the base configuration settings
 
-move EMDatabase to sql_gen.database
+#move EMDatabase to sql_gen.database
 move query runner to sql_gen.database
 test emproject without em_core_home set
 Approaches to python configuration (Resolve properties within properties)
 Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
+refactor queries.py
+tidy up tests -too many database tests

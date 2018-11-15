@@ -1,4 +1,4 @@
-from sql_gen.emproject import current_emproject,addb
+from sql_gen.emproject import current_emproject
 import pymssql
 import sys
 from sql_gen.queries.queries import Keynames
@@ -13,10 +13,4 @@ def camelcase(st):
 
 def prj_prefix():
     return current_emproject.prefix()
-
-def adquery(query):
-    return addb().query(query)
-
-def adlist(query):
-    return addb().list(query)
 
