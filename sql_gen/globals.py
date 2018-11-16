@@ -1,4 +1,4 @@
-from sql_gen.emproject import current_emproject
+from sql_gen.current_project import app
 import pymssql
 import sys
 from sql_gen.queries.queries import Keynames
@@ -12,5 +12,5 @@ def camelcase(st):
     return output[0].lower() + output[1:]
 
 def prj_prefix():
-    return current_emproject.prefix()
+    return app.emproject.prefix()
 

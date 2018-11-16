@@ -1,4 +1,3 @@
-from sql_gen.emproject import current_emproject
 import pymssql
 import cx_Oracle
 from sql_gen.logger import logger
@@ -126,16 +125,6 @@ class EMDatabase(object):
     #    return result
 
 def _addb():
-    emconfig = current_emproject.config()
-    host = emconfig['database.host']
-    username = emconfig['database.admin.user']
-    password = emconfig['database.admin.pass']
-    database = emconfig['database.logical-schema']
-    return EMDatabase(host,
-                      username,
-                      password,
-                      database,
-                      "1433",
-                      "sqlserver")
+    pass
 #this is singleton, otherwise cache will not work
 addb = _addb()

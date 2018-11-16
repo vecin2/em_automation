@@ -1,10 +1,13 @@
 import os
 from sql_gen.logger import logger
-from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvironmentVarNotFoundException
+from sql_gen.config import ConfigFile
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvironmentVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
+from sql_gen.utils.filesystem import RelativePath
 
 class CCAdmin(object):
     show_config_content=""
-    fake_emproject_builder = None
+    def __init__(self,root):
+        self.root =root
 
     def show_config(self, params):
         logger.debug("Running ccadmin show-config "+params)
@@ -16,11 +19,10 @@ class CCAdmin(object):
         result = os.system(self._ccadmin_file() +" "+command_and_args)
         if result ==0:
             return result
-        raise CCAdminException("Failed when running 'ccadmin "+ command_and_args+"'")
+        raise CCAdminException("Failed when running '"+self._ccadmin_file()+" "+ command_and_args+"'")
     def _ccadmin_file(self):
-        prj_bin_path=os.path.join(self.root,"bin")
         ccadmin_file_name ="ccadmin."+self._ccadmin_file_ext()
-        ccadmin_path=os.path.join(prj_bin_path, ccadmin_file_name)
+        ccadmin_path=os.path.join(self.root, ccadmin_file_name)
         logger.debug("ccadmin found under: "+ ccadmin_path)
         return ccadmin_path
 
@@ -44,17 +46,35 @@ class EMConfigID(object):
         self.machine_name = machine_name
         self.container_name = container_name
 
+PATHS={"ccadmin"     : "bin",
+       "config"      : "work/config/show-config-txt",
+       "repo_modules": "repository/default"
+       }
+
 def emproject_home():
     try:
-        return os.environ['EM_CORE_HOME']
+        result = os.environ['EM_CORE_HOME']
     except Exception:
         raise EnvironmentVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+    if not result:
+        raise EnvironmentVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+    relative_path =RelativePath(result,PATHS)
+    try:
+        relative_path.check()
+    except InvalidFileSystemPathException as excinfo:
+        raise InvalidEnvVarException("Are you sure 'EM_CORE_HOME' points to a valid EM installation? "+ str(excinfo))
+    return result
+
 
 class EMProject(object):
-    def __init__(self,root=None,ccadmin_client=CCAdmin()):
+    def __init__(self,root=None,ccadmin_client=None):
         if not root:
             root = emproject_home()
         self.root = root
+        self.paths= RelativePath(self.root,PATHS)
+        if not ccadmin_client:
+            ccadmin_client = CCAdmin(self.paths['ccadmin'])
+        self.ccadmin_client = ccadmin_client
         self.ccadmin_client =ccadmin_client
         self.emautomation_props={}
         self.default_config_id =None
@@ -62,30 +82,24 @@ class EMProject(object):
     def set_default_config_id(self,config_id):
         self.default_config_id =config_id
 
+    def config(self,config_id=None):
+        if not os.path.exists(self.config_path(config_id)):
+            self._create_config()
+        config_content = ConfigFile(self.config_path(config_id)).properties
+        return config_content
+
     def config_path(self,config_id=None):
+        file_name =self._build_config_file_name(config_id)
+        result = os.path.join(self.paths['config'],file_name)
+        logger.info("Returning  em config path: "+ result)
+        return result
+
+    def _build_config_file_name(self,config_id):
         actual_config_id=self._actual_config_id(config_id)
         env_name= actual_config_id.env_name
         machine_name= actual_config_id.machine_name
         container_name= actual_config_id.container_name
-        file_name =env_name+"-"+machine_name+"-"+container_name+".txt"
-        result =to_path("work,config,show-config-txt,"+file_name)
-        logger.info("Returning  em config path: "+ result)
-        return result
-
-    def clear_config(self,config_id=None):
-        self._remove(self.config_path(config_id))
-
-    def _remove(self,relative_path):
-        try:
-            os.remove(os.path.join(self.root, relative_path))
-        except OSError:
-            pass
-
-    def config(self,config_id=None):
-        if not self._exists(self.config_path(config_id)):
-            self._create_config()
-        config_content = self._read_properties(self.config_path(config_id))
-        return config_content
+        return env_name+"-"+machine_name+"-"+container_name+".txt"
 
     def _actual_config_id(self,config_id):
         if not config_id and not self.default_config_id:
@@ -100,37 +114,13 @@ class EMProject(object):
         try:
             self.ccadmin_client.show_config("-Dformat=txt")
         except CCAdminException as info:
-            error_msg ="Unable to configure project:\n  "+str(info)
+            error_msg ="Something went wrong while running ccadmin command:\n  "+str(info)
             raise ConfigException(error_msg)
-
-
-    def prop_val(self,prop_name):
-        return self.config()[prop_name]
-
     def product_prj(self):
         return EMProject(self.prop_val('product.home'))
 
-
-    def _exists(self,relative_path):
-        full_path = os.path.join(self.root, relative_path)
-        return os.path.exists(full_path)
-
-    def _read_properties(self,relative_path):
-        full_path = os.path.join(self.root, relative_path)
-        myprops = {}
-        try:
-            with open(full_path, 'r') as f:
-                for line in f:
-                    line = line.rstrip() #removes trailing whitespace and '\n' 
-
-                    if "=" not in line: continue #skips blanks and comments w/o =
-                    if line.startswith("#"): continue #skips comments which contain =
-                    k, v = line.split("=", 1)
-                    myprops[k] = v
-        except FileNotFoundError:
-            logger.error("something")
-            raise ConfigFileNotFound("Config file '"+full_path+"' does not exist")
-        return myprops
+    def prop_val(self,prop_name):
+        return self.config()[prop_name]
 
     def prefix(self):
         custom_repo_modules = self._get_repo_custom_modules()
@@ -162,15 +152,11 @@ class EMProject(object):
         return to_path(full_path)
 
     def _get_repo_modules(self):
-        repo_modules_path= self.repo_modules_path()
+        repo_modules_path= self.paths['repo_modules']
         if not os.path.exists(repo_modules_path) or not os.listdir(repo_modules_path):
             return []
         #if there is at least one module created
         return [name for name in os.listdir(repo_modules_path)
            if os.path.isdir(os.path.join(repo_modules_path, name))]
 
-current_emproject = EMProject()
-current_emproject.set_default_config_id(EMConfigID("localdev",
-                                                "localhost",
-                                                "ad"))
 

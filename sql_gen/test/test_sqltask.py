@@ -2,7 +2,7 @@ import pytest
 import os
 from sql_gen.emproject import SQLTask,emproject_home
 from sql_gen.ui.cli_ui_util import InputRequester
-from sql_gen.emproject.em_project import current_emproject
+from sql_gen import current_emproject
 
 #set em core home as it used as based to write sql modules
 class FakeEMSvn(object):

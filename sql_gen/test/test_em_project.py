@@ -1,7 +1,7 @@
 import pytest
 import os
 from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.exceptions import ConfigFileNotFoundException,EnvironmentVarNotFoundException,NoDefaultEnvFoundException,ConfigException
+from sql_gen.exceptions import ConfigFileNotFoundException,EnvironmentVarNotFoundException,ConfigException,InvalidEnvVarException
 from sql_gen.test.utils.emproject_test_util import FakeCCAdminClient,FakeEMProjectBuilder
 from unittest.mock import patch
 def prj_builder(fs, root='/home/em'):
@@ -18,12 +18,19 @@ def test_em_core_env_var_not_set():
     finally:
         os.environ.clear()
         os.environ.update(_environ)
-@pytest.mark.skip
-def test_config_throws_exception_if_no_default_env_passed():
-    with pytest.raises(NoDefaultEnvFoundException) as excinfo:
-        emproject = EMProject('/home/em')
-        emproject.config()
-    assert "Default environment not set" in excinfo.value
+
+def test_em_core_env_var_set_to_blank():
+    with patch.dict('os.environ', {'EM_CORE_HOME': ''}):
+        assert "" == os.environ["EM_CORE_HOME"]
+        with pytest.raises(EnvironmentVarNotFoundException) as excinfo:
+            project = EMProject()
+        assert "'EM_CORE_HOME' is not set within environment variables. This var contains the path of you current EM project."==str(excinfo.value)
+
+def test_em_core_env_var_set_to_a_not_em_project():
+    with patch.dict('os.environ', {'EM_CORE_HOME': '/opt'}):
+        with pytest.raises(InvalidEnvVarException) as excinfo:
+            project = EMProject()
+        assert "Are you sure 'EM_CORE_HOME' points to a valid EM installation? Path '/opt/bin' does not exist." == str(excinfo.value)
 
 def test_project_prefix_from_em_core_home(fs):
     em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
@@ -64,7 +71,7 @@ local_config_id=EMConfigID("localdev",
 def test_config_path_depends_on_config_id(fs):
     em_project = EMProject("/home/project")
     mylocal_config_id=EMConfigID("mylocal","localhost","ad")
-    assert "work/config/show-config-txt/mylocal-localhost-ad.txt" ==em_project.config_path(mylocal_config_id)
+    assert "/home/project/work/config/show-config-txt/mylocal-localhost-ad.txt" ==em_project.config_path(mylocal_config_id)
 
 def test_returns_config_without_invoke_ccadmin_if_config_exist(fs):
     config_content="""\n
@@ -99,8 +106,7 @@ def test_config_throws_exception_if_ccadmin_config_fails(fs):
                         .with_ccadmin(ccadmin_client)\
                                               .build()
         config = em_project.config(local_config_id)
-        
-    error_msg= "Unable to configure project:\n  Failed when running ccadmin"
+    error_msg="Something went wrong while running ccadmin command:"
     assert error_msg in str(exc_info.value)
 
 def test_config_with_no_args_returns_default_config(fs):

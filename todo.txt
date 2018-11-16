@@ -35,3 +35,6 @@ Approaches to python configuration (Resolve properties within properties)
 Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
 refactor queries.py
 tidy up tests -too many database tests
+EnvironmentVarnotfoundException --> EnvVarNotFoundException
+remove _addb from database.
+avoid using current_emproject in general in tests

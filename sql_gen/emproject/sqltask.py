@@ -1,9 +1,10 @@
 import pyperclip
 from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
-from sql_gen.emproject import current_emproject
 from sql_gen.emproject.emsvn import EMSvn
 import os
+from sql_gen.current_project import app
 
+current_emproject =app.emproject
 class Clipboard():
     def on_write(self, sqltask):
         file_path=sqltask.fs_location()
