@@ -1,12 +1,6 @@
 import os
 from sql_gen.logger import logger
-from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException
-
-def emproject_home():
-    try:
-        return os.environ['EM_CORE_HOME']
-    except Exception:
-        raise AttributeError("EM_CORE_HOME must added to environment variables and it should contain the path of your current em project")
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvironmentVarNotFoundException
 
 class CCAdmin(object):
     show_config_content=""
@@ -50,8 +44,16 @@ class EMConfigID(object):
         self.machine_name = machine_name
         self.container_name = container_name
 
+def emproject_home():
+    try:
+        return os.environ['EM_CORE_HOME']
+    except Exception:
+        raise EnvironmentVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+
 class EMProject(object):
-    def __init__(self,root=emproject_home(),ccadmin_client=CCAdmin()):
+    def __init__(self,root=None,ccadmin_client=CCAdmin()):
+        if not root:
+            root = emproject_home()
         self.root = root
         self.ccadmin_client =ccadmin_client
         self.emautomation_props={}
