@@ -1,5 +1,6 @@
-from sql_gen.database import addb
+from sql_gen.current_project import app
 
+addb =app.ad_db
 class Keynames(object):
     @property
     def ED(self):

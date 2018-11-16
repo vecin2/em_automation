@@ -34,7 +34,6 @@ def test_resolve_should_not_exc_if_error_occurs_after_var_is_resolve():
     env = Environment()
     template = Template(text)
     context = TemplateContext(template)
-    #import pdb; pdb.set_trace()
     assert "hello" == context.resolve("greeting")
 
 

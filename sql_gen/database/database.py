@@ -67,6 +67,16 @@ class EMDatabase(object):
     def set_conn_factory(self, dbdriver_factory):
         self.conn_factory =dbdriver_factory
 
+    def list(self,query):
+        logger.debug("Running list of query")
+        table = self.query(query)
+        if not table:
+            return table
+        first_column_name = next(iter(table[0]))
+        result = [row[first_column_name] for row in table]
+        logger.debug("Returning column:"+first_column_name)
+        return result
+
     def find(self,query):
         result = self.query(query)
         if not result or len(result)>1:
@@ -74,7 +84,6 @@ class EMDatabase(object):
         return result[0]
 
     def query(self, query):
-        #import pdb;pdb.set_trace()
         if query in self.queries_cache:
             logger.debug("Returning from cache")
             return self.queries_cache[query]
@@ -84,22 +93,17 @@ class EMDatabase(object):
         return result
 
     def _run_query(self,query):
-        conn = self._conn()
-        cursor = conn.cursor()
+        cursor = self._conn().cursor()
         start_time = time.time()
         cursor.execute(query)
         query_time = str(time.time() - start_time)
-        logger.debug("Query "+query+ " took "+ query_time+ " to run")
+        logger.debug("Query run: "+query)
+        logger.debug("Query tooked "+ query_time)
         return cursor
 
-    def list(self,query):
-        logger.debug("Running list of query")
-        table = self.query(query)
-        if not table:
-            return table
-        first_column_name = next(iter(table[0]))
-        result = [row[first_column_name] for row in table]
-        logger.debug("Returning column:"+first_column_name)
+    def _extract_rowlist(self,cursor):
+        columns = [i[0] for i in cursor.description]
+        result = [SQLRow(zip(columns, row)) for row in cursor]
         return result
 
     def _conn(self):
@@ -111,20 +115,3 @@ class EMDatabase(object):
                                        self.dbtype)
 
         return self.__conn
-    def _extract_rowlist(self,cursor):
-        start_time = time.time()
-        columns = [i[0] for i in cursor.description]
-        result = [dict(zip(columns, row)) for row in cursor]
-        convert_time = str(time.time() - start_time)
-        logger.debug("Extract  dictionary list from query took "+ convert_time)
-        return result
-    #def _extract_rowlist(self,cursor):
-    #    result=[]
-    #    for row in cursor:
-    #        result.append(SQLRow(row))
-    #    return result
-
-def _addb():
-    pass
-#this is singleton, otherwise cache will not work
-addb = _addb()

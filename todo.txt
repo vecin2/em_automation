@@ -38,3 +38,4 @@ tidy up tests -too many database tests
 EnvironmentVarnotfoundException --> EnvVarNotFoundException
 remove _addb from database.
 avoid using current_emproject in general in tests
+loggin excpetions
