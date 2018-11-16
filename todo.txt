@@ -1,42 +1,7 @@
-#test_config_calls_ccadmin_if_config_does_not_exit
-#test_config_throws_exception_if_ccadmin_config_fails
-test_config_returns_no_ccadmin_calls_if_config_exist
-test_config_with_no_args_returns_default_config
-test_config_with_no_args_throws_exc_when_no_default_defined
-
-
-addb.fetch.v__by_name.format("inlineSearch")--> return a verb row
-addb.fetch.v_names__by_entity_id.format("inlineSearch")--> return a list of verb names
-
-test_fetch_verbs_by_name_returns_table
-	#define query file
-	#parse query file to dict
-	#create fetch class as AttrDict
-	#override fetch __getatr__ to query db
-
-test _addb
-	test_list_query_runs_list_in_db
-	test_list_query_when_query_does_not_exist
-
-sqltask has a current_em_project, 
-sqltask has a ad_query_runner helper which can be use to make queries to the database.
-Queries are configurable and stored in file
-sqltask has configuration settings for each em_project. 
-The configuration settings path should be easy to change.
-When sqltask start checks configuration is setup.
-sqltask handles configuration file not exist or configuration settings not set.
-
 sqltask bootstrap will create the base configuration settings
 
-#move EMDatabase to sql_gen.database
-#move query runner to sql_gen.database
-#test emproject without em_core_home set
 #Approaches to python configuration (Resolve properties within properties)
 Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
 #refactor queries.py
-tidy up tests -too many database tests
-#EnvironmentVarnotfoundException --> EnvVarNotFoundException
-#remove _addb from database.
-avoid using current_emproject in general in tests
-#loggin excpetions
 sqltask uses current project (it should be comeing from the project)
+project_home should be instantiate only once at a top level

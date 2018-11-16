@@ -7,7 +7,7 @@ class ConfigFileNotFoundException(Exception):
 class EnvVarNotFoundException(Exception):
     """Raised when an expect environment variable is not set"""
     def __init__(self,env_name, help_text):
-        super().__init__("'"+env_name +"' is not set within environment variables. This var "+ help_text)
+        super().__init__("'"+env_name +"' is not set within environment variables. "+ help_text)
 
 class InvalidEnvVarException(Exception):
     """Raised when a envrionment variable is set but to a wrong value"""

@@ -13,7 +13,7 @@
 					           | default(old_pd['TYPE']) %}
 
  {% set suggested_ext_path =      prj_prefix()+old_pd['REPOSITORY_PATH'] %}
- {% set repository_path =         tmp_pd_repo_path | description('repository_path')
+ {% set repository_path =         tmp_pd_repo_path | codepath()
 						   | default (suggested_ext_path) %}
 
  {% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}

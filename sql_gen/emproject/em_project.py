@@ -51,12 +51,13 @@ PATHS={"ccadmin"     : "bin",
        "repo_modules": "repository/default"
        }
 def get_prj_home():
+    help_text="It should contain the path of your current EM project."
     try:
         result = os.environ['EM_CORE_HOME']
     except Exception:
-        raise EnvVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+        raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
     if not result:
-        raise EnvVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+        raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
     relative_path =RelativePath(result,PATHS)
     try:
         relative_path.check()
@@ -122,11 +123,6 @@ class EMProject(object):
         except CCAdminException as info:
             error_msg ="Something went wrong while running ccadmin command:\n  "+str(info)
             raise ConfigException(error_msg)
-    def product_prj(self):
-        return EMProject(self.prop_val('product.home'))
-
-    def prop_val(self,prop_name):
-        return self.config()[prop_name]
 
     def prefix(self):
         custom_repo_modules = self._get_repo_custom_modules()
@@ -153,9 +149,8 @@ class EMProject(object):
                 result.append(module)
         return result
 
-    def repo_modules_path(self):
-        full_path= self.root +",repository,default"
-        return to_path(full_path)
+    def product_prj(self):
+        return EMProject(self.config()['product.home'])
 
     def _get_repo_modules(self):
         repo_modules_path= self.paths['repo_modules']

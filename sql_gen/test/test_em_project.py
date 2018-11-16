@@ -14,7 +14,6 @@ def test_em_core_env_var_not_set():
     try:
         with pytest.raises(EnvVarNotFoundException) as excinfo:
            project = EMProject()
-        assert "'EM_CORE_HOME' is not set within environment variables. This var contains the path of you current EM project."==str(excinfo.value)
     finally:
         os.environ.clear()
         os.environ.update(_environ)
@@ -24,7 +23,6 @@ def test_em_core_env_var_set_to_blank():
         assert "" == os.environ["EM_CORE_HOME"]
         with pytest.raises(EnvVarNotFoundException) as excinfo:
             project = EMProject()
-        assert "'EM_CORE_HOME' is not set within environment variables. This var contains the path of you current EM project."==str(excinfo.value)
 
 def test_em_core_env_var_set_to_a_not_em_project():
     with patch.dict('os.environ', {'EM_CORE_HOME': '/opt'}):
@@ -130,6 +128,15 @@ def test_config_with_no_args_throws_exc_when_no_default_defined(fs):
         em_project.config()
 
     assert "Try to retrieve configuration but not config_id was specified. You can specify the config by either passing a config_id or by setting a default config_id (environment.name, machine.name and container.name)"
+
+def test_product_prj(fs):
+    config_id = EMConfigID("localdev","localhost","ad")
+    em_project  = FakeEMProjectBuilder(fs)\
+                    .add_config(local_config_id,"product.home=my_product/is/here")\
+                    .build()
+
+    em_project.set_default_config_id(config_id)
+    assert "my_product/is/here" == em_project.product_prj().root
 
 @pytest.mark.skip
 def test_emautomation_config_throws_exception_if_file_not_there(fs):

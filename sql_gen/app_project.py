@@ -30,9 +30,14 @@ class AppProject(object):
                                                                self.addb)
         return self._ad_query_runner
 
+    def em_config(self): 
+        if not self.emproject.default_config_id:
+            self.emproject.set_default_config_id(self._emconfig_id())
+        return self.emproject.config()
+
     @property
     def addb(self):
-        emconfig = self.emproject.config(self._emconfig_id())
+        emconfig = self.em_config()
         host = emconfig['database.host']
         username = emconfig['database.admin.user']
         password = emconfig['database.admin.pass']
