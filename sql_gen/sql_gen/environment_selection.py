@@ -69,7 +69,8 @@ class TemplateSelector():
         template_name = option.name
         try:
             env.loader.get_source(env,template_name)
-        except Exception:
+        except Exception as excinfo:
+            logger.error(str(excinfo))
             print ("This template does not exist. Make sure there is a matching template under the configured templates folder")
             return None
 

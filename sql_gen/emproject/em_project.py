@@ -50,8 +50,7 @@ PATHS={"ccadmin"     : "bin",
        "config"      : "work/config/show-config-txt",
        "repo_modules": "repository/default"
        }
-
-def emproject_home():
+def get_prj_home():
     try:
         result = os.environ['EM_CORE_HOME']
     except Exception:
@@ -64,6 +63,13 @@ def emproject_home():
     except InvalidFileSystemPathException as excinfo:
         raise InvalidEnvVarException("Are you sure 'EM_CORE_HOME' points to a valid EM installation? "+ str(excinfo))
     return result
+
+def emproject_home():
+    try:
+        return get_prj_home()
+    except Exception as excinfo:
+        logger.error(str(excinfo))
+        raise excinfo
 
 
 class EMProject(object):
