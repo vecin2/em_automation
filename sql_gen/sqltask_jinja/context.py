@@ -1,9 +1,12 @@
-from sql_gen.queries.queries import Keynames,EntityDefinition,ProcessDescriptor
 from sql_gen import app
 
 
+class Keynames(object):
+    def __getitem__(self,name):
+        return self.list(name)
+    def list(self,keyset):
+        return app.addb.list("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"'")
+
 initial_context={'_keynames':Keynames(),
-                  '_ed'      :EntityDefinition(),
-                  '_pd'      :ProcessDescriptor(),
                   '_addb'    :app.ad_queryrunner
                  }

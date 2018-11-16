@@ -17,7 +17,7 @@ test_fetch_verbs_by_name_returns_table
 test _addb
 	test_list_query_runs_list_in_db
 	test_list_query_when_query_does_not_exist
-	
+
 sqltask has a current_em_project, 
 sqltask has a ad_query_runner helper which can be use to make queries to the database.
 Queries are configurable and stored in file
@@ -30,10 +30,10 @@ sqltask bootstrap will create the base configuration settings
 
 #move EMDatabase to sql_gen.database
 #move query runner to sql_gen.database
-test emproject without em_core_home set
-Approaches to python configuration (Resolve properties within properties)
+#test emproject without em_core_home set
+#Approaches to python configuration (Resolve properties within properties)
 Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
-refactor queries.py
+#refactor queries.py
 tidy up tests -too many database tests
 EnvironmentVarnotfoundException --> EnvVarNotFoundException
 remove _addb from database.

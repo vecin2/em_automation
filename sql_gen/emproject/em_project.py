@@ -1,7 +1,7 @@
 import os
 from sql_gen.logger import logger
 from sql_gen.config import ConfigFile
-from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvironmentVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
+from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
 from sql_gen.utils.filesystem import RelativePath
 
 class CCAdmin(object):
@@ -55,9 +55,9 @@ def emproject_home():
     try:
         result = os.environ['EM_CORE_HOME']
     except Exception:
-        raise EnvironmentVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+        raise EnvVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
     if not result:
-        raise EnvironmentVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
+        raise EnvVarNotFoundException("EM_CORE_HOME","contains the path of you current EM project.")
     relative_path =RelativePath(result,PATHS)
     try:
         relative_path.check()

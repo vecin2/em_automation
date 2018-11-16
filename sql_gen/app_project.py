@@ -27,11 +27,11 @@ class AppProject(object):
         if not self._ad_query_runner:
             queries_path=self.paths["ad_queries"]
             self._ad_query_runner = QueryRunner.make_from_file(queries_path,
-                                                               self.ad_db)
+                                                               self.addb)
         return self._ad_query_runner
 
     @property
-    def ad_db(self):
+    def addb(self):
         emconfig = self.emproject.config(self._emconfig_id())
         host = emconfig['database.host']
         username = emconfig['database.admin.user']

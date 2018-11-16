@@ -1,7 +1,6 @@
 from sql_gen.current_project import app
 import pymssql
 import sys
-from sql_gen.queries.queries import Keynames
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit import prompt
 

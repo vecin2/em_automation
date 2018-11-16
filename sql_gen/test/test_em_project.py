@@ -1,7 +1,7 @@
 import pytest
 import os
 from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.exceptions import ConfigFileNotFoundException,EnvironmentVarNotFoundException,ConfigException,InvalidEnvVarException
+from sql_gen.exceptions import ConfigFileNotFoundException,EnvVarNotFoundException,ConfigException,InvalidEnvVarException
 from sql_gen.test.utils.emproject_test_util import FakeCCAdminClient,FakeEMProjectBuilder
 from unittest.mock import patch
 def prj_builder(fs, root='/home/em'):
@@ -12,7 +12,7 @@ def test_em_core_env_var_not_set():
     _environ = dict(os.environ)  # or os.environ.copy()
     os.environ.clear()
     try:
-        with pytest.raises(EnvironmentVarNotFoundException) as excinfo:
+        with pytest.raises(EnvVarNotFoundException) as excinfo:
            project = EMProject()
         assert "'EM_CORE_HOME' is not set within environment variables. This var contains the path of you current EM project."==str(excinfo.value)
     finally:
@@ -22,7 +22,7 @@ def test_em_core_env_var_not_set():
 def test_em_core_env_var_set_to_blank():
     with patch.dict('os.environ', {'EM_CORE_HOME': ''}):
         assert "" == os.environ["EM_CORE_HOME"]
-        with pytest.raises(EnvironmentVarNotFoundException) as excinfo:
+        with pytest.raises(EnvVarNotFoundException) as excinfo:
             project = EMProject()
         assert "'EM_CORE_HOME' is not set within environment variables. This var contains the path of you current EM project."==str(excinfo.value)
 
