@@ -20,7 +20,7 @@ def test_resolve_var_passed():
     assert "John" == context.resolve("name")
 
 def test_wrong_design_template_throw_exception():
-    #we are  writting a template as if name would be an object and present 
+    #we are  writting a template as if name would be an object and present
     #in the context already, but that should fail
     template = Template("hola {{name.value}}")
     context = TemplateContext(template)
@@ -30,7 +30,7 @@ def test_wrong_design_template_throw_exception():
     assert "'name' is undefined" == str(exc_info.value)
 
 def test_resolve_should_not_exc_if_error_occurs_after_var_is_resolve():
-    text ="{%set greeting= 'hello'%} {{greeting }}{{name.capitalize()}}" 
+    text ="{%set greeting= 'hello'%} {{greeting }}{{name.capitalize()}}"
     env = Environment()
     template = Template(text)
     context = TemplateContext(template)
