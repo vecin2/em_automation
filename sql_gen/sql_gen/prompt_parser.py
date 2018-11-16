@@ -84,7 +84,7 @@ class PromptVisitor(NodeVisitor):
 
     def __get_filter_definition(self,jinja2_filter):
         filter_name=jinja2_filter.name
-        return getattr(importlib.import_module("sql_gen.filters."+filter_name), filter_name.capitalize()+"Filter") 
+        return getattr(importlib.import_module("sql_gen.sqltask_jinja.filters."+filter_name), filter_name.capitalize()+"Filter") 
 
     def visit_Name(self,node,template_values={}):
         #Create a prompt for Name nodes which are in part of the undeclare vars

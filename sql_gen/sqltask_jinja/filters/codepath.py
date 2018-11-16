@@ -1,4 +1,4 @@
-from sql_gen.filters import PromptFilter
+from sql_gen.sqltask_jinja.filters import PromptFilter
 from sql_gen.sql_gen.completer import PathCompleter
 from sql_gen.current_project import app
 import os

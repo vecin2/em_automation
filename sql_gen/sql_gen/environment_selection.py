@@ -1,7 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.ui.cli_ui_util import input_with_validation
-import sql_gen.globals as template_globals
-import sql_gen.filters as template_filters
+import sql_gen.sqltask_jinja.globals as template_globals
+import sql_gen.sqltask_jinja.filters as template_filters
 import os,sys
 import inspect
 import pkgutil

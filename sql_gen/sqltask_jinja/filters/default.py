@@ -1,4 +1,4 @@
-from sql_gen.filters import PromptFilter
+from sql_gen.sqltask_jinja.filters import PromptFilter
 
 class DefaultFilter(PromptFilter):
     def __init__(self, jinja_filter):
