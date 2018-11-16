@@ -1,38 +1,31 @@
+import ast
+class FakeDBConnectionFactory(object):
+    def __init__(self,results):
+        self.results=results
+
+    def make_conn(self,*args,**kwargs):
+        return  FakeDBConnection(self.results)
 
 class FakeDBConnection(object):
-    def __init__(self,*args,**kwargs):
-        self.args = args
-        self.kwargs =kwargs
+    def __init__(self,results):
+        self.results = results 
 
     def cursor(self):
-        return FakeCursor()
-
-    def commit(self):
-        return 
+        return FakeCursor(self.results)
 
 class FakeCursor(object):
     """mimics cursor behaviour"""
-    def __init__(self):
-        self.last_rows_fetched=None
-        self.description=None
+    def __init__(self,results):
+        self.results = results
+        headers = self.results.pop(0)
+        self.description =[[name] for name in headers]
 
     def execute(self,string):
-        """mimics execute behaviour"""
-        self.last_rows_fetched =("12","inlineCreate")
-        self.description=["ID","NAME"]
+        pass
 
     def __iter__(self):
-        return self.last_rows_fetched.__iter__()
+        return self.results.__iter__()
 
     def next(self):
-        return self.last_rows_fetched.next()
+        return self.results.next()
 
-class FakeDBConnectionFactory(object):
-    def __init__(self):
-        self.args = None
-        self.kwargs =None
-
-    def make_conn(self,*args,**kwargs):
-        self.args=args
-        self.kwargs =kwargs
-        return FakeDBConnection(*args,**kwargs)

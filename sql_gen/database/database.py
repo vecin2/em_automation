@@ -62,7 +62,7 @@ class EMDatabase(object):
         self.dbtype =dbtype
         self.conn_factory = conn_factory
         self.queries_cache ={}
-        self.__conn =None
+        self._connection =None
 
     def set_conn_factory(self, dbdriver_factory):
         self.conn_factory =dbdriver_factory
@@ -107,11 +107,13 @@ class EMDatabase(object):
         return result
 
     def _conn(self):
-        return self.conn_factory.make_conn(self.host,
+        if not self._connection:
+            self._connection = self.conn_factory.make_conn(self.host,
                                        self.username,
                                        self.password,
                                        self.database,
                                        self.port,
                                        self.dbtype)
+        return self._connection
 
         return self.__conn
