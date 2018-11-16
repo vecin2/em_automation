@@ -1,14 +1,14 @@
 import ast
-class FakeDBConnectionFactory(object):
-    def __init__(self,results):
-        self.results=results
 
-    def make_conn(self,*args,**kwargs):
-        return  FakeDBConnection(self.results)
-
-class FakeDBConnection(object):
+class FakeDBConnector(object):
     def __init__(self,results):
-        self.results = results 
+        self.results = results
+    @staticmethod
+    def make(self,results):
+        return FakeDBConnector(results)
+
+    def connect(self):
+        return self
 
     def cursor(self):
         return FakeCursor(self.results)

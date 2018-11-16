@@ -1,7 +1,6 @@
 import pymssql
 import cx_Oracle
 from sql_gen.logger import logger
-from sql_gen.exceptions import DBConnectionException
 import time
 
 class SQLRow(dict):
@@ -13,26 +12,34 @@ class SQLRow(dict):
             return "NULL"
         return dict.__getitem__(self,key)
 
-class ConnFactory(object):
-    """It acts a wrapper of several connection libraries. This allows to use different types of DBs, e.g. sqlserver or oracle."""
-    def make_conn(self,
+class Connector(object):
+    """It acts a wrapper of several connector libraries. This allows to use different types of DBs, e.g. sqlserver or oracle."""
+    def __init__(self,
                  server=None,
                  user=None,
                  password=None,
                  database=None,
                  port=None,
                  dbtype=None):
-        if dbtype == "sqlserver":
-            return pymssql.connect(server,
-                                    user,
-                                    password,
-                                    database,
-                                    port=port)
-        elif dbtype =="oracle":
-            dsn_tns = cx_Oracle.makedsn(server,port,database)
-            return cx_Oracle.connect(user,password,dsn_tns)
+        self.server=server
+        self.user =user
+        self.password = password
+        self.database = database
+        self.port = port
+        self.dbtype =dbtype
+
+    def connect(self):
+        if self.dbtype == "sqlserver":
+            return pymssql.connect(self.server,
+                                    self.user,
+                                    self.password,
+                                    self.database,
+                                    port=self.port)
+        elif self.dbtype =="oracle":
+            dsn_tns = cx_Oracle.makedsn(self.server,self.port,self.database)
+            return cx_Oracle.connect(self.user,self.password,dsn_tns)
         else:
-            raise ValueError(self._get_conn_error_msg(dbtype))
+            raise ValueError(self._get_conn_error_msg(self.dbtype))
 
     def _get_conn_error_msg(self,dbtype):
         help_msg="Please make sure you configure a valid database type (sqlserver, oracle)"
@@ -44,37 +51,22 @@ class ConnFactory(object):
 
 
 class EMDatabase(object):
-    ad_singleton = None
-
-    def __init__(self,
-                 server=None,
-                 user=None,
-                 password=None,
-                 database=None,
-                 port=None,
-                 dbtype=None,
-                 conn_factory=ConnFactory()):
-        self.host = server
-        self.username = user
-        self.password = password
-        self.database = database
-        self.port =port
-        self.dbtype =dbtype
-        self.conn_factory = conn_factory
+    def __init__(self,connector):
+        self.connector = connector
+        self._connection=None
         self.queries_cache ={}
-        self._connection =None
-
-    def set_conn_factory(self, dbdriver_factory):
-        self.conn_factory =dbdriver_factory
 
     def list(self,query):
         logger.debug("Running list of query")
         table = self.query(query)
-        if not table:
+        if not table: #if query return no results
             return table
+        else:
+            return self._first_column(table)
+
+    def _first_column(self,table):
         first_column_name = next(iter(table[0]))
         result = [row[first_column_name] for row in table]
-        logger.debug("Returning column:"+first_column_name)
         return result
 
     def find(self,query):
@@ -101,19 +93,13 @@ class EMDatabase(object):
         logger.debug("Query tooked "+ query_time)
         return cursor
 
+    def _conn(self):
+        if not self._connection:
+            self._connection = self.connector.connect()
+        return self._connection
+
     def _extract_rowlist(self,cursor):
         columns = [i[0] for i in cursor.description]
         result = [SQLRow(zip(columns, row)) for row in cursor]
         return result
 
-    def _conn(self):
-        if not self._connection:
-            self._connection = self.conn_factory.make_conn(self.host,
-                                       self.username,
-                                       self.password,
-                                       self.database,
-                                       self.port,
-                                       self.dbtype)
-        return self._connection
-
-        return self.__conn

@@ -1,6 +1,6 @@
 from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID
-from sql_gen.database import QueryRunner
+from sql_gen.database import QueryRunner,Connector
 from sql_gen.config import ConfigFile
 from sql_gen.utils.filesystem import RelativePath
 import sys
@@ -39,12 +39,13 @@ class AppProject(object):
         database = emconfig['database.logical-schema']
         port = emconfig['database.port']
         dbtype = self.config['database.type']
-        return EMDatabase(host,
-                          username,
-                          password,
-                          database,
-                          port,
-                          dbtype)
+        connector = Connector(host,
+                                username,
+                                password,
+                                database,
+                                port,
+                                dbtype)
+        return EMDatabase(connector)
     @property
     def config(self):
         if not self._config_file:
