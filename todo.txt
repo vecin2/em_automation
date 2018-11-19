@@ -14,3 +14,5 @@ Documentation
 #55 handle invalid templates path
 #52 SVN rev number offset
 #Config log level
+fix do same script twice does not popup all prompts
+refactor cli-util-to-use-prompter

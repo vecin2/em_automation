@@ -2,6 +2,7 @@ from sql_gen.database import EMDatabase
 from sql_gen.test.utils.db_utils import FakeDBConnector
 import pytest
 
+
 def test_find_throws_exception_if_more_than_one_found():
     fake_cursor =[("ID", "NAME"),
              (1,"inlineCreate"),

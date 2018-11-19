@@ -1,5 +1,6 @@
 import pymssql
 import cx_Oracle
+from sql_gen.exceptions import DatabaseError
 from sql_gen.logger import logger
 import time
 
@@ -29,6 +30,17 @@ class Connector(object):
         self.dbtype =dbtype
 
     def connect(self):
+        try:
+            cursor = self.do_connect()
+        except Exception as excinfo:
+            logger.exception(excinfo)
+            raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.admin.user="+self.user+"\nReason was: "+str(excinfo)+". For the full exception trace check the logs.")
+        if not cursor:
+            raise ValueError(self._get_conn_error_msg(self.dbtype))
+        else:
+            return cursor
+
+    def do_connect(self):
         if self.dbtype == "sqlServer":
             return pymssql.connect(self.server,
                                     self.user,
@@ -39,7 +51,7 @@ class Connector(object):
             dsn_tns = cx_Oracle.makedsn(self.server,self.port,self.database)
             return cx_Oracle.connect(self.user,self.password,dsn_tns)
         else:
-            raise ValueError(self._get_conn_error_msg(self.dbtype))
+            return None
 
     def _get_conn_error_msg(self,dbtype):
         help_msg="Please make sure you configure a valid database type (sqlserver, oracle)"

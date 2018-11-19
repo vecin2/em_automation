@@ -2,16 +2,25 @@ from sql_gen.sql_gen.template_renderer import TemplateRenderer
 from sql_gen.sql_gen.environment_selection import TemplateSelector
 import argparse
 from sql_gen.emproject import SQLTask
-from sql_gen.ui.cli_ui_util import do_not_print_stack_trace_on_ctrl_c
 from sql_gen.logger import logger
-do_not_print_stack_trace_on_ctrl_c()
 import sys
 from sql_gen.sqltask_jinja import initial_context
 
 
 ##main
 def run_app():
- # construct the argument parse and parse the arguments
+    try:
+        do_run_app()
+    except KeyboardInterrupt as excinfo:
+        logger.exception(excinfo)
+        print( '\n KeyboardInterrupt exception')
+    except Exception as excinfo:
+        logger.exception(excinfo)
+        print(excinfo)
+
+def do_run_app():
+
+# construct the argument parse and parse the arguments
     args = parse_args();
     logger.info("Starting sqltask")
     logger.info("Arguments passed: "+str(sys.argv))
@@ -33,10 +42,10 @@ def run_app():
 
     rendered_text=""
     template_renderer = TemplateRenderer()
-    current_parsed_template = template_renderer.run(initial_context)
+    current_parsed_template = template_renderer.run(dict(initial_context))
     rendered_text +=current_parsed_template+"\n\n"
     while current_parsed_template is not "":
-        current_parsed_template = template_renderer.run(initial_context)
+        current_parsed_template = template_renderer.run(dict(initial_context))
         rendered_text +=current_parsed_template+"\n\n"
     logger.debug("No more sql task to run")
     if sql_task:

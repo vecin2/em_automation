@@ -29,7 +29,6 @@ class PromptParser(object):
         return self.env.parse(template_source_text)
 
     def next_prompt(self,template_values={}):
-        #eval_context =prepare_eval_context(self.template,template_values)
         context =TemplateContext(self.template,template_values)
         return self.prompt_visitor.next_prompt(context)
 
