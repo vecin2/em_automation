@@ -315,3 +315,13 @@ It takes the prompt text and it changes it accordingly to what it should be disp
 func :: <strong>get_template_filter</strong>()<br>
 It returns the function which implements the jinja filter.</p>
 
+# Database Connection
+The following EM  properties are read to connect to the database:
+database.type=sqlServer # Possible values 
+-database.admin.user
+-database.admin.pass
+-database.host
+-database.port
+-database.name
+Please notice that 'database.name' is not really required by EM when connecting to a sqlServer database. However it will need to be setup for this app to work.
+

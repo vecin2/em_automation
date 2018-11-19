@@ -41,9 +41,9 @@ class AppProject(object):
         host = emconfig['database.host']
         username = emconfig['database.admin.user']
         password = emconfig['database.admin.pass']
-        database = emconfig['database.logical-schema']
+        database = emconfig['database.name']
         port = emconfig['database.port']
-        dbtype = self.config['database.type']
+        dbtype = emconfig['database.type']
         connector = Connector(host,
                                 username,
                                 password,

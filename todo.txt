@@ -6,7 +6,7 @@ sqltask uses current project (it should be comeing from the project)
 	project_home should be instantiate only once at a top level
 #Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
 #Handling wrong query name
-move from double __ to _
+#move from double __ to _
 Documentation
 	Manually delete config to recreate
 	Queries

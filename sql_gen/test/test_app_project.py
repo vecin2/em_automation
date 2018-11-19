@@ -43,7 +43,8 @@ database.admin.user=sa
 database.admin.pass=admin
 database.host=localhost
 database.port=1433
-database.logical-schema=ootb_15_1_fp2
+database.name=ootb_15_1_fp2
+database.type=sqlServer
 """
     em_project_home="/home/em/my_prj"
     config_id = EMConfigID("localdev","localhost","ad")
@@ -54,7 +55,6 @@ database.logical-schema=ootb_15_1_fp2
 environment.name=localdev
 machine.name=localhost
 container.name=ad
-database.type=sqlserver
 """
     queries_content="""
 v_names__by_ed=SELECT * FROM verb_name WHERE NAME='{}'"""

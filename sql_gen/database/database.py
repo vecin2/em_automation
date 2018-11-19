@@ -29,7 +29,7 @@ class Connector(object):
         self.dbtype =dbtype
 
     def connect(self):
-        if self.dbtype == "sqlserver":
+        if self.dbtype == "sqlServer":
             return pymssql.connect(self.server,
                                     self.user,
                                     self.password,

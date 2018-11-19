@@ -47,7 +47,7 @@ class EMConfigID(object):
         self.container_name = container_name
 
 PATHS={"ccadmin"     : "bin",
-       "config"      : "work/config/show-config-txt",
+       "config"      : "work/config",
        "repo_modules": "repository/default"
        }
 def get_prj_home():
@@ -97,7 +97,7 @@ class EMProject(object):
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)
-        result = os.path.join(self.paths['config'],file_name)
+        result = os.path.join(self.paths['config'],"show-config-txt",file_name)
         logger.info("Returning  em config path: "+ result)
         return result
 

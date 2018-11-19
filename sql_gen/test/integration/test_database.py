@@ -13,7 +13,7 @@ sqlserver_conn=Connector(sqlserver_host,
                   sqlserver_password,
                   sqlserver_database,
                   sqlserver_port,
-                  "sqlserver")
+                  "sqlServer")
 sqlserver_db = EMDatabase(sqlserver_conn)
 
 oracle_host ="oracle"
