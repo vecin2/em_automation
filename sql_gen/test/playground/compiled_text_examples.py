@@ -2,15 +2,18 @@ from sql_gen.test.utils.draw_trees import TreeDrawer
 from jinja2 import  Environment,Template
 from jinja2.compiler import generate
 from jinja2.utils import concat
+from sql_gen.sql_gen.environment_selection import  EMTemplatesEnv
 
 text ='''
-{% set martin_name = "Juan"%}
-martin is {{name | default(martin_name)}}
-lastt name is {{last_name | default("nothing")}}
+ {% set tmp_pd_type = process_descriptor_type      | description('type_id (0=regular process, 2=action, 3=sla)')
+					           | default("hesus") %}
+{% set suggested_ext_path ="suggestion" %}
+ {% set repository_path =         tmp_repo_path | codepath()
+						   | default (suggested_ext_path) %}
 '''
-text="{%set greeting =  'hello'%} {{name}}"
-
-t = Template(text)
+env = EMTemplatesEnv().get_env()
+t =env.from_string(text)
+#t = Template(text)
 print("***printing template rendered****")
 print(t.render({}))
 

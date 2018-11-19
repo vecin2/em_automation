@@ -1,20 +1,21 @@
 {# Compute variables for add_process_descriptor#}
  {# Compute current pd #}
 	{% set entity_ids = _keynames.ED %}
-	{% set verb_names= _addb.list.v_names__by_ed(entity_def_id | suggest(entity_ids)) %}
+	{% set verb_names= _addb.list.v_names_by_ed(entity_def_id | suggest(entity_ids)) %}
 	{% set verb_name_tmp = verb_name | suggest(verb_names) %}
-	{% set old_pd = _addb.find.pd__by_ed_n_vnam(entity_def_id) %}
+	{% set old_pd = _addb.find.pd_by_ed_n_vname(entity_def_id,verb_name) %}
 
  {# Request add_process_desc_variables using old pd #}
- {% set tmp_pd_config = 	  config_id        | description("config_id, default fetched from current value")
+ {% set config_id = 	  tmp_pd_config        	   | description("config_id, default fetched from current value")
 			  	  	           | default(old_pd['CONFIG_ID']) %}
 
- {% set tmp_pd_type = process_descriptor_type      | description('type_id (0=regular process, 2=action, 3=sla)')
+ {% set process_descriptor_type = tmp_pd_type      | description('type_id (0=regular process, 2=action, 3=sla)')
 					           | default(old_pd['TYPE']) %}
 
  {% set suggested_ext_path =      prj_prefix()+old_pd['REPOSITORY_PATH'] %}
- {% set repository_path =         tmp_pd_repo_path | codepath()
-						   | default (suggested_ext_path) %}
+ {% set repository_path=          tmp_repo_path | description("repository_path")
+					        | codepath()
+					        | default (suggested_ext_path) %}
 
  {% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
 
