@@ -16,3 +16,5 @@ class InvalidFileSystemPathException(Exception):
 class ConfigException(Exception):
     """This exception is raised when unable to configure EM, usually because ccadmin run failed
     """
+class IllegalArgumentError(ValueError):
+    """When invoking a method with the wrong number of arguments"""

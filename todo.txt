@@ -1,7 +1,16 @@
 sqltask bootstrap will create the base configuration settings
 
 #Approaches to python configuration (Resolve properties within properties)
-Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
 #refactor queries.py
 sqltask uses current project (it should be comeing from the project)
-project_home should be instantiate only once at a top level
+	project_home should be instantiate only once at a top level
+#Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
+Handling wrong query name
+move from double __ to _
+Documentation
+	Manually delete config to recreate
+	Queries
+#No db conexion scenario
+#55 handle invalid templates path
+#52 SVN rev number offset
+#Config log level
