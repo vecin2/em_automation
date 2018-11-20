@@ -13,11 +13,12 @@ class Clipboard():
 
 class SQLTask(object):
     task_path=""
-    def __init__(self, root=current_emproject.root,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester()):
+    def __init__(self, root=current_emproject.root,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester(),config=None):
         self.root=root
         self.input_requester = input_requester
         self.svnclient =svnclient
         self.listener = listener
+        self.config =config
 
     def with_path(self, task_path):
         #strip as well "/" as we could run in windows within GitBash or CygWin
@@ -49,10 +50,18 @@ class SQLTask(object):
         f.close()
     def __update_sequence_content(self):
         print("Computing update sequence no...")
-        update_sequence_no =self.svnclient.revision_number()+1
+        update_sequence_no =self.get_seq_no()
         print("Update sequence number set to: " +str(update_sequence_no))
 
         return "PROJECT $Revision: "+str(update_sequence_no)+" $"
+
+    def get_seq_no(self):
+        if "svn.rev.no.offset" not in self.config:
+            offset =0
+        else:
+            offset =int(self.config["svn.rev.no.offset"])
+
+        return self.svnclient.revision_number()+offset+1
 
     def fs_location(self):
         return os.path.join(self.root, self.task_path)

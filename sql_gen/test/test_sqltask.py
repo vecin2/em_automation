@@ -31,8 +31,9 @@ class FakeSQLTaskListener(object):
 
 def make_testable_sqltask(root,svnclient=FakeEMSvn("3"),\
                           listener=FakeSQLTaskListener(),\
-                          input_requester=InputRequester()):
-    return SQLTask(root,svnclient,listener,input_requester)
+                          input_requester=InputRequester(),
+                          config=None):
+    return SQLTask(root,svnclient,listener,input_requester,config=config)
 
 def test_split():
     assert "home" == "/home".strip("/")
@@ -59,9 +60,11 @@ def test_set_path_apprends_to_root_even_if_starts_with_forward_slash(fs):
 def test_write_creates_table_data_and_update_sequence_file_and_notifies_listener(fs):
     fake_listener = FakeSQLTaskListener()
     fake_svnclient = FakeEMSvn("3")
+    fake_config={"svn.rev.no.offset":"0"}
     sql_task = make_testable_sqltask("/em/home",\
                                     fake_svnclient,\
-                                    fake_listener)
+                                    fake_listener,
+                                    config=fake_config)
     sql_task.with_table_data("some data").with_path("modules/A")
 
     sql_task.write()
@@ -72,6 +75,24 @@ def test_write_creates_table_data_and_update_sequence_file_and_notifies_listener
     assert_file_exist("/em/home/modules/A/update.sequence",\
                       "PROJECT $Revision: 4 $")
     assert fake_listener.invoked_on_write
+
+def test_offset_svn_adds_offset_to_rev_no():
+    fake_listener = FakeSQLTaskListener()
+    fake_svnclient = FakeEMSvn("3")
+    fake_config={"svn.rev.no.offset":"100"}
+    sql_task = make_testable_sqltask("/em/home",
+                                     svnclient=fake_svnclient,
+                                     config=fake_config)
+    assert 104 ==sql_task.get_seq_no()
+
+def test_offset_0_when_property_not_set():
+    fake_listener = FakeSQLTaskListener()
+    fake_svnclient = FakeEMSvn("3")
+    fake_config={"svn.rev.no.offset":"100"}
+    sql_task = make_testable_sqltask("/em/home",
+                                     svnclient=fake_svnclient,
+                                     config={})
+    assert 4 ==sql_task.get_seq_no()
 
 def test_set_path_asks_to_override_if_path_already_exists(fs):
     fs.create_file("/em/home/my_module/table_data.sql")

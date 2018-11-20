@@ -29,6 +29,6 @@ class EMSvn(object):
             info = self.remote_client().info()
             return info['entry_revision']
         except Exception as excinfo:
-            logger.error(str(excinfo))
-            print("Unable to access svn repository to compute revision number")
+            logger.exception(excinfo)
+            print("Unable to access svn repository to compute revision number: "+str(excinfo))
             return -1

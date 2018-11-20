@@ -47,7 +47,7 @@ def test_unable_to_connect_to_db_throws_exception():
     with pytest.raises(DatabaseError) as excinfo:
         conn.connect()
 
-    error_msg= "Unable to connect to Database with params:\n  database.name="+database+"\n  database.port="+str(port)+"\n  database.admin.user="+username
+    error_msg= "Unable to connect to database with params"
     assert error_msg in str(excinfo.value)
 
 def test_connect_with_unknown_dbtype_throws_value_error():

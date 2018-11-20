@@ -22,6 +22,9 @@ class ConfigFile(object):
             raise ConfigFileNotFoundException("Config file '"+full_path+"' does not exist")
         return myprops
 
+    def __contains__(self, item):
+        return item in self.properties
+
     def __getitem__(self,name):
         return self.properties[name]
 

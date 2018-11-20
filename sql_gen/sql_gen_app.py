@@ -3,6 +3,7 @@ from sql_gen.sql_gen.environment_selection import TemplateSelector
 import argparse
 from sql_gen.emproject import SQLTask
 from sql_gen.logger import logger
+from sql_gen import app
 import sys
 from sql_gen.sqltask_jinja import initial_context
 
@@ -29,7 +30,7 @@ def do_run_app():
     sql_task = None
     if sql_task_path:
         try:
-            sql_task = SQLTask()
+            sql_task = SQLTask(config=app.config)
             sql_task.with_path(sql_task_path)
         except AttributeError as e:
             logger.error(str(e))
