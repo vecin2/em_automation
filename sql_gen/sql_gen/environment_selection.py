@@ -16,58 +16,72 @@ class TemplateOption(object):
         #we want to remove so template can still be loaded by name
         self.id =id
         self.name =template_path.replace(self.MENU_FOLDER,'').replace(self.WINDOWS_LINK,'')
+    def __repr__(self):
+        return str(self.id) +" "+self.name
 
 def list_menu_templates(template_name):
     if TemplateOption.MENU_FOLDER in template_name:
         return True
     return False
+class MenuDisplayer(object):
+    def display(self, items):
+        for template_option in items:
+            print(str(template_option.id) + ". " +template_option.name)
+        no_of_options=str(len(items)-1)
+        print("\n[0 to "+no_of_options+"]. Create SQLTask\t\tx. Exit")
+
 class TemplateSelector():
+    def __init__(self,env_vars=os.environ,displayer=MenuDisplayer()):
+        self.env_vars=env_vars
+        self.displayer = displayer
+        self.env =None
 
     def select_template(self):
-        logger.debug("Entering select_template")
-        env = EMTemplatesEnv().get_env()
-        template_list = env.list_templates(None,list_menu_templates)
-        logger.debug("List templated returned "+ str(len(template_list))+" templates")
-        self.create_options(template_list)
-        logger.debug("Option list created with "+str(len(self.template_option_list))+" options")
         self.show_options()
-        return self.prompt_to_select_template(env)
+        return self.prompt_to_select_template()
+
+    def get_env(self):
+        if not self.env:
+            self.env= EMTemplatesEnv().get_env(self.env_vars)
+        return self.env
 
     def create_options(self, template_list):
         self.template_option_list=[]
         for counter, template_path in enumerate(template_list):
             template_option =TemplateOption(counter, template_path)
             self.template_option_list.append(template_option)
+        logger.debug("Option list created with "+str(len(self.template_option_list))+" options")
         return self.template_option_list
 
     def show_options(self):
-        for template_option in self.template_option_list:
-            print(str(template_option.id) + ". " +template_option.name)
-        no_of_options=str(len(self.template_option_list)-1)
-        print("\n[0 to "+no_of_options+"]. Create SQLTask\t\tx. Exit")
+        template_list = self.get_env().list_templates(None,list_menu_templates)
+        logger.debug("List templated returned "+ str(len(template_list))+" templates")
+        self.create_options(template_list)
+        self.displayer.display(self.template_option_list)
 
-    def prompt_to_select_template(self,env):
+    def prompt_to_select_template(self):
         option_key = input_with_validation("\nEnter option: ")
         if option_key =="x":
             return
-        template_name = self.get_template_name(option_key, env)
+        template_name = self.get_template_name(option_key)
         while template_name is None:
             option_key = input_with_validation("\nEnter option: ")
             if option_key =="x":
                 return
             sys.stdout.write('\n')
             self.show_options()
-            template_name = self.get_template_name(option_key, env)
-        return env.get_template(template_name)
+            template_name = self.get_template_name(option_key)
+        return self.get_env().get_template(template_name)
 
 
-    def get_template_name(self, template_number,env):
+    def get_template_name(self, template_number):
         logger.debug("Getting template for option number"+ template_number)
         option = self.get_option_by_id(template_number)
         if option is None:
             return option
         template_name = option.name
         try:
+            env=self.get_env()
             env.loader.get_source(env,template_name)
         except Exception as excinfo:
             logger.error(str(excinfo))
@@ -111,8 +125,11 @@ def populate_filters_and_globals(env):
     populate_globals(env)
 
 class EMTemplatesEnv():
-    def __init__(self):
-        templates_path =os.environ['SQL_TEMPLATES_PATH']
+    def get_env(self,env_vars=os.environ):
+        if 'SQL_TEMPLATES_PATH' in env_vars:
+            templates_path =env_vars['SQL_TEMPLATES_PATH']
+        else:
+            templates_path = os.path.join(env_vars['EM_CORE_HOME'],"sqltask","templates")
         print("\nLoading templates from '" + templates_path+"':")
         self.env = Environment(
                             loader=FileSystemLoader(templates_path),
@@ -122,5 +139,4 @@ class EMTemplatesEnv():
                             )
         populate_globals(self.env)
         populate_filters(self.env)
-    def get_env(self):
         return self.env

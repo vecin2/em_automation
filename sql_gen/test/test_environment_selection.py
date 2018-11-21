@@ -6,12 +6,49 @@ from sql_gen.test.utils.package_example.module_example import example_filter1 as
 import sql_gen.test.utils.package_example.module_example2 as module_example2
 from sql_gen.test.utils.package_example.module_example2 import example_filter2 as example_filter2
 
-from sql_gen.sql_gen.environment_selection import populate_globals
-from sql_gen.sql_gen.environment_selection import populate_filters
+from sql_gen.sql_gen.environment_selection import populate_globals, populate_filters, EMTemplatesEnv,TemplateSelector,TemplateOption
 from jinja2 import Environment
 import pkgutil
 import os
+import pytest
+@pytest.mark.skip
+def test_template_folder():
+    env_vars={"SQL_TEMPLATES_PATH":"/opt/sqltasktemplates"}
+    env = EMTemplatesEnv().get_env(env_vars)
+    assert "/opt/sqltasktemplates" ==env.loader.searchpath[0]
 
+class FakeTemplateSelectorDisplayer(object):
+    def display(self,options):
+        self.last_rendered =str(options)
+
+def test_display_options(fs):
+    fs.create_file("opt/sqltask/templates/menu/template_one.sql")
+    env_vars={"SQL_TEMPLATES_PATH":"/opt/sqltask/templates"}
+    option_one = TemplateOption(0,"template_one.sql")
+
+    displayer=FakeTemplateSelectorDisplayer()
+    template_selector = TemplateSelector(env_vars,displayer)
+    template_selector.show_options()
+    assert str([option_one]) == displayer.last_rendered
+
+def test_sql_template_path_not_set_computes_loc_from_em_core_home(fs):
+    fs.create_file("opt/my_project/sqltask/templates/menu/template_one.sql")
+    env_vars={"EM_CORE_HOME":"/opt/my_project"}
+    option_one = TemplateOption(0,"template_one.sql")
+
+    displayer=FakeTemplateSelectorDisplayer()
+    template_selector = TemplateSelector(env_vars,displayer)
+    template_selector.show_options()
+    assert str([option_one]) == displayer.last_rendered
+
+def test_sql_template_path_set_non_existing_folder_returns_0(fs):
+    env_vars={"SQL_TEMPLATES_PATH":"/opt/sqltask/templates"}
+    option_one = TemplateOption(0,"template_one.sql")
+
+    displayer=FakeTemplateSelectorDisplayer()
+    template_selector = TemplateSelector(env_vars,displayer)
+    template_selector.show_options()
+    assert str([]) == displayer.last_rendered
 
 def test_extract_function_from_module():
     all_functions = inspect.getmembers(module_example, inspect.isfunction)

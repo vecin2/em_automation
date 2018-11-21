@@ -4,6 +4,8 @@ import cx_Oracle
 import pymssql
 import pytest
 
+pytestmark=pytest.mark.skip(reason="database integration tests take too long to run with unit tests")
+
 sqlserver_host ="windows"
 sqlserver_username="sa"
 sqlserver_password="admin"
