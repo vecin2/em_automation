@@ -12,7 +12,7 @@ Documentation
 	Manually delete config to recreate
 	Queries
 #No db conexion scenario
-#55 handle invalid templates path
+##55 handle invalid templates path
 ##52 SVN rev number offset
 #Config log level
 refactor cli-util-to-use-prompter

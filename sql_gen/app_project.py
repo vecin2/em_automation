@@ -5,8 +5,10 @@ from sql_gen.config import ConfigFile
 from sql_gen.utils.filesystem import RelativePath
 import sys
 import os
+import logging
 
 PATHS={
+        "config": "config",
         "core_config":"config/core.properties",
         "ad_queries":"config/ad_queries.sql"
         }
@@ -63,6 +65,11 @@ class AppProject(object):
         return EMConfigID(self.config["environment.name"],
                           self.config["machine.name"],
                           self.config["container.name"])
+
+    def get_logger(self):
+        return logging.getLogger("app_logger")
+
+
 
 
 
