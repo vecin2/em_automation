@@ -1,6 +1,6 @@
 import svn.local, svn.remote
 from sql_gen.emproject import emproject_home
-from sql_gen.logger import logger
+from sql_gen import logger
 
 class SvnClientFactory(object):
     def LocalClient(self, url):

@@ -1,5 +1,5 @@
 import os
-from sql_gen.logger import logger
+from sql_gen import logger
 from sql_gen.config import ConfigFile
 from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
 from sql_gen.utils.filesystem import RelativePath
@@ -98,7 +98,6 @@ class EMProject(object):
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)
         result = os.path.join(self.paths['config'],"show-config-txt",file_name)
-        logger.info("Returning  em config path: "+ result)
         return result
 
     def _build_config_file_name(self,config_id):

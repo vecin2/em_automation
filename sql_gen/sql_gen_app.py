@@ -2,12 +2,11 @@ from sql_gen.sql_gen.template_renderer import TemplateRenderer
 from sql_gen.sql_gen.environment_selection import TemplateSelector
 import argparse
 from sql_gen.emproject import SQLTask
-from sql_gen.logger import logger
 from sql_gen import app
 import sys
 from sql_gen.sqltask_jinja import initial_context
 
-
+logger =app.logger
 ##main
 def run_app():
     try:

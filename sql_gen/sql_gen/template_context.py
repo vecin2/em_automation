@@ -1,6 +1,6 @@
 from jinja2 import Template
 from jinja2.utils import concat
-from sql_gen.logger import logger
+from sql_gen import logger
 
 class TemplateContext():
     def __init__(self,template,vars={}):

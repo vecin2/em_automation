@@ -6,7 +6,7 @@ import os,sys
 import inspect
 import pkgutil
 import importlib
-from sql_gen.logger import logger
+from sql_gen import logger
 
 class TemplateOption(object):
     MENU_FOLDER="menu/"

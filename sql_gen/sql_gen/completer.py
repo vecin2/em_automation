@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from prompt_toolkit.completion import Completer, Completion
 from fuzzyfinder import fuzzyfinder
-from sql_gen.logger import logger
+from sql_gen import logger
 import os
 
 __all__ = [

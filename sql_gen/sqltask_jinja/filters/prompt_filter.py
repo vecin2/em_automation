@@ -1,5 +1,5 @@
 from jinja2.nodes import List,Name,Const,Getitem
-from sql_gen.logger import logger
+from sql_gen import logger
 
 class PromptFilter:
     def _render_args(self,context):

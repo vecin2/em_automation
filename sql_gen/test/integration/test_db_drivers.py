@@ -14,6 +14,7 @@ oracle_password="SPEN_3PD"
 oracle_database="orcl12c"
 oracle_port=1521
 
+pytestmark=pytest.mark.skip(reason="database integration tests take too long to run with unit tests")
 def test_pymssql_fetchone_asdict():
     conn = pymssql.connect(sqlserver_host,
                             sqlserver_username,

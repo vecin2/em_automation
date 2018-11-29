@@ -19,10 +19,15 @@ class AppProject(object):
         self._ad_query_runner=None
         self.emproject = emproject
         self.paths= RelativePath(self.root,PATHS)
+        self._logger = None
 
     @property
     def root(self):
         return os.path.join(self.emproject.root,"sqltask")
+
+    @property
+    def logger(self):
+        return self.get_logger()
 
     @property
     def ad_queryrunner(self):
@@ -67,7 +72,9 @@ class AppProject(object):
                           self.config["container.name"])
 
     def get_logger(self):
-        return logging.getLogger("app_logger")
+        if not self._logger:
+            self._logger = logging.getLogger("app_logger")
+        return self._logger
 
 
 

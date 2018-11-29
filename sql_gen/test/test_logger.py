@@ -2,7 +2,7 @@ import pytest
 from sql_gen.app_project import AppProject
 from sql_gen.emproject import EMProject
 #from sql_gen.loggu import log
-from sql_gen.logger import log
+from sql_gen.log import log
 
 @pytest.mark.skip
 def test_log_path_comes_from_config(fs):
@@ -17,7 +17,6 @@ def test_log_path_comes_from_config(fs):
 
 def test_default_log_config():
     root =  "/my_project/sqltask"
-    import pdb; pdb.set_trace()
     config = log.config(root)
 
     info_log_path =config['handlers']['info_file_handler']['filename']

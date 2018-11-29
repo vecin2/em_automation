@@ -16,3 +16,5 @@ Documentation
 ##52 SVN rev number offset
 #Config log level
 refactor cli-util-to-use-prompter
+
+Currently issue wiht logging is that its getting the log without configuring it first. To configure we need the project root.

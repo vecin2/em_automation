@@ -1,7 +1,7 @@
 import pymssql
 import cx_Oracle
 from sql_gen.exceptions import DatabaseError
-from sql_gen.logger import logger
+from sql_gen import logger
 import time
 
 class SQLRow(dict):

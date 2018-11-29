@@ -12,19 +12,19 @@ handlers:
         stream: ext://sys.stdout
 
     info_file_handler:
-        class: logging.handlers.RotatingFileHandler
+        class: sql_gen.log.handlers.MakeRotatingFileHandler
         level: INFO
         formatter: simple
-        filename: jose.log
+        filename: {info_path}
         maxBytes: 10485760 # 10MB
         backupCount: 20
         encoding: utf8
 
     error_file_handler:
-        class: logging.handlers.RotatingFileHandler
+        class: sql_gen.log.handlers.MakeRotatingFileHandler
         level: ERROR
         formatter: simple
-        filename: juan.log
+        filename: {error_path}
         maxBytes: 10485760 # 10MB
         backupCount: 20
         encoding: utf8

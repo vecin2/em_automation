@@ -1,5 +1,5 @@
 from sql_gen.exceptions import ConfigFileNotFoundException
-from sql_gen.logger import logger as log_util
+from sql_gen import logger as log_util
 
 class ConfigFile(object):
     def __init__(self, filepath,logger=log_util):

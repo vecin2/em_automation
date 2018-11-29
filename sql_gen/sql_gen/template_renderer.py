@@ -1,7 +1,7 @@
 from sql_gen.sql_gen.prompt_parser import PromptParser
 from sql_gen.sql_gen.template_context import TemplateContext
 from sql_gen.sql_gen.environment_selection import TemplateSelector
-from sql_gen.logger import logger
+from sql_gen import logger
 
 class TemplateRenderer(object):
     def run(self,context):
