@@ -39,8 +39,8 @@ def test_instantiate_with_emproject(fs):
 
 def test_instantiate_ad_queryrunner(fs):
     emconfig_content="""
-database.admin.user=sa
-database.admin.pass=admin
+database.user=sa
+database.pass=admin
 database.host=localhost
 database.port=1433
 database.name=ootb_15_1_fp2

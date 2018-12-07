@@ -46,8 +46,8 @@ class AppProject(object):
     def addb(self):
         emconfig = self.em_config()
         host = emconfig['database.host']
-        username = emconfig['database.admin.user']
-        password = emconfig['database.admin.pass']
+        username = emconfig['database.user']
+        password = emconfig['database.pass']
         database = emconfig['database.name']
         port = emconfig['database.port']
         dbtype = emconfig['database.type']

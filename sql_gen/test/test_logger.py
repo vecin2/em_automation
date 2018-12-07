@@ -24,3 +24,37 @@ def test_default_log_config():
     assert "/my_project/sqltask/logs/info.log" == info_log_path
     assert "/my_project/sqltask/logs/error.log" == error_log_path
 
+def test_project_log_config_overrides_default(fs):
+    root =  "/my_project/sqltask"
+    fs.create_file(root+"/config/logging.yaml",contents=config_content)
+    config = log.config(root)
+
+    info_log_path =config['handlers']['info_file_handler']['filename']
+    assert "information.log" == info_log_path
+
+config_content="""
+version: 1
+disable_existing_loggers: False
+formatters:
+    simple:
+        format: "%(asctime)s - %(levelname)s - %(message)s"
+
+handlers:
+    info_file_handler:
+        class: sql_gen.log.handlers.MakeRotatingFileHandler
+        level: INFO
+        formatter: simple
+        filename: information.log
+        maxBytes: 10485760 # 10MB
+        backupCount: 20
+        encoding: utf8
+loggers:
+    app_logger:
+        level: INFO
+        handlers: [console,info_file_handler, error_file_handler]
+        propagate: no
+
+root:
+    level: INFO
+    handlers: [console, info_file_handler, error_file_handler]
+"""

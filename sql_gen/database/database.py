@@ -34,7 +34,7 @@ class Connector(object):
             cursor = self.do_connect()
         except Exception as excinfo:
             logger.exception(excinfo)
-            raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.admin.user="+self.user+"\nReason was: "+str(excinfo)+". For the full exception trace check the logs.")
+            raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.user="+self.user+"\nReason was: "+str(excinfo)+". Please notice that variables are not rendered, if the property is assigned another property replace it for its value.\nFor the full exception trace check the logs.")
         if not cursor:
             raise ValueError(self._get_conn_error_msg(self.dbtype))
         else:

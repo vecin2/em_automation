@@ -21,7 +21,7 @@ pytest==3.7.2
 python-dateutil==2.7.3
 PyYAML==3.13
 six==1.11.0
-sqltask==0.0.1a18
+sqltask==0.0.1a19
 svn==0.3.46
 termcolor==1.1.0
 wcwidth==0.1.7

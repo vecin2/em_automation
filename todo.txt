@@ -18,3 +18,5 @@ Documentation
 refactor cli-util-to-use-prompter
 
 Currently issue wiht logging is that its getting the log without configuring it first. To configure we need the project root.
+"For the full exception trace check the logs" - Add log path
+db connection is using now admin but it should use  user details
