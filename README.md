@@ -282,6 +282,33 @@ Process descriptor id <span class="token operator">is</span> Customer
        	<span class="token string">'N'</span> <span class="token comment">--is_shared</span>
        <span class="token punctuation">)</span><span class="token punctuation">;</span>
 </code></pre>
+<h1 id="logging">Logging</h1>
+<p>The application logging is configure by default to write to the logs dir within the main application folder.<br>
+Logging configuration can be modify by creatng a file called <code>logging.yaml</code> under the app config folder.<br>
+This is a example of a valid configuration file:</p>
+<pre class=" language-yaml"><code class="prism  language-yaml"><span class="token key atrule">version</span><span class="token punctuation">:</span> <span class="token number">1</span>
+<span class="token key atrule">disable_existing_loggers</span><span class="token punctuation">:</span> <span class="token boolean important">False</span>
+<span class="token key atrule">formatters</span><span class="token punctuation">:</span>
+    <span class="token key atrule">simple</span><span class="token punctuation">:</span>
+        <span class="token key atrule">format</span><span class="token punctuation">:</span> <span class="token string">"%(asctime)s - %(levelname)s - %(message)s"</span>
+<span class="token key atrule">handlers</span><span class="token punctuation">:</span>
+    <span class="token key atrule">info_file_handler</span><span class="token punctuation">:</span>
+        <span class="token key atrule">class</span><span class="token punctuation">:</span> sql_gen.log.handlers.MakeRotatingFileHandler
+        <span class="token key atrule">level</span><span class="token punctuation">:</span> INFO
+        <span class="token key atrule">formatter</span><span class="token punctuation">:</span> simple
+        <span class="token key atrule">filename</span><span class="token punctuation">:</span> information.log
+        <span class="token key atrule">maxBytes</span><span class="token punctuation">:</span> <span class="token number">10485760 </span><span class="token comment"># 10MB</span>
+        <span class="token key atrule">backupCount</span><span class="token punctuation">:</span> <span class="token number">20</span>
+        <span class="token key atrule">encoding</span><span class="token punctuation">:</span> utf8
+<span class="token key atrule">loggers</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app_logger</span><span class="token punctuation">:</span>
+        <span class="token key atrule">level</span><span class="token punctuation">:</span> INFO
+        <span class="token key atrule">handlers</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>console<span class="token punctuation">,</span>info_file_handler<span class="token punctuation">,</span> error_file_handler<span class="token punctuation">]</span>
+        <span class="token key atrule">propagate</span><span class="token punctuation">:</span> no
+<span class="token key atrule">root</span><span class="token punctuation">:</span>
+    <span class="token key atrule">level</span><span class="token punctuation">:</span> INFO
+    <span class="token key atrule">handlers</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>info_file_handler<span class="token punctuation">]</span>
+</code></pre>
 <h1 id="build-extensions">Build Extensions</h1>
 <h3 id="developer-setup">Developer Setup</h3>
 <p>Branch this project and submit merge request.</p>
@@ -314,14 +341,4 @@ It takes the prompt text and it changes it accordingly to what it should be disp
 <p><em>class</em> sql_gen.filters.<strong>DescriptionFilter</strong>()<br>
 func :: <strong>get_template_filter</strong>()<br>
 It returns the function which implements the jinja filter.</p>
-
-# Database Connection
-The following EM  properties are read to connect to the database:
-database.type=sqlServer # Possible values 
--database.admin.user
--database.admin.pass
--database.host
--database.port
--database.name
-Please notice that 'database.name' is not really required by EM when connecting to a sqlServer database. However it will need to be setup for this app to work.
 
