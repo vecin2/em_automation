@@ -2,15 +2,18 @@ from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID
 from sql_gen.database import QueryRunner,Connector
 from sql_gen.config import ConfigFile
-from sql_gen.utils.filesystem import RelativePath
+from sql_gen.utils.filesystem import RelativePath,Path
 import sys
 import os
 import logging
+from sql_gen.log import log
 
-PATHS={
-        "config": "config",
-        "core_config":"config/core.properties",
-        "ad_queries":"config/ad_queries.sql"
+PATHS= {
+         "config"         : Path("config"),
+         "core_config"    : Path("config/core.properties"),
+         "ad_queries"     : Path("config/ad_queries.sql"),
+         "logging_config" : Path("config/logging.yaml"),
+         "logs"           : Path("logs","optional")
         }
 
 class AppProject(object):
@@ -73,8 +76,13 @@ class AppProject(object):
 
     def get_logger(self):
         if not self._logger:
+            if os.path.exists(self.paths['logging_config']):
+                log.setup_from_file(self.paths['logging_config'])
+            else:
+                log.basic_setup(logs_dir=paths['logs'])
             self._logger = logging.getLogger("app_logger")
         return self._logger
+
 
 
 

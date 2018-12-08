@@ -2,7 +2,7 @@ import os
 from sql_gen import logger
 from sql_gen.config import ConfigFile
 from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
-from sql_gen.utils.filesystem import RelativePath
+from sql_gen.utils.filesystem import RelativePath,Path
 
 class CCAdmin(object):
     show_config_content=""
@@ -33,9 +33,6 @@ class CCAdmin(object):
         else:
             return "sh"
 
-def to_path(filesystem_path):
-    repo_modules_arr= filesystem_path.split(",") 
-    return os.path.join(*repo_modules_arr)
 
 class EMConfigID(object):
     def __init__(self,
@@ -46,10 +43,12 @@ class EMConfigID(object):
         self.machine_name = machine_name
         self.container_name = container_name
 
-PATHS={"ccadmin"     : "bin",
-       "config"      : "work/config",
-       "repo_modules": "repository/default"
+PATHS={"ccadmin"         : Path("bin"),
+       "repo_modules"    : Path("repository/default"),
+       "config"          : Path("work/config"),
+       "show_config_txt" : Path("work/config/show-config-txt","optional")
        }
+
 def get_prj_home():
     help_text="It should contain the path of your current EM project."
     try:
@@ -97,7 +96,7 @@ class EMProject(object):
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)
-        result = os.path.join(self.paths['config'],"show-config-txt",file_name)
+        result = os.path.join(self.paths['show_config_txt'],file_name)
         return result
 
     def _build_config_file_name(self,config_id):
