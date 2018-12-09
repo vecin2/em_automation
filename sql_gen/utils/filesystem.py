@@ -2,23 +2,53 @@ import os
 from sql_gen.exceptions import InvalidFileSystemPathException
 
 class Path(object):
-    def __init__(self,path="",path_type="mandatory"):
+    def __init__(self,path=""):
         self.path=path
-        self.path_type=path_type
-    def is_mandatory(self):
-        return self.path_type == "mandatory"
 
-class RelativePath(dict):
-    def __init__(self,root,dict):
+    def exists(self):
+        return os.path.exists(self.path)
+
+    def listdir(self):
+        if not self.exists()\
+           or not os.listdir(self.path):
+            return []
+        #if there is at least one module created
+        return [name for name in os.listdir(self.path)
+           if os.path.isdir(os.path.join(self.path, name))]
+
+    def join(self,str_path):
+        return Path(os.path.join(self.path, str_path))
+
+
+class ProjectLayout(dict):
+    def __init__(self,root,dict,mandatory_keys=[]):
         self.root= root
         self.paths=dict
+        self.mandatory_keys=mandatory_keys
+
     def __getitem__(self,key):
-        return os.path.join(self.root,self.paths[key].path)
+        return Path(os.path.join(self.root,self.paths[key]))
+
     def check(self):
         for key in self.paths:
             self.check_path(key)
+
     def check_path(self,key):
         path =self.paths[key]
-        if path.is_mandatory() and not os.path.exists(self[key]):
-            raise InvalidFileSystemPathException("Path '"+self[key]+"' does not exist.")
+        if self.is_mandatory(key) and not self.exists(key):
+            raise InvalidFileSystemPathException("Path '"+self[key].path+"' does not exist.")
+
+    def is_mandatory(self,key):
+        return key in self.mandatory_keys
+
+    def path(self,key):
+        full_path =os.path.join(self.root,self[key])
+        return Path(full_path)
+
+
+    def exists(self,key):
+        return self[key].exists()
+
+    def listdir(self,key):
+        return self.paths[key].listdir()
 

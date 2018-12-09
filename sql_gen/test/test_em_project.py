@@ -69,7 +69,7 @@ local_config_id=EMConfigID("localdev",
 def test_config_path_depends_on_config_id(fs):
     em_project = EMProject("/home/project")
     mylocal_config_id=EMConfigID("mylocal","localhost","ad")
-    assert "/home/project/work/config/show-config-txt/mylocal-localhost-ad.txt" ==em_project.config_path(mylocal_config_id)
+    assert "/home/project/work/config/show-config-txt/mylocal-localhost-ad.txt" == em_project.config_path(mylocal_config_id).path
 
 def test_returns_config_without_invoke_ccadmin_if_config_exist(fs):
     config_content="""\n

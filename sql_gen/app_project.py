@@ -2,28 +2,32 @@ from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID
 from sql_gen.database import QueryRunner,Connector
 from sql_gen.config import ConfigFile
-from sql_gen.utils.filesystem import RelativePath,Path
+from sql_gen.utils.filesystem import ProjectLayout,Path
 import sys
 import os
 import logging
 from sql_gen.log import log
 
 PATHS= {
-         "config"         : Path("config"),
-         "core_config"    : Path("config/core.properties"),
-         "ad_queries"     : Path("config/ad_queries.sql"),
-         "logging_config" : Path("config/logging.yaml"),
-         "logs"           : Path("logs","optional")
+         "config"         : "config",
+         "core_config"    : "config/core.properties",
+         "ad_queries"     : "config/ad_queries.sql",
+         "logging_config" : "config/logging.yaml",
+         "logs"           : "logs"
         }
+
+MANDATORY_KEYS=["config",
+                 "core_config",
+                 "ad_queries"
+                ]
 
 class AppProject(object):
     def __init__(self,emproject=EMProject()):
         self._config_file=None
         self._ad_query_runner=None
         self.emproject = emproject
-        self.paths= RelativePath(self.root,PATHS)
+        self.paths= ProjectLayout(self.root,PATHS,MANDATORY_KEYS)
         self._logger = None
-
     @property
     def root(self):
         return os.path.join(self.emproject.root,"sqltask")
@@ -35,7 +39,7 @@ class AppProject(object):
     @property
     def ad_queryrunner(self):
         if not self._ad_query_runner:
-            queries_path=self.paths["ad_queries"]
+            queries_path=self.paths["ad_queries"].path
             self._ad_query_runner = QueryRunner.make_from_file(queries_path,
                                                                self.addb)
         return self._ad_query_runner
@@ -64,7 +68,7 @@ class AppProject(object):
     @property
     def config(self):
         if not self._config_file:
-            self._config_file = ConfigFile(self.paths["core_config"])
+            self._config_file = ConfigFile(self.paths["core_config"].path)
         return self._config_file
 
     def _emconfig_id(self):
@@ -76,8 +80,8 @@ class AppProject(object):
 
     def get_logger(self):
         if not self._logger:
-            if os.path.exists(self.paths['logging_config']):
-                log.setup_from_file(self.paths['logging_config'])
+            if self.paths.exists('logging_config'):
+                log.setup_from_file(self.paths['logging_config'].path)
             else:
                 log.basic_setup(logs_dir=paths['logs'])
             self._logger = logging.getLogger("app_logger")

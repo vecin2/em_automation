@@ -1,38 +1,9 @@
 import os
 from sql_gen import logger
 from sql_gen.config import ConfigFile
+from .ccadmin import CCAdmin
 from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
-from sql_gen.utils.filesystem import RelativePath,Path
-
-class CCAdmin(object):
-    show_config_content=""
-    def __init__(self,root):
-        self.root =root
-
-    def show_config(self, params):
-        logger.debug("Running ccadmin show-config "+params)
-        result = self._run_ccadmin("show-config "+params)
-        logger.debug("End Running ccadmin show-config")
-        return result
-
-    def _run_ccadmin(self, command_and_args):
-        result = os.system(self._ccadmin_file() +" "+command_and_args)
-        if result ==0:
-            return result
-        raise CCAdminException("Failed when running '"+self._ccadmin_file()+" "+ command_and_args+"'")
-    def _ccadmin_file(self):
-        ccadmin_file_name ="ccadmin."+self._ccadmin_file_ext()
-        ccadmin_path=os.path.join(self.root, ccadmin_file_name)
-        logger.debug("ccadmin found under: "+ ccadmin_path)
-        return ccadmin_path
-
-    def _ccadmin_file_ext(self):
-        logger.debug("Checking OS name: "+ os.name)
-        if os.name == 'nt':
-            return "bat"
-        else:
-            return "sh"
-
+from sql_gen.utils.filesystem import ProjectLayout,Path
 
 class EMConfigID(object):
     def __init__(self,
@@ -43,11 +14,15 @@ class EMConfigID(object):
         self.machine_name = machine_name
         self.container_name = container_name
 
-PATHS={"ccadmin"         : Path("bin"),
-       "repo_modules"    : Path("repository/default"),
-       "config"          : Path("work/config"),
-       "show_config_txt" : Path("work/config/show-config-txt","optional")
+PATHS={"ccadmin"         : "bin",
+       "repo_modules"    : "repository/default",
+       "config"          : "work/config",
+       "show_config_txt" : "work/config/show-config-txt"
        }
+MANDATORY_KEYS=["ccadmin",
+                "repo_modules",
+                "config"
+               ]
 
 def get_prj_home():
     help_text="It should contain the path of your current EM project."
@@ -57,7 +32,7 @@ def get_prj_home():
         raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
     if not result:
         raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
-    relative_path =RelativePath(result,PATHS)
+    relative_path =ProjectLayout(result,PATHS,MANDATORY_KEYS)
     try:
         relative_path.check()
     except InvalidFileSystemPathException as excinfo:
@@ -77,9 +52,9 @@ class EMProject(object):
         if not root:
             root = emproject_home()
         self.root = root
-        self.paths= RelativePath(self.root,PATHS)
+        self.paths= ProjectLayout(self.root,PATHS)
         if not ccadmin_client:
-            ccadmin_client = CCAdmin(self.paths['ccadmin'])
+            ccadmin_client = CCAdmin(self.paths['ccadmin'].path)
         self.ccadmin_client = ccadmin_client
         self.ccadmin_client =ccadmin_client
         self.emautomation_props={}
@@ -89,14 +64,14 @@ class EMProject(object):
         self.default_config_id =config_id
 
     def config(self,config_id=None):
-        if not os.path.exists(self.config_path(config_id)):
+        if not self.config_path(config_id).exists():
             self._create_config()
-        config_content = ConfigFile(self.config_path(config_id)).properties
+        config_content = ConfigFile(self.config_path(config_id).path).properties
         return config_content
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)
-        result = os.path.join(self.paths['show_config_txt'],file_name)
+        result = self.paths['show_config_txt'].join(file_name)
         return result
 
     def _build_config_file_name(self,config_id):
@@ -140,7 +115,7 @@ class EMProject(object):
         return result[:-1]
 
     def _get_repo_custom_modules(self):
-        repo_modules= self._get_repo_modules()
+        repo_modules= self.paths['repo_modules'].listdir()
         result=[]
         for module in repo_modules:
             if len(self._extract_module_prefix(module)) >2:
@@ -149,13 +124,3 @@ class EMProject(object):
 
     def product_prj(self):
         return EMProject(self.config()['product.home'])
-
-    def _get_repo_modules(self):
-        repo_modules_path= self.paths['repo_modules']
-        if not os.path.exists(repo_modules_path) or not os.listdir(repo_modules_path):
-            return []
-        #if there is at least one module created
-        return [name for name in os.listdir(repo_modules_path)
-           if os.path.isdir(os.path.join(repo_modules_path, name))]
-
-

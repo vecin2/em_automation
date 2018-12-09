@@ -12,11 +12,11 @@ class FakeAppPrjBuilder(object):
         self.fs =fs
 
     def add_config(self,content):
-        self._add_file(self.app_project.paths["core_config"],content)
+        self._add_file(self.app_project.paths["core_config"].path,content)
         return self
 
     def set_ad_queries(self,content):
-        self._add_file(self.app_project.paths["ad_queries"],content)
+        self._add_file(self.app_project.paths["ad_queries"].path,content)
         return self
 
 

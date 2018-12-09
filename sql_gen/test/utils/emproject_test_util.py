@@ -57,7 +57,7 @@ class FakeEMProjectBuilder():
                             contents=config_content)
 
     def add_config(self, config_id, config_content):
-        self._create_file(self.emproject.config_path(config_id),\
+        self._create_file(self.emproject.config_path(config_id).path,\
                             contents=config_content)
         return self
 
