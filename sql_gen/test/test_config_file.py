@@ -1,5 +1,5 @@
 import pytest
-from sql_gen import ConfigFile
+from sql_gen.config import ConfigFile
 
 
 def test_value_in_config(fs):

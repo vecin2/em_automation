@@ -1,6 +1,6 @@
 import svn.local, svn.remote
 from sql_gen.emproject import emproject_home
-from sql_gen import logger
+import sql_gen
 
 class SvnClientFactory(object):
     def LocalClient(self, url):
@@ -29,6 +29,6 @@ class EMSvn(object):
             info = self.remote_client().info()
             return info['entry_revision']
         except Exception as excinfo:
-            logger.exception(excinfo)
+            sql_gen.logger.exception(excinfo)
             print("Unable to access svn repository to compute revision number: "+str(excinfo))
             return -1

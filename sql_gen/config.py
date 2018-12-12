@@ -1,11 +1,15 @@
 from sql_gen.exceptions import ConfigFileNotFoundException
-from sql_gen import logger as log_util
+import sql_gen 
 
 class ConfigFile(object):
-    def __init__(self, filepath,logger=log_util):
+    def __init__(self, filepath,logger=None):
+        if logger is None:
+            self.logger = sql_gen.logger
+        else:
+            self.logger = logger
         self.filepath=filepath
-        self.logger =logger
         self.properties=self._read_properties(filepath)
+
     def _read_properties(self,full_path):
         myprops = {}
         try:

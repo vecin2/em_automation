@@ -1,4 +1,4 @@
-from sql_gen import logger
+import sql_gen
 import os
 class CCAdmin(object):
     show_config_content=""
@@ -6,9 +6,9 @@ class CCAdmin(object):
         self.root =root
 
     def show_config(self, params):
-        logger.debug("Running ccadmin show-config "+params)
+        sql_gen.logger.debug("Running ccadmin show-config "+params)
         result = self._run_ccadmin("show-config "+params)
-        logger.debug("End Running ccadmin show-config")
+        sql_gen.logger.debug("End Running ccadmin show-config")
         return result
 
     def _run_ccadmin(self, command_and_args):

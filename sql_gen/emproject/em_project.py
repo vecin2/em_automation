@@ -1,5 +1,5 @@
 import os
-from sql_gen import logger
+import sql_gen
 from sql_gen.config import ConfigFile
 from .ccadmin import CCAdmin
 from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
@@ -43,7 +43,7 @@ def emproject_home():
     try:
         return get_prj_home()
     except Exception as excinfo:
-        logger.error(str(excinfo))
+        sql_gen.logger.error(str(excinfo))
         raise excinfo
 
 

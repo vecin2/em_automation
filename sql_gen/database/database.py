@@ -1,7 +1,7 @@
 import pymssql
 import cx_Oracle
 from sql_gen.exceptions import DatabaseError
-from sql_gen import logger
+import sql_gen
 import time
 
 class SQLRow(dict):
@@ -33,7 +33,7 @@ class Connector(object):
         try:
             cursor = self.do_connect()
         except Exception as excinfo:
-            logger.exception(excinfo)
+            sql_gen.logger.exception(excinfo)
             raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.user="+self.user+"\nReason was: "+str(excinfo)+". Please notice that variables are not rendered, if the property is assigned another property replace it for its value.\nFor the full exception trace check the logs.")
         if not cursor:
             raise ValueError(self._get_conn_error_msg(self.dbtype))
@@ -69,7 +69,7 @@ class EMDatabase(object):
         self.queries_cache ={}
 
     def list(self,query):
-        logger.debug("Running list of query")
+        sql_gen.logger.debug("Running list of query")
         table = self.query(query)
         if not table: #if query return no results
             return table
@@ -89,7 +89,7 @@ class EMDatabase(object):
 
     def query(self, query):
         if query in self.queries_cache:
-            logger.debug("Returning from cache")
+            sql_gen.logger.debug("Returning from cache")
             return self.queries_cache[query]
         cursor = self._run_query(query)
         result = self._extract_rowlist(cursor)
@@ -101,8 +101,8 @@ class EMDatabase(object):
         start_time = time.time()
         cursor.execute(query)
         query_time = str(time.time() - start_time)
-        logger.debug("Query run: "+query)
-        logger.debug("Query tooked "+ query_time)
+        sql_gen.logger.debug("Query run: "+query)
+        sql_gen.logger.debug("Query tooked "+ query_time)
         return cursor
 
     def _conn(self):
