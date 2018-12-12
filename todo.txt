@@ -20,9 +20,9 @@ refactor cli-util-to-use-prompter
 "For the full exception trace check the logs" - Add log path
 "db connection is using now admin but it should use  user details
 "we want the PATHS map to contain all the maps that we need to refer to. Then a map can be optional or mandatory
-Currently issue wiht logging is that its getting the log without configuring it first. To configure we need the project root.
+#Currently issue wiht logging is that its getting the log without configuring it first. To configure we need the project root.
 issue with path are only the relative while RelativePath returns the full path
 
-Refactor to path
+#Refactor to path
 	refactor __getitem__ to return path with full path
 	refactor mandatory to its own array of keys--> elements are paths

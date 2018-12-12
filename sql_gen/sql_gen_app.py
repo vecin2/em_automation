@@ -22,7 +22,6 @@ def do_run_app():
 
 # construct the argument parse and parse the arguments
     args = parse_args();
-    logger.info("Starting sqltask")
     logger.info("Arguments passed: "+str(sys.argv))
     sql_task_path = args.dir
 
