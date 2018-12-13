@@ -5,7 +5,7 @@ from jinja2 import meta
 from jinja2.nodes import Call,Name
 import importlib
 from collections import OrderedDict
-from sql_gen.sql_gen.prompt import Prompt
+from sql_gen.docugen.prompt import Prompt
 import sys
 
 class PromptParser(object):
