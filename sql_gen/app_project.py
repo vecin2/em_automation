@@ -83,7 +83,7 @@ class AppProject(object):
             if self.paths.exists('logging_config'):
                 log.setup_from_file(self.paths['logging_config'].path)
             else:
-                log.basic_setup(logs_dir=paths['logs'])
+                log.basic_setup(logs_dir=self.paths['logs'])
             self._logger = logging.getLogger("app_logger")
             print("Default logs dir is: "+self.paths['logs'].path)
         return self._logger

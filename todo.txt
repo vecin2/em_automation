@@ -15,7 +15,7 @@ Documentation
 ##55 handle invalid templates path
 ##52 SVN rev number offset
 #Config log level
-refactor cli-util-to-use-prompter
+#refactor cli-util-to-use-prompter
 
 "For the full exception trace check the logs" - Add log path
 "db connection is using now admin but it should use  user details
