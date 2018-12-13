@@ -1,4 +1,4 @@
-from sql_gen.sql_gen.environment_selection import TemplateOption
+from sql_gen.docugen.environment_selection import TemplateOption
 
 def test_is_removes_main_folder_from_name():
     option = TemplateOption(1,"menu/template_1.sql")

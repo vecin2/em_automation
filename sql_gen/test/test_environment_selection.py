@@ -6,7 +6,7 @@ from sql_gen.test.utils.package_example.module_example import example_filter1 as
 import sql_gen.test.utils.package_example.module_example2 as module_example2
 from sql_gen.test.utils.package_example.module_example2 import example_filter2 as example_filter2
 
-from sql_gen.sql_gen.environment_selection import populate_globals, populate_filters, EMTemplatesEnv,TemplateSelector,TemplateOption
+from sql_gen.docugen.environment_selection import populate_globals, populate_filters, EMTemplatesEnv,TemplateSelector,TemplateOption
 from jinja2 import Environment
 import pkgutil
 import os

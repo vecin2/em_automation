@@ -3,7 +3,7 @@ from jinja2.nodes import Stmt,Template,Output,Node
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from anytree import Node as AnyTreeNode
 import pytest
-from sql_gen.sql_gen.environment_selection import populate_filters
+from sql_gen.docugen.environment_selection import populate_filters
 
 
 env = Environment(

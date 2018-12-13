@@ -1,5 +1,5 @@
 from jinja2 import Template,Environment,FileSystemLoader
-from sql_gen.sql_gen.environment_selection import EMTemplatesEnv
+from sql_gen.docugen.environment_selection import EMTemplatesEnv
 
 def test_default_filter():
     env = Environment(
