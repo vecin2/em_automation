@@ -1,5 +1,5 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from sql_gen.ui.cli_ui_util import input_with_validation
+from sql_gen.ui.cli_ui_util import suggest_prompt
 import sql_gen.sqltask_jinja.globals as template_globals
 import sql_gen.sqltask_jinja.filters as template_filters
 import os,sys
@@ -17,7 +17,7 @@ class TemplateOption(object):
         self.id =id
         self.name =template_path.replace(self.MENU_FOLDER,'').replace(self.WINDOWS_LINK,'')
     def __repr__(self):
-        return str(self.id) +" "+self.name
+        return str(self.id) +". "+self.name
 
 def list_menu_templates(template_name):
     if TemplateOption.MENU_FOLDER in template_name:
@@ -59,13 +59,22 @@ class TemplateSelector():
         self.create_options(template_list)
         self.displayer.display(self.template_option_list)
 
+    def _get_option(self):
+        input_text =suggest_prompt(
+                            "\nEnter option: ",
+                            self.template_option_list)
+        if input_text:
+            return input_text.split(".")[0]
+        return input_text
+
     def prompt_to_select_template(self):
-        option_key = input_with_validation("\nEnter option: ")
+        #option_key = input_with_validation("\nEnter option: ")
+        option_key = self._get_option()
         if option_key =="x":
             return
         template_name = self.get_template_name(option_key)
         while template_name is None:
-            option_key = input_with_validation("\nEnter option: ")
+            option_key = self._get_option()
             if option_key =="x":
                 return
             sys.stdout.write('\n')

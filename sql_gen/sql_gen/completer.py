@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from prompt_toolkit.completion import Completer, Completion
 from fuzzyfinder import fuzzyfinder
-from sql_gen import logger
+import sql_gen
 import os
 
 __all__ = [
@@ -15,12 +15,12 @@ class SuggestionCompleter(Completer):
         self.suggestions = suggestions
 
     def get_completions(self, document, complete_event):
-        logger.debug("Running get_completing within SuggestionCompleter")
+        sql_gen.logger.debug("Running get_completing within SuggestionCompleter")
         word_before_cursor = document.get_word_before_cursor(WORD=True)
         matches = fuzzyfinder(word_before_cursor, self.suggestions)
         for m in matches:
             yield Completion(m, start_position=-len(word_before_cursor))
-        logger.debug("Finished get_completing within SuggestionCompleter")
+        sql_gen.logger.debug("Finished get_completing within SuggestionCompleter")
 
 #This is o copy of  prompt_toolkit.completion.filsystem
 class PathCompleter(Completer):
