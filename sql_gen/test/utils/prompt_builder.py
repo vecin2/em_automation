@@ -1,6 +1,6 @@
 from jinja2 import Template,Environment,DictLoader
 from sql_gen.docugen.environment_selection import populate_filters_and_globals
-from sql_gen.sql_gen.prompt_parser import PromptParser
+from sql_gen.docugen.prompt_parser import PromptParser
 
 class _TestPromptBuilder(object):
     def __init__(self, source):
