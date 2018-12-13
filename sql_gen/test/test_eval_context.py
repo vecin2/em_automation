@@ -2,7 +2,7 @@ import pytest
 from jinja2 import Template,Environment
 from jinja2.utils import concat
 from sql_gen import logger
-from sql_gen.sql_gen.template_context import TemplateContext
+from sql_gen.docugen.template_context import TemplateContext
 
 
 

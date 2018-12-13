@@ -1,5 +1,5 @@
 from sql_gen import logger
-from sql_gen.sql_gen.template_context import TemplateContext
+from sql_gen.docugen.template_context import TemplateContext
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call,Name
