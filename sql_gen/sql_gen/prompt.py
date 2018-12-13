@@ -1,7 +1,7 @@
 from sql_gen import logger
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion
-from sql_gen.sql_gen.completer import SuggestionCompleter
+from sql_gen.docugen.completer import SuggestionCompleter
 
 class Prompt:
     def __init__(self, variable_name, filter_list):

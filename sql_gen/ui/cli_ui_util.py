@@ -1,6 +1,6 @@
 import signal
 from prompt_toolkit import prompt
-from sql_gen.sql_gen.completer import SuggestionCompleter
+from sql_gen.docugen.completer import SuggestionCompleter
 
 def suggest_prompt(text,suggestions=[]):
     try:

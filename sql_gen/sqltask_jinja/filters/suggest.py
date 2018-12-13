@@ -1,5 +1,5 @@
 from sql_gen.sqltask_jinja.filters import PromptFilter
-from sql_gen.sql_gen.completer import SuggestionCompleter
+from sql_gen.docugen.completer import SuggestionCompleter
 
 def suggest(value, suggestions):
     return value
