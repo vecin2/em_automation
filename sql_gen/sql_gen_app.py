@@ -28,7 +28,7 @@ def do_run_app():
     sql_task = None
     if sql_task_path:
         try:
-            sql_task = SQLTask(config=app.config)
+            sql_task = SQLTask(root=app.root,config=app.config)
             sql_task.with_path(sql_task_path)
         except AttributeError as e:
             logger.error(str(e))

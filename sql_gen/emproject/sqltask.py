@@ -2,9 +2,7 @@ import pyperclip
 from sql_gen.ui.cli_ui_util import InputRequester
 from sql_gen.emproject.emsvn import EMSvn
 import os
-from sql_gen.current_project import app
 
-current_emproject =app.emproject
 class Clipboard():
     def on_write(self, sqltask):
         file_path=sqltask.fs_location()
@@ -13,7 +11,7 @@ class Clipboard():
 
 class SQLTask(object):
     task_path=""
-    def __init__(self, root=current_emproject.root,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester(),config=None):
+    def __init__(self, root=None,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester(),config=None):
         self.root=root
         self.input_requester = input_requester
         self.svnclient =svnclient

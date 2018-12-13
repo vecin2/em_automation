@@ -26,3 +26,11 @@ Logg
 Basic logger
 	logging.basicConfig(level=logging.INFO)
 	logger = logging.getLogger(__name__)
+
+if app:
+  app.logger
+else
+   basic_logger
+
+sqltask has a reference to currentapp. 
+	Break that reference

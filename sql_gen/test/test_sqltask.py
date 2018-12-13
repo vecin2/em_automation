@@ -47,7 +47,7 @@ def test_sets_root():
 
 def test_defaults_root_to_current_emproject():
     sqltask = SQLTask()
-    assert current_emproject.root == sqltask.root
+    assert None == sqltask.root
 
 def test_set_path_appends_to_root(fs):
     sql_task = make_testable_sqltask("/em/home").with_path("modules")
