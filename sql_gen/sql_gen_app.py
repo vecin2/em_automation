@@ -1,5 +1,5 @@
-from sql_gen.sql_gen.template_renderer import TemplateRenderer
-from sql_gen.sql_gen.environment_selection import TemplateSelector
+from sql_gen.docugen.template_renderer import TemplateRenderer
+from sql_gen.docugen.environment_selection import TemplateSelector
 import argparse
 from sql_gen.emproject import SQLTask
 from sql_gen import app

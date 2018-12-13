@@ -1,6 +1,6 @@
-from sql_gen.sql_gen.prompt_parser import PromptParser
-from sql_gen.sql_gen.template_context import TemplateContext
-from sql_gen.sql_gen.environment_selection import TemplateSelector
+from sql_gen.docugen.prompt_parser import PromptParser
+from sql_gen.docugen.template_context import TemplateContext
+from sql_gen.docugen.environment_selection import TemplateSelector
 from sql_gen import logger
 
 class TemplateRenderer(object):
