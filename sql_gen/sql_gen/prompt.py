@@ -1,4 +1,3 @@
-from sql_gen.ui.cli_ui_util import input_with_validation
 from sql_gen import logger
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import Completer, Completion

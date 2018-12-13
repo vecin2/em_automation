@@ -1,5 +1,5 @@
 import pyperclip
-from sql_gen.ui.cli_ui_util import input_with_validation,InputRequester
+from sql_gen.ui.cli_ui_util import InputRequester
 from sql_gen.emproject.emsvn import EMSvn
 import os
 from sql_gen.current_project import app
