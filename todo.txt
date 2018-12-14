@@ -34,3 +34,5 @@ else
 
 sqltask has a reference to currentapp. 
 	Break that reference
+
+Run test templates to make sure they still run - important for refactoring templates

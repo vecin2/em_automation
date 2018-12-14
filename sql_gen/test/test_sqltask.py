@@ -2,8 +2,9 @@ import pytest
 import os
 from sql_gen.emproject import SQLTask,emproject_home
 from sql_gen.ui.cli_ui_util import InputRequester
-from sql_gen import app
+from sql_gen.app_project import AppProject
 
+app = AppProject()
 current_emproject=app.emproject
 #set em core home as it used as based to write sql modules
 class FakeEMSvn(object):

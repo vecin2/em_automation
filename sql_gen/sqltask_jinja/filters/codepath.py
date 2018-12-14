@@ -1,6 +1,6 @@
 from sql_gen.sqltask_jinja.filters import PromptFilter
 from sql_gen.docugen.completer import PathCompleter
-from sql_gen.current_project import app
+from sql_gen.sqltaskapp import app
 from sql_gen import logger
 
 def codepath(value):

@@ -1,10 +1,10 @@
-from sql_gen.sql_gen_app import run_app
+from sql_gen import sqltaskapp
  
 ##main
 def main():
-    #root =EMProject.
-    #app = AppProject(EMProject(root))
-    run_app()
+    sqltaskapp.init()
+    sqltaskapp.run()
+
 
 if __name__ == '__main__':
     main()

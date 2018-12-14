@@ -4,9 +4,11 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import Completer, Completion
 #import click
 from fuzzyfinder import fuzzyfinder
-from sql_gen.current_project import app
 from sql_gen.sql_gen.completer import SuggestionCompleter
+from sql_gen.app_project import AppProject
 
+
+app =  AppProject()
 addb =app.addb
 
 result =addb.query("SELECT NAME FROM EVA_ENTITY_DEFINITION")

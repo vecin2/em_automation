@@ -12,12 +12,12 @@
  {% set process_descriptor_type = tmp_pd_type      | description('type_id (0=regular process, 2=action, 3=sla)')
 					           | default(old_pd['TYPE']) %}
 
- {% set suggested_ext_path =      prj_prefix()+old_pd['REPOSITORY_PATH'] %}
+ {% set suggested_ext_path =      _emprj.prefix()+old_pd['REPOSITORY_PATH'] %}
  {% set repository_path=          tmp_repo_path | description("repository_path")
 					        | codepath()
 					        | default (suggested_ext_path) %}
 
- {% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
+ {% set process_descriptor_id = _emprj.prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
 
 {% include 'add_process_descriptor.sql' %}
 

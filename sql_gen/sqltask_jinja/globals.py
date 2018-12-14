@@ -1,4 +1,3 @@
-from sql_gen.current_project import app
 import pymssql
 import sys
 from prompt_toolkit.completion import Completer, Completion
@@ -9,7 +8,4 @@ def camelcase(st):
         return ""
     output = ''.join(x for x in st.title() if x.isalnum())
     return output[0].lower() + output[1:]
-
-def prj_prefix():
-    return app.emproject.prefix()
 

@@ -33,10 +33,6 @@ class AppProject(object):
         return os.path.join(self.emproject.root,"sqltask")
 
     @property
-    def logger(self):
-        return self.get_logger()
-
-    @property
     def ad_queryrunner(self):
         if not self._ad_query_runner:
             queries_path=self.paths["ad_queries"].path
@@ -78,7 +74,7 @@ class AppProject(object):
                           self.config["machine.name"],
                           self.config["container.name"])
 
-    def get_logger(self):
+    def setup_logger(self):
         if not self._logger:
             if self.paths.exists('logging_config'):
                 log.setup_from_file(self.paths['logging_config'].path)
