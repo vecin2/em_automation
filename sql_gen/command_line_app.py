@@ -1,13 +1,5 @@
 import argparse
-
-class CreateTaskApp(object):
-    def __init__(self):
-        self.path=""
-    def set_path(self,path):
-        self.path=path
-    def run(self):
-        self.run =True
-
+from sql_gen.create_sqltask_app import CreateSQLTaskApp
 class CommanLineApp(object):
     """"""
     def __init__(self,create_task_app=None):
