@@ -3,13 +3,13 @@ from jinja2.nodes import Stmt,Template,Output,Node
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from anytree import Node as AnyTreeNode
 import pytest
-from sql_gen.docugen.environment_selection import populate_filters
+import sql_gen.sqltask_jinja.filters as filters_package
+from sql_gen.docugen.env_builder import EnvBuilder
 
 
-env = Environment(
-    loader=FileSystemLoader("templates"),
-    autoescape=select_autoescape(['html', 'xml']))
-populate_filters(env)
+env = EnvBuilder().set_fs_path("templates")\
+                  .set_filters_package(filters_package)\
+                  .build()
 
 hello_welcome_output ="Output(nodes=[TemplateData(data='Hello '), "+\
                           "Name(name='name', ctx='load'), "+\
@@ -232,7 +232,7 @@ Hello {{ name_with_title}}!"""
     assert "load" == right.ctx
 
     output =child(template,1)
-    assert "\nHello " == child(output,0).data
+    assert "Hello " == child(output,0).data
     assert "name_with_title" == child(output,1).name
     assert "!" == child(output,2).data
 

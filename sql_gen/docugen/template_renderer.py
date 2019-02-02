@@ -4,21 +4,21 @@ from sql_gen.docugen.environment_selection import TemplateSelector
 from sql_gen import logger
 
 class TemplateRenderer(object):
+    def __init__(self, listener,template_selector):
+        self.listener = listener
+        self.template_selector = template_selector
+
     def run(self,context):
         logger.debug("About to run template renderer to start filling template values")
-        template_selector = TemplateSelector()
-        template = template_selector.select_template()
+        template = self.template_selector.select_template()
         if template is not None:
+            self.fill_template(template,context)
             logger.debug("Finish filling and rendering template "+template.name)
-            return self.render(template,context)
-        return ""
+        self.listener.finished()
 
-    def render(self,template,context):
+    def fill_template(self,template,context):
         context = self.build_context(template,context)
-        logger.debug("About to render template with final context"+template.name)
-        result = template.render(context)
-        logger.debug("Template rendered successfully: "+template.name)
-        return result
+        self.listener.template_filled(template,context)
 
     def build_context(self,template,context):
         parser = PromptParser(template)

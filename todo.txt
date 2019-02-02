@@ -1,38 +1,21 @@
-sqltask bootstrap will create the base configuration settings
+1. sqltask bootstrap will create the base configuration settings
+2. Approaches to python configuration (Resolve properties within properties)
 
-#Approaches to python configuration (Resolve properties within properties)
-#refactor queries.py
-sqltask uses current project (it should be comeing from the project)
+3. sqltask uses current project (it should be comeing from the project)
 	project_home should be instantiate only once at a top level
-#Handling wrong number of parameters passed to query - is not showig what paremeters passed and what is expected
-#Handling wrong query name
-#move from double __ to _
-#fix do same script twice does not popup all prompts
-Documentation
+
+4. Documentation
 	Manually delete config to recreate
 	Queries
-#No db conexion scenario
-##55 handle invalid templates path
-##52 SVN rev number offset
-#Config log level
-#refactor cli-util-to-use-prompter
 
-
-#Refactor to path
-	refactor __getitem__ to return path with full path
-	refactor mandatory to its own array of keys--> elements are paths
-
-Logg
-Basic logger
+5. Basic logger
 	logging.basicConfig(level=logging.INFO)
 	logger = logging.getLogger(__name__)
+	if app:
+	  app.logger
+	else
+	   basic_logger
+6.  Run test templates to make sure they still run - important for refactoring templates
+7. PReguntas RAul, *.yaml and *.sql (package_data in setup.py)
 
-if app:
-  app.logger
-else
-   basic_logger
-
-sqltask has a reference to currentapp. 
-	Break that reference
-
-Run test templates to make sure they still run - important for refactoring templates
+commit!!

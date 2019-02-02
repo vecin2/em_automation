@@ -4,6 +4,8 @@ from fuzzyfinder import fuzzyfinder
 import sql_gen
 import os
 
+logger = sql_gen.logger
+
 __all__ = [
     'SuggestionCompleter',
     'PathCompleter',

@@ -32,7 +32,7 @@ handlers:
 loggers:
     app_logger:
         level: INFO
-        handlers: [console,info_file_handler, error_file_handler]
+        handlers: [info_file_handler, error_file_handler]
         propagate: no
 
 root:

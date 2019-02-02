@@ -1,6 +1,8 @@
 from jinja2 import Template,Environment,DictLoader
-from sql_gen.docugen.environment_selection import populate_filters_and_globals
 from sql_gen.docugen.prompt_parser import PromptParser
+from sql_gen.docugen.env_builder import EnvBuilder
+from sql_gen.sqltask_jinja import globals as globals_module
+from sql_gen.sqltask_jinja import filters as filters_package
 
 class _TestPromptBuilder(object):
     def __init__(self, source):
@@ -19,10 +21,10 @@ class _TestPromptBuilder(object):
         return self._env().get_template("one_template")
 
     def _env(self):
-        env = Environment(
-            loader=DictLoader(self.templates))
-        populate_filters_and_globals(env)
-        return env
+        return EnvBuilder().set_loader(DictLoader(self.templates))\
+                           .set_globals_module(globals_module)\
+                           .set_filters_package(filters_package)\
+                           .build()
 
     def and_template(self, template_name, source):
         self.templates[template_name]=source
@@ -47,4 +49,5 @@ class _TestPromptBuilder(object):
 
     def assert_display_msg(self,msg, prompt):
         assert msg +": " == prompt.get_display_text()
+
 

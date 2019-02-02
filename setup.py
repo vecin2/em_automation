@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="sqltask",
-        version="0.0.1a22",
+        version="0.0.1a24",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -14,7 +14,7 @@ setuptools.setup(
         url="https://bfs-eng-can05.kana-test.com/dgarcia/em_automation",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        package_data = {'sql_gen': ['template/*.*', 'template/*/*.*']},
+        package_data = {'sql_gen': ['template/*.*', 'template/*/*.*','log/*.yaml']},
         install_requires=['Jinja2','pymssql','fuzzyfinder','prompt_toolkit','svn','pyperclip','PyYAML','cx-Oracle'],
         extra_require={
             ':"linux" in sys_platform':[

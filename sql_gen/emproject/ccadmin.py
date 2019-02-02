@@ -1,5 +1,7 @@
 import sql_gen
 import os
+from sql_gen import logger
+
 class CCAdmin(object):
     show_config_content=""
     def __init__(self,root):

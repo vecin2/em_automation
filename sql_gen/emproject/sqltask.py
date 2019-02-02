@@ -11,8 +11,18 @@ class Clipboard():
 
 class SQLTask(object):
     task_path=""
+    @staticmethod
+    def make(fs_location):
+        sql_task = None
+        if fs_location:
+            sql_task = SQLTask(root=app.root,config=app.config)
+            sql_task.with_path(sql_task_path)
+        else:
+            sql_task = DefaultOutputSQLTask()
+        return sql_task
     def __init__(self, root=None,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester(),config=None):
         self.root=root
+        self.table_data=""
         self.input_requester = input_requester
         self.svnclient =svnclient
         self.listener = listener
@@ -63,3 +73,14 @@ class SQLTask(object):
 
     def fs_location(self):
         return os.path.join(self.root, self.task_path)
+
+    def template_filled(self, template,context):
+        rendered_content = template.render(context)
+        self.table_data += rendered_content+"\n\n"
+
+class DefaultOutputSQLTask(SQLTask):
+    def __init__(self, root=None,svnclient=EMSvn(),listener=Clipboard(),input_requester=InputRequester(),config=None):
+        super().__init__(root,svnclient,listener,None,config)
+    def write(self):
+        print(self.table_data)
+

@@ -1,7 +1,5 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sql_gen.ui.cli_ui_util import suggest_prompt
-import sql_gen.sqltask_jinja.globals as template_globals
-import sql_gen.sqltask_jinja.filters as template_filters
 import os,sys
 import inspect
 import pkgutil
@@ -31,18 +29,15 @@ class MenuDisplayer(object):
         print("\n[0 to "+no_of_options+"]. Create SQLTask\t\tx. Exit")
 
 class TemplateSelector():
-    def __init__(self,env_vars=os.environ,displayer=MenuDisplayer()):
-        self.env_vars=env_vars
+    def __init__(self,env=None,displayer=MenuDisplayer()):
+        self.env = env
         self.displayer = displayer
-        self.env =None
 
     def select_template(self):
         self.show_options()
         return self.prompt_to_select_template()
 
     def get_env(self):
-        if not self.env:
-            self.env= EMTemplatesEnv().get_env(self.env_vars)
         return self.env
 
     def create_options(self, template_list):
@@ -106,46 +101,3 @@ class TemplateSelector():
                 return template_option
         return None
 
-def populate_globals(env,globals_module=template_globals):
-    all_functions = inspect.getmembers(globals_module, inspect.isfunction)
-    for name, function in all_functions:
-        env.globals[name]=function
-    return env
-def extract_module_names(package):
-    package_path = package.__path__
-    prefix = package.__name__+"."
-    modules=[]
-    for _, name, _ in pkgutil.iter_modules(package_path, prefix):
-        modules.append(name)
-    return modules
-
-def populate_filters(env,filters_package=template_filters):
-    module_names = extract_module_names(filters_package)
-    for module_name in module_names:
-        filter_module =importlib.import_module(module_name)
-        #filters which are built in  jinja do not need to be added
-        if hasattr(filter_module, "get_template_filter"):
-            get_filter_func=getattr(filter_module, "get_template_filter")
-            filter_func =get_filter_func()
-            env.filters[filter_func.__name__]=filter_func
-    return env
-def populate_filters_and_globals(env):
-    populate_filters(env)
-    populate_globals(env)
-
-class EMTemplatesEnv():
-    def get_env(self,env_vars=os.environ):
-        if 'SQL_TEMPLATES_PATH' in env_vars:
-            templates_path =env_vars['SQL_TEMPLATES_PATH']
-        else:
-            templates_path = os.path.join(env_vars['EM_CORE_HOME'],"sqltask","templates")
-        print("\nLoading templates from '" + templates_path+"':")
-        self.env = Environment(
-                            loader=FileSystemLoader(templates_path),
-                            trim_blocks=True,
-                            lstrip_blocks=True,
-                            keep_trailing_newline=False #default
-                            )
-        populate_globals(self.env)
-        populate_filters(self.env)
-        return self.env
