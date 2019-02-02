@@ -71,7 +71,7 @@ def do_run_app():
     args = parse_args();
     sql_task_path = args.dir
     try:
-        sqltask = SQLTask.make(sql_task_path)
+        sqltask = SQLTask.make(sql_task_path,app.root,app.config)
     except AttributeError as e:
         logger.error(str(e))
         exit()

@@ -12,10 +12,10 @@ class Clipboard():
 class SQLTask(object):
     task_path=""
     @staticmethod
-    def make(fs_location):
+    def make(fs_location,root=None,config=None):
         sql_task = None
         if fs_location:
-            sql_task = SQLTask(root=app.root,config=app.config)
+            sql_task = SQLTask(root,config)
             sql_task.with_path(sql_task_path)
         else:
             sql_task = DefaultOutputSQLTask()
