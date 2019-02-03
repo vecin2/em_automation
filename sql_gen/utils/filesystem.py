@@ -21,9 +21,9 @@ class Path(object):
 
 
 class ProjectLayout(dict):
-    def __init__(self,root,dict,mandatory_keys=[]):
+    def __init__(self,root,paths,mandatory_keys=[]):
         self.root= root
-        self.paths=dict
+        self.paths=paths
         self.mandatory_keys=mandatory_keys
 
     def __getitem__(self,key):
