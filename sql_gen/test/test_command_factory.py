@@ -7,7 +7,7 @@ def test_not_args_creates_sqltask_ouput_to_console():
     sys.argv=['.']
     factory = CommandFactory()
     command = factory.make()
-    assert "PrintSQLToConsole" ==class_name(command)
+    assert "PrintSQLToConsoleCommand" ==class_name(command)
 
 def test_dir_arg_creates_sqltask_ouput_to_file():
     sys.argv=['.','-d','modules/my_module']

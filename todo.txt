@@ -19,3 +19,7 @@
 7. PReguntas RAul, *.yaml and *.sql (package_data in setup.py)
 
 commit!!
+
+Print to console
+It should ask for template, fill the template and send the document to console 
+It should send to console the ouput of Running a template filling
