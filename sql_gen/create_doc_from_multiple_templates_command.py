@@ -1,7 +1,3 @@
-class CreateDocumentFromTemplateCommand(object):
-    def run(self):
-        return  "hello Mark"
-
 class CreateDocumentFromMultipleTemplatesCommand(object):
     def __init__(self,doc_creator=None):
         self.doc_creator=doc_creator
