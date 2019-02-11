@@ -1,12 +1,16 @@
 from sql_gen.print_sql_to_console_command import PrintSQLToConsoleCommand,PrintSQLToConsoleDisplayer
+from sql_gen.create_doc_from_multiple_templates_command import CreateDocumentFromMultipleTemplatesCommand
 
 
 def test_it_sends_to_console_the_filled_template(mocker):
-    sql_output = "hello Mark"
     displayer = PrintSQLToConsoleDisplayer()
     mocker.patch.object(displayer,'render_sql')
-    command = PrintSQLToConsoleCommand(displayer)
+    doc_creator=mocker.Mock(spec=CreateDocumentFromMultipleTemplatesCommand)
+    doc_creator.run.return_value ="hello Mark"
+    command = PrintSQLToConsoleCommand(doc_creator,displayer)
+
     command.run()
-    displayer.render_sql.assert_called_once_with(sql_output)
+
+    displayer.render_sql.assert_called_once_with("hello Mark")
 
 

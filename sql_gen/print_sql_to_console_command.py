@@ -1,11 +1,11 @@
-from sql_gen.fill_composed_template_command import FillComposedTemplateCommand
 
 class PrintSQLToConsoleCommand(object):
     """"""
-    def __init__(self, displayer=None):
+    def __init__(self, doc_creator=None, displayer=None):
+        self.doc_creator = doc_creator
         self.displayer = displayer
     def run(self):
-        output = FillComposedTemplateCommand().run()
+        output = self.doc_creator.run()
         self.displayer.render_sql(output)
 
 class PrintSQLToConsoleDisplayer(object):
