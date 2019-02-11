@@ -8,3 +8,5 @@ def test_it_sends_to_console_the_filled_template(mocker):
     command = PrintSQLToConsoleCommand(displayer)
     command.run()
     displayer.render_sql.assert_called_once_with(sql_output)
+
+
