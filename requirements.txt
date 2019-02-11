@@ -18,10 +18,11 @@ pyfakefs==3.4.3
 pymssql==2.1.4
 pyperclip==1.7.0
 pytest==3.7.2
+pytest-mock==1.10.1
 python-dateutil==2.7.3
 PyYAML==3.13
 six==1.11.0
-sqltask==0.0.1a19
+sqltask==0.0.1a24
 svn==0.3.46
 termcolor==1.1.0
 wcwidth==0.1.7
