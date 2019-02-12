@@ -5,7 +5,7 @@ import pytest
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleCommand
+from sql_gen.commands import PrintSQLToConsoleCommandBuilder
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller, SelectTemplateLoader,SelectTemplateDisplayer
 
 class FakeSQLRenderer(object):
@@ -16,14 +16,11 @@ class FakeSQLRenderer(object):
         self.rendered_sql+=sql_string
 
 class CommandTestFactory(CommandFactory):
-    def __init__(self,
-                 sql_renderer=FakeSQLRenderer(),
-                 select_template_loader=SelectTemplateLoader()):
-        self.sql_renderer = sql_renderer
-        self.select_template_loader=select_template_loader
+    def __init__(self, print_sql_to_console_command=None):
+        self.print_sql_to_console_command=print_sql_to_console_command
 
-    def _make_print_to_console_displayer(self):
-        return self.sql_renderer
+    def make_print_sql_to_console_command(self):
+        return self.print_sql_to_console_command
 
 class AppRunner():
     def with_user_inputs(self,user_inputs):
@@ -32,23 +29,24 @@ class AppRunner():
         return self
 
     def run_print_SQL_to_console(self):
-        self.run(['.'])
+        self._run(['.'])
         return self
 
-    def run(self,args):
+    def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        app_test_factory = CommandTestFactory(self.sql_renderer)
+        app_test_factory = CommandTestFactory(
+                            self._make_test_print_sql_to_console_command())
         app = CommandLineSQLTaskApp(app_test_factory)
         app.run()
 
+    def _make_test_print_sql_to_console_command(self):
+        return PrintSQLToConsoleCommandBuilder().\
+                  with_sql_renderer(self.sql_renderer).\
+                  build()
+
     def _user_input_to_str(self):
-        str_input_lines=""
-        for user_input in self.user_inputs.values():
-            if str_input_lines is not "":
-                str_input_lines+="\n"
-            str_input_lines += user_input
-        return str_input_lines
+        return "\n".join([user_input for user_input in self.user_inputs.values()])
 
     def assert_rendered_sql(self,expected_sql):
         assert expected_sql == self.sql_renderer.rendered_sql

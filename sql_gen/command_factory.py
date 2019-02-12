@@ -1,5 +1,5 @@
 from sql_gen.create_sqltask_command import CreateSQLTaskCommand
-from sql_gen.commands import PrintSQLToConsoleCommand,PrintSQLToConsoleDisplayer
+from sql_gen.commands import PrintSQLToConsoleCommandBuilder
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller,SelectTemplateLoader,SelectTemplateDisplayer
 import argparse
 
@@ -11,16 +11,10 @@ class CommandFactory(object):
             return CreateSQLTaskCommand()
         else:
             return self.make_print_sql_to_console_command()
+
     def make_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommand(
-                    CreateDocumentFromTemplateCommand(
-                            TemplateSelector(
-                                    SelectTemplateLoader(),
-                                    SelectTemplateDisplayer()),
-                            TemplateFiller()),
-                    self._make_print_to_console_displayer())
-    def _make_print_to_console_displayer(self):
-        return PrintSQLToConsoleDisplayer()
+        return PrintSQLToConsoleCommandBuilder().build()
+
 
     def parse_args(self):
         ap = argparse.ArgumentParser()
