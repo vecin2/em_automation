@@ -6,8 +6,7 @@ import pytest
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleCommand
-  
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller
+from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller, SelectTemplateLoader,SelectTemplateDisplayer
 
 class FakeSQLRenderer(object):
     def __init__(self):
@@ -16,14 +15,6 @@ class FakeSQLRenderer(object):
     def render_sql(self,sql_string):
         self.rendered_sql+=sql_string
 
-class SelectTemplateLoader(object):
-    def list_options(self):
-        return []
-
-class SelectTemplateDisplayer(object):
-    def ask_for_template(self,option_list):
-        return input("Please enter an option: ")
-
 class CommandTestFactory(CommandFactory):
     def __init__(self,
                  sql_renderer=FakeSQLRenderer(),
@@ -31,14 +22,8 @@ class CommandTestFactory(CommandFactory):
         self.sql_renderer = sql_renderer
         self.select_template_loader=select_template_loader
 
-    def make_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommand(
-                    CreateDocumentFromTemplateCommand(
-                            TemplateSelector(
-                                    self.select_template_loader,
-                                    SelectTemplateDisplayer()),
-                            None),
-                    self.sql_renderer)
+    def _make_print_to_console_displayer(self):
+        return self.sql_renderer
 
 class AppRunner():
     def with_user_inputs(self,user_inputs):

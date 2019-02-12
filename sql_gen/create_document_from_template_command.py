@@ -2,6 +2,9 @@ class TemplateLoader(object):
     """"""
 
 class SelectTemplateDisplayer(object):
+    def ask_for_template(self,option_list):
+        return input("Please enter an option ('x' to save && exit): ")
+
     """"""
 
 class TemplateSelector(object):
@@ -24,6 +27,10 @@ class TemplateSelector(object):
 
     def run(self):
         return None
+
+class SelectTemplateLoader(object):
+    def list_options(self):
+        return []
 
 class TemplateFiller(object):
     def fill(self):
