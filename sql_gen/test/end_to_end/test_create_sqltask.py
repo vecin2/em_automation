@@ -23,8 +23,11 @@ class CommandTestFactory(CommandFactory):
         return self.print_sql_to_console_command
 
 class AppRunner():
-    def with_user_inputs(self,user_inputs):
-        self.user_inputs =user_inputs
+    def __init__(self):
+        self.user_inputs=[]
+    def add_user_input(self,description, user_input):
+        #description is used only for test readability
+        self.user_inputs.append(user_input)
         self.sql_renderer = FakeSQLRenderer()
         return self
 
@@ -46,7 +49,7 @@ class AppRunner():
                   build()
 
     def _user_input_to_str(self):
-        return "\n".join([user_input for user_input in self.user_inputs.values()])
+        return "\n".join([user_input for user_input in self.user_inputs])
 
     def assert_rendered_sql(self,expected_sql):
         assert expected_sql == self.sql_renderer.rendered_sql
@@ -54,12 +57,7 @@ class AppRunner():
 
 
 def test_returns_empty_when_no_template_selected():
-    AppRunner().with_user_inputs({'template':'x'})\
-              .run_print_SQL_to_console()\
-              .assert_rendered_sql("")
-
-def test_returns_empty_when_no_template_selected():
-    AppRunner().with_user_inputs({'template':'x'})\
+    AppRunner().add_user_input('template','x')\
               .run_print_SQL_to_console()\
               .assert_rendered_sql("")
 
