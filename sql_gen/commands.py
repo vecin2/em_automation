@@ -1,7 +1,7 @@
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller,SelectTemplateLoader,SelectTemplateDisplayer
 
 class PrintSQLToConsoleCommand(object):
-    """"""
+    """Command which generates a SQL script from a template and it prints the ouput to console"""
     def __init__(self, doc_creator=None, displayer=None):
         self.doc_creator = doc_creator
         self.displayer = displayer

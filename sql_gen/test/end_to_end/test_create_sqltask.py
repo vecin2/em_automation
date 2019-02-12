@@ -58,3 +58,8 @@ def test_returns_empty_when_no_template_selected():
               .run_print_SQL_to_console()\
               .assert_rendered_sql("")
 
+def test_returns_empty_when_no_template_selected():
+    AppRunner().with_user_inputs({'template':'x'})\
+              .run_print_SQL_to_console()\
+              .assert_rendered_sql("")
+
