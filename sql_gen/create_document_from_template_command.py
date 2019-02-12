@@ -1,9 +1,20 @@
+import sys
+
+from prompt_toolkit import prompt as tk_prompt
+
+
 class TemplateLoader(object):
     """"""
 
+def prompt(text):
+    if not sys.stdout.isatty():
+        return input(text)
+    else:
+        return tk_prompt(text)
+
 class SelectTemplateDisplayer(object):
     def ask_for_template(self,option_list):
-        return input("Please enter an option ('x' to save && exit): ")
+        return prompt("Please enter an option ('x' to save && exit): ")
 
     """"""
 
