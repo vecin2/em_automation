@@ -9,28 +9,37 @@ class SelectTemplateDisplayer(object):
 
 class TemplateSelector(object):
     def __init__(self,loader,displayer):
-        self.loader = loader
         self.displayer = displayer
-    def select_template(self):
-        """"""
-        option_list = self.loader.list_options()
-        template_input =self.displayer.ask_for_template(option_list)
-        if template_input == 'x':
-            return
-        option = menu.ask_for_option(option_list)
-        #template = loader.load_template(template_input)
-        return option.get_template()
-        #while not template:
-        #    self.displayer.show_invalid_template_selected()
-        #    template_input =self.displayer.ask_for_template(option_list)
-        #    template = loader.load_template(template_input)
+        self.menu = loader.list_options()
 
-    def run(self):
+    def select_template(self):
+        self._select_option().code
+        return
+
+    def _select_option(self):
+        option =None
+        while option is None:
+            template_input =self.displayer.ask_for_template(self.menu)
+            option = self._parse_input(template_input)
+        return option
+
+    def _parse_input(self,input_entered):
+        for option in self.menu:
+            if option.code == input_entered:
+                return option
         return None
+
 
 class SelectTemplateLoader(object):
     def list_options(self):
-        return []
+        return [MenuOption('x','Save && Exit')]
+
+class MenuOption(object):
+    def __init__(self,code, name):
+        self.code =code
+        self.name =name
+    def __repr__(self):
+        return str(self.code) +". "+self.name
 
 class TemplateFiller(object):
     def fill(self):

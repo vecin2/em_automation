@@ -24,10 +24,10 @@ class CommandTestFactory(CommandFactory):
 
 class AppRunner():
     def __init__(self):
-        self.user_inputs=[]
-    def add_user_input(self,description, user_input):
+        self.inputs=[]
+    def user_inputs(self,description, user_input):
         #description is used only for test readability
-        self.user_inputs.append(user_input)
+        self.inputs.append(user_input)
         self.sql_renderer = FakeSQLRenderer()
         return self
 
@@ -49,15 +49,30 @@ class AppRunner():
                   build()
 
     def _user_input_to_str(self):
-        return "\n".join([user_input for user_input in self.user_inputs])
+        return "\n".join([input for input in self.inputs])
 
     def assert_rendered_sql(self,expected_sql):
         assert expected_sql == self.sql_renderer.rendered_sql
+        return self
+
+    def assert_all_input_was_read(self):
+        with pytest.raises(EOFError) as excinfo:
+            input("check")
+        assert "EOF" in str(excinfo.value)
+        return self
 
 
 
 def test_returns_empty_when_no_template_selected():
-    AppRunner().add_user_input('template','x')\
-              .run_print_SQL_to_console()\
-              .assert_rendered_sql("")
+    AppRunner().user_inputs('template','x')\
+               .run_print_SQL_to_console()\
+               .assert_rendered_sql("")
+
+def test_ask_for_template_until_valid_entry():
+    apprunner = AppRunner()
+    apprunner.user_inputs('template','abc')\
+               .user_inputs('template','x')\
+               .run_print_SQL_to_console()\
+               .assert_rendered_sql("")\
+               .assert_all_input_was_read()
 
