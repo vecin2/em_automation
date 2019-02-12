@@ -1,5 +1,5 @@
 from sql_gen.create_sqltask_command import CreateSQLTaskCommand
-from sql_gen.print_sql_to_console_command import PrintSQLToConsoleCommand
+from sql_gen.commands import PrintSQLToConsoleCommand
 import argparse
 
 class CommandFactory(object):
@@ -9,7 +9,9 @@ class CommandFactory(object):
         if path:
             return CreateSQLTaskCommand()
         else:
-            return PrintSQLToConsoleCommand()
+            return self.make_print_sql_to_console_command()
+    def make_print_sql_to_console_command(self):
+        return PrintSQLToConsoleCommand()
 
     def parse_args(self):
         ap = argparse.ArgumentParser()

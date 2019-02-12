@@ -1,4 +1,4 @@
-from sql_gen.print_sql_to_console_command import PrintSQLToConsoleCommand,PrintSQLToConsoleDisplayer
+from sql_gen.commands import PrintSQLToConsoleCommand,PrintSQLToConsoleDisplayer
 from sql_gen.create_doc_from_multiple_templates_command import CreateDocumentFromMultipleTemplatesCommand
 
 
