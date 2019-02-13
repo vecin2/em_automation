@@ -3,18 +3,21 @@ import sys
 from prompt_toolkit import prompt as tk_prompt
 from sql_gen.docugen.completer import SuggestionCompleter
 
-def prompt(text,suggestions):
+def prompt(text,completer):
     try:
         if not sys.stdout.isatty():
             return input(text)
         else:
-            str_suggestions = [str(item) for item in suggestions]
-            completer = SuggestionCompleter(str_suggestions)
             return tk_prompt(text,completer=completer)
     except EOFError:
         #If Ctrl+D is enter exit the program
         print("\n\nEOF entered. Exiting.")
         exit()
+
+def prompt_suggestions(text,suggestions):
+        str_suggestions = [str(item) for item in suggestions]
+        completer = SuggestionCompleter(str_suggestions)
+        return prompt(text,completer=completer)
 
 class DummyAction():
     def run(self):
@@ -33,7 +36,7 @@ class MenuOption(object):
 def select_option(text, option_list):
     option =None
     while option is None:
-        template_input =prompt(text,option_list)
+        template_input =prompt_suggestions(text,option_list)
         option = match_option(template_input,option_list)
     return option
 

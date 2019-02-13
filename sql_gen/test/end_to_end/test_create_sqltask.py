@@ -41,9 +41,11 @@ class AppRunner():
         self.sql_renderer = FakeSQLRenderer()
         return self
 
-    def with_environment(self, environment):
-        self.environment=environment
+    def using_templates_under(self, templates_path):
+        env_vars={'SQL_TEMPLATES_PATH':templates_path}
+        self.environment = EMTemplatesEnv().get_env(env_vars)
         return self
+
 
     def run_print_SQL_to_console(self):
         self._run(['.'])
@@ -102,28 +104,20 @@ def test_asks_for_template_until_valid_entry(app_runner):
                .assert_all_input_was_read()
 
 def test_select_and_render_no_vals_template(app_runner,fs):
-    templates_path ="/templates"
-    say_hello_path= os.path.join(templates_path,"say_hello.sql")
-    fs.create_file(say_hello_path, contents="hello!")
-    env_vars={'SQL_TEMPLATES_PATH':templates_path}
-    environment = EMTemplatesEnv().get_env(env_vars)
+    fs.create_file("/templates/say_hello.sql", contents="hello!")
 
-    app_runner.with_environment(environment)\
+    app_runner.using_templates_under("/templates")\
                .user_inputs('template','1. say_hello.sql')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
 
-@pytest.mark.skip
 def test_select_and_render_one_value_template(app_runner,fs):
-    templates_path ="/templates"
-    say_hello_path= os.path.join(templates_path,"say_hello.sql")
-    fs.create_file(say_hello_path, contents="hello {{name}}!")
-    env_vars={'SQL_TEMPLATES_PATH':templates_path}
-    environment = EMTemplatesEnv().get_env(env_vars)
+    fs.create_file("/templates/greeting.sql", contents="hello {{name}}!")
 
-    app_runner.with_environment(environment)\
-               .user_inputs('template','1. say_hello.sql')\
+    app_runner.using_templates_under("/templates")\
+               .user_inputs('template','1. greeting.sql')\
+               .user_inputs('name','David')\
                .run_print_SQL_to_console()\
-               .assert_rendered_sql("hello!")\
+               .assert_rendered_sql("hello David!")\
                .assert_all_input_was_read()
