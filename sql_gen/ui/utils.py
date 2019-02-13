@@ -8,7 +8,6 @@ def prompt(text,completer):
         if not sys.stdout.isatty():
             #return input(text)
             print(text)
-            print("type of stdin is "+str(type(sys.stdin)))
             return sys.stdin.readline().strip()
         else:
             return tk_prompt(text,completer=completer)

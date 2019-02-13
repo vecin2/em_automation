@@ -1,23 +1,23 @@
 import argparse
+import os
 
 from sql_gen.create_sqltask_command import CreateSQLTaskCommand
-from sql_gen.commands import PrintSQLToConsoleCommandBuilder
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.commands import PrintSQLToConsoleProdConfig
 
 
 class CommandFactory(object):
-    def make(self):
+    def __init__(self,
+                 print_sql_to_console_config=PrintSQLToConsoleProdConfig()):
+        self.print_sql_to_console_config = print_sql_to_console_config
+
+    def make(self,env_vars=os.environ):
         args =self.parse_args()
         path = args.dir
+        self.env_vars =env_vars
         if path:
             return CreateSQLTaskCommand()
         else:
-            return self.make_print_sql_to_console_command()
-
-    def make_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommandBuilder().\
-                    with_environment(EMTemplatesEnv().get_env()).\
-                    build()
+            return self.print_sql_to_console_config.make(env_vars)
 
 
     def parse_args(self):

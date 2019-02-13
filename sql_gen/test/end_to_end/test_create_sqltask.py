@@ -7,25 +7,15 @@ import pytest
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleCommandBuilder
+from sql_gen.commands import PrintSQLToConsoleCommandBuilder, PrintSQLToConsoleDisplayer,PrintSQLToConsoleProdConfig
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
-class FakeSQLRenderer(object):
-    def __init__(self):
-        self.rendered_sql=""
+class PrintSQLToConsoleTestConfig(PrintSQLToConsoleProdConfig):
+    def __init__(self, sql_renderer):
+        self.sql_renderer = sql_renderer
 
-    def write(self,sql_string):
-        if self.rendered_sql is not "" and\
-            sql_string is not "":
-           self.rendered_sql+="\n" 
-        self.rendered_sql+=sql_string
-
-class CommandTestFactory(CommandFactory):
-    def __init__(self, print_sql_to_console_command=None):
-        self.print_sql_to_console_command=print_sql_to_console_command
-
-    def make_print_sql_to_console_command(self):
-        return self.print_sql_to_console_command
+    def _make_doc_writer(self):
+        return self.sql_renderer
 
 class DummyEnvironment(object):
     def list_templates(self):
@@ -37,6 +27,7 @@ class AppRunner():
         self.original_stdin = sys.stdin
         self.template_path=""
         self.environment =DummyEnvironment()
+        self.env_vars=os.environ
 
     def saveAndExit(self):
         self.user_inputs("","x")
@@ -51,12 +42,11 @@ class AppRunner():
     def user_inputs(self,description, user_input):
         #description is used only for test readability
         self.inputs.append(user_input)
-        self.sql_renderer = FakeSQLRenderer()
+        self.sql_renderer = PrintSQLToConsoleDisplayer()
         return self
 
     def using_templates_under(self, templates_path):
-        env_vars={'SQL_TEMPLATES_PATH':templates_path}
-        self.environment = EMTemplatesEnv().get_env(env_vars)
+        self.env_vars={'SQL_TEMPLATES_PATH':templates_path}
         return self
 
 
@@ -67,19 +57,11 @@ class AppRunner():
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        app_test_factory = CommandTestFactory(
-                            self._make_test_print_sql_to_console_command())
-        app = CommandLineSQLTaskApp(app_test_factory)
-        app.run()
 
-    def _make_test_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommandBuilder().\
-                  with_sql_renderer(self.sql_renderer).\
-                  with_environment(self.environment).\
-                  build()
-
-    def _make_emsqltemplate_env(self):
-        return EMTemplatesEnv().get_env(self.env_vars)
+        test_config= PrintSQLToConsoleTestConfig(self.sql_renderer)
+        command_factory = CommandFactory(test_config)
+        app = CommandLineSQLTaskApp(command_factory)
+        app.run(self.env_vars)
 
     def _user_input_to_str(self):
         return "\n".join([input for input in self.inputs])

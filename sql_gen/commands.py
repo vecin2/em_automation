@@ -1,48 +1,73 @@
+import os
+
 from sql_gen.create_document_from_template_command import MultipleTemplatesDocGenerator,CreateDocumentFromTemplateCommand,TemplateSelector,SelectTemplateLoader
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
-    def __init__(self, doc_creator=None, displayer=None):
+    def __init__(self, doc_creator=None):
         self.doc_creator = doc_creator
-        self.displayer = displayer
     def run(self):
         self.doc_creator.run()
 
 class PrintSQLToConsoleDisplayer(object):
+    """Prints to console the command output"""
     def __init__(self):
         self.rendered_sql=""
-    """Prints to console the command output"""
-    def render_sql(self,sql_to_render):
-        print(sql_to_render)
-        self.rendered_sql+=sql_to_render
 
     def write(self,content):
         self.render_sql(content)
 
+    def render_sql(self,sql_to_render):
+        print(sql_to_render)
+        self._append_rendered_text(sql_to_render)
+
+    def _append_rendered_text(self,text):
+        if self.rendered_sql is not "" and\
+            text is not "":
+           self.rendered_sql+="\n" 
+        self.rendered_sql+=text
+
+class PrintSQLToConsoleProdConfig(object):
+    def make(self, env_vars=os.environ):
+        self.env_vars = env_vars
+        return PrintSQLToConsoleCommandBuilder().\
+                    with_action_seletor(self._make_action_selector()).\
+                    with_doc_writer(self._make_doc_writer()).\
+                    build()
+
+    def _make_action_selector(self):
+        return TemplateSelector(self._make_template_selector())
+
+    def _make_template_selector(self):
+        return SelectTemplateLoader(self._make_template_env())
+
+    def _make_template_env(self):
+        return EMTemplatesEnv().get_env(self.env_vars)
+
+    def _make_doc_writer(self):
+        return PrintSQLToConsoleDisplayer()
 
 class PrintSQLToConsoleCommandBuilder(object):
-    def __init__(self,
-                 sql_renderer=PrintSQLToConsoleDisplayer(),
-                 env_vars=None):
-        self.sql_renderer=sql_renderer
-        self.environment =None
+    def __init__(self):
+        self.sql_renderer=None
+        self.action_selector =None
+        self.doc_writer =None
 
-    def with_sql_renderer(self,sql_renderer):
-        self.sql_renderer = sql_renderer
+    def with_action_seletor(self,action_selector):
+        self.action_selector=action_selector
         return self
 
-    def with_environment(self,environment):
-        self.environment = environment
+    def with_doc_writer(self,doc_writer):
+        self.doc_writer =doc_writer
         return self
 
     def build(self):
-        action_selector=TemplateSelector(
-                                SelectTemplateLoader(self.environment))
         return PrintSQLToConsoleCommand(
                     MultipleTemplatesDocGenerator(
                         CreateDocumentFromTemplateCommand(
-                            action_selector,
-                            self.sql_renderer
+                            self.action_selector,
+                            self.doc_writer
                         )
                     ),
                 )
