@@ -49,6 +49,8 @@ class MultipleTemplatesDocGenerator(object):
         while filled_template is not "":
             filled_template = self.single_doc_generator.run()
         return
+    def generated_doc(self):
+        return self.single_doc_generator.generated_doc()
 
 
 class CreateDocumentFromTemplateCommand(object):
@@ -61,4 +63,6 @@ class CreateDocumentFromTemplateCommand(object):
         self.writer.write(filled_template)
         return filled_template
 
+    def generated_doc(self):
+        return self.writer.current_text()
 

@@ -7,8 +7,12 @@ class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
     def __init__(self, doc_creator=None):
         self.doc_creator = doc_creator
+
     def run(self):
         self.doc_creator.run()
+
+    def sql_printed(self):
+        return self.doc_creator.generated_doc()
 
 class PrintSQLToConsoleDisplayer(object):
     """Prints to console the command output"""
@@ -25,8 +29,11 @@ class PrintSQLToConsoleDisplayer(object):
     def _append_rendered_text(self,text):
         if self.rendered_sql is not "" and\
             text is not "":
-           self.rendered_sql+="\n" 
+           self.rendered_sql+="\n"
         self.rendered_sql+=text
+
+    def current_text(self):
+        return self.rendered_text
 
 class PrintSQLToConsoleProdConfig(object):
     def make(self, env_vars=os.environ):

@@ -7,8 +7,7 @@ import pytest
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleCommandBuilder, PrintSQLToConsoleDisplayer,PrintSQLToConsoleProdConfig
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleProdConfig
 
 class PrintSQLToConsoleTestConfig(PrintSQLToConsoleProdConfig):
     def __init__(self, sql_renderer):
@@ -16,6 +15,9 @@ class PrintSQLToConsoleTestConfig(PrintSQLToConsoleProdConfig):
 
     def _make_doc_writer(self):
         return self.sql_renderer
+
+class CommandTestFactory(CommandFactory):
+    """"""
 
 class DummyEnvironment(object):
     def list_templates(self):
@@ -57,10 +59,9 @@ class AppRunner():
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-
-        test_config= PrintSQLToConsoleTestConfig(self.sql_renderer)
-        command_factory = CommandFactory(test_config)
-        app = CommandLineSQLTaskApp(command_factory)
+        self.test_config= PrintSQLToConsoleTestConfig(self.sql_renderer)
+        self.command_factory = CommandFactory(self.test_config)
+        app = CommandLineSQLTaskApp(self.command_factory)
         app.run(self.env_vars)
 
     def _user_input_to_str(self):
@@ -68,6 +69,7 @@ class AppRunner():
 
     def assert_rendered_sql(self,expected_sql):
         assert expected_sql == self.sql_renderer.rendered_sql
+        #assert expected_sql == self.test_command.sql_printed()
         return self
 
     def assert_all_input_was_read(self):

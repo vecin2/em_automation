@@ -17,8 +17,10 @@ class CommandFactory(object):
         if path:
             return CreateSQLTaskCommand()
         else:
-            return self.print_sql_to_console_config.make(env_vars)
+            return self.make_print_sql_to_console_command(env_vars)
 
+    def make_print_sql_to_console_command(self,env_vars):
+        return self.print_sql_to_console_config.make(env_vars)
 
     def parse_args(self):
         ap = argparse.ArgumentParser()
