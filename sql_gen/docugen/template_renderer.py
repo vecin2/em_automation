@@ -18,7 +18,8 @@ class TemplateRenderer(object):
 
     def fill_template(self,template,context):
         context = self.build_context(template,context)
-        self.listener.template_filled(template,context)
+        return template.render(context)
+        #self.listener.template_filled(template,context)
 
     def build_context(self,template,context):
         parser = PromptParser(template)

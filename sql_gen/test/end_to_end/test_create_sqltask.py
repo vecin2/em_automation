@@ -1,4 +1,6 @@
 import sys
+import os
+
 from io import StringIO
 
 import pytest
@@ -7,6 +9,7 @@ from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleCommandBuilder
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller, SelectTemplateLoader,SelectTemplateDisplayer
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 class FakeSQLRenderer(object):
     def __init__(self):
@@ -22,15 +25,25 @@ class CommandTestFactory(CommandFactory):
     def make_print_sql_to_console_command(self):
         return self.print_sql_to_console_command
 
+class DummyEnvironment(object):
+    def list_templates(self):
+        return []
+
 class AppRunner():
     def __init__(self):
         self.inputs=[]
         self.original_stdin = sys.stdin
+        self.template_path=""
+        self.environment =DummyEnvironment()
 
     def user_inputs(self,description, user_input):
         #description is used only for test readability
         self.inputs.append(user_input)
         self.sql_renderer = FakeSQLRenderer()
+        return self
+
+    def with_environment(self, environment):
+        self.environment=environment
         return self
 
     def run_print_SQL_to_console(self):
@@ -48,7 +61,11 @@ class AppRunner():
     def _make_test_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommandBuilder().\
                   with_sql_renderer(self.sql_renderer).\
+                  with_environment(self.environment).\
                   build()
+
+    def _make_emsqltemplate_env(self):
+        return EMTemplatesEnv().get_env(self.env_vars)
 
     def _user_input_to_str(self):
         return "\n".join([input for input in self.inputs])
@@ -72,6 +89,7 @@ def app_runner():
     yield app_runner
     app_runner.teardown()
 
+
 def test_returns_empty_when_no_template_selected(app_runner):
     app_runner.user_inputs('template','x')\
                .run_print_SQL_to_console()\
@@ -84,9 +102,17 @@ def test_asks_for_template_until_valid_entry(app_runner):
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
-def test_select_and_fill_template_prints_result_to_console(app_runner):
-    app_runner.user_inputs('template','1')\
+def test_select_and_fill_template_prints_result_to_console(app_runner,fs):
+    #templates ={"1. say_hello.sql","hello"}
+    templates_path ="/templates"
+    say_hello_path= os.path.join(templates_path,"say_hello.sql")
+    fs.create_file(say_hello_path, contents="hello!")
+    env_vars={'SQL_TEMPLATES_PATH':templates_path}
+    environment = EMTemplatesEnv().get_env(env_vars)
+
+    app_runner.with_environment(environment)\
+               .user_inputs('template','0. say_hello.sql')\
                .run_print_SQL_to_console()\
-               .assert_rendered_sql("")\
+               .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
 

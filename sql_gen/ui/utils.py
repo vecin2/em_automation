@@ -16,8 +16,12 @@ def prompt(text,suggestions):
         print("\n\nEOF entered. Exiting.")
         exit()
 
+class DummyAction():
+    def run():
+        """implementation of the null pattern"""
+
 class MenuOption(object):
-    def __init__(self,code, name):
+    def __init__(self,code, name,action=DummyAction()):
         self.code =code
         self.name =name
     def __repr__(self):
