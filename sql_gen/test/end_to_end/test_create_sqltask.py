@@ -25,6 +25,8 @@ class CommandTestFactory(CommandFactory):
 class AppRunner():
     def __init__(self):
         self.inputs=[]
+        self.original_stdin = sys.stdin
+
     def user_inputs(self,description, user_input):
         #description is used only for test readability
         self.inputs.append(user_input)
@@ -61,16 +63,22 @@ class AppRunner():
         assert "EOF" in str(excinfo.value)
         return self
 
+    def teardown(self):
+        sys.stdin = self.original_stdin
 
+@pytest.fixture
+def app_runner():
+    app_runner = AppRunner()
+    yield app_runner
+    app_runner.teardown()
 
-def test_returns_empty_when_no_template_selected():
-    AppRunner().user_inputs('template','x')\
+def test_returns_empty_when_no_template_selected(app_runner):
+    app_runner.user_inputs('template','x')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("")
 
-def test_ask_for_template_until_valid_entry():
-    apprunner = AppRunner()
-    apprunner.user_inputs('template','abc')\
+def test_asks_for_template_until_valid_entry(app_runner):
+    app_runner.user_inputs('template','abc')\
                .user_inputs('template','x')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("")\
