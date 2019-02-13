@@ -1,4 +1,4 @@
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller,SelectTemplateDisplayer
+from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector
 import unittest.mock as mocker
 import pytest
 
@@ -43,7 +43,6 @@ def test_exit_returns_no_():
 def test_enter_option_id_returns_template():
     user_inputs =["1"]
     options = [Option("1","create_verb.sql")]
-    #loader
 
     selector = TemplateSelector(None,None)
     assert None == selector.run()

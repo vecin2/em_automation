@@ -8,7 +8,6 @@ import pytest
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleCommandBuilder
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller, SelectTemplateLoader,SelectTemplateDisplayer
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 class FakeSQLRenderer(object):
@@ -102,8 +101,7 @@ def test_asks_for_template_until_valid_entry(app_runner):
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
-def test_select_and_fill_template_prints_result_to_console(app_runner,fs):
-    #templates ={"1. say_hello.sql","hello"}
+def test_select_and_render_no_vals_template(app_runner,fs):
     templates_path ="/templates"
     say_hello_path= os.path.join(templates_path,"say_hello.sql")
     fs.create_file(say_hello_path, contents="hello!")
@@ -111,8 +109,21 @@ def test_select_and_fill_template_prints_result_to_console(app_runner,fs):
     environment = EMTemplatesEnv().get_env(env_vars)
 
     app_runner.with_environment(environment)\
-               .user_inputs('template','0. say_hello.sql')\
+               .user_inputs('template','1. say_hello.sql')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
 
+@pytest.mark.skip
+def test_select_and_render_one_value_template(app_runner,fs):
+    templates_path ="/templates"
+    say_hello_path= os.path.join(templates_path,"say_hello.sql")
+    fs.create_file(say_hello_path, contents="hello {{name}}!")
+    env_vars={'SQL_TEMPLATES_PATH':templates_path}
+    environment = EMTemplatesEnv().get_env(env_vars)
+
+    app_runner.with_environment(environment)\
+               .user_inputs('template','1. say_hello.sql')\
+               .run_print_SQL_to_console()\
+               .assert_rendered_sql("hello!")\
+               .assert_all_input_was_read()

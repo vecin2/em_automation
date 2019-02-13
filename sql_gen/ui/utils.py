@@ -17,15 +17,18 @@ def prompt(text,suggestions):
         exit()
 
 class DummyAction():
-    def run():
+    def run(self):
         """implementation of the null pattern"""
 
 class MenuOption(object):
     def __init__(self,code, name,action=DummyAction()):
         self.code =code
         self.name =name
+        self.action =action
     def __repr__(self):
         return str(self.code) +". "+self.name
+    def run(self):
+        return self.action.run()
 
 def select_option(text, option_list):
     option =None

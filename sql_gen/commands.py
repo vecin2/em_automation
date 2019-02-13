@@ -1,4 +1,4 @@
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller,SelectTemplateLoader,SelectTemplateDisplayer
+from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,SelectTemplateLoader
 
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
@@ -34,7 +34,5 @@ class PrintSQLToConsoleCommandBuilder(object):
         return PrintSQLToConsoleCommand(
                     CreateDocumentFromTemplateCommand(
                             TemplateSelector(
-                                    SelectTemplateLoader(self.environment),
-                                    SelectTemplateDisplayer()),
-                            TemplateFiller()),
+                                    SelectTemplateLoader(self.environment))),
                     self.sql_renderer)

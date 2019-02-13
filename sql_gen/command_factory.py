@@ -1,7 +1,9 @@
+import argparse
+
 from sql_gen.create_sqltask_command import CreateSQLTaskCommand
 from sql_gen.commands import PrintSQLToConsoleCommandBuilder
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,TemplateFiller,SelectTemplateLoader,SelectTemplateDisplayer
-import argparse
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+
 
 class CommandFactory(object):
     def make(self):
@@ -13,7 +15,9 @@ class CommandFactory(object):
             return self.make_print_sql_to_console_command()
 
     def make_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommandBuilder().build()
+        return PrintSQLToConsoleCommandBuilder().\
+                    with_environment(EMTemplatesEnv().get_env()).\
+                    build()
 
 
     def parse_args(self):
