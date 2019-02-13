@@ -14,7 +14,10 @@ class FakeSQLRenderer(object):
     def __init__(self):
         self.rendered_sql=""
 
-    def render_sql(self,sql_string):
+    def write(self,sql_string):
+        if self.rendered_sql is not "" and\
+            sql_string is not "":
+           self.rendered_sql+="\n" 
         self.rendered_sql+=sql_string
 
 class CommandTestFactory(CommandFactory):
@@ -108,6 +111,7 @@ def test_select_and_render_no_vals_template(app_runner,fs):
 
     app_runner.using_templates_under("/templates")\
                .user_inputs('template','1. say_hello.sql')\
+               .user_inputs('template','x')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
@@ -118,6 +122,22 @@ def test_select_and_render_one_value_template(app_runner,fs):
     app_runner.using_templates_under("/templates")\
                .user_inputs('template','1. greeting.sql')\
                .user_inputs('name','David')\
+               .user_inputs('template','x')\
                .run_print_SQL_to_console()\
                .assert_rendered_sql("hello David!")\
+               .assert_all_input_was_read()
+
+
+def test_fills_two_templates_combines_output(app_runner,fs):
+    fs.create_file("/templates/hello.sql", contents="hello {{name}}!")
+    #fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+
+    app_runner.using_templates_under("/templates")\
+               .user_inputs('template','1. hello.sql')\
+               .user_inputs('name','John')\
+               .user_inputs('template','1. hello.sql')\
+               .user_inputs('name','Mark')\
+               .user_inputs('template','x')\
+               .run_print_SQL_to_console()\
+               .assert_rendered_sql("hello John!\nhello Mark!")\
                .assert_all_input_was_read()

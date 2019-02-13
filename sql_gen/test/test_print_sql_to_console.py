@@ -1,7 +1,10 @@
+import pytest
+
 from sql_gen.commands import PrintSQLToConsoleCommand,PrintSQLToConsoleDisplayer
 from sql_gen.create_doc_from_multiple_templates_command import CreateDocumentFromMultipleTemplatesCommand
 
 
+@pytest.mark.skip
 def test_it_sends_to_console_the_filled_template(mocker):
     displayer = PrintSQLToConsoleDisplayer()
     mocker.patch.object(displayer,'render_sql')

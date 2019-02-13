@@ -17,6 +17,7 @@ class CommandFactory(object):
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommandBuilder().\
                     with_environment(EMTemplatesEnv().get_env()).\
+                    with_sql_renderer(FakeSQLRenderer()).\
                     build()
 
 

@@ -1,4 +1,4 @@
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,SelectTemplateLoader
+from sql_gen.create_document_from_template_command import MultipleTemplatesDocGenerator,CreateDocumentFromTemplateCommand,TemplateSelector,SelectTemplateLoader
 
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
@@ -6,13 +6,19 @@ class PrintSQLToConsoleCommand(object):
         self.doc_creator = doc_creator
         self.displayer = displayer
     def run(self):
-        output = self.doc_creator.run()
-        self.displayer.render_sql(output)
+        self.doc_creator.run()
 
 class PrintSQLToConsoleDisplayer(object):
+    def __init__(self):
+        self.rendered_sql=""
     """Prints to console the command output"""
     def render_sql(self,sql_to_render):
         print(sql_to_render)
+        self.rendered_sql+=sql_to_render
+
+    def write(self,content):
+        self.render_sql(content)
+
 
 class PrintSQLToConsoleCommandBuilder(object):
     def __init__(self,
@@ -32,7 +38,9 @@ class PrintSQLToConsoleCommandBuilder(object):
 
     def build(self):
         return PrintSQLToConsoleCommand(
-                    CreateDocumentFromTemplateCommand(
-                            TemplateSelector(
-                                    SelectTemplateLoader(self.environment))),
-                    self.sql_renderer)
+                    MultipleTemplatesDocGenerator(
+                        CreateDocumentFromTemplateCommand(TemplateSelector(
+                                                            SelectTemplateLoader(self.environment)),
+                                                          self.sql_renderer)
+                    ),
+                )

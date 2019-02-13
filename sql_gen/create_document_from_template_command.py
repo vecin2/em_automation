@@ -38,11 +38,25 @@ class SelectTemplateLoader(object):
             self.template_option_list.append(template_option)
         return self.template_option_list
 
-
-class CreateDocumentFromTemplateCommand(object):
-    def __init__(self,selector):
-        self.selector = selector
+class MultipleTemplatesDocGenerator(object):
+    def __init__(self,single_doc_generator):
+        self.single_doc_generator = single_doc_generator
 
     def run(self):
-        return self.selector.select_action().run()
+        filled_template = self.single_doc_generator.run()
+        while filled_template is not "":
+            filled_template = self.single_doc_generator.run()
+        return
+
+
+class CreateDocumentFromTemplateCommand(object):
+    def __init__(self,selector,writer):
+        self.selector = selector
+        self.writer =writer
+
+    def run(self):
+        filled_template = self.selector.select_action().run()
+        self.writer.write(filled_template)
+        return filled_template
+
 
