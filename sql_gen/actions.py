@@ -1,4 +1,4 @@
-from sql_gen.docugen.template_renderer import TemplateRenderer
+from sql_gen.docugen.template_filler import TemplateFiller
 class ExitAction():
     """Does nothing and exits"""
     def run(self):
@@ -11,5 +11,5 @@ class FillTemplateAction():
         self.loader = loader
     def run(self):
         template = self.loader.get_template(self.template_name)
-        return TemplateRenderer(None,None).fill_template(template,{})
+        return TemplateFiller().fill(template,{})
 
