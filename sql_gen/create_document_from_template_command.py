@@ -2,6 +2,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from sql_gen.ui import prompt,MenuOption,select_option
 from sql_gen.docugen.template_renderer import TemplateRenderer
+from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.actions import ExitAction, FillTemplateAction 
 
 class TemplateSelector(object):
@@ -31,7 +32,8 @@ class SelectTemplateLoader(object):
         self.template_option_list=[]
         for counter, template_path in enumerate(template_list):
             action =FillTemplateAction(template_path,
-                                       self.environment)
+                                       self.environment,
+                                       TemplateFiller())
             template_option =MenuOption(counter +1,
                                         template_path,
                                         action)

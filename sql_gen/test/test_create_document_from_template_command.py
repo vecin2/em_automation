@@ -1,10 +1,36 @@
-from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector
 import unittest.mock as mocker
 import pytest
+
+from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand,TemplateSelector,SelectTemplateLoader
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.ui import MenuOption
 
 def make():
     return CreateDocumentFromTemplateCommand()
 
+@pytest.fixture
+def loader():
+    env_vars={'SQL_TEMPLATES_PATH':'/templates'}
+    env =EMTemplatesEnv().get_env(env_vars)
+    yield SelectTemplateLoader(env)
+
+def test_no_templates_returns_only_exit(loader):
+    expected_options=[MenuOption('x','Save && Exit')]
+    assert str(expected_options) ==str(loader.list_options())
+
+def test_load_one_template(fs,loader):
+    fs.create_file("/templates/hello.sql", contents="hello {{name}}!")
+    expected_options=[MenuOption('1','hello.sql'),
+                      MenuOption('x','Save && Exit')]
+    assert str(expected_options) ==str(loader.list_options())
+
+def test_list_multiple_templates_in_alphabetic_order(fs,loader):
+    fs.create_file("/templates/hello.sql", contents="hello {{name}}!")
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    expected_options=[MenuOption('1','bye.sql'),
+                      MenuOption('2','hello.sql'),
+                      MenuOption('x','Save && Exit')]
+    assert str(expected_options) ==str(loader.list_options())
 @pytest.mark.skip
 def test_it_selects_a_template_then_returns_it_filled():
     template="some_template"

@@ -6,10 +6,11 @@ class ExitAction():
 
 class FillTemplateAction():
     """It fills the template values"""
-    def __init__(self,template_name, loader):
+    def __init__(self,template_name, loader,template_filler=TemplateFiller()):
         self.template_name =template_name
         self.loader = loader
+        self.template_filler =template_filler
     def run(self):
         template = self.loader.get_template(self.template_name)
-        return TemplateFiller().fill(template,{})
+        return self.template_filler.fill(template,{})
 

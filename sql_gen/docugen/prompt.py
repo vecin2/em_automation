@@ -1,6 +1,9 @@
+import sys
+
+from prompt_toolkit.completion import Completer, Completion
+
 from sql_gen import logger
 from sql_gen.ui import prompt
-from prompt_toolkit.completion import Completer, Completion
 from sql_gen.docugen.completer import SuggestionCompleter
 
 class Prompt:

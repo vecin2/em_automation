@@ -1,12 +1,14 @@
-from sql_gen import logger
-from sql_gen.docugen.template_context import TemplateContext
+import sys
+import importlib
+from collections import OrderedDict
+
 from jinja2.visitor import NodeTransformer,NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call,Name
-import importlib
-from collections import OrderedDict
+
 from sql_gen.docugen.prompt import Prompt
-import sys
+from sql_gen import logger
+from sql_gen.docugen.template_context import TemplateContext
 
 class PromptParser(object):
     def __init__(self,template):

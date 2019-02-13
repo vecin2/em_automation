@@ -6,7 +6,10 @@ from sql_gen.docugen.completer import SuggestionCompleter
 def prompt(text,completer):
     try:
         if not sys.stdout.isatty():
-            return input(text)
+            #return input(text)
+            print(text)
+            print("type of stdin is "+str(type(sys.stdin)))
+            return sys.stdin.readline().strip()
         else:
             return tk_prompt(text,completer=completer)
     except EOFError:
@@ -43,6 +46,7 @@ def select_option(text, option_list):
 def match_option(input_entered,option_list):
     for option in option_list:
         if option.code == input_entered or\
+            option.name == input_entered or\
             input_entered == str(option):
             return option
     return None

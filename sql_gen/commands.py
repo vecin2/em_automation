@@ -26,7 +26,6 @@ class PrintSQLToConsoleCommandBuilder(object):
                  env_vars=None):
         self.sql_renderer=sql_renderer
         self.environment =None
-        #self.environment=EMTemplatesEnv.get_env(env_vars)
 
     def with_sql_renderer(self,sql_renderer):
         self.sql_renderer = sql_renderer
@@ -37,10 +36,13 @@ class PrintSQLToConsoleCommandBuilder(object):
         return self
 
     def build(self):
+        action_selector=TemplateSelector(
+                                SelectTemplateLoader(self.environment))
         return PrintSQLToConsoleCommand(
                     MultipleTemplatesDocGenerator(
-                        CreateDocumentFromTemplateCommand(TemplateSelector(
-                                                            SelectTemplateLoader(self.environment)),
-                                                          self.sql_renderer)
+                        CreateDocumentFromTemplateCommand(
+                            action_selector,
+                            self.sql_renderer
+                        )
                     ),
                 )
