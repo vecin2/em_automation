@@ -11,7 +11,8 @@ class TemplateSelector(object):
 
 class SelectTemplateLoader(object):
     def list_options(self):
-        return [MenuOption('x','Save && Exit')]
+        return [MenuOption('1','say_hello.sql'),
+                MenuOption('x','Save && Exit')]
 
 class SelectTemplateDisplayer(object):
     def ask_for_template(self,option_list):

@@ -84,3 +84,9 @@ def test_asks_for_template_until_valid_entry(app_runner):
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
+def test_select_and_fill_template_prints_result_to_console(app_runner):
+    app_runner.user_inputs('template','1')\
+               .run_print_SQL_to_console()\
+               .assert_rendered_sql("")\
+               .assert_all_input_was_read()
+

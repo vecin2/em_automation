@@ -27,11 +27,12 @@ def select_option(text, option_list):
     option =None
     while option is None:
         template_input =prompt(text,option_list)
-        option = _find_option(template_input,option_list)
+        option = match_option(template_input,option_list)
     return option
 
-def _find_option(input_entered,option_list):
+def match_option(input_entered,option_list):
     for option in option_list:
-        if option.code == input_entered:
+        if option.code == input_entered or\
+            input_entered == str(option):
             return option
     return None
