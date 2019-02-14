@@ -27,7 +27,6 @@ class AppRunner():
     def __init__(self):
         self.inputs=[]
         self.original_stdin = sys.stdin
-        self.template_path=""
         self.environment =DummyEnvironment()
         self.env_vars=os.environ
 
