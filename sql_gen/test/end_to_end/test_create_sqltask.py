@@ -58,8 +58,8 @@ class AppRunner():
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        self.test_config= PrintSQLToConsoleTestFactory(self.sql_renderer)
-        self.command_factory = CommandFactory(self.test_config)
+        self.printsql_factory= PrintSQLToConsoleTestFactory(self.sql_renderer)
+        self.command_factory = CommandFactory(self.printsql_factory)
         app = CommandLineSQLTaskApp(self.command_factory)
         app.run(self.env_vars)
 
