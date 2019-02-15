@@ -1,5 +1,7 @@
 import os
+from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import init
 from sql_gen.create_document_from_template_command import TemplateSelector,SelectTemplateLoader,MultipleTemplatesDocGenerator,CreateDocumentFromTemplateCommand
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
@@ -45,13 +47,22 @@ class PrintSQLToConsoleCommandFactory(object):
         return TemplateSelector(self._make_template_selector())
 
     def _make_template_selector(self):
-        return SelectTemplateLoader(self._make_template_env())
+        return SelectTemplateLoader(self._make_template_env(),
+                                    self._make_initial_context())
 
     def _make_template_env(self):
         return EMTemplatesEnv().get_env(self.env_vars)
 
     def _make_doc_writer(self):
         return PrintSQLToConsoleDisplayer()
+
+    def _make_initial_context(self):
+        app = AppProject()
+        return init(app)
+        logger = app.setup_logger()
+        logger.info("Initializing app which is pointing currently to '"+app.emproject.root+"'")
+        
+
 
 class PrintSQLToConsoleCommandBuilder(object):
     def __init__(self):

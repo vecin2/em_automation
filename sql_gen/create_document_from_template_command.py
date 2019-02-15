@@ -15,8 +15,9 @@ class TemplateSelector(object):
         return select_option(text, options)
 
 class SelectTemplateLoader(object):
-    def __init__(self, environment):
+    def __init__(self, environment,initial_context={}):
         self.environment=environment
+        self.initial_context=initial_context
 
     def list_options(self):
         saveAndExit=MenuOption('x','Save && Exit',ExitAction())
@@ -33,7 +34,7 @@ class SelectTemplateLoader(object):
         for counter, template_path in enumerate(template_list):
             action =FillTemplateAction(template_path,
                                        self.environment,
-                                       TemplateFiller())
+                                       self.initial_context)
             template_option =MenuOption(counter +1,
                                         template_path,
                                         action)

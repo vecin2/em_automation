@@ -2,8 +2,8 @@ from sql_gen.docugen.prompt_parser import PromptParser
 from sql_gen import logger
 
 class TemplateFiller(object):
-    def fill(self,template,context):
-        context = self.build_context(template,context)
+    def fill(self,template,initial_context):
+        context = self.build_context(template,initial_context)
         return template.render(context)
 
     def build_context(self,template,context):

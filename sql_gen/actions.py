@@ -6,11 +6,15 @@ class ExitAction():
 
 class FillTemplateAction():
     """It fills the template values"""
-    def __init__(self,template_name, loader,template_filler=TemplateFiller()):
+    def __init__(self,template_name, loader,initial_context={}):
         self.template_name =template_name
         self.loader = loader
-        self.template_filler =template_filler
+        self.template_filler = TemplateFiller()
+        self.initial_context = initial_context
     def run(self):
         template = self.loader.get_template(self.template_name)
-        return self.template_filler.fill(template,{})
+        #pass a copy of the intial context otherwise if we run the same
+        #action twice the second time the context is already populated
+        return self.template_filler.fill(template,
+                                         dict(self.initial_context))
 
