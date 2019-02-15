@@ -2,12 +2,12 @@ import argparse
 import os
 
 from sql_gen.create_sqltask_command import CreateSQLTaskCommand
-from sql_gen.commands import PrintSQLToConsoleProdConfig
+from sql_gen.commands import PrintSQLToConsoleCommandFactory
 
 
 class CommandFactory(object):
     def __init__(self,
-                 print_sql_to_console_config=PrintSQLToConsoleProdConfig()):
+                 print_sql_to_console_config=PrintSQLToConsoleCommandFactory()):
         self.print_sql_to_console_config = print_sql_to_console_config
 
     def make(self,env_vars=os.environ):

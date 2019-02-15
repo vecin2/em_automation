@@ -33,7 +33,7 @@ class PrintSQLToConsoleDisplayer(object):
     def current_text(self):
         return self.rendered_text
 
-class PrintSQLToConsoleProdConfig(object):
+class PrintSQLToConsoleCommandFactory(object):
     def make(self, env_vars=os.environ):
         self.env_vars = env_vars
         return PrintSQLToConsoleCommandBuilder().\

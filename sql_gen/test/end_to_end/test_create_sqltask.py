@@ -7,9 +7,9 @@ import pytest
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleProdConfig
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommandFactory
 
-class PrintSQLToConsoleTestConfig(PrintSQLToConsoleProdConfig):
+class PrintSQLToConsoleTestFactory(PrintSQLToConsoleCommandFactory):
     def __init__(self, sql_renderer):
         self.sql_renderer = sql_renderer
 
@@ -58,7 +58,7 @@ class AppRunner():
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        self.test_config= PrintSQLToConsoleTestConfig(self.sql_renderer)
+        self.test_config= PrintSQLToConsoleTestFactory(self.sql_renderer)
         self.command_factory = CommandFactory(self.test_config)
         app = CommandLineSQLTaskApp(self.command_factory)
         app.run(self.env_vars)
