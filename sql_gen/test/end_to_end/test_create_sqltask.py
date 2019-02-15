@@ -1,5 +1,4 @@
 import sys
-import os
 
 from io import StringIO
 
@@ -16,9 +15,6 @@ class PrintSQLToConsoleTestFactory(PrintSQLToConsoleCommandFactory):
     def _make_doc_writer(self):
         return self.sql_renderer
 
-class CommandTestFactory(CommandFactory):
-    """"""
-
 class DummyEnvironment(object):
     def list_templates(self):
         return []
@@ -28,28 +24,27 @@ class AppRunner():
         self.inputs=[]
         self.original_stdin = sys.stdin
         self.environment =DummyEnvironment()
-        self.env_vars=os.environ
+        self.env_vars={'EM_CORE_HOME':'/em/projects/pc'}
+        self.sql_renderer = PrintSQLToConsoleDisplayer()
+        self.printsql_factory= PrintSQLToConsoleTestFactory(self.sql_renderer)
 
     def saveAndExit(self):
-        self.user_inputs("","x")
+        self.user_inputs("x")
         return self
 
     def select_template(self, template_option,values):
-        self.user_inputs("",template_option)
+        self.user_inputs(template_option)
         for value in values.values():
-            self.user_inputs("",value)
+            self.user_inputs(value)
         return self
 
-    def user_inputs(self,description, user_input):
-        #description is used only for test readability
+    def user_inputs(self, user_input):
         self.inputs.append(user_input)
-        self.sql_renderer = PrintSQLToConsoleDisplayer()
         return self
 
     def using_templates_under(self, templates_path):
         self.env_vars={'SQL_TEMPLATES_PATH':templates_path}
         return self
-
 
     def run_print_SQL_to_console(self):
         self._run(['.'])
@@ -58,7 +53,6 @@ class AppRunner():
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        self.printsql_factory= PrintSQLToConsoleTestFactory(self.sql_renderer)
         self.command_factory = CommandFactory(self.printsql_factory)
         app = CommandLineSQLTaskApp(self.command_factory)
         app.run(self.env_vars)
@@ -68,7 +62,6 @@ class AppRunner():
 
     def assert_rendered_sql(self,expected_sql):
         assert expected_sql == self.sql_renderer.rendered_sql
-        #assert expected_sql == self.test_command.sql_printed()
         return self
 
     def assert_all_input_was_read(self):
