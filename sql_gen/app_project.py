@@ -28,6 +28,7 @@ class AppProject(object):
         self.emproject = emproject
         self.paths= ProjectLayout(self.root,PATHS,MANDATORY_KEYS)
         self._logger = None
+
     @property
     def root(self):
         return os.path.join(self.emproject.root,"sqltask")
@@ -40,7 +41,7 @@ class AppProject(object):
                                                                self.addb)
         return self._ad_query_runner
 
-    def em_config(self): 
+    def em_config(self):
         if not self.emproject.default_config_id:
             self.emproject.set_default_config_id(self._emconfig_id())
         return self.emproject.config()

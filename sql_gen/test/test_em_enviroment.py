@@ -1,7 +1,7 @@
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 def get_templates_path(env_vars):
-    return EMTemplatesEnv().get_templates_path(env_vars)
+    return EMTemplatesEnv().extract_templates_path(env_vars)
 
 def test_list_templates_from_sql_templates_path():
     env_vars={"SQL_TEMPLATES_PATH":"/opt/sqltask/templates"}

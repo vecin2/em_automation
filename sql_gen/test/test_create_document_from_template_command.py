@@ -10,9 +10,7 @@ def make():
 
 @pytest.fixture
 def loader():
-    env_vars={'SQL_TEMPLATES_PATH':'/templates'}
-    env =EMTemplatesEnv().get_env(env_vars)
-    yield SelectTemplateLoader(env)
+    yield SelectTemplateLoader('/templates')
 
 def test_no_templates_returns_only_exit(loader):
     expected_options=[MenuOption('x','Save && Exit')]

@@ -17,7 +17,7 @@ class PrintSQLToConsoleTestFactory(PrintSQLToConsoleCommandFactory):
         return self.sql_renderer
 
     def _make_initial_context(self):
-        return self.initial_context 
+        return self.initial_context
 
 class DummyEnvironment(object):
     def list_templates(self):

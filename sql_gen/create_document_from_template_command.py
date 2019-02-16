@@ -1,26 +1,34 @@
 from jinja2 import Environment, FileSystemLoader
 
+from sql_gen.app_project import AppProject
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import init
 from sql_gen.ui import prompt,MenuOption,select_option
 from sql_gen.docugen.template_renderer import TemplateRenderer
 from sql_gen.docugen.template_filler import TemplateFiller
-from sql_gen.actions import ExitAction, FillTemplateAction 
 
 class TemplateSelector(object):
-    def __init__(self,loader):
-        self.loader = loader
+    def __init__(self,env_vars):
+        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
+        self.loader= SelectTemplateLoader(templates_path)
 
-    def select_action(self):
+    def select_template(self):
         options = self.loader.list_options()
         text="Please enter an option ('x' to save && exit): "
-        return select_option(text, options)
+        option =  select_option(text, options)
+        if option.code == 'x':
+            return None
+        return self.loader.load_template(option.name)
 
 class SelectTemplateLoader(object):
-    def __init__(self, environment,initial_context={}):
-        self.environment=environment
-        self.initial_context=initial_context
+    def __init__(self, templates_path):
+        self.environment= EMTemplatesEnv().make_env(templates_path)
+
+    def load_template(self,name):
+        return self.environment.get_template(name)
 
     def list_options(self):
-        saveAndExit=MenuOption('x','Save && Exit',ExitAction())
+        saveAndExit=MenuOption('x','Save && Exit')
         result = self._template_options()
         result.append(saveAndExit)
         return result
@@ -32,38 +40,23 @@ class SelectTemplateLoader(object):
     def _to_options(self, template_list):
         self.template_option_list=[]
         for counter, template_path in enumerate(template_list):
-            action =FillTemplateAction(template_path,
-                                       self.environment,
-                                       self.initial_context)
             template_option =MenuOption(counter +1,
-                                        template_path,
-                                        action)
+                                        template_path)
             self.template_option_list.append(template_option)
         return self.template_option_list
 
-class MultipleTemplatesDocGenerator(object):
-    def __init__(self,single_doc_generator):
-        self.single_doc_generator = single_doc_generator
-
-    def run(self):
-        filled_template = self.single_doc_generator.run()
-        while filled_template is not "":
-            filled_template = self.single_doc_generator.run()
-        return
-    def generated_doc(self):
-        return self.single_doc_generator.generated_doc()
-
-
 class CreateDocumentFromTemplateCommand(object):
-    def __init__(self,selector,writer):
-        self.selector = selector
+    def __init__(self,env_vars,writer,initial_context={}):
+        self.selector = TemplateSelector(env_vars)
         self.writer =writer
+        self.initial_context=initial_context 
 
     def run(self):
-        filled_template = self.selector.select_action().run()
-        self.writer.write(filled_template)
+        template = self.selector.select_template()
+        filled_template=""
+        while template:
+            filled_template =TemplateFiller().fill(template,dict(self.initial_context))
+            self.writer.write(filled_template)
+            template = self.selector.select_template()
         return filled_template
-
-    def generated_doc(self):
-        return self.writer.current_text()
 

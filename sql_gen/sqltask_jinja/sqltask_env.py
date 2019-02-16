@@ -4,7 +4,7 @@ from sql_gen.docugen.env_builder import EnvBuilder
 import os
 
 class EMTemplatesEnv():
-    def get_templates_path(self,env_vars):
+    def extract_templates_path(self,env_vars):
         templates_path=""
         if 'SQL_TEMPLATES_PATH' in env_vars:
             templates_path =env_vars['SQL_TEMPLATES_PATH']
@@ -13,10 +13,9 @@ class EMTemplatesEnv():
         print("\nLoading templates from '" + templates_path+"':")
         return templates_path
 
-    def get_env(self,env_vars=os.environ):
+    def make_env(self,templates_path):
         env_builder = EnvBuilder()
-        env_builder.set_env_vars(env_vars)\
-                   .set_globals_module(template_globals)\
+        env_builder.set_globals_module(template_globals)\
                    .set_filters_package(template_filters)\
-                   .set_fs_path(self.get_templates_path(env_vars))
+                   .set_fs_path(templates_path)
         return env_builder.build()

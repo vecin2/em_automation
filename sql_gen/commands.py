@@ -1,12 +1,16 @@
 import os
 from sql_gen.app_project import AppProject
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.sqltask_jinja.context import init
-from sql_gen.create_document_from_template_command import TemplateSelector,SelectTemplateLoader,MultipleTemplatesDocGenerator,CreateDocumentFromTemplateCommand
+from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
+
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
-    def __init__(self, doc_creator):
-        self.doc_creator = doc_creator
+    def __init__(self, env_vars, doc_writer, initial_context):
+        self.doc_creator = CreateDocumentFromTemplateCommand(
+                            env_vars,
+                            doc_writer,
+                            initial_context
+                        )
 
     def run(self):
         self.doc_creator.run()
@@ -36,54 +40,20 @@ class PrintSQLToConsoleDisplayer(object):
         return self.rendered_text
 
 class PrintSQLToConsoleCommandFactory(object):
+
+    def __init__(self):
+        self.builder = None
+
     def make(self, env_vars=os.environ):
-        self.env_vars = env_vars
-        return PrintSQLToConsoleCommandBuilder().\
-                    with_action_seletor(self._make_action_selector()).\
-                    with_doc_writer(self._make_doc_writer()).\
-                    build()
-
-    def _make_action_selector(self):
-        return TemplateSelector(self._make_template_selector())
-
-    def _make_template_selector(self):
-        return SelectTemplateLoader(self._make_template_env(),
-                                    self._make_initial_context())
-
-    def _make_template_env(self):
-        return EMTemplatesEnv().get_env(self.env_vars)
+        return PrintSQLToConsoleCommand(env_vars,
+                                        self._make_doc_writer(),
+                                        self._make_initial_context())
 
     def _make_doc_writer(self):
         return PrintSQLToConsoleDisplayer()
 
     def _make_initial_context(self):
-        app = AppProject()
-        return init(app)
-        logger = app.setup_logger()
-        logger.info("Initializing app which is pointing currently to '"+app.emproject.root+"'")
-        
+       app = AppProject()
+       return init(app)
 
 
-class PrintSQLToConsoleCommandBuilder(object):
-    def __init__(self):
-        self.sql_renderer=None
-        self.action_selector =None
-        self.doc_writer =None
-
-    def with_action_seletor(self,action_selector):
-        self.action_selector=action_selector
-        return self
-
-    def with_doc_writer(self,doc_writer):
-        self.doc_writer =doc_writer
-        return self
-
-    def build(self):
-        return PrintSQLToConsoleCommand(
-                    MultipleTemplatesDocGenerator(
-                        CreateDocumentFromTemplateCommand(
-                            self.action_selector,
-                            self.doc_writer
-                        )
-                    ),
-                )

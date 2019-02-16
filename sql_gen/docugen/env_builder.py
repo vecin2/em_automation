@@ -19,10 +19,6 @@ class EnvBuilder(object):
         self.filters_package = package
         return self
 
-    def set_env_vars(self,env_vars):
-        self.env_vars
-        return self
-
     def set_fs_path(self,path):
         self.path = path
         return self
