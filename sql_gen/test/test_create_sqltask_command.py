@@ -8,6 +8,8 @@ class FakeWriter(object):
     def write(self,content):
         self.content = content
 
+#def test_if_sqltask_exist_and_user_not_confirm_then_it_doesnt_run():
+
 @pytest.mark.skip
 def test_writes_sqltask():
     consolewritter =FakeWriter()
