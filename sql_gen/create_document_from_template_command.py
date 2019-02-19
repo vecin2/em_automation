@@ -34,8 +34,12 @@ class SelectTemplateLoader(object):
         return result
 
     def _template_options(self):
-        template_names =self.environment.list_templates()
+        template_names =self.environment.list_templates(None,self.list_templates_filter)
         return self._to_options(template_names)
+
+    def list_templates_filter(self,template_name):
+        if "hidden_templates" not in template_name:
+            return True
 
     def _to_options(self, template_list):
         self.template_option_list=[]
