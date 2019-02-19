@@ -10,13 +10,13 @@ def app_runner():
 
 def test_returns_empty_when_no_template_selected(app_runner):
     app_runner.saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("")
 
 def test_asks_for_template_until_valid_entry(app_runner):
     app_runner.select_template('abc',{})\
                .saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
@@ -25,7 +25,7 @@ def test_select_and_render_no_vals_template(app_runner,fs):
     app_runner.using_templates_under("/templates")\
                .select_template('1. say_hello.sql',{})\
                .saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
 
@@ -35,7 +35,7 @@ def test_select_and_render_one_value_template(app_runner,fs):
     app_runner.using_templates_under("/templates")\
                .select_template('1. greeting.sql',{'name':'David'})\
                .saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("hello David!")\
                .assert_all_input_was_read()
 
@@ -48,7 +48,7 @@ def test_fills_two_templates_combines_output(app_runner,fs):
                .select_template('hello.sql',{'name':'John'})\
                .select_template('bye.sql',{'name':'Mark'})\
                .saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("hello John!\nbye Mark!")\
                .assert_all_input_was_read()
 
@@ -60,6 +60,6 @@ def test_initial_context_is_using_when_filling_template(app_runner,fs):
                .with_initial_context(initial_context)\
                .select_template('hello.sql',{'dummy':'hello'})\
                .saveAndExit()\
-               .run_print_SQL_to_console()\
+               .run()\
                .assert_rendered_sql("hello Dummy note!")\
                .assert_all_input_was_read()

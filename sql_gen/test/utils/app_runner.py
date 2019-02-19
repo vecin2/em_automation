@@ -56,16 +56,10 @@ class AppRunner():
         self.initial_context=initial_context
         return self
 
-    def run_print_SQL_to_console(self):
-        self._run(['.'])
-        return self
-
     def _run(self,args):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        self.printsql_factory= self._make_specific_command_factory()
-        self.command_factory = CommandFactory(self.printsql_factory)
-        app = CommandLineSQLTaskApp(self.command_factory)
+        app = CommandLineSQLTaskApp(self._make_command_factory())
         app.run(self.env_vars)
 
     def _user_input_to_str(self):
@@ -85,18 +79,26 @@ class AppRunner():
         sys.stdin = self.original_stdin
 
 class PrintSQLToConsoleAppRunner(AppRunner):
-    def _make_specific_command_factory(self):
-        return PrintSQLToConsoleTestFactory(self.sql_renderer,
-                                            self.initial_context)
+    def run(self):
+        self._run(['.'])
+        return self
+
+    def _make_command_factory(self):
+        printsql_factory = PrintSQLToConsoleTestFactory(
+                                        self.sql_renderer,
+                                        self.initial_context)
+        return CommandFactory(printsql_factory)
+
 class CreateSQLTaskTestFactory(object):
     def make(self):
-        return CreateSQLTaskCommand()
+        return CreateSQLTaskCommand(self.sql_renderer,
+                                            self.initial_context)
 
 class CreateSQLTaskAppRunner(AppRunner):
 
     def _make_specific_command_factory(self):
-        return CreateSQLTaskTestFactory(self.sql_renderer,
-                                            self.initial_context)
+        return CreateSQLTaskTestFactory()
+
     def with_svn_rev_no(self,rev_no):
         self.rev_no=rev_no
 
