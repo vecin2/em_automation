@@ -20,8 +20,7 @@ PATHS={"ccadmin"         : "bin",
        "show_config_txt" : "work/config/show-config-txt"
        }
 MANDATORY_KEYS=["ccadmin",
-                "repo_modules",
-                "config"
+                "repo_modules"
                ]
 
 def get_prj_home():

@@ -22,12 +22,12 @@ class DummyEnvironment(object):
         return []
 
 class AppRunner():
-    def __init__(self):
+    def __init__(self,sql_renderer):
         self.inputs=[]
         self.original_stdin = sys.stdin
         self.environment =DummyEnvironment()
         self.env_vars={'EM_CORE_HOME':'/em/projects/pc'}
-        self.sql_renderer = PrintSQLToConsoleDisplayer()
+        self.sql_renderer = sql_renderer
         self.initial_context={}
 
     def saveAndExit(self):
@@ -79,6 +79,9 @@ class AppRunner():
         sys.stdin = self.original_stdin
 
 class PrintSQLToConsoleAppRunner(AppRunner):
+    def __init__(self):
+        super().__init__(PrintSQLToConsoleDisplayer())
+
     def run(self):
         self._run(['.'])
         return self
@@ -101,10 +104,17 @@ class CreateSQLTaskAppRunner(AppRunner):
 
     def with_svn_rev_no(self,rev_no):
         self.rev_no=rev_no
+        return self
 
     def run_create_sqltask(self,sqltask_location):
         self._run(['.','-d',sqltask_location])
         return self
+
+    def _make_command_factory(self):
+        printsql_factory = PrintSQLToConsoleTestFactory(
+                                        self.sql_renderer,
+                                        self.initial_context)
+        return CommandFactory(printsql_factory)
 
     def assert_sqltask(files,prj_location):
         """"""

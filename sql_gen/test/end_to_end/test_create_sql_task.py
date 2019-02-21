@@ -1,6 +1,6 @@
 import pytest
 
-from sql_gen.test.utils.app_runner import AppRunner
+from sql_gen.test.utils.app_runner import CreateSQLTaskAppRunner
 @pytest.fixture
 def app_runner():
     app_runner = CreateSQLTaskAppRunner()
