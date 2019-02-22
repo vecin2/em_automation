@@ -4,7 +4,7 @@ import argparse
 from sql_gen.command_factory import CommandFactory
 
 class SysArgParser (object):
-    def __init__(self, command_factory):
+    def __init__(self, command_factory=CommandFactory()):
         self.command_factory=command_factory
 
     def parse(self):
