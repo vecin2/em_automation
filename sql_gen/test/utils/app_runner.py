@@ -3,7 +3,7 @@ from io import StringIO
 
 import pytest
 
-from sql_gen.command_line_app import CommandLineSQLTaskApp,CommandFactory
+from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand
 
