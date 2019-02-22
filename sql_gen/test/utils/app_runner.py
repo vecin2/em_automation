@@ -8,12 +8,11 @@ from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
 
 class AppRunner():
-    def __init__(self,sql_renderer):
+    def __init__(self):
         self.inputs=[]
         self.original_stdin = sys.stdin
         self.environment = DummyEnvironment()
         self.env_vars={'EM_CORE_HOME':'/em/projects/pc'}
-        self.sql_renderer = sql_renderer
         self.initial_context={}
 
     def saveAndExit(self):
@@ -84,7 +83,8 @@ class CommandTestFactory(CommandFactory):
 
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self):
-        super().__init__(PrintSQLToConsoleDisplayer())
+        super().__init__()
+        self.sql_renderer = PrintSQLToConsoleDisplayer()
 
     def run(self):
         self._run(['.'])
@@ -98,32 +98,6 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         return CommandTestFactory(
                 print_to_console_command=command)
 
-class SQLTask(object):
-    def __init__(self,
-                 path="",
-                 table_data="",
-                 update_sequence=""):
-        self.path=path
-        self.table_data=table_data
-        self.update_sequence=update_sequence
-        self.rendered_sql=""
-        self.svn_client=None
-    def __eq__(self, other):
-        if isinstance(other,SQLTask):
-            return self.path == other.path and\
-                   self.table_data == other.table_data and\
-                   self.update_sequence == other.update_sequence
-    def __repr__(self):
-        return "[table_data: "+self.table_data +\
-                ", update_sequence: "+self.update_sequence+\
-                ", path: "+self.path +"]"
-
-    def write(self,text):
-        self.table_data=text
-        update_sequence_no=int(self.svn_client.current_rev_no())+1
-        self.update_sequence="PROJECT $Revision: "+\
-                            str(update_sequence_no)
-
 class FakeSvnClient(object):
     def __init__(self, rev_no):
         self.rev_no =rev_no
@@ -133,20 +107,19 @@ class FakeSvnClient(object):
 
 class CreateSQLTaskAppRunner(AppRunner):
     def __init__(self):
-        self.sqltask=SQLTask()
-        super().__init__(self.sqltask)
+        super().__init__()
+        self.command =None
 
     def _make_command_factory(self):
-        self.sqltask.svn_client =self.svn_client
-        command = CreateSQLTaskCommand(
+        self.command = CreateSQLTaskCommand(
                                 self.env_vars,
-                                self.sql_renderer,
-                                self.initial_context)
+                                self.initial_context,
+                                FakeSvnClient(self.rev_no))
         return CommandTestFactory(
-                create_sqltask_command=command)
+                create_sqltask_command=self.command)
 
     def with_svn_rev_no(self,rev_no):
-        self.svn_client=FakeSvnClient(rev_no)
+        self.rev_no =rev_no
         return self
 
     def run_create_sqltask(self,taskpath):
@@ -155,7 +128,7 @@ class CreateSQLTaskAppRunner(AppRunner):
 
 
     def assert_sqltask(self,expected_sqltask):
-        assert expected_sqltask == self.sqltask
+        assert expected_sqltask == self.command.sqltask
         return self
         """"""
 
