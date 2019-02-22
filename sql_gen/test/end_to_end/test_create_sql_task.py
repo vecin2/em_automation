@@ -15,6 +15,7 @@ def test_select_and_srender_one_value_template(app_runner,fs):
                     update_sequence="PROJECT $Revision: 123")
 
     app_runner.using_templates_under("/templates")\
+               .with_svn_rev_no("122")\
                .select_template('1. greeting.sql',{'name':'David'})\
                .saveAndExit()\
                .run_create_sqltask("/modules/module_A")\
