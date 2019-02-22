@@ -26,3 +26,9 @@ It should send to console the ouput of Running a template filling
 
 
 cleanup sys.stdin
+
+layout managers - use test
+Status - Layout Managers, EM integrated
+
+
+

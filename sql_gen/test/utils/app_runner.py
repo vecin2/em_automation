@@ -3,23 +3,9 @@ from io import StringIO
 
 import pytest
 
-from sql_gen.command_line_app import CommandLineSQLTaskApp
+from sql_gen.command_line_app import CommandLineSQLTaskApp,CommandFactory
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommandFactory
-class PrintSQLToConsoleTestFactory(PrintSQLToConsoleCommandFactory):
-    def __init__(self, sql_renderer,initial_context={}):
-        self.sql_renderer = sql_renderer
-        self.initial_context = initial_context
-
-    def _make_doc_writer(self):
-        return self.sql_renderer
-
-    def _make_initial_context(self):
-        return self.initial_context
-
-class DummyEnvironment(object):
-    def list_templates(self):
-        return []
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand
 
 class AppRunner():
     def __init__(self,sql_renderer):
@@ -60,7 +46,7 @@ class AppRunner():
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
         app = CommandLineSQLTaskApp(self._make_command_factory())
-        app.run(self.env_vars)
+        app.run()
 
     def _user_input_to_str(self):
         return "\n".join([input for input in self.inputs])
@@ -78,6 +64,18 @@ class AppRunner():
     def teardown(self):
         sys.stdin = self.original_stdin
 
+class DummyEnvironment(object):
+    def list_templates(self):
+        return []
+
+class CommandTestFactory(CommandFactory):
+    def __init__(self,
+            print_to_console_command=None):
+        self.print_to_console_command=print_to_console_command
+
+    def make_print_sql_to_console_command(self):
+        return self.print_to_console_command
+
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self):
         super().__init__(PrintSQLToConsoleDisplayer())
@@ -87,20 +85,60 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         return self
 
     def _make_command_factory(self):
-        printsql_factory = PrintSQLToConsoleTestFactory(
-                                        self.sql_renderer,
-                                        self.initial_context)
-        return CommandFactory(printsql_factory)
+        command = PrintSQLToConsoleCommand(
+                                self.env_vars,
+                                self.sql_renderer,
+                                self.initial_context)
+        return CommandTestFactory(
+                print_to_console_command=command)
 
-class CreateSQLTaskTestFactory(object):
-    def make(self):
-        return CreateSQLTaskCommand(self.sql_renderer,
-                                            self.initial_context)
+class SQLTask(object):
+    def __init__(self,
+                 path="",
+                 table_data="",
+                 update_sequence=""):
+        self.path=path
+        self.table_data=table_data
+        self.update_sequence=update_sequence
+        self.rendered_sql=""
+    def __eq__(self, other):
+        if isinstance(other,SQLTask):
+            return self.path == other.path and\
+                   self.table_data == other.table_data and\
+                   self.update_sequence == other.update_sequence
+    def __repr__(self):
+        return "[table_data: "+self.table_data +\
+                ", update_sequence: "+self.update_sequence+\
+                ", path: "+self.path +"]"
+
+    def write(self,text):
+        self.rendered_sql="jjjjj"
+        self.path="dddd"
+        """"""
+
+class CreateSQLTaskCommandTestFactory(CommandFactory):
+    def __init__(self, sql_renderer,initial_context={}):
+        self.sql_renderer = sql_renderer
+        self.initial_context = initial_context
+
+    def make(self, env_vars):
+        return CreateSQLTaskCommand(
+                                env_vars,
+                                self.sql_renderer,
+                                self.initial_context)
 
 class CreateSQLTaskAppRunner(AppRunner):
+    def __init__(self):
+        self.sqltask=SQLTask()
+        super().__init__(self.sqltask)
 
-    def _make_specific_command_factory(self):
-        return CreateSQLTaskTestFactory()
+    def _make_command_factory(self):
+        test_factory= CreateSQLTaskCommandTestFactory(
+                                    self.sql_renderer,
+                                    self.initial_context)
+        return CommandFactory(
+                print_to_console_factory=None,
+                create_sqltask_factory=test_factory)
 
     def with_svn_rev_no(self,rev_no):
         self.rev_no=rev_no
@@ -110,12 +148,13 @@ class CreateSQLTaskAppRunner(AppRunner):
         self._run(['.','-d',sqltask_location])
         return self
 
-    def _make_command_factory(self):
-        printsql_factory = PrintSQLToConsoleTestFactory(
-                                        self.sql_renderer,
-                                        self.initial_context)
-        return CommandFactory(printsql_factory)
+    def run_create_sqltask(self,taskpath):
+        self._run(['.','-d',taskpath])
+        return self
 
-    def assert_sqltask(files,prj_location):
+
+    def assert_sqltask(self,expected_sqltask):
+        assert expected_sqltask == self.sqltask
+        return self
         """"""
 

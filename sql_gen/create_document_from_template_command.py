@@ -1,3 +1,5 @@
+import os
+
 from jinja2 import Environment, FileSystemLoader
 
 from sql_gen.app_project import AppProject
@@ -50,7 +52,10 @@ class SelectTemplateLoader(object):
         return self.template_option_list
 
 class CreateDocumentFromTemplateCommand(object):
-    def __init__(self,env_vars,writer,initial_context={}):
+    def __init__(self,
+                 env_vars=os.environ,
+                 writer=None,
+                 initial_context={}):
         self.selector = TemplateSelector(env_vars)
         self.writer =writer
         self.initial_context=initial_context 

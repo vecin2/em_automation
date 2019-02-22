@@ -3,21 +3,6 @@ from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.context import init
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
 
-class PrintSQLToConsoleCommand(object):
-    """Command which generates a SQL script from a template and it prints the ouput to console"""
-    def __init__(self, env_vars, doc_writer, initial_context):
-        self.doc_creator = CreateDocumentFromTemplateCommand(
-                            env_vars,
-                            doc_writer,
-                            initial_context
-                        )
-
-    def run(self):
-        self.doc_creator.run()
-
-    def sql_printed(self):
-        return self.doc_creator.generated_doc()
-
 class PrintSQLToConsoleDisplayer(object):
     """Prints to console the command output"""
     def __init__(self):
@@ -39,21 +24,22 @@ class PrintSQLToConsoleDisplayer(object):
     def current_text(self):
         return self.rendered_text
 
-class PrintSQLToConsoleCommandFactory(object):
+class PrintSQLToConsoleCommand(object):
+    """Command which generates a SQL script from a template and it prints the ouput to console"""
+    def __init__(self, env_vars=os.environ,
+                       doc_writer=PrintSQLToConsoleDisplayer(),
+                       initial_context=init(AppProject())):
+        self.doc_creator = CreateDocumentFromTemplateCommand(
+                            env_vars,
+                            doc_writer,
+                            initial_context
+                        )
 
-    def __init__(self):
-        self.builder = None
+    def run(self):
+        self.doc_creator.run()
 
-    def make(self, env_vars=os.environ):
-        return PrintSQLToConsoleCommand(env_vars,
-                                        self._make_doc_writer(),
-                                        self._make_initial_context())
+    def sql_printed(self):
+        return self.doc_creator.generated_doc()
 
-    def _make_doc_writer(self):
-        return PrintSQLToConsoleDisplayer()
-
-    def _make_initial_context(self):
-       app = AppProject()
-       return init(app)
 
 
