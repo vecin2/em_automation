@@ -41,5 +41,17 @@ class PrintSQLToConsoleCommand(object):
     def sql_printed(self):
         return self.doc_creator.generated_doc()
 
+class CreateSQLTaskCommand(PrintSQLToConsoleCommand):
+    def __init__(self,
+                 env_vars=os.environ,
+                 doc_writer=None,
+                 initial_context={}):
+        self.doc_writer =doc_writer
+        super().__init__(env_vars,doc_writer,initial_context)
+        self.path = ""
+
+    def run(self):
+        self.doc_writer.path = self.path
+        super().run()
 
 

@@ -7,15 +7,18 @@ def app_runner():
     yield app_runner
     app_runner.teardown()
 
-@pytest.mark.skip
 def test_select_and_srender_one_value_template(app_runner,fs):
     fs.create_file("/templates/greeting.sql", contents="hello {{name}}!")
+    expected_sqltask=SQLTask(
+                    path="/modules/module_A",
+                    table_data="hello David!",
+                    update_sequence="PROJECT $Revision: 123")
 
     app_runner.using_templates_under("/templates")\
                .select_template('1. greeting.sql',{'name':'David'})\
                .saveAndExit()\
-               .run_create_sqltask("ddd")\
-               .assert_rendered_sql("hello David!")\
+               .run_create_sqltask("/modules/module_A")\
+               .assert_sqltask(expected_sqltask)\
                .assert_all_input_was_read()
 @pytest.mark.skip
 def test_select_and_render_one_value_template(app_runner,fs):

@@ -5,13 +5,13 @@ import pytest
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
 
 class AppRunner():
     def __init__(self,sql_renderer):
         self.inputs=[]
         self.original_stdin = sys.stdin
-        self.environment =DummyEnvironment()
+        self.environment = DummyEnvironment()
         self.env_vars={'EM_CORE_HOME':'/em/projects/pc'}
         self.sql_renderer = sql_renderer
         self.initial_context={}
@@ -70,11 +70,17 @@ class DummyEnvironment(object):
 
 class CommandTestFactory(CommandFactory):
     def __init__(self,
-            print_to_console_command=None):
+            print_to_console_command=None,
+            create_sqltask_command=None):
         self.print_to_console_command=print_to_console_command
+        self.create_sqltask_command=create_sqltask_command
 
     def make_print_sql_to_console_command(self):
         return self.print_to_console_command
+
+    def make_create_sqltask_command(self,path):
+        self.create_sqltask_command.path =path
+        return self.create_sqltask_command
 
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self):
@@ -112,8 +118,8 @@ class SQLTask(object):
                 ", path: "+self.path +"]"
 
     def write(self,text):
-        self.rendered_sql="jjjjj"
-        self.path="dddd"
+        self.table_data=text
+        self.update_sequence="PROJECT $Revision: 123"
         """"""
 
 class CreateSQLTaskCommandTestFactory(CommandFactory):
@@ -133,19 +139,15 @@ class CreateSQLTaskAppRunner(AppRunner):
         super().__init__(self.sqltask)
 
     def _make_command_factory(self):
-        test_factory= CreateSQLTaskCommandTestFactory(
-                                    self.sql_renderer,
-                                    self.initial_context)
-        return CommandFactory(
-                print_to_console_factory=None,
-                create_sqltask_factory=test_factory)
+        command = CreateSQLTaskCommand(
+                                self.env_vars,
+                                self.sql_renderer,
+                                self.initial_context)
+        return CommandTestFactory(
+                create_sqltask_command=command)
 
     def with_svn_rev_no(self,rev_no):
         self.rev_no=rev_no
-        return self
-
-    def run_create_sqltask(self,sqltask_location):
-        self._run(['.','-d',sqltask_location])
         return self
 
     def run_create_sqltask(self,taskpath):
