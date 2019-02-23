@@ -12,7 +12,7 @@ class AppRunner():
         self.inputs=[]
         self.original_stdin = sys.stdin
         self.environment = DummyEnvironment()
-        self.env_vars={'EM_CORE_HOME':'/em/projects/pc'}
+        self.env_vars={}
         self.initial_context={}
 
     def saveAndExit(self):
@@ -29,12 +29,12 @@ class AppRunner():
         self.inputs.append(user_input)
         return self
 
-    def using_templates_under(self, templates_path):
-        self.env_vars={'SQL_TEMPLATES_PATH':templates_path}
+    def with_emproject_under(self,emproject_path):
+        self.env_vars['EM_CORE_HOME']=emproject_path
         return self
 
-    def em_prj_under(self, prj_home):
-        self.env_vars={'EM_CORE_HOME':prj_home}
+    def using_templates_under(self, templates_path):
+        self.env_vars['SQL_TEMPLATES_PATH']=templates_path
         return self
 
     def with_initial_context(self, initial_context):
@@ -126,9 +126,9 @@ class CreateSQLTaskAppRunner(AppRunner):
         self._run(['.','-d',taskpath])
         return self
 
-
-    def assert_sqltask(self,expected_sqltask):
-        assert expected_sqltask == self.command.sqltask
+    def exist(self,filepath,expected_content):
+        with open(filepath) as f:
+                s = f.read()
+        assert expected_content == s
         return self
-        """"""
 

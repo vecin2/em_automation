@@ -9,20 +9,32 @@ def app_runner():
 
 
 def test_returns_empty_when_no_template_selected(app_runner):
-    app_runner.saveAndExit()\
+    app_runner.with_emproject_under("/em/prj")\
+               .saveAndExit()\
                .run()\
                .assert_rendered_sql("")
 
 def test_asks_for_template_until_valid_entry(app_runner):
-    app_runner.select_template('abc',{})\
+    app_runner.with_emproject_under("/em/prj")\
+               .select_template('abc',{})\
                .saveAndExit()\
                .run()\
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
+def test_computes_tempaltes_path_from_prj_path(app_runner,fs):
+    fs.create_file("/em/prj/sqltask/templates/say_hello.sql", contents="hello!")
+    app_runner.with_emproject_under("/em/prj")\
+               .select_template('1. say_hello.sql',{})\
+               .saveAndExit()\
+               .run()\
+               .assert_rendered_sql("hello!")\
+               .assert_all_input_was_read()
+
 def test_select_and_render_no_vals_template(app_runner,fs):
     fs.create_file("/templates/say_hello.sql", contents="hello!")
-    app_runner.using_templates_under("/templates")\
+    app_runner.with_emproject_under("/em/prj")\
+               .using_templates_under("/templates")\
                .select_template('1. say_hello.sql',{})\
                .saveAndExit()\
                .run()\

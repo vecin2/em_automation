@@ -45,44 +45,37 @@ class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
                  initial_context={},
-                 svn_client= None):
-        self.sqltask =SQLTask(svn_client=svn_client);
-        self.doc_creator = CreateDocumentFromTemplateCommand(
-                            env_vars,
-                            self.sqltask,
-                            initial_context
-                        )
-        self.path = ""
+                 svn_client= None,
+                 path=None):
+        self.path=path
+        self.svn_client=svn_client
+        self.env_vars=env_vars
+        self.initial_context=initial_context
 
     def run(self):
-        self.sqltask.path = self.path
+        self.sqltask =SQLTask(self.path,self.svn_client);
+        self.doc_creator = CreateDocumentFromTemplateCommand(
+                            self.env_vars,
+                            self.sqltask,
+                            self.initial_context
+                        )
         self.doc_creator.run()
 
 
 class SQLTask(object):
     def __init__(self,
-                 path="",
-                 table_data="",
-                 update_sequence="",
+                 path =None,
                  svn_client=None):
         self.path=path
-        self.table_data=table_data
-        self.update_sequence=update_sequence
-        self.rendered_sql=""
         self.svn_client=svn_client
-    def __eq__(self, other):
-        if isinstance(other,SQLTask):
-            return self.path == other.path and\
-                   self.table_data == other.table_data and\
-                   self.update_sequence == other.update_sequence
-    def __repr__(self):
-        return "[table_data: "+self.table_data +\
-                ", update_sequence: "+self.update_sequence+\
-                ", path: "+self.path +"]"
 
     def write(self,text):
         self.table_data=text
         update_sequence_no=int(self.svn_client.current_rev_no())+1
         self.update_sequence="PROJECT $Revision: "+\
                             str(update_sequence_no)
-
+        os.makedirs(self.path)
+        with open(os.path.join(self.path,"tableData.sql"),"w") as f:
+            f.write(self.table_data)
+        with open(os.path.join(self.path,"update.sequence"),"w") as f:
+            f.write(self.update_sequence)
