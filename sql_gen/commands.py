@@ -47,11 +47,18 @@ class CreateSQLTaskDisplayer(object):
         text= "Are you sure you want to override the task '"+ path + "' (y/n): "
         return select_item(text,['y','n'])
 
+class SvnClient(object):
+    def __init__(self, rev_no):
+        self.rev_no =rev_no
+
+    def current_rev_no(self):
+        return self.rev_no
+
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
-                 initial_context={},
-                 svn_client= None,
+                 initial_context=init(AppProject()),
+                 svn_client= SvnClient("123"),
                  path=None):
         self.path=path
         self.svn_client=svn_client
@@ -85,7 +92,8 @@ class SQLTask(object):
         update_sequence_no=int(self.svn_client.current_rev_no())+1
         self.update_sequence="PROJECT $Revision: "+\
                             str(update_sequence_no)
-        os.makedirs(self.path)
+        if not os.path.exists(self.path):
+                os.makedirs(self.path)
         with open(os.path.join(self.path,"tableData.sql"),"w") as f:
             f.write(self.table_data)
         with open(os.path.join(self.path,"update.sequence"),"w") as f:

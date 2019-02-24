@@ -109,6 +109,7 @@ class CreateSQLTaskAppRunner(AppRunner):
     def __init__(self):
         super().__init__()
         self.command =None
+        self.rev_no="0"
 
     def _make_command_factory(self):
         self.command = CreateSQLTaskCommand(
