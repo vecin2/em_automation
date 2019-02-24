@@ -3,7 +3,7 @@ import sys
 from prompt_toolkit import prompt as tk_prompt
 from sql_gen.docugen.completer import SuggestionCompleter
 
-def prompt(text,completer):
+def prompt(text,completer=None):
     try:
         if not sys.stdout.isatty():
             #return input(text)
@@ -26,20 +26,34 @@ class MenuOption(object):
         self.code =code
         self.name =name
 
+    def matches(self,input_entered):
+        if self.code == input_entered or\
+            self.name == input_entered or\
+            input_entered == str(self):
+            return True
+        return False
+
     def __repr__(self):
         return str(self.code) +". "+self.name
 
 def select_option(text, option_list):
     option =None
     while option is None:
-        template_input =prompt_suggestions(text,option_list)
-        option = match_option(template_input,option_list)
+        user_input =prompt_suggestions(text,option_list)
+        option = match_options(user_input,option_list)
     return option
 
-def match_option(input_entered,option_list):
+def select_item(text, string_list):
+    result =None
+    while result is None:
+        user_input =prompt(text)
+        if user_input in string_list:
+            result = user_input
+
+    return result
+
+def match_options(input_entered,option_list):
     for option in option_list:
-        if option.code == input_entered or\
-            option.name == input_entered or\
-            input_entered == str(option):
+        if option.matches(input_entered):
             return option
     return None

@@ -1,4 +1,5 @@
 import os
+from sql_gen.ui.utils import select_item
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.context import init
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
@@ -44,7 +45,7 @@ class PrintSQLToConsoleCommand(object):
 class CreateSQLTaskDisplayer(object):
     def ask_to_override_task(self,path):
         text= "Are you sure you want to override the task '"+ path + "' (y/n): "
-        return input(text)
+        return select_item(text,['y','n'])
 
 class CreateSQLTaskCommand(object):
     def __init__(self,
