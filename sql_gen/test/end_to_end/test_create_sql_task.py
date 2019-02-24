@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from sql_gen.test.utils.app_runner import CreateSQLTaskAppRunner,PrintSQLToConsoleAppRunner
@@ -8,18 +9,34 @@ def app_runner():
     yield app_runner
     app_runner.teardown()
 
-def test_creates_sql_task_under_path(app_runner,fs):
+def test_creates_sqltask_from_absolute_path(app_runner,fs):
     fs.create_file("/templates/greeting.sql", contents="hello {{name}}!")
 
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
                .with_svn_rev_no("122")\
-               .select_template('1. greeting.sql',{'name':'David'})\
+               .select_template('greeting.sql',{'name':'David'})\
                .saveAndExit()\
                .run_create_sqltask("/em/prj/modules/module_A")\
                .exist("/em/prj/modules/module_A/tableData.sql",
                        "hello David!")\
                .exist("/em/prj/modules/module_A/update.sequence",
+                       "PROJECT $Revision: 123")\
+               .assert_all_input_was_read()
+
+def test_creates_sqltask_from_relative_path(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+
+    os.chdir("/templates")
+    app_runner.with_emproject_under("/em/prj")\
+               .using_templates_under("/templates")\
+               .with_svn_rev_no("122")\
+               .select_template('bye.sql',{'name':'David'})\
+               .saveAndExit()\
+               .run_create_sqltask("modules/module_A")\
+               .exist("/templates/modules/module_A/tableData.sql",
+                       "bye David!")\
+               .exist("/templates/modules/module_A/update.sequence",
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
 
