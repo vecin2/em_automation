@@ -40,3 +40,15 @@ def test_creates_sqltask_from_relative_path(app_runner,fs):
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
 
+def test_sqltask_exists_user_cancels_then_does_not_create(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/prj/modules/moduleB/bye")
+    os.chdir("/prj")
+    app_runner.with_emproject_under("/em/prj")\
+               .using_templates_under("/templates")\
+               .with_svn_rev_no("122")\
+               .user_inputs("n")\
+               .run_create_sqltask("modules/moduleB/bye")\
+               .assert_all_input_was_read()
+    assert False == os.path.exists("/prj/modules/moduleB/bye/tableData.sql")
+    assert False == os.path.exists("/prj/modules/moduleB/bye/update.sequence")

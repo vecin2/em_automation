@@ -41,6 +41,11 @@ class PrintSQLToConsoleCommand(object):
     def sql_printed(self):
         return self.doc_creator.generated_doc()
 
+class CreateSQLTaskDisplayer(object):
+    def ask_to_override_task(self,path):
+        text= "Are you sure you want to override the task '"+ path + "' (y/n): "
+        return input(text)
+
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
@@ -51,8 +56,13 @@ class CreateSQLTaskCommand(object):
         self.svn_client=svn_client
         self.env_vars=env_vars
         self.initial_context=initial_context
+        self.displayer = CreateSQLTaskDisplayer()
 
     def run(self):
+        if os.path.exists(self.path):
+            should_override = self.displayer.ask_to_override_task(self.path)
+            if should_override == "n":
+                return
         self.sqltask =SQLTask(self.path,self.svn_client);
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.env_vars,
