@@ -21,19 +21,13 @@ def prompt_suggestions(text,suggestions):
         completer = SuggestionCompleter(str_suggestions)
         return prompt(text,completer=completer)
 
-class DummyAction():
-    def run(self):
-        """implementation of the null pattern"""
-
 class MenuOption(object):
-    def __init__(self,code, name,action=DummyAction()):
+    def __init__(self,code, name):
         self.code =code
         self.name =name
-        self.action =action
+
     def __repr__(self):
         return str(self.code) +". "+self.name
-    def run(self):
-        return self.action.run()
 
 def select_option(text, option_list):
     option =None
