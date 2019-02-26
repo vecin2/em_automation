@@ -63,3 +63,21 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
                .exist("/prj/modules/moduleB/bye/update.sequence",
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
+
+def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/prj/modules/moduleB/bye")
+
+    app_runner.with_emproject_under("/em/prj")\
+               .with_app_config({'svn.rev.no.offset':'10'})\
+               .using_templates_under("/templates")\
+               .with_svn_rev_no("122")\
+               .user_inputs("y")\
+               .select_template('bye.sql',{'name':'Frank'})\
+               .saveAndExit()\
+               .run_create_sqltask("/prj/modules/moduleB/bye")\
+               .exist("/prj/modules/moduleB/bye/tableData.sql",
+                       "bye Frank!")\
+               .exist("/prj/modules/moduleB/bye/update.sequence",
+                       "PROJECT $Revision: 133")\
+               .assert_all_input_was_read()

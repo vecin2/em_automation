@@ -22,10 +22,13 @@ MANDATORY_KEYS=["config",
                 ]
 
 class AppProject(object):
-    def __init__(self,emproject=EMProject()):
+    def __init__(self,emproject=EMProject(),env_vars=None):
         self._config_file=None
         self._ad_query_runner=None
-        self.emproject = emproject
+        if env_vars:
+            self.emproject = EMProject(env_vars=env_vars)
+        else:
+            self.emproject = emproject
         self.paths= ProjectLayout(self.root,PATHS,MANDATORY_KEYS)
         self._logger = None
 

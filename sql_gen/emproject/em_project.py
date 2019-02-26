@@ -23,33 +23,35 @@ MANDATORY_KEYS=["ccadmin",
                 "repo_modules"
                ]
 
-def get_prj_home():
+def get_prj_home(env_vars):
     help_text="It should contain the path of your current EM project."
     try:
-        result = os.environ['EM_CORE_HOME']
+        result = env_vars['EM_CORE_HOME']
     except Exception:
         raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
     if not result:
         raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
     relative_path =ProjectLayout(result,PATHS,MANDATORY_KEYS)
-    try:
-        relative_path.check()
-    except InvalidFileSystemPathException as excinfo:
-        raise InvalidEnvVarException("Are you sure 'EM_CORE_HOME' points to a valid EM installation? "+ str(excinfo))
+    #try:
+    #    relative_path.check()
+    #except InvalidFileSystemPathException as excinfo:
+    #    raise InvalidEnvVarException("Are you sure 'EM_CORE_HOME' points to a valid EM installation? "+ str(excinfo))
     return result
 
-def emproject_home():
+def emproject_home(env_vars=os.environ):
     try:
-        return get_prj_home()
+        return get_prj_home(env_vars)
     except Exception as excinfo:
         sql_gen.logger.error(str(excinfo))
         raise excinfo
 
 
 class EMProject(object):
-    def __init__(self,root=None,ccadmin_client=None):
-        if not root:
+    def __init__(self,root=None,ccadmin_client=None,env_vars=None):
+        if not root and not env_vars:
             root = emproject_home()
+        elif env_vars:
+            root =emproject_home(env_vars) 
         self.root = root
         self.paths= ProjectLayout(self.root,PATHS)
         if not ccadmin_client:

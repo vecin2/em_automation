@@ -1,3 +1,4 @@
+import os
 import sys
 from io import StringIO
 
@@ -6,6 +7,7 @@ import pytest
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
+from sql_gen.app_project import AppProject
 
 class AppRunner():
     def __init__(self):
@@ -32,6 +34,24 @@ class AppRunner():
     def with_emproject_under(self,emproject_path):
         self.env_vars['EM_CORE_HOME']=emproject_path
         return self
+
+    def with_app_config(self, config):
+        self._create_file(self._app_path('core_config'),
+                          self._dict_to_str(config))
+        return self
+
+    def _app_path(self,key):
+        return AppProject(env_vars=self.env_vars).paths[key].path
+
+    def _dict_to_str(self,config):
+        return '\n'.join("{!s}={!s}".format(key,val) for (key,val) in config.items())
+
+    def _create_file(self,path,content):
+        dirname=os.path.dirname(path)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        with open(path,"w") as f:
+            f.write(content)
 
     def using_templates_under(self, templates_path):
         self.env_vars['SQL_TEMPLATES_PATH']=templates_path

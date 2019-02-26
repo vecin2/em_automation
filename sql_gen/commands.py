@@ -71,7 +71,10 @@ class CreateSQLTaskCommand(object):
             should_override = self.displayer.ask_to_override_task(self.path)
             if should_override == "n":
                 return
-        self.sqltask =SQLTask(self.path,self.svn_client);
+
+        self.sqltask = SQLTask(self.path);
+        self.sqltask.set_update_sequence(
+                            self._compute_update_seq_no())
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.env_vars,
                             self.sqltask,
@@ -79,19 +82,24 @@ class CreateSQLTaskCommand(object):
                         )
         self.doc_creator.run()
 
+    def _compute_update_seq_no(self):
+        rev_no_offset = AppProject(env_vars=self.env_vars).config.get('svn.rev.no.offset','0')
+        return int(self.svn_client.current_rev_no())+1+int(rev_no_offset)
+
+
+
 
 class SQLTask(object):
-    def __init__(self,
-                 path =None,
-                 svn_client=None):
+    def __init__(self, path =None):
         self.path=path
-        self.svn_client=svn_client
+
+    def set_update_sequence(self, update_sequence_no):
+        self.update_sequence_no = update_sequence_no
 
     def write(self,text):
         self.table_data=text
-        update_sequence_no=int(self.svn_client.current_rev_no())+1
         self.update_sequence="PROJECT $Revision: "+\
-                            str(update_sequence_no)
+                            str(self.update_sequence_no)
         if not os.path.exists(self.path):
                 os.makedirs(self.path)
         with open(os.path.join(self.path,"tableData.sql"),"w") as f:
