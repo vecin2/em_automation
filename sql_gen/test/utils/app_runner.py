@@ -147,9 +147,13 @@ class CreateSQLTaskAppRunner(AppRunner):
         self._run(['.','-d',taskpath])
         return self
 
-    def exist(self,filepath,expected_content):
+    def exists(self,filepath,expected_content):
         with open(filepath) as f:
                 s = f.read()
         assert expected_content == s
+        return self
+
+    def not_exists(self,filepath):
+        return not os.path.exists(filepath)
         return self
 

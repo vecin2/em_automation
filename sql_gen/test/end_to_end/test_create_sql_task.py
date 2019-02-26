@@ -18,9 +18,9 @@ def test_creates_sqltask_from_absolute_path(app_runner,fs):
                .select_template('greeting.sql',{'name':'David'})\
                .saveAndExit()\
                .run_create_sqltask("/em/prj/modules/module_A")\
-               .exist("/em/prj/modules/module_A/tableData.sql",
+               .exists("/em/prj/modules/module_A/tableData.sql",
                        "hello David!")\
-               .exist("/em/prj/modules/module_A/update.sequence",
+               .exists("/em/prj/modules/module_A/update.sequence",
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
 
@@ -33,9 +33,9 @@ def test_creates_sqltask_from_relative_path(app_runner,fs):
                .select_template('bye.sql',{'name':'David'})\
                .saveAndExit()\
                .run_create_sqltask("modules/module_A")\
-               .exist("/templates/modules/module_A/tableData.sql",
+               .exists("/templates/modules/module_A/tableData.sql",
                        "bye David!")\
-               .exist("/templates/modules/module_A/update.sequence",
+               .exists("/templates/modules/module_A/update.sequence",
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
 
@@ -58,9 +58,9 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
                .select_template('bye.sql',{'name':'Frank'})\
                .saveAndExit()\
                .run_create_sqltask("/prj/modules/moduleB/bye")\
-               .exist("/prj/modules/moduleB/bye/tableData.sql",
+               .exists("/prj/modules/moduleB/bye/tableData.sql",
                        "bye Frank!")\
-               .exist("/prj/modules/moduleB/bye/update.sequence",
+               .exists("/prj/modules/moduleB/bye/update.sequence",
                        "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
 
@@ -76,8 +76,26 @@ def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
                .select_template('bye.sql',{'name':'Frank'})\
                .saveAndExit()\
                .run_create_sqltask("/prj/modules/moduleB/bye")\
-               .exist("/prj/modules/moduleB/bye/tableData.sql",
+               .exists("/prj/modules/moduleB/bye/tableData.sql",
                        "bye Frank!")\
-               .exist("/prj/modules/moduleB/bye/update.sequence",
+               .exists("/prj/modules/moduleB/bye/update.sequence",
                        "PROJECT $Revision: 133")\
+               .assert_all_input_was_read()
+
+@pytest.mark.skip
+def test_it_saves_sqltask_once_after_all_templates_are_filled(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/prj/modules/moduleB/bye")
+    app_runner.with_emproject_under("/em/prj")\
+               .using_templates_under("/templates")\
+               .with_svn_rev_no("122")\
+               .user_inputs("y")\
+               .select_template('bye.sql',{'name':'Frank'})\
+               .not_exists("/prj/modules/moduleB/bye/tableData.sql")\
+               .saveAndExit()\
+               .run_create_sqltask("/prj/modules/moduleB/bye")\
+               .exists("/prj/modules/moduleB/bye/tableData.sql",
+                       "bye Frank!")\
+               .exists("/prj/modules/moduleB/bye/update.sequence",
+                       "PROJECT $Revision: 123")\
                .assert_all_input_was_read()
