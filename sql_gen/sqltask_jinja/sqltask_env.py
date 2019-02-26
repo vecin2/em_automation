@@ -10,7 +10,6 @@ class EMTemplatesEnv():
             templates_path =env_vars['SQL_TEMPLATES_PATH']
         else:
             templates_path = os.path.join(env_vars['EM_CORE_HOME'],"sqltask","templates")
-        print("\nLoading templates from '" + templates_path+"':")
         return templates_path
 
     def make_env(self,templates_path):

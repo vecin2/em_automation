@@ -1,5 +1,3 @@
-import os
-
 from jinja2 import Environment, FileSystemLoader
 
 from sql_gen.app_project import AppProject
@@ -9,15 +7,20 @@ from sql_gen.ui import prompt,MenuOption,select_option
 from sql_gen.docugen.template_renderer import TemplateRenderer
 from sql_gen.docugen.template_filler import TemplateFiller
 
+class TemplateSelectorDisplayer(object):
+    def ask_for_template(self,options):
+        text="\nStart typing the template name('x' - Save && Exit): "
+        return select_option(text, options)
+
 class TemplateSelector(object):
-    def __init__(self,env_vars):
-        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
-        self.loader= SelectTemplateLoader(templates_path)
+    def __init__(self,templates_path):
+        self.templates_path=templates_path
+        self.loader= SelectTemplateLoader(self.templates_path)
+        self.displayer = TemplateSelectorDisplayer()
 
     def select_template(self):
         options = self.loader.list_options()
-        text="Please enter an option ('x' to save && exit): "
-        option =  select_option(text, options)
+        option = self.displayer.ask_for_template(options)
         if option.code == 'x':
             return None
         return self.loader.load_template(option.name)
@@ -51,16 +54,22 @@ class SelectTemplateLoader(object):
             self.template_option_list.append(template_option)
         return self.template_option_list
 
+class FillTemplateCommandDisplayer(object):
+    def display_loading_templates_from(self,templates_path):
+        print("\nTemplates loaded from '" + templates_path+"'\n\n")
+
 class CreateDocumentFromTemplateCommand(object):
     def __init__(self,
-                 env_vars=os.environ,
+                 templates_path,
                  writer=None,
                  initial_context={}):
-        self.selector = TemplateSelector(env_vars)
+        self.templates_path=templates_path
         self.writer =writer
         self.initial_context=initial_context 
 
     def run(self):
+        self.selector = TemplateSelector(self.templates_path)
+        FillTemplateCommandDisplayer().display_loading_templates_from(self.templates_path)
         template = self.selector.select_template()
         filled_template=""
         while template:

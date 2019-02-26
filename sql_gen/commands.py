@@ -3,6 +3,7 @@ import os
 import pyperclip
 
 from sql_gen.ui.utils import select_item
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.context import init
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
@@ -33,8 +34,9 @@ class PrintSQLToConsoleCommand(object):
     def __init__(self, env_vars=os.environ,
                        doc_writer=PrintSQLToConsoleDisplayer(),
                        initial_context=init(AppProject())):
+        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.doc_creator = CreateDocumentFromTemplateCommand(
-                            env_vars,
+                            templates_path,
                             doc_writer,
                             initial_context
                         )
@@ -90,8 +92,9 @@ class CreateSQLTaskCommand(object):
 
     def _create_sql(self):
         displayer = PrintSQLToConsoleDisplayer()
+        templates_path=EMTemplatesEnv().extract_templates_path(self.env_vars)
         self.doc_creator = CreateDocumentFromTemplateCommand(
-                            self.env_vars,
+                            templates_path,
                             displayer,
                             self.initial_context)
         self.doc_creator.run()
