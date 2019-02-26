@@ -23,7 +23,8 @@ def test_creates_sqltask_from_absolute_path(app_runner,fs):
                        "hello David!")\
                .exists("/em/prj/modules/module_A/update.sequence",
                        "PROJECT $Revision: 123")\
-               .assert_all_input_was_read()
+               .assert_all_input_was_read()\
+               .assert_path_copied_to_sys_clipboard()
 
 def test_creates_sqltask_from_relative_path(app_runner,fs):
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")

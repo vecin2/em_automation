@@ -1,4 +1,7 @@
 import os
+
+import pyperclip
+
 from sql_gen.ui.utils import select_item
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.context import init
@@ -47,6 +50,10 @@ class CreateSQLTaskDisplayer(object):
         text= "Are you sure you want to override the task '"+ path + "' (y/n): "
         return select_item(text,['y','n'])
 
+    def display_sqltask_created_and_path_in_clipboard(self,filepath):
+        print("\n\nSQL task created under '"+filepath+"' and path copied to clipboard\n")
+
+
 class SvnClient(object):
     def __init__(self, rev_no):
         self.rev_no =rev_no
@@ -59,12 +66,14 @@ class CreateSQLTaskCommand(object):
                  env_vars=os.environ,
                  initial_context=init(AppProject()),
                  svn_client= SvnClient("123"),
+                 clipboard= pyperclip,
                  path=None):
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars
         self.initial_context=initial_context
         self.displayer = CreateSQLTaskDisplayer()
+        self.clipboard = clipboard
 
     def run(self):
         if os.path.exists(self.path) and not\
@@ -74,7 +83,8 @@ class CreateSQLTaskCommand(object):
         sqltask = SQLTask(self.path,
                           self._compute_update_seq_no())
         sqltask.write(self._create_sql())
-
+        self.clipboard.copy(self.path)
+        self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "n"
 

@@ -3,6 +3,7 @@ import sys
 from io import StringIO
 
 import pytest
+import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
@@ -125,17 +126,26 @@ class FakeSvnClient(object):
     def current_rev_no(self):
         return self.rev_no
 
+class FakeClipboard():
+    def copy(self, text):
+        self.text = text
+    def paste(self):
+        return self.text
+
 class CreateSQLTaskAppRunner(AppRunner):
     def __init__(self):
         super().__init__()
         self.command =None
         self.rev_no="0"
+        self.taskpath=""
+        self.clipboard =FakeClipboard()
 
     def _make_command_factory(self):
         self.command = CreateSQLTaskCommand(
                                 self.env_vars,
                                 self.initial_context,
-                                FakeSvnClient(self.rev_no))
+                                FakeSvnClient(self.rev_no),
+                                self.clipboard)
         return CommandTestFactory(
                 create_sqltask_command=self.command)
 
@@ -144,6 +154,7 @@ class CreateSQLTaskAppRunner(AppRunner):
         return self
 
     def run_create_sqltask(self,taskpath):
+        self.taskpath =taskpath
         self._run(['.','-d',taskpath])
         return self
 
@@ -155,5 +166,9 @@ class CreateSQLTaskAppRunner(AppRunner):
 
     def not_exists(self,filepath):
         assert not os.path.exists(filepath)
+        return self
+
+    def assert_path_copied_to_sys_clipboard(self):
+        assert self.taskpath == self.clipboard.paste()
         return self
 

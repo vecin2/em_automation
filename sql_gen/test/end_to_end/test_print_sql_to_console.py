@@ -22,7 +22,7 @@ def test_asks_for_template_until_valid_entry(app_runner):
                .assert_rendered_sql("")\
                .assert_all_input_was_read()
 
-def test_computes_tempaltes_path_from_prj_path(app_runner,fs):
+def test_computes_templates_path_from_prj_path(app_runner,fs):
     fs.create_file("/em/prj/sqltask/templates/say_hello.sql", contents="hello!")
     app_runner.with_emproject_under("/em/prj")\
                .select_template('1. say_hello.sql',{})\
@@ -52,7 +52,7 @@ def test_select_and_render_one_value_template(app_runner,fs):
                .assert_all_input_was_read()
 
 
-def test_fills_two_templates_combines_output(app_runner,fs):
+def test_fills_two_templates_and_combines_output(app_runner,fs):
     fs.create_file("/templates/hello.sql", contents="hello {{name}}!")
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
 
@@ -64,7 +64,7 @@ def test_fills_two_templates_combines_output(app_runner,fs):
                .assert_rendered_sql("hello John!\nbye Mark!")\
                .assert_all_input_was_read()
 
-def test_initial_context_is_using_when_filling_template(app_runner,fs):
+def test_initial_context_is_used_when_filling_template(app_runner,fs):
     initial_context = {'_dummy_note': 'Dummy note'}
     fs.create_file("/templates/hello.sql", contents="hello {{_dummy_note}}!")
 
