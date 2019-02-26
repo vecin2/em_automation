@@ -1,3 +1,4 @@
+import signal
 import os
 import pytest
 
@@ -82,20 +83,3 @@ def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
                        "PROJECT $Revision: 133")\
                .assert_all_input_was_read()
 
-@pytest.mark.skip
-def test_it_saves_sqltask_once_after_all_templates_are_filled(app_runner,fs):
-    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
-    fs.create_dir("/prj/modules/moduleB/bye")
-    app_runner.with_emproject_under("/em/prj")\
-               .using_templates_under("/templates")\
-               .with_svn_rev_no("122")\
-               .user_inputs("y")\
-               .select_template('bye.sql',{'name':'Frank'})\
-               .not_exists("/prj/modules/moduleB/bye/tableData.sql")\
-               .saveAndExit()\
-               .run_create_sqltask("/prj/modules/moduleB/bye")\
-               .exists("/prj/modules/moduleB/bye/tableData.sql",
-                       "bye Frank!")\
-               .exists("/prj/modules/moduleB/bye/update.sequence",
-                       "PROJECT $Revision: 123")\
-               .assert_all_input_was_read()

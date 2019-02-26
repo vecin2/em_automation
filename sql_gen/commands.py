@@ -67,33 +67,35 @@ class CreateSQLTaskCommand(object):
         self.displayer = CreateSQLTaskDisplayer()
 
     def run(self):
-        if os.path.exists(self.path):
-            should_override = self.displayer.ask_to_override_task(self.path)
-            if should_override == "n":
-                return
+        if os.path.exists(self.path) and not\
+                self._user_wants_to_override():
+            return
 
-        self.sqltask = SQLTask(self.path);
-        self.sqltask.set_update_sequence(
-                            self._compute_update_seq_no())
+        sqltask = SQLTask(self.path,
+                          self._compute_update_seq_no())
+        sqltask.write(self._create_sql())
+
+    def _user_wants_to_override(self):
+        return self.displayer.ask_to_override_task(self.path) != "n"
+
+    def _create_sql(self):
+        displayer = PrintSQLToConsoleDisplayer()
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.env_vars,
-                            self.sqltask,
-                            self.initial_context
-                        )
+                            displayer,
+                            self.initial_context)
         self.doc_creator.run()
+        return displayer.rendered_sql
 
     def _compute_update_seq_no(self):
-        rev_no_offset = AppProject(env_vars=self.env_vars).config.get('svn.rev.no.offset','0')
-        return int(self.svn_client.current_rev_no())+1+int(rev_no_offset)
-
-
+        rev_no_offset = AppProject(env_vars=self.env_vars).\
+                                config.get('svn.rev.no.offset','0')
+        return 1+ int(self.svn_client.current_rev_no())+int(rev_no_offset)
 
 
 class SQLTask(object):
-    def __init__(self, path =None):
+    def __init__(self, path =None,update_sequence_no=None):
         self.path=path
-
-    def set_update_sequence(self, update_sequence_no):
         self.update_sequence_no = update_sequence_no
 
     def write(self,text):

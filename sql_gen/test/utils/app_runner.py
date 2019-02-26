@@ -154,6 +154,6 @@ class CreateSQLTaskAppRunner(AppRunner):
         return self
 
     def not_exists(self,filepath):
-        return not os.path.exists(filepath)
+        assert not os.path.exists(filepath)
         return self
 
