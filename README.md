@@ -5,6 +5,7 @@ sqltask is command line application that helps users generating SQL scripts. Eac
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values, and they should minimize user interactions, avoiding asking for values that could be computed.
 
 
+
 # Table Of Contents
 
 - [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
