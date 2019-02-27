@@ -24,7 +24,16 @@ class CommandLineSQLTaskApp(object):
     """"""
     def __init__(self,args_factory=CommandFactory()):
         self.args_factory = args_factory
-    def run (self):
+
+    def run(self):
+        try:
+            self._dorun()
+        except KeyboardInterrupt as excinfo:
+            print( '\n KeyboardInterrupt exception')
+        except Exception as excinfo:
+            raise(excinfo)
+
+    def _dorun (self):
         command =SysArgParser(self.args_factory).parse()
         command.run()
 
