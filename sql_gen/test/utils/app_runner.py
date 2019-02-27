@@ -72,7 +72,7 @@ class AppRunner():
         return "\n".join([input for input in self.inputs])
 
     def assert_rendered_sql(self,expected_sql):
-        assert expected_sql == self.sql_renderer.rendered_sql
+        assert expected_sql == self.command.sql_printed()
         return self
 
     def assert_all_input_was_read(self):
@@ -105,19 +105,17 @@ class CommandTestFactory(CommandFactory):
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self):
         super().__init__()
-        self.sql_renderer = PrintSQLToConsoleDisplayer()
 
     def run(self):
         self._run(['.'])
         return self
 
     def _make_command_factory(self):
-        command = PrintSQLToConsoleCommand(
-                                self.env_vars,
-                                self.sql_renderer,
-                                self.initial_context)
+        self.command = PrintSQLToConsoleCommand(
+                                env_vars=self.env_vars,
+                                initial_context=self.initial_context)
         return CommandTestFactory(
-                print_to_console_command=command)
+                print_to_console_command=self.command)
 
 class FakeSvnClient(object):
     def __init__(self, rev_no):

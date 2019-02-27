@@ -71,7 +71,6 @@ class CreateDocumentFromTemplateCommand(object):
         self.selector = TemplateSelector(self.templates_path)
         FillTemplateCommandDisplayer().display_loading_templates_from(self.templates_path)
         template = self.selector.select_template()
-        filled_template=""
         while template:
             filled_template =TemplateFiller().fill(template,dict(self.initial_context))
             self.writer.write(filled_template)

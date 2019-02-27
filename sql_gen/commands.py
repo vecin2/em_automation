@@ -32,20 +32,21 @@ class PrintSQLToConsoleDisplayer(object):
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
     def __init__(self, env_vars=os.environ,
-                       doc_writer=PrintSQLToConsoleDisplayer(),
                        initial_context=init(AppProject())):
-        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
-        self.doc_creator = CreateDocumentFromTemplateCommand(
-                            templates_path,
-                            doc_writer,
-                            initial_context
-                        )
+        self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
+        self.initial_context =initial_context
 
     def run(self):
+        self.doc_writer = PrintSQLToConsoleDisplayer()
+        self.doc_creator = CreateDocumentFromTemplateCommand(
+                            self.templates_path,
+                            self.doc_writer,
+                            self.initial_context
+                        )
         self.doc_creator.run()
 
     def sql_printed(self):
-        return self.doc_creator.generated_doc()
+        return self.doc_writer.rendered_sql
 
 class CreateSQLTaskDisplayer(object):
     def ask_to_override_task(self,path):
