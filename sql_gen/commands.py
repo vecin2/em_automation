@@ -32,7 +32,9 @@ class PrintSQLToConsoleDisplayer(object):
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the ouput to console"""
     def __init__(self, env_vars=os.environ,
-                       initial_context=init(AppProject())):
+            initial_context=None):
+        if initial_context is None:
+            initial_context=init(AppProject())
         self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.initial_context =initial_context
 
@@ -67,10 +69,12 @@ class SvnClient(object):
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
-                 initial_context=init(AppProject()),
+                 initial_context=None,
                  svn_client= SvnClient("123"),
                  clipboard= pyperclip,
                  path=None):
+        if initial_context is None:
+            initial_context = init(AppProject())
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars

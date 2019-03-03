@@ -8,7 +8,7 @@ import os
 #from sql_gen.sqltask_jinja import initial_context
 import sql_gen.sqltask_jinja.context as jinjacontext
 from sql_gen.docugen.environment_selection import TemplateSelector
-from sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 app = None
 logger =None

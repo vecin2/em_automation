@@ -10,7 +10,7 @@ class SvnClientFactory(object):
         return svn.remote.RemoteClient(url)
 
 class EMSvn(object):
-    def __init__(self,local_url=emproject_home(),svnclient_factory=SvnClientFactory()):
+    def __init__(self,local_url=None,svnclient_factory=SvnClientFactory()):
         self.svnclient_factory = svnclient_factory
         self.remote_client_var=None
         self.local_url = local_url
