@@ -25,13 +25,18 @@ MANDATORY_KEYS=["ccadmin",
 
 
 def get_prj_home(env_vars):
+    env_name='EM_CORE_HOME'
     help_text="It should contain the path of your current EM project."
     try:
-        result = env_vars['EM_CORE_HOME']
+        result = env_vars[env_name]
     except Exception:
-        raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
+        raise EnvVarNotFoundException(env_name,help_text)
     if not result:
-        raise EnvVarNotFoundException("EM_CORE_HOME",help_text)
+        raise EnvVarNotFoundException(env_name,help_text)
+    if not os.path.exists(result):
+        error_msg ="Environment variable '"+env_name+"' exists "+\
+                   "but it points to an invalid path"
+        raise ValueError(error_msg)
     relative_path =ProjectLayout(result,PATHS,MANDATORY_KEYS)
     #try:
     #    relative_path.check()

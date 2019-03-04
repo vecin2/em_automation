@@ -19,6 +19,10 @@ class EMTemplatesEnv():
             "(so templates path can be computes)"\
             "or, explicetely  add '"+templates_path_env_name+"'."
             raise ValueError(error_msg)
+        if not os.path.exists(templates_path):
+            error_msg="Templates path '"+templates_path+"' does not exist. "+\
+            "Make sure the directory is created and it contains templates"
+            raise ValueError(error_msg)
         return templates_path
 
 

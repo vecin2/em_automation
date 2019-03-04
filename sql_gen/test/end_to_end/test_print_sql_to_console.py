@@ -15,10 +15,10 @@ def test_it_throws_exception_when_no_templates_path_define(app_runner):
         app_runner.saveAndExit().run()
     assert "Templates path can not" in str(excinfo.value)
 
-def test_it_throws_exception_when_empty_templates_path(app_runner):
+def test_it_throws_exception_when_templates_path_does_not_exist(app_runner):
     with pytest.raises(ValueError) as  excinfo:
         app_runner.using_templates_under("").saveAndExit().run()
-    assert "Templates path can not" in str(excinfo.value)
+    assert "Make sure the directory is created" in str(excinfo.value)
 
 def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(app_runner):
     with pytest.raises(EnvVarNotFoundException) as  excinfo:
@@ -27,15 +27,26 @@ def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(app
                   .run_prod()
     assert "path of your current EM project" in str(excinfo.value)
 
+def test_it_throws_exception_when_run_with_em_context_and_em_path_does_not_exist(app_runner,fs):
+    fs.create_dir("/my_templates")
+    with pytest.raises(ValueError) as  excinfo:
+        app_runner.with_emproject_under("/em/prj")\
+                  .using_templates_under("/my_templates")\
+                  .saveAndExit()\
+                  .run_prod()
+    assert "points to an invalid path" in str(excinfo.value)
 
-def test_returns_empty_when_no_template_selected(app_runner):
-    app_runner.with_emproject_under("/em/prj")\
+
+def test_returns_empty_when_no_template_selected(app_runner,fs):
+    fs.create_dir("/my_templates")
+    app_runner.using_templates_under("/my_templates")\
                .saveAndExit()\
                .run()\
                .assert_rendered_sql("")
 
-def test_asks_for_template_until_valid_entry(app_runner):
-    app_runner.with_emproject_under("/em/prj")\
+def test_asks_for_template_until_valid_entry(app_runner,fs):
+    fs.create_dir("/templates")
+    app_runner.using_templates_under("/templates")\
                .select_template('abc',{})\
                .saveAndExit()\
                .run()\

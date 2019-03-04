@@ -12,6 +12,7 @@ def app_runner():
 
 def test_creates_sqltask_from_absolute_path(app_runner,fs):
     fs.create_file("/templates/greeting.sql", contents="hello {{name}}!")
+    fs.create_dir("/em/prj")
 
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
@@ -28,6 +29,7 @@ def test_creates_sqltask_from_absolute_path(app_runner,fs):
 
 def test_creates_sqltask_from_relative_path(app_runner,fs):
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/em/prj")
     os.chdir("/templates")
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
@@ -43,6 +45,7 @@ def test_creates_sqltask_from_relative_path(app_runner,fs):
 
 def test_sqltask_exists_user_cancels_then_does_not_create(app_runner,fs):
     fs.create_dir("/prj/modules/moduleB/bye")
+
     app_runner.user_inputs("bad input")\
                .user_inputs("n")\
                .run_create_sqltask("/prj/modules/moduleB/bye")\
@@ -53,6 +56,8 @@ def test_sqltask_exists_user_cancels_then_does_not_create(app_runner,fs):
 def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
     fs.create_dir("/prj/modules/moduleB/bye")
+    fs.create_dir("/em/prj")
+
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
                .with_svn_rev_no("122")\
@@ -68,13 +73,12 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
 
 def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
-    fs.create_dir("/prj/modules/moduleB/bye")
+    fs.create_dir("/em/prj")
 
     app_runner.with_emproject_under("/em/prj")\
                .with_app_config({'svn.rev.no.offset':'10'})\
                .using_templates_under("/templates")\
                .with_svn_rev_no("122")\
-               .user_inputs("y")\
                .select_template('bye.sql',{'name':'Frank'})\
                .saveAndExit()\
                .run_create_sqltask("/prj/modules/moduleB/bye")\
