@@ -15,7 +15,6 @@ def test_it_throws_exception_when_no_templates_path_define(app_runner):
         app_runner.saveAndExit().run()
     assert "Templates path can not" in str(excinfo.value)
 
-@pytest.mark.skip
 def test_it_throws_exception_when_empty_templates_path(app_runner):
     with pytest.raises(ValueError) as  excinfo:
         app_runner.using_templates_under("").saveAndExit().run()
