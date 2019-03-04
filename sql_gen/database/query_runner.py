@@ -51,21 +51,29 @@ class CallableDBQuery(object):
         return count
 
 class DBOperation(AttrDict):
-    def __init__(self,op_name,query_dict,emdb):
+    def __init__(self,op_name,query_dict,emdb_loader):
         super().__init__(query_dict)
-        self.emdb =emdb
+        self.emdb_loader =emdb_loader
         self.op_name=op_name
+        self._emdb =None
     def __getattr__(self, item):
         return CallableDBQuery(self.op_name,item,super().__getattr__(item),self.emdb)
+
+    @property
+    def emdb(self):
+        if not self._emdb:
+            self._emdb = self.emdb_loader.addb
+        return self._emdb
 
 class QueryRunner(object):
     def __init__(self,query_dict, emdb,app_project=None):
         self._query_dict = None
         self._emdb = None
-        self._app_project =None
-        #self.find = DBOperation("find",self.query_dict,self.emdb)
-        #self.list = DBOperation("list",self.query_dict,self.emdb)
+        self._app_project =app_project
+        self.find = DBOperation("find",self.query_dict,app_project)
+        self.list = DBOperation("list",self.query_dict,app_project)
         self._query_dict=None
+        self._list=None
 
     @property
     def emdb(self):
@@ -75,21 +83,21 @@ class QueryRunner(object):
     @property
     def query_dict(self):
         if not self._query_dict:
-            queries_path=self.app_project.paths["ad_queries"].path
-            config_file=ConfigFile(file_path)
+            queries_path=self._app_project.paths["ad_queries"].path
+            config_file=ConfigFile(queries_path)
             self._query_dict= config_file.properties
         return self._query_dict
-    @property
-    def find(self):
-        if not self._find:
-            self._find = DBOperation("find",self.query_dict,self.emdb)
-        return self._find
+    #@property
+    #def find(self):
+    #    if not self._find:
+    #        self._find = DBOperation("find",self.query_dict,self.emdb)
+    #    return self._find
 
-    @property
-    def list(self):
-        if not self._list:
-            self._list = DBOperation("list",self.query_dict,self.emdb)
-        return self._find
+    #@property
+    #def list(self):
+    #    if not self._list:
+    #        self._list = DBOperation("list",self.query_dict,self.emdb)
+    #    return self._list
 
     def has_query(self,key):
         return key in self.query_dict

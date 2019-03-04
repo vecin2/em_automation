@@ -37,6 +37,7 @@ class PrintSQLToConsoleCommand(object):
             initial_context=init(AppProject(env_vars=env_vars))
         self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.initial_context =initial_context
+        self.env_vars = env_vars
 
     def run(self):
         self.doc_writer = PrintSQLToConsoleDisplayer()
@@ -74,7 +75,7 @@ class CreateSQLTaskCommand(object):
                  clipboard= pyperclip,
                  path=None):
         if initial_context is None:
-            initial_context = init(AppProject())
+            initial_context = init(AppProject(env_vars=env_vars))
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars

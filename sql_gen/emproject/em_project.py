@@ -23,6 +23,7 @@ MANDATORY_KEYS=["ccadmin",
                 "repo_modules"
                ]
 
+
 def get_prj_home(env_vars):
     help_text="It should contain the path of your current EM project."
     try:
@@ -134,5 +135,5 @@ class EMProject(object):
                 result.append(module)
         return result
 
-    def product_prj(self):
-        return EMProject(self.config()['product.home'])
+    def product_layout(self):
+        return ProjectLayout(self.config()['product.home'],PATHS)

@@ -23,7 +23,7 @@
 
 {# Compute variables for process_descriptor_ref#}
  {% set process_descriptor_ref_id = process_descriptor_id %}
-{% include 'add_process_descriptor_ref.sql' %}
+{% include 'hidden_templates/add_process_descriptor_ref.sql' %}
 
 
 {# Rewire verb to point to new process descriptor#}

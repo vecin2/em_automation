@@ -23,9 +23,8 @@ def test_get_config_value_returns_value(fs):
     config = ConfigFile(config_home)
     assert "ad" == config["container.name"]
 
-def test_get_config_value_when_no_file_exist_throws_exc_and_logs_it(fs):
+def test_get_config_value_when_no_file_exist_returns_empty_dict():
     config_home ="/em/project/gsc/config/emautomation.properties"
     fake_logger = FakeLogger()
-    with pytest.raises(ConfigFileNotFoundException) as e_info:
-        config = ConfigFile(config_home,fake_logger)
-    assert "File not found" in fake_logger.error_text
+    config = ConfigFile(config_home,fake_logger)
+    assert str({}) == str(config)
