@@ -27,9 +27,7 @@ MANDATORY_KEYS=["ccadmin",
 def get_prj_home(env_vars):
     env_name='EM_CORE_HOME'
     help_text="It should contain the path of your current EM project."
-    try:
-        result = env_vars[env_name]
-    except Exception:
+    if env_name not in env_vars:
         raise EnvVarNotFoundException(env_name,help_text)
     if not result:
         raise EnvVarNotFoundException(env_name,help_text)
