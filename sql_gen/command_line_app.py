@@ -22,7 +22,7 @@ class SysArgParser (object):
 
 class CommandLineSQLTaskApp(object):
     """"""
-    def __init__(self,args_factory=CommandFactory()):
+    def __init__(self,args_factory=CommandFactory(os.environ)):
         self.args_factory = args_factory
 
     def run(self):

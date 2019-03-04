@@ -34,7 +34,7 @@ class PrintSQLToConsoleCommand(object):
     def __init__(self, env_vars=os.environ,
             initial_context=None):
         if initial_context is None:
-            initial_context=init(AppProject())
+            initial_context=init(AppProject(env_vars=env_vars))
         self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.initial_context =initial_context
 

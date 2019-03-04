@@ -22,15 +22,25 @@ MANDATORY_KEYS=["config",
                 ]
 
 class AppProject(object):
-    def __init__(self,emproject=None,env_vars=None):
+    def __init__(self,env_vars=None):
         self._config_file=None
         self._ad_query_runner=None
-        if env_vars:
-            self.emproject = EMProject(env_vars=env_vars)
-        else:
-            self.emproject = emproject
-        self.paths= ProjectLayout(self.root,PATHS,MANDATORY_KEYS)
+        self._emproject = None
+        self._paths =None
         self._logger = None
+        self.env_vars = env_vars
+
+    @property
+    def emproject(self):
+        if not self._emproject:
+            self._emproject = EMProject(env_vars=self.env_vars)
+        return self._emproject
+
+    @property
+    def paths(self):
+        if not self._paths:
+            self._paths= ProjectLayout(self.root,PATHS,MANDATORY_KEYS)
+        return self._paths
 
     @property
     def root(self):
@@ -39,9 +49,10 @@ class AppProject(object):
     @property
     def ad_queryrunner(self):
         if not self._ad_query_runner:
-            queries_path=self.paths["ad_queries"].path
-            self._ad_query_runner = QueryRunner.make_from_file(queries_path,
-                                                               self.addb)
+            #queries_path=self.paths["ad_queries"].path
+            self._ad_query_runner = QueryRunner.make_from_app_prj(self)
+            #self._ad_query_runner = QueryRunner.make_from_file(queries_path,
+            #                                                   self.addb)
         return self._ad_query_runner
 
     def em_config(self):

@@ -47,19 +47,31 @@ def emproject_home(env_vars=os.environ):
 
 
 class EMProject(object):
-    def __init__(self,root=None,ccadmin_client=None,env_vars=None):
-        if not root and not env_vars:
-            root = emproject_home()
-        elif env_vars:
-            root =emproject_home(env_vars) 
-        self.root = root
-        self.paths= ProjectLayout(self.root,PATHS)
-        if not ccadmin_client:
-            ccadmin_client = CCAdmin(self.paths['ccadmin'].path)
-        self.ccadmin_client = ccadmin_client
-        self.ccadmin_client =ccadmin_client
+    def __init__(self,ccadmin_client=None,env_vars=None):
+        self.env_vars =env_vars
+        self._root = None
+        self._paths= None
+        self._ccadmin_client = ccadmin_client
         self.emautomation_props={}
         self.default_config_id =None
+
+    @property
+    def root(self):
+        if not self._paths:
+            self._root= emproject_home(self.env_vars)
+        return self._root
+
+    @property
+    def paths(self):
+        if not self._paths:
+            self._paths= ProjectLayout(self.root,PATHS)
+        return self._paths
+
+    @property
+    def ccadmin_client(self):
+        if not self._ccadmin_client:
+            self._ccadmin_client = CCAdmin(self.paths['ccadmin'].path)
+        return self._ccadmin_client
 
     def set_default_config_id(self,config_id):
         self.default_config_id =config_id
@@ -67,8 +79,7 @@ class EMProject(object):
     def config(self,config_id=None):
         if not self.config_path(config_id).exists():
             self._create_config()
-        config_content = ConfigFile(self.config_path(config_id).path).properties
-        return config_content
+        return ConfigFile(self.config_path(config_id).path).properties
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)

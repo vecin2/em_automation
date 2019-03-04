@@ -3,6 +3,7 @@ import re
 import string
 from fuzzyfinder import fuzzyfinder
 
+
 class AttrDict(object):
     def __init__(self,dict):
         self.dict = dict
@@ -58,11 +59,37 @@ class DBOperation(AttrDict):
         return CallableDBQuery(self.op_name,item,super().__getattr__(item),self.emdb)
 
 class QueryRunner(object):
-    def __init__(self,query_dict, emdb):
-        self.query_dict = query_dict
-        self.emdb = emdb
-        self.find = DBOperation("find",self.query_dict,self.emdb)
-        self.list = DBOperation("list",self.query_dict,self.emdb)
+    def __init__(self,query_dict, emdb,app_project=None):
+        self._query_dict = None
+        self._emdb = None
+        self._app_project =None
+        #self.find = DBOperation("find",self.query_dict,self.emdb)
+        #self.list = DBOperation("list",self.query_dict,self.emdb)
+        self._query_dict=None
+
+    @property
+    def emdb(self):
+        if not self._emdb:
+            self._emdb=self.app_project.addb
+        return self._emdb
+    @property
+    def query_dict(self):
+        if not self._query_dict:
+            queries_path=self.app_project.paths["ad_queries"].path
+            config_file=ConfigFile(file_path)
+            self._query_dict= config_file.properties
+        return self._query_dict
+    @property
+    def find(self):
+        if not self._find:
+            self._find = DBOperation("find",self.query_dict,self.emdb)
+        return self._find
+
+    @property
+    def list(self):
+        if not self._list:
+            self._list = DBOperation("list",self.query_dict,self.emdb)
+        return self._find
 
     def has_query(self,key):
         return key in self.query_dict
@@ -72,4 +99,7 @@ class QueryRunner(object):
         config_file=ConfigFile(file_path)
         return QueryRunner(config_file.properties, emdb)
 
+    @staticmethod
+    def make_from_app_prj(app_project):
+        return QueryRunner(None,None,app_project =app_project)
 
