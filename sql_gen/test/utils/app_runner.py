@@ -12,9 +12,8 @@ from sql_gen.app_project import AppProject
 
 class AppRunner():
     def __init__(self):
-        self.inputs=[]
         self.original_stdin = sys.stdin
-        self.environment = DummyEnvironment()
+        self.inputs=[]
         self.env_vars={}
         self.initial_context={}
 
@@ -62,10 +61,11 @@ class AppRunner():
         self.initial_context=initial_context
         return self
 
-    def _run(self,args):
+    def _run(self,args,app=None):
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
-        app = CommandLineSQLTaskApp(self._make_command_factory())
+        if not app:
+            app = CommandLineSQLTaskApp(self._make_command_factory())
         app.run()
 
     def _user_input_to_str(self):
@@ -106,9 +106,12 @@ class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self):
         super().__init__()
 
-    def run(self):
-        self._run(['.'])
+    def run(self,app =None):
+        self._run(['.'],app=app)
         return self
+
+    def run_prod(self):
+        self.run(CommandLineSQLTaskApp())
 
     def _make_command_factory(self):
         self.command = PrintSQLToConsoleCommand(

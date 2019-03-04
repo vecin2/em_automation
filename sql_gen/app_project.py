@@ -34,7 +34,6 @@ class AppProject(object):
     def emproject(self):
         if not self._emproject:
             self._emproject = EMProject(env_vars=self.env_vars)
-            self.em_config()
         return self._emproject
 
     @property

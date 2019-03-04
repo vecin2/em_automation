@@ -1,11 +1,27 @@
 import pytest
 
 from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
+from sql_gen.exceptions import EnvVarNotFoundException
+
 @pytest.fixture
 def app_runner():
     app_runner = PrintSQLToConsoleAppRunner()
     yield app_runner
     app_runner.teardown()
+
+
+def test_it_throws_exception_when_no_templates_path_define(app_runner):
+    with pytest.raises(ValueError) as  excinfo:
+        app_runner.saveAndExit().run()
+    assert "Templates path can not" in str(excinfo.value)
+
+def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(app_runner):
+    with pytest.raises(EnvVarNotFoundException) as  excinfo:
+        app_runner.using_templates_under("/my_templates")\
+                  .saveAndExit()\
+                  .run_prod()\
+                  .assert_rendered_sql("")
+    assert "path of your current EM project" in str(excinfo.value)
 
 
 def test_returns_empty_when_no_template_selected(app_runner):
