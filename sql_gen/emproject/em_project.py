@@ -37,11 +37,6 @@ def get_prj_home(env_vars):
         error_msg ="Environment variable '"+env_name+"' exists "+\
                    "but it points to an invalid path"
         raise ValueError(error_msg)
-    relative_path =ProjectLayout(result,PATHS,MANDATORY_KEYS)
-    #try:
-    #    relative_path.check()
-    #except InvalidFileSystemPathException as excinfo:
-    #    raise InvalidEnvVarException("Are you sure 'EM_CORE_HOME' points to a valid EM installation? "+ str(excinfo))
     return result
 
 def emproject_home(env_vars=os.environ):
