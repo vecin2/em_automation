@@ -15,12 +15,17 @@ def test_it_throws_exception_when_no_templates_path_define(app_runner):
         app_runner.saveAndExit().run()
     assert "Templates path can not" in str(excinfo.value)
 
+@pytest.mark.skip
+def test_it_throws_exception_when_empty_templates_path(app_runner):
+    with pytest.raises(ValueError) as  excinfo:
+        app_runner.using_templates_under("").saveAndExit().run()
+    assert "Templates path can not" in str(excinfo.value)
+
 def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(app_runner):
     with pytest.raises(EnvVarNotFoundException) as  excinfo:
         app_runner.using_templates_under("/my_templates")\
                   .saveAndExit()\
-                  .run_prod()\
-                  .assert_rendered_sql("")
+                  .run_prod()
     assert "path of your current EM project" in str(excinfo.value)
 
 

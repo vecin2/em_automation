@@ -111,7 +111,8 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         return self
 
     def run_prod(self):
-        self.run(CommandLineSQLTaskApp())
+        self.run(CommandLineSQLTaskApp(CommandFactory(self.env_vars)))
+        return self
 
     def _make_command_factory(self):
         self.command = PrintSQLToConsoleCommand(
