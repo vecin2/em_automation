@@ -51,7 +51,6 @@ class EMProject(object):
         self._root = None
         self._paths= None
         self._ccadmin_client = ccadmin_client
-        self.emautomation_props={}
         self.default_config_id =None
 
     @property

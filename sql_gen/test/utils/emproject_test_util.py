@@ -33,7 +33,8 @@ class FakeEMProjectBuilder():
         self.root = root
         self.ccadmin_client =FakeCCAdminClient(None)
         self.ccadmin_client.fake_emproject_builder=self
-        self.emproject =EMProject(self.root,self.ccadmin_client)
+        self.fs.create_dir(root)
+        self.emproject =EMProject(self.ccadmin_client,{'EM_CORE_HOME':root})
         self.config_map={}
 
     def add_config_settings(self, config_id, settings_map):
@@ -64,7 +65,7 @@ class FakeEMProjectBuilder():
     def with_ccadmin(self, ccadmin_client):
         self.ccadmin_client = ccadmin_client
         self.ccadmin_client.fake_emproject_builder=self
-        self.emproject.ccadmin_client =self.ccadmin_client
+        self.emproject._ccadmin_client =self.ccadmin_client
         return self
 
     def add_repo_module(self, module_name):

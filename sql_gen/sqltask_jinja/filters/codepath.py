@@ -13,7 +13,7 @@ def get_template_filter():
     return codepath
 
 class CodepathFilter(PromptFilter):
-    def __init__(self, jinja_filter):
+    def __init__(self, jinja_filter,env_vars=os.environ):
         self.filter = jinja_filter;
 
     def apply(self, prompt,context):

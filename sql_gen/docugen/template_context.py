@@ -13,7 +13,7 @@ class TemplateContext():
             self._render_template(context)
         except Exception as exception:
             if var_name in context:
-                #although template while rendered var was resolved
+                #although template throwed an excpetion while rendered var was resolved
                 return context[var_name]
             else:
                 raise exception

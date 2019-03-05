@@ -4,31 +4,10 @@ from sql_gen.emproject import EMProject, EMConfigID
 from sql_gen.exceptions import ConfigFileNotFoundException,EnvVarNotFoundException,ConfigException,InvalidEnvVarException
 from sql_gen.test.utils.emproject_test_util import FakeCCAdminClient,FakeEMProjectBuilder
 from unittest.mock import patch
+
 def prj_builder(fs, root='/home/em'):
     return FakeEMProjectBuilder(fs,root)
 
-
-def test_em_core_env_var_not_set():
-    _environ = dict(os.environ)  # or os.environ.copy()
-    os.environ.clear()
-    try:
-        with pytest.raises(EnvVarNotFoundException) as excinfo:
-           project = EMProject()
-    finally:
-        os.environ.clear()
-        os.environ.update(_environ)
-
-def test_em_core_env_var_set_to_blank():
-    with patch.dict('os.environ', {'EM_CORE_HOME': ''}):
-        assert "" == os.environ["EM_CORE_HOME"]
-        with pytest.raises(EnvVarNotFoundException) as excinfo:
-            project = EMProject()
-
-def test_em_core_env_var_set_to_a_not_em_project():
-    with patch.dict('os.environ', {'EM_CORE_HOME': '/opt'}):
-        with pytest.raises(InvalidEnvVarException) as excinfo:
-            project = EMProject()
-        assert "Are you sure 'EM_CORE_HOME' points to a valid EM installation? Path '/opt/bin' does not exist." == str(excinfo.value)
 
 def test_project_prefix_from_em_core_home(fs):
     em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
@@ -40,14 +19,14 @@ def test_project_prefix_throws_exc_if_not_repo_modules_created(fs):
         em_project = prj_builder(fs).build()
         em_project.prefix()
         assert False, "should have through an ValueError exception"
-    assert "compute project prefix" in str(excinfo.value)
+    assert "project prefix custom modules must exist" in str(excinfo.value)
 
 def test_project_prefix_throws_exc_if_no_module_with_3_uppercase(fs):
     with pytest.raises(ValueError) as excinfo:
         em_project = prj_builder(fs).add_repo_module("other").build()
         em_project.prefix()
         assert False, "should have through an ValueError exception"
-    assert "compute project prefix" in str(excinfo.value)
+    assert "project prefix custom modules must exist" in str(excinfo.value)
 
 def test_project_prefix_throws_exc_if_not_custom_module_created(fs):
     em_project = prj_builder(fs).add_repo_module("").build()
@@ -66,8 +45,12 @@ local_config_id=EMConfigID("localdev",
                            "localhost",
                            "ad")
 
+def make_emproject(root):
+    return EMProject(env_vars={'EM_CORE_HOME': root})
+
 def test_config_path_depends_on_config_id(fs):
-    em_project = EMProject("/home/project")
+    em_project = make_emproject("/home/project")
+    fs.create_dir("/home/project")
     mylocal_config_id=EMConfigID("mylocal","localhost","ad")
     assert "/home/project/work/config/show-config-txt/mylocal-localhost-ad.txt" == em_project.config_path(mylocal_config_id).path
 
@@ -129,14 +112,14 @@ def test_config_with_no_args_throws_exc_when_no_default_defined(fs):
 
     assert "Try to retrieve configuration but not config_id was specified. You can specify the config by either passing a config_id or by setting a default config_id (environment.name, machine.name and container.name)"
 
-def test_product_prj(fs):
+def test_product_layout(fs):
     config_id = EMConfigID("localdev","localhost","ad")
     em_project  = FakeEMProjectBuilder(fs)\
                     .add_config(local_config_id,"product.home=my_product/is/here")\
                     .build()
 
     em_project.set_default_config_id(config_id)
-    assert "my_product/is/here" == em_project.product_prj().root
+    assert "my_product/is/here" == em_project.product_layout().root
 
 @pytest.mark.skip
 def test_emautomation_config_throws_exception_if_file_not_there(fs):

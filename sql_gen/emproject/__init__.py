@@ -5,10 +5,9 @@ from sql_gen.emproject.em_project import EMConfigID
 from sql_gen.emproject.em_project import emproject_home
 from sql_gen.emproject.em_project import CCAdmin
 from sql_gen.database import QueryRunner
-from sql_gen.emproject.sqltask import SQLTask, Clipboard
 from sql_gen.emproject.emsvn import EMSvn
 
 
 __all__ = [ 
-        'SQLTask', 'EMProject','EMConfigID','CCADMIN', 'emproject_home', 'EMSvn', 'Clipboard'
+        'EMProject','EMConfigID','CCADMIN', 'emproject_home', 'EMSvn' 
 ]

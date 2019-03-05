@@ -25,7 +25,6 @@ class EMTemplatesEnv():
             raise ValueError(error_msg)
         return templates_path
 
-
     def make_env(self,templates_path):
         env_builder = EnvBuilder()
         env_builder.set_globals_module(template_globals)\
