@@ -20,6 +20,6 @@ class CodepathFilter(PromptFilter):
         app=AppProject(env_vars=os.environ)
         logger.debug("Applying CodePath filter to project :"+app.emproject.root)
         project_modules= app.emproject.paths['repo_modules'].path
-        product_modules= app.emproject.product_layout()['repo_modules'].path
+        product_modules= app.product_layout()['repo_modules'].path
         get_paths_func= (lambda:[ project_modules, product_modules])
         prompt.completer = PathCompleter(get_paths=get_paths_func)

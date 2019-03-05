@@ -87,25 +87,8 @@ class QueryRunner(object):
             config_file=ConfigFile(queries_path)
             self._query_dict= config_file.properties
         return self._query_dict
-    #@property
-    #def find(self):
-    #    if not self._find:
-    #        self._find = DBOperation("find",self.query_dict,self.emdb)
-    #    return self._find
-
-    #@property
-    #def list(self):
-    #    if not self._list:
-    #        self._list = DBOperation("list",self.query_dict,self.emdb)
-    #    return self._list
-
     def has_query(self,key):
         return key in self.query_dict
-
-    @staticmethod
-    def make_from_file(file_path,emdb):
-        config_file=ConfigFile(file_path)
-        return QueryRunner(config_file.properties, emdb)
 
     @staticmethod
     def make_from_app_prj(app_project):

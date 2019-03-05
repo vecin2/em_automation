@@ -49,11 +49,12 @@ class AppProject(object):
     @property
     def ad_queryrunner(self):
         if not self._ad_query_runner:
-            #queries_path=self.paths["ad_queries"].path
             self._ad_query_runner = QueryRunner.make_from_app_prj(self)
-            #self._ad_query_runner = QueryRunner.make_from_file(queries_path,
-            #                                                   self.addb)
         return self._ad_query_runner
+
+    def product_layout(self):
+        self.em_config()
+        return self.emproject.product_layout()
 
     def em_config(self):
         if not self.emproject.default_config_id:
