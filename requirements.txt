@@ -2,6 +2,8 @@ anytree==2.4.3
 atomicwrites==1.1.5
 attrs==18.1.0
 cx-Oracle==7.0.0
+em-sql==0.0.2a3
+emsql==0.0.2a7
 fuzzyfinder==2.1.0
 gnureadline==6.3.8
 Jinja2==2.10
@@ -20,6 +22,7 @@ pytest-mock==1.10.1
 python-dateutil==2.7.3
 PyYAML==3.13
 six==1.11.0
+sqltask==0.0.1a24
 svn==0.3.46
 termcolor==1.1.0
 wcwidth==0.1.7

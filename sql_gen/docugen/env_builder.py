@@ -1,6 +1,9 @@
 from jinja2 import Environment, FileSystemLoader
 import os,sys
 from . import source_inspector
+from sql_gen.sqltask_jinja.filters.codepath import codepath
+from sql_gen.sqltask_jinja.filters.description import description
+from sql_gen.sqltask_jinja.filters.suggest import suggest
 
 
 class EnvBuilder(object):
@@ -49,9 +52,12 @@ class EnvBuilder(object):
             env.globals.update(functions)
 
     def _build_filters(self,env):
-        if self.filters_package:
-            functions = source_inspector.extract_pkg_funcs_list_by_name(
-                            self.filters_package,
-                            "get_template_filter")
-            env.filters.update(functions)
+        env.filters['codepath']= codepath
+        env.filters['description']= description
+        env.filters['suggest']= suggest
+        #if self.filters_package:
+        #    functions = source_inspector.extract_pkg_funcs_list_by_name(
+        #                    self.filters_package,
+        #                    "get_template_filter")
+        #    env.filters.update(functions)
 
