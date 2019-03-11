@@ -9,35 +9,33 @@ def prj_builder(fs, root='/home/em'):
     return FakeEMProjectBuilder(fs,root)
 
 
-def test_project_prefix_from_em_core_home(fs):
+def test_project_prefix_from_em_core_home_must_have_at_least_two_modules(fs):
     em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
+                            .add_repo_module("SPENContactHistory")\
                             .build()
     assert "SPEN" == em_project.prefix()
 
-def test_project_prefix_throws_exc_if_not_repo_modules_created(fs):
-    with pytest.raises(ValueError) as excinfo:
-        em_project = prj_builder(fs).build()
-        em_project.prefix()
-        assert False, "should have through an ValueError exception"
-    assert "project prefix custom modules must exist" in str(excinfo.value)
+def test_project_prefix_from_em_core_home_must_have_at_least_two_modules(fs):
+    em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
+                            .build()
+    assert "" == em_project.prefix()
 
-def test_project_prefix_throws_exc_if_no_module_with_3_uppercase(fs):
-    with pytest.raises(ValueError) as excinfo:
-        em_project = prj_builder(fs).add_repo_module("other").build()
-        em_project.prefix()
-        assert False, "should have through an ValueError exception"
-    assert "project prefix custom modules must exist" in str(excinfo.value)
+def test_project_prefix_empty_if_not_repo_modules_created(fs):
+    em_project = prj_builder(fs).build()
+    assert "" ==em_project.prefix()
 
-def test_project_prefix_throws_exc_if_not_custom_module_created(fs):
+def test_project_prefix_empty_if_no_module_with_3_uppercase(fs):
+    em_project = prj_builder(fs).add_repo_module("other").build()
+    assert "" ==em_project.prefix()
+
+def test_project_prefix_empty_if_not_custom_module_created(fs):
     em_project = prj_builder(fs).add_repo_module("").build()
-    with pytest.raises(ValueError) as excinfo:
-        em_project.prefix()
-        assert False, "should have through an ValueError exception"
-    assert "compute project prefix" in str(excinfo.value)
+    assert "" ==em_project.prefix()
 
 def test_project_prefix_skip_modules_without_3_uppercase(fs):
     em_project = prj_builder(fs).add_repo_module("otherModule")\
                                 .add_repo_module("SPENCoreEntities")\
+                                .add_repo_module("SPENContactHistory")\
                                 .build()
     assert "SPEN" == em_project.prefix()
 

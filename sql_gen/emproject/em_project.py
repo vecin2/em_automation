@@ -109,9 +109,10 @@ class EMProject(object):
 
     def prefix(self):
         custom_repo_modules = self._get_repo_custom_modules()
-        if not custom_repo_modules:
-            raise ValueError("To compute project prefix custom modules must exist under ${em_core_home}/repository/default/, starting with at least three capital letters")
-        return self._extract_module_prefix(custom_repo_modules[0])
+        if len(custom_repo_modules)>=2:
+            return self._extract_module_prefix(custom_repo_modules[0])
+
+        return ""
 
     def _extract_module_prefix(self, repo_module):
         result = ''
