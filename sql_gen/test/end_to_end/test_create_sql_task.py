@@ -23,7 +23,7 @@ def test_creates_sqltask_from_absolute_path(app_runner,fs):
                .exists("/em/prj/modules/module_A/tableData.sql",
                        "hello David!")\
                .exists("/em/prj/modules/module_A/update.sequence",
-                       "PROJECT $Revision: 123")\
+                       "PROJECT $Revision: 123 $")\
                .assert_all_input_was_read()\
                .assert_path_copied_to_sys_clipboard()
 
@@ -40,7 +40,7 @@ def test_creates_sqltask_from_relative_path(app_runner,fs):
                .exists("/templates/modules/module_A/tableData.sql",
                        "bye David!")\
                .exists("/templates/modules/module_A/update.sequence",
-                       "PROJECT $Revision: 123")\
+                       "PROJECT $Revision: 123 $")\
                .assert_all_input_was_read()
 
 def test_sqltask_exists_user_cancels_then_does_not_create(app_runner,fs):
@@ -68,7 +68,7 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
                .exists("/prj/modules/moduleB/bye/tableData.sql",
                        "bye Frank!")\
                .exists("/prj/modules/moduleB/bye/update.sequence",
-                       "PROJECT $Revision: 123")\
+                       "PROJECT $Revision: 123 $")\
                .assert_all_input_was_read()
 
 def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
@@ -85,6 +85,6 @@ def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
                .exists("/prj/modules/moduleB/bye/tableData.sql",
                        "bye Frank!")\
                .exists("/prj/modules/moduleB/bye/update.sequence",
-                       "PROJECT $Revision: 133")\
+                       "PROJECT $Revision: 133 $")\
                .assert_all_input_was_read()
 

@@ -120,7 +120,7 @@ class SQLTask(object):
     def write(self,text):
         self.table_data=text
         self.update_sequence="PROJECT $Revision: "+\
-                            str(self.update_sequence_no)
+                            str(self.update_sequence_no) +" $"
         if not os.path.exists(self.path):
                 os.makedirs(self.path)
         with open(os.path.join(self.path,"tableData.sql"),"w") as f:

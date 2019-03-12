@@ -22,7 +22,7 @@ class PromptFilter:
             result = dict[key]
         else:
             raise ValueError("Filters at the moment only support collections,contants and vairables."+\
-                    "But you passed something that is none of that, maybe a function? "+str(arg))
+                    "But you passed something else, maybe a function? "+str(arg))
         logger.debug("Argument resolved to: "+ str(result))
         return result
 
