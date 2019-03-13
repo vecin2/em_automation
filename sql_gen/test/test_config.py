@@ -27,4 +27,4 @@ def test_get_config_value_when_no_file_exist_returns_empty_dict():
     config_home ="/em/project/gsc/config/emautomation.properties"
     fake_logger = FakeLogger()
     config = ConfigFile(config_home,fake_logger)
-    assert str({}) == str(config)
+    assert str({}) == str(config.properties)

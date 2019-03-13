@@ -23,7 +23,7 @@ queries ={"v__by_name":"SELECT * FROM verb_name WHERE NAME='{}' and IS_DELETED='
 @pytest.mark.parametrize("op_name",["list","find"])
 def test_run_query_call_db_with_correct_query(op_name):
     fakedb = FakeEMDB()
-    ad=QueryRunner(queries,fakedb)
+    ad=QueryRunner(query_dict=queries,emdb=fakedb)
     op = getattr(ad,op_name) #ad.list or ad.find
     op.v__by_name_with_keywords(name="inlineSearch",deleted="N")
 
@@ -33,7 +33,7 @@ def test_run_query_call_db_with_correct_query(op_name):
 @pytest.mark.parametrize("op_name",["list","find"])
 def test_run_query_with_wrong_number_args_throws_exception(op_name):
     fakedb = FakeEMDB()
-    ad=QueryRunner(queries,fakedb)
+    ad=QueryRunner(query_dict=queries,emdb=fakedb)
     with pytest.raises(AssertionError) as excinfo:
         op = getattr(ad,op_name) #ad.list or ad.find
         op.v__by_name("inlineSearch")
@@ -53,7 +53,7 @@ def test_non_existing_throws_exception_no_query_defined(op_name):
 @pytest.mark.parametrize("op_name",["list","find"])
 def test_non_existing_query_with_similar_name_throws_exception_suggest_queries(op_name):
     fakedb = FakeEMDB()
-    ad=QueryRunner(queries,fakedb)
+    ad=QueryRunner(query_dict=queries,emdb=fakedb)
     with pytest.raises(AssertionError) as excinfo:
         op = getattr(ad,op_name) #ad.list or ad.find
         op.v__by_nam("inlineSearch")
@@ -68,13 +68,15 @@ v__by_name=SELECT * FROM verb_name WHERE NAME='{}' and IS_DELETED='{}'
     file_path="/em/gsc/queries.sql"
     fs.create_file(file_path,contents=file_content)
 
-    ad=QueryRunner.make_from_file(file_path,None)
+    ad=QueryRunner.make_from_file(file_path,db=FakeEMDB())
 
     assert expected_dict == ad.query_dict
 
-def test_make_queries_from_file_throws_exception_if_file_not_exist():
-    with pytest.raises(ConfigFileNotFoundException) as exc_info:
-        ad=QueryRunner.make_from_file("/queries.sql",None)
+def test_make_queries_from_file_does_not_throw_exception_if_file_not_exist():
+    ad=QueryRunner.make_from_file("/queries.sql",db=FakeEMDB())
 
-    assert "queries.sql" in str(exc_info.value)
-
+def test_something():
+    fakedb=FakeEMDB()
+    query_runner = QueryRunner(query_dict=queries,emdb=fakedb)
+    query_runner.list.v__by_name
+    assert fakedb == query_runner.addb

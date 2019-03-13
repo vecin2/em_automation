@@ -6,9 +6,9 @@ import os
 
 class FakeAppPrjBuilder(object):
 
-    def __init__(self,emproject,fs):
+    def __init__(self,emproject,fs,env_vars=None):
         self.emproject= emproject
-        self.app_project =AppProject(emproject)
+        self.app_project =AppProject(env_vars=env_vars)
         self.fs =fs
 
     def add_config(self,content):
@@ -33,7 +33,7 @@ def test_instantiate_defaults_to_em_core_home():
     assert os.path.join(os.environ["EM_CORE_HOME"],"sqltask")==prj.root
 
 def test_instantiate_with_emproject(fs):
-    emproject = EMProject("/home/em/my_project")
+    emproject = EMProject(env_vars={'EM_CORE_HOME':"/home/em/my_project"})
     prj = AppProject(emproject)
     assert "/home/em/my_project/sqltask" ==prj.root
 
@@ -48,6 +48,7 @@ database.type=sqlServer
 """
     em_project_home="/home/em/my_prj"
     config_id = EMConfigID("localdev","localhost","ad")
+    env_vars={'EM_CORE_HOME':"/home/em/my_project"}
     em_project  = FakeEMProjectBuilder(fs,em_project_home)\
                     .add_config(config_id,emconfig_content)\
                     .build()

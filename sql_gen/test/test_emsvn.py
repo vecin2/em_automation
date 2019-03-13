@@ -1,4 +1,4 @@
-from sql_gen.emproject import EMSvn,emproject_home
+from sql_gen.emproject import EMSvn,current_prj_path
 import pytest
 
 class FakeSvnClientFactory(object):
@@ -25,13 +25,12 @@ class  FakeSvnClient(object):
     def info(self):
         return self.dictinfo
 
-def test_emsvn_sets_local_url():
-    emsvn = EMSvn("/home/em")
+env_vars ={"EM_CORE_HOME":"/home/em"}
+
+def test_emsvn_sets_local_url_from_env_vars():
+    emsvn = EMSvn(env_vars)
     assert "/home/em" == emsvn.local_url
 
-def test_emsvn_defauts_local_url_to_emproject_home():
-    emsvn = EMSvn()
-    assert emproject_home() == emsvn.local_url
 
 def test_revision_number_returns_remote_client_entry_revision():
     local_url='/home/em'
@@ -42,7 +41,7 @@ def test_revision_number_returns_remote_client_entry_revision():
     fake_svnclient_factory.add_local(local_url,local_svnclient)
     fake_svnclient_factory.add_remote(remote_url,remote_svnclient)
 
-    emsvn = EMSvn(local_url,fake_svnclient_factory)
+    emsvn = EMSvn(env_vars,fake_svnclient_factory)
 
     assert 3 == emsvn.revision_number()
 
@@ -55,7 +54,7 @@ def test_revision_number_returns_zero_when_svn_not_available():
     fake_svnclient_factory.add_local(local_url,local_svnclient)
     fake_svnclient_factory.add_remote(remote_url,remote_svnclient)
 
-    emsvn = EMSvn(local_url,fake_svnclient_factory)
+    emsvn = EMSvn(env_vars,fake_svnclient_factory)
 
 
     assert -1 == emsvn.revision_number() 

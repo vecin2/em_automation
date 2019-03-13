@@ -1,5 +1,6 @@
+import os
 import svn.local, svn.remote
-from sql_gen.emproject import emproject_home
+from sql_gen.emproject import current_prj_path
 import sql_gen
 
 class SvnClientFactory(object):
@@ -10,13 +11,23 @@ class SvnClientFactory(object):
         return svn.remote.RemoteClient(url)
 
 class EMSvn(object):
-    def __init__(self,local_url=None,svnclient_factory=SvnClientFactory()):
-        self.svnclient_factory = svnclient_factory
+    def __init__(self,env_vars=os.environ,svnclient_factory=None):
         self.remote_client_var=None
-        self.local_url = local_url
+        self.env_vars =env_vars
+        self._svnclient_factory = svnclient_factory
 
     def local_client(self):
         return self.svnclient_factory.LocalClient(self.local_url)
+
+    @property
+    def local_url(self):
+        return current_prj_path(self.env_vars)
+
+    @property
+    def svnclient_factory(self):
+        if not self._svnclient_factory:
+            self._svnclient_factory = SvnClientFactory()
+        return self._svnclient_factory
 
     def remote_client(self):
         #cache remote client

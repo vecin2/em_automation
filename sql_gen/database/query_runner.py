@@ -55,42 +55,51 @@ class DBOperation(AttrDict):
         super().__init__(query_dict)
         self.emdb_loader =emdb_loader
         self.op_name=op_name
-        self._emdb =None
-    def __getattr__(self, item):
-        return CallableDBQuery(self.op_name,item,super().__getattr__(item),self.emdb)
+        self.addb =None
+        if emdb_loader:
+            self.addb =emdb_loader.addb
 
-    @property
-    def emdb(self):
-        if not self._emdb:
-            self._emdb = self.emdb_loader.addb
-        return self._emdb
+    def __getattr__(self, item):
+        return CallableDBQuery(self.op_name,item,super().__getattr__(item),self.addb)
+
 
 class QueryRunner(object):
-    def __init__(self,query_dict, emdb,app_project=None):
-        self._query_dict = None
-        self._emdb = None
+    def __init__(self,query_dict=None, emdb=None,app_project=None,filepath=None):
+        self._filepath =filepath
+        self._query_dict = query_dict
+        self._addb = emdb
         self._app_project =app_project
-        self.find = DBOperation("find",self.query_dict,app_project)
-        self.list = DBOperation("list",self.query_dict,app_project)
+        self.find = DBOperation("find",self.query_dict,self)
+        self.list = DBOperation("list",self.query_dict,self)
         self._query_dict=None
         self._list=None
 
     @property
-    def emdb(self):
-        if not self._emdb:
-            self._emdb=self.app_project.addb
-        return self._emdb
+    def addb(self):
+        if not self._addb:
+            self._addb=self._app_project.addb
+        return self._addb
     @property
     def query_dict(self):
         if not self._query_dict:
-            queries_path=self._app_project.paths["ad_queries"].path
-            config_file=ConfigFile(queries_path)
+            config_file=ConfigFile(self.filepath)
             self._query_dict= config_file.properties
         return self._query_dict
     def has_query(self,key):
         return key in self.query_dict
 
+    @property
+    def filepath(self):
+        if not self._filepath:
+            self._filepath = self._app_project.paths["ad_queries"].path
+        return self._filepath
+
+
     @staticmethod
     def make_from_app_prj(app_project):
-        return QueryRunner(None,None,app_project =app_project)
+        return QueryRunner(app_project =app_project)
+
+    @staticmethod
+    def make_from_file(filepath,db=None):
+        return QueryRunner(filepath=filepath,emdb=db)
 

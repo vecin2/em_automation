@@ -125,7 +125,7 @@ class FakeSvnClient(object):
     def __init__(self, rev_no):
         self.rev_no =rev_no
 
-    def current_rev_no(self):
+    def revision_number(self):
         return self.rev_no
 
 class FakeClipboard():

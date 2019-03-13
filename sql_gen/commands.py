@@ -5,6 +5,7 @@ import pyperclip
 from sql_gen.ui.utils import select_item
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.app_project import AppProject
+from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.sqltask_jinja.context import init
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
 
@@ -60,22 +61,18 @@ class CreateSQLTaskDisplayer(object):
         print("\n\nSQL task created under '"+filepath+"' and path copied to clipboard\n")
 
 
-class SvnClient(object):
-    def __init__(self, rev_no):
-        self.rev_no =rev_no
-
-    def current_rev_no(self):
-        return self.rev_no
-
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
                  initial_context=None,
-                 svn_client= SvnClient("123"),
+                 svn_client= None,
                  clipboard= pyperclip,
                  path=None):
         if initial_context is None:
-            initial_context = init(AppProject(env_vars=env_vars))
+            app_project=AppProject(env_vars=env_vars)
+            initial_context = init(app_project)
+        if svn_client is None:
+            svn_client = EMSvn(env_vars)
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars
@@ -88,9 +85,10 @@ class CreateSQLTaskCommand(object):
                 self._user_wants_to_override():
             return
 
-        sqltask = SQLTask(self.path,
-                          self._compute_update_seq_no())
-        sqltask.write(self._create_sql())
+        sqltask = SQLTask(self.path)
+        document=self._create_sql()
+        sqltask.update_sequence_no= self._compute_update_seq_no()
+        sqltask.write(document)
         self.clipboard.copy(self.path)
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
     def _user_wants_to_override(self):
@@ -109,7 +107,7 @@ class CreateSQLTaskCommand(object):
     def _compute_update_seq_no(self):
         rev_no_offset = AppProject(env_vars=self.env_vars).\
                                 config.get('svn.rev.no.offset','0')
-        return 1+ int(self.svn_client.current_rev_no())+int(rev_no_offset)
+        return 1+ int(self.svn_client.revision_number())+int(rev_no_offset)
 
 
 class SQLTask(object):

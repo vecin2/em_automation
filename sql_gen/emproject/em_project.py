@@ -24,15 +24,17 @@ MANDATORY_KEYS=["ccadmin",
                ]
 
 
-def get_prj_home(env_vars):
-    env_name='EM_CORE_HOME'
-    if env_name not in env_vars:
+ENV_VAR_NAME='EM_CORE_HOME'
+def current_prj_path(env_vars):
+    if ENV_VAR_NAME not in env_vars:
         help_text="It should contain the path of your current EM project."
-        raise EnvVarNotFoundException(env_name,help_text)
+        raise EnvVarNotFoundException(ENV_VAR_NAME,help_text)
 
-    result = env_vars[env_name]
+    return env_vars[ENV_VAR_NAME]
+def get_prj_home(env_vars):
+    result = current_prj_path(env_vars)
     if not os.path.exists(result):
-        error_msg ="Environment variable '"+env_name+"' exists "+\
+        error_msg ="Environment variable '"+ENV_VAR_NAME+"' exists "+\
                    "but it points to an invalid path"
         raise ValueError(error_msg)
     return result
