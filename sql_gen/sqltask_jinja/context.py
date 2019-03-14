@@ -10,8 +10,9 @@ class Keynames(object):
 
 def init(app=None):
     template_API ={'_keynames'   : Keynames(app),
-                  '_addb'    : app.ad_queryrunner,
-                  '_emprj'   : app.emproject
+                  '_db'          :  app.ad_queryrunner,
+                  'database'     : app.addb,
+                  '_emprj'       : app.emproject
                  }
     return template_API
 

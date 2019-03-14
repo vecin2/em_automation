@@ -71,6 +71,7 @@ class QueryRunner(object):
         self._app_project =app_project
         self.find = DBOperation("find",self.query_dict,self)
         self.list = DBOperation("list",self.query_dict,self)
+        self.fetch = DBOperation("fetch",self.query_dict,self)
         self._query_dict=None
         self._list=None
 

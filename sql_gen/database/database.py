@@ -70,7 +70,7 @@ class EMDatabase(object):
 
     def list(self,query):
         sql_gen.logger.debug("Running list of query")
-        table = self.query(query)
+        table = self.fetch(query)
         if not table: #if query return no results
             return table
         else:
@@ -82,12 +82,12 @@ class EMDatabase(object):
         return result
 
     def find(self,query):
-        result = self.query(query)
+        result = self.fetch(query)
         if not result or len(result)>1:
             raise LookupError("Expected to find one record but query returned None or more than one. If you expect more that one record use fetch instead")
         return result[0]
 
-    def query(self, query):
+    def fetch(self, query):
         if query in self.queries_cache:
             sql_gen.logger.debug("Returning from cache")
             return self.queries_cache[query]

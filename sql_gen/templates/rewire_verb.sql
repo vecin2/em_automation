@@ -1,9 +1,9 @@
 {# Compute variables for add_process_descriptor#}
  {# Compute current pd #}
 	{% set entity_ids = _keynames.ED %}
-	{% set verb_names= _addb.list.v_names_by_ed(entity_def_id | suggest(entity_ids)) %}
+	{% set verb_names= _db.list.v_names_by_ed(entity_def_id | suggest(entity_ids)) %}
 	{% set verb_name_tmp = verb_name | suggest(verb_names) %}
-	{% set old_pd = _addb.find.pd_by_ed_n_vname(entity_def_id,verb_name) %}
+	{% set old_pd = _db.find.pd_by_ed_n_vname(entity_def_id,verb_name) %}
 
  {# Request add_process_desc_variables using old pd #}
  {% set config_id = 	  tmp_pd_config        	   | description("config_id, default fetched from current value")
@@ -30,3 +30,17 @@
 UPDATE EVA_VERB 
 SET (PROCESS_DESC_REF_ID) = (@PDR.{{process_descriptor_ref_id}})
 WHERE ENTITY_DEF_ID = @ED.{{entity_def_id}} AND NAME ='{{verb_name}}';
+
+
+
+
+
+Running find returns a dictionary with column names as keys.
+{% set verb= _db.find.v__by_id({{verb_id | default("2129")}}) %}
+Returns verb['NAME']={{verb['NAME']}}
+
+{% set verb_fetch= _db.fetch.v__by_id({{fetch_verb_id | default("2129")}}) %}
+Returns verbs[0]['NAME'] ={{verb[0]['NAME']}}
+
+{% set verb_list= _db.list.v_names_by_ed("Customer") %}
+Returns verb_list[0]={{verb_list[0]}}
