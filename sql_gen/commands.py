@@ -81,6 +81,7 @@ class CreateSQLTaskCommand(object):
         self.clipboard = clipboard
 
     def run(self):
+        print("paaath is "+str(self.path))
         if os.path.exists(self.path) and not\
                 self._user_wants_to_override():
             return

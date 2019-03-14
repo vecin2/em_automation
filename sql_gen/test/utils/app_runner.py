@@ -157,7 +157,7 @@ class CreateSQLTaskAppRunner(AppRunner):
 
     def run_create_sqltask(self,taskpath):
         self.taskpath =taskpath
-        self._run(['.','-d',taskpath])
+        self._run(['.','create-sql',taskpath])
         return self
 
     def exists(self,filepath,expected_content):

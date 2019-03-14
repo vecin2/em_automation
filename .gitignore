@@ -2,6 +2,7 @@
 *.swn
 *.swo
 *.swp
+*.swl
 *.pyc
 **/.cache/
 **/.pytest_cache/
