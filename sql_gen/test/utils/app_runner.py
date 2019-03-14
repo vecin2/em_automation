@@ -107,7 +107,7 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         super().__init__()
 
     def run(self,app =None):
-        self._run(['.'],app=app)
+        self._run(['.','print-sql'],app=app)
         return self
 
     def run_prod(self):

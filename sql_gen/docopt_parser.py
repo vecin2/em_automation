@@ -1,6 +1,6 @@
 """dtask.
 Usage:
-  dtask
+  dtask print-sql
   dtask create-sql <directory>
 """
 from docopt import docopt
