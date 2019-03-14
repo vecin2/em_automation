@@ -58,9 +58,24 @@ class CreateSQLTaskDisplayer(object):
         return select_item(text,['y','n'])
 
     def display_sqltask_created_and_path_in_clipboard(self,filepath):
-        print("\n\nSQL task created under '"+filepath+"' and path copied to clipboard\n")
+        print("\nSQL task created under '"+filepath+"' and path copied to clipboard\n")
 
+    def unable_to_rev_no_svn_not_installed(self,rev_no):
+        message="Looks like SVN command line tool is not installed,\
+ without it 'update.sequence' can not be computed and it is default to\
+ 'PROJECT $Revision: "+rev_no+" $'. Make sure you update it manually!!"
+        print(message)
+    def computing_rev_no(self):
+        print ("Computing 'update.sequence' from current SVN number...")
 
+class FakeSvnClient(object):
+    def __init__(self, rev_no):
+        self.rev_no =rev_no
+
+    def revision_number(self):
+        if type(self.rev_no).__name__ =="str":
+            return self.rev_no
+        raise self.rev_no
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
@@ -72,7 +87,7 @@ class CreateSQLTaskCommand(object):
             app_project=AppProject(env_vars=env_vars)
             initial_context = init(app_project)
         if svn_client is None:
-            svn_client = EMSvn(env_vars)
+            svn_client = FakeSvnClient(ValueError("an error ocurred"))
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars
@@ -81,7 +96,6 @@ class CreateSQLTaskCommand(object):
         self.clipboard = clipboard
 
     def run(self):
-        print("paaath is "+str(self.path))
         if os.path.exists(self.path) and not\
                 self._user_wants_to_override():
             return
@@ -106,9 +120,15 @@ class CreateSQLTaskCommand(object):
         return displayer.rendered_sql
 
     def _compute_update_seq_no(self):
-        rev_no_offset = AppProject(env_vars=self.env_vars).\
-                                config.get('svn.rev.no.offset','0')
-        return 1+ int(self.svn_client.revision_number())+int(rev_no_offset)
+        self.displayer.computing_rev_no()
+        try:
+            revision_no =int(self.svn_client.revision_number())
+        except Exception:
+            self.displayer.unable_to_rev_no_svn_not_installed("-1")
+            return -1
+        app_config =AppProject(env_vars=self.env_vars).config
+        rev_no_offset = app_config.get('svn.rev.no.offset','0')
+        return revision_no+ 1 + int(rev_no_offset)
 
 
 class SQLTask(object):

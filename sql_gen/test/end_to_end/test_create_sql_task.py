@@ -88,3 +88,18 @@ def test_create_sqltask_uses_offset_svnrevision_property(app_runner,fs):
                        "PROJECT $Revision: 133 $")\
                .assert_all_input_was_read()
 
+def test_svn_throws_exception_returns_default_rev_no(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/em/prj")
+
+    app_runner.with_emproject_under("/em/prj")\
+               .with_svn_rev_no(Exception("an error ocurred"))\
+               .using_templates_under("/templates")\
+               .select_template('bye.sql',{'name':'Frank'})\
+               .saveAndExit()\
+               .run_create_sqltask("/prj/modules/moduleB/bye")\
+               .exists("/prj/modules/moduleB/bye/tableData.sql",
+                       "bye Frank!")\
+               .exists("/prj/modules/moduleB/bye/update.sequence",
+                       "PROJECT $Revision: -1 $")\
+               .assert_all_input_was_read()

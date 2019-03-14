@@ -126,7 +126,9 @@ class FakeSvnClient(object):
         self.rev_no =rev_no
 
     def revision_number(self):
-        return self.rev_no
+        if type(self.rev_no).__name__ =="str":
+            return self.rev_no
+        raise self.rev_no
 
 class FakeClipboard():
     def copy(self, text):
