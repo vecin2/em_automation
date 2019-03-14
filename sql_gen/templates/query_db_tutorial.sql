@@ -19,4 +19,15 @@ Returns verb_list[0]={{verb_list[0]}}
 Returns verb_list[1]={{verb_list[1]}}
 
 
+USING DATABASE object
+Find can be achieved with "_database" object as well
+For example:
+	{{ '{%' }} set find_verb= _database.find(Queries.v__by_id(verb_id | default("2129")) {{ '%}' }} 
+{% set find_verb= _database.find("SELECT * FROM eva_verb where id= 2129") %}
+Returns find_verb['NAME']={{find_verb['NAME']}}
 
+Find can be achieved with "_database" object as well
+For example:
+	{{ '{%' }} set find_verb= _database.find(Queries.v__by_id(verb_id | default("2129")) {{ '%}' }} 
+{% set find_verb= _database.find(_Query.v__by_id("2129")) %}
+Returns find_verb['NAME']={{find_verb['NAME']}}
