@@ -79,7 +79,7 @@ class EMProject(object):
     def config(self,config_id=None):
         if not self.config_path(config_id).exists():
             self._create_config()
-        return ConfigFile(self.config_path(config_id).path).properties
+        return ConfigFile(self.config_path(config_id).path)
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)
