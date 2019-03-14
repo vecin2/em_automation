@@ -1,5 +1,5 @@
 import os
-import sql_gen.dtask_parser as arg_parser
+import sql_gen.docopt_parser as arg_parser
 
 from sql_gen.command_factory import CommandFactory
 
@@ -19,9 +19,6 @@ class SysArgParser (object):
         arguments = docopt(__doc__, version='dtask 0.1')
         print(arguments)
         return arguments
-        ap = argparse.ArgumentParser()
-        ap.add_argument("-d", "--dir", help="Its the directory where the sql task will be written to. Its a relative path from  $CORE_HOME to, e.g. modules/GSCCoreEntites...")
-        return ap.parse_args()
 
 class CommandLineSQLTaskApp(object):
     """"""
