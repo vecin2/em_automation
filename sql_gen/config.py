@@ -1,3 +1,5 @@
+import re
+
 import os
 import sql_gen 
 
@@ -37,4 +39,12 @@ class ConfigFile(object):
         return item in self.properties
 
     def __getitem__(self,name):
-        return self.properties[name]
+        return self._resolve(self.properties[name])
+
+    def _resolve(self,value):
+        if value.startswith('${') and value.endswith('}'):
+                    var_name= value[value.find("${")+2:value.find("}")]
+                    if var_name in self:
+                        return self[var_name]
+                    return ""
+        return value

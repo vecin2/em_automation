@@ -16,15 +16,34 @@ class FakeLogger(object):
             self.error_text +=exception
 
 
-def test_get_config_value_returns_value(fs):
-    config_home ="/em/project/gsc/config/emautomation.properties"
-    config_content="container.name=ad"
+def make_config(fs,config_content,config_home=None):
+    if not config_home:
+        config_home ="/em/project/gsc/config/emautomation.properties"
     fs.create_file(config_home,contents=config_content)
-    config = ConfigFile(config_home)
+    return ConfigFile(config_home)
+
+def test_get_config_value_returns_value(fs):
+    config_content="container.name=ad"
+    config = make_config(fs,config_content)
     assert "ad" == config["container.name"]
 
+def test_it_returns_empty_when_value_cannot_be_resolved(fs):
+    config_content="database.user=${logical.db.name}"
+    config = make_config(fs,config_content)
+    assert "" == config["database.user"]
+
+def test_it_resolve_value_assigned_to_var_multiple_times(fs):
+    config_content="ad.name=DEV\ndb.name=${ad.name}\ndb.user=${db.name}"
+    config = make_config(fs,config_content)
+    assert "DEV" == config["db.user"]
+
+def test_it_resolve_value_assigned_to_var_multiple_times_no_matter_the_order(fs):
+    config_content="db.user=${db.name}\ndb.name=${ad.name}\nad.name=DEV"
+    config = make_config(fs,config_content)
+    assert "DEV" == config["db.user"]
 def test_get_config_value_when_no_file_exist_returns_empty_dict():
     config_home ="/em/project/gsc/config/emautomation.properties"
     fake_logger = FakeLogger()
     config = ConfigFile(config_home,fake_logger)
     assert str({}) == str(config.properties)
+
