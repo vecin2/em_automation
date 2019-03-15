@@ -68,14 +68,6 @@ class CreateSQLTaskDisplayer(object):
     def computing_rev_no(self):
         print ("Computing 'update.sequence' from current SVN number...")
 
-class FakeSvnClient(object):
-    def __init__(self, rev_no):
-        self.rev_no =rev_no
-
-    def revision_number(self):
-        if type(self.rev_no).__name__ =="str":
-            return self.rev_no
-        raise self.rev_no
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
@@ -87,7 +79,7 @@ class CreateSQLTaskCommand(object):
             app_project=AppProject(env_vars=env_vars)
             initial_context = init(app_project)
         if svn_client is None:
-            svn_client = FakeSvnClient(ValueError("an error ocurred"))
+            svn_client = EMSvn()
         self.path=path
         self.svn_client=svn_client
         self.env_vars=env_vars
