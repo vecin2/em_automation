@@ -61,6 +61,13 @@ class EMProject(object):
             self._root= emproject_home(self.env_vars)
         return self._root
 
+    def has_root(self):
+        try:
+            emproject_home(self.env_vars)
+            return True
+        except:
+            return False
+
     @property
     def paths(self):
         if not self._paths:

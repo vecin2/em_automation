@@ -52,6 +52,9 @@ class AppProject(object):
             self._ad_query_runner = QueryRunner.make_from_app_prj(self)
         return self._ad_query_runner
 
+    def has_root(self):
+        return self.emproject.has_root()
+
     def product_layout(self):
         self.em_config()
         return self.emproject.product_layout()
@@ -91,7 +94,7 @@ class AppProject(object):
                           self.config["container.name"])
 
     def setup_logger(self):
-        if not self._logger:
+        if not self._logger and self.has_root():
             if self.paths.exists('logging_config'):
                 log.setup_from_file(self.paths['logging_config'].path)
             else:
