@@ -1,7 +1,8 @@
 import os
 import svn.local, svn.remote
-from sql_gen.emproject import current_prj_path
+
 import sql_gen
+from sql_gen.emproject import current_prj_path
 
 class SvnClientFactory(object):
     def LocalClient(self, url):
@@ -38,6 +39,8 @@ class EMSvn(object):
     def revision_number(self):
         try:
             info = self.remote_client().info()
+            sql_gen.logger.debug("Remote client info is: "+\
+                    str(info))
             return info['entry_revision']
         except Exception as excinfo:
             sql_gen.logger.exception(excinfo)

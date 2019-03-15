@@ -1,8 +1,8 @@
 import sys
 import os
-import sql_gen.docopt_parser as arg_parser
 
-import sql_gen.log
+import sql_gen
+import sql_gen.docopt_parser as arg_parser
 from sql_gen.app_project import AppProject
 from sql_gen.command_factory import CommandFactory
 

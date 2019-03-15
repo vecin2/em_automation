@@ -67,7 +67,8 @@ class CreateSQLTaskDisplayer(object):
         print(message)
     def computing_rev_no(self):
         print ("Computing 'update.sequence' from current SVN number...")
-
+    def update_seq_no_computed(self, number):
+        print("update.sequence is '"+str(number)+"'")
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
@@ -120,7 +121,9 @@ class CreateSQLTaskCommand(object):
             return -1
         app_config =AppProject(env_vars=self.env_vars).config
         rev_no_offset = app_config.get('svn.rev.no.offset','0')
-        return revision_no+ 1 + int(rev_no_offset)
+        result = revision_no+ 1 + int(rev_no_offset)
+        self.displayer.update_seq_no_computed(result)
+        return result
 
 
 class SQLTask(object):
