@@ -6,6 +6,7 @@ from sql_gen.utils.filesystem import ProjectLayout,Path
 import sys
 import os
 import logging
+import sql_gen
 from sql_gen.log import log
 
 PATHS= {
@@ -92,6 +93,9 @@ class AppProject(object):
         return EMConfigID(self.config["environment.name"],
                           self.config["machine.name"],
                           self.config["container.name"])
+    @staticmethod
+    def set_logger(logger):
+        sql_gen.log.log.set_logger(logger)
 
     def setup_logger(self):
         if not self._logger and self.has_root():

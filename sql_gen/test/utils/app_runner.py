@@ -10,6 +10,13 @@ from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
 from sql_gen.app_project import AppProject
 
+class FakeLogger(object):
+    def debug(self):
+        """"""
+    def info(self):
+        """"""
+    def error(self):
+        """"""
 class AppRunner():
     def __init__(self):
         self.original_stdin = sys.stdin
@@ -65,7 +72,8 @@ class AppRunner():
         sys.argv=args
         sys.stdin = StringIO(self._user_input_to_str())
         if not app:
-            app = CommandLineSQLTaskApp(self._make_command_factory())
+            app = CommandLineSQLTaskApp(self._make_command_factory(),
+                                        logger=FakeLogger())
         app.run()
 
     def _user_input_to_str(self):
@@ -111,7 +119,8 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         return self
 
     def run_prod(self):
-        self.run(CommandLineSQLTaskApp(CommandFactory(self.env_vars)))
+        self.run(CommandLineSQLTaskApp(CommandFactory(self.env_vars),
+                 logger=FakeLogger()))
         return self
 
     def _make_command_factory(self):

@@ -30,4 +30,7 @@ def _replace_logs_dir(default_config,logs_dir):
     return default_config.format(info_path=info_path,
                              error_path=error_path)
 
+def set_logger(logger_arg):
+    logger = logger_arg
+
 logger = logging.getLogger("app_logger")

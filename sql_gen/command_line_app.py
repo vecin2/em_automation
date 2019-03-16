@@ -25,8 +25,13 @@ class SysArgParser (object):
 
 class CommandLineSQLTaskApp(object):
     """"""
-    def __init__(self,args_factory=CommandFactory(os.environ)):
+    def __init__(self,args_factory=CommandFactory(os.environ),logger=None):
         self.args_factory = args_factory
+        if logger:
+            AppProject.set_logger(logger)
+        else:
+            AppProject(os.environ).setup_logger()
+        self._logger =logger
 
     def run(self):
         try:
@@ -37,7 +42,6 @@ class CommandLineSQLTaskApp(object):
             raise(excinfo)
 
     def _dorun (self):
-        AppProject(os.environ).setup_logger()
         sql_gen.logger.info("Starting application with params: "+str(sys.argv))
         command =SysArgParser(self.args_factory).parse()
         command.run()
