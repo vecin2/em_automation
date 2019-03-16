@@ -43,7 +43,16 @@ def select_option(text, option_list):
         option = match_options(user_input,option_list)
     return option
 
-def select_item(text, string_list):
+def select_string(text, string_list):
+    result =None
+    while result is None:
+        user_input =prompt_suggestions(text,string_list)
+        if user_input in string_list:
+            result = user_input
+
+    return result
+
+def select_string_noprompt(text, string_list):
     result =None
     while result is None:
         user_input =prompt(text)

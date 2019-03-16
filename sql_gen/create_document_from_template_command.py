@@ -56,7 +56,7 @@ class SelectTemplateLoader(object):
 
 class FillTemplateCommandDisplayer(object):
     def display_loading_templates_from(self,templates_path):
-        print("\nTemplates loaded from '" + templates_path+"'\n\n")
+        print("\nTemplates loaded from '" + templates_path+"'")
 
 class CreateDocumentFromTemplateCommand(object):
     def __init__(self,

@@ -109,13 +109,15 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(app_runner,fs
     fs.create_dir("/em/prj")
 
     app_runner.with_emproject_under("/em/prj")\
-               .with_svn_rev_no("123")\
+               .with_repo_modules(["PRJCoreEmail","PRJCustomer"])\
                .using_templates_under("/templates")\
+               .user_inputs("PRJCoreEmail")\
+               .user_inputs("rewireEditEmail")\
                .select_template('bye.sql',{'name':'Frank'})\
                .saveAndExit()\
                .run_create_sqltask()\
-               .exists("/prj/modules/moduleB/bye/tableData.sql",
+               .exists("/em/prj/modules/PRJCoreEmail/sqlScripts/oracle/updates/Pacificorp_R_0_0_1//rewireEditEmail/tableData.sql",
                        "bye Frank!")\
-               .exists("/prj/modules/moduleB/bye/update.sequence",
-                       "PROJECT $Revision: -1 $")\
                .assert_all_input_was_read()
+               #
+

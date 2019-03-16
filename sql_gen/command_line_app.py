@@ -12,8 +12,8 @@ class SysArgParser (object):
 
     def parse(self):
         args = arg_parser.parse()
-        path = args['<directory>']
-        if path:
+        if args['create-sql']:
+            path = args['<directory>']
             return self.command_factory.make_create_sqltask_command(path)
         else:
             return self.command_factory.make_print_sql_to_console_command()

@@ -2,7 +2,7 @@ import os
 
 import pyperclip
 
-from sql_gen.ui.utils import select_item
+from sql_gen.ui.utils import select_string_noprompt,select_string
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.emsvn import EMSvn
@@ -55,7 +55,15 @@ class PrintSQLToConsoleCommand(object):
 class CreateSQLTaskDisplayer(object):
     def ask_to_override_task(self,path):
         text= "Are you sure you want to override the task '"+ path + "' (y/n): "
-        return select_item(text,['y','n'])
+        return select_string_noprompt(text,['y','n'])
+
+    def ask_for_sqlmodulename(self,options):
+        text= "\nPlease enter the sql module name: "
+        return select_string(text,options)
+
+    def ask_for_sqltaskname(self,options):
+        text= "\nPlease enter the task name (e.g. overrideCustomer): "
+        return input(text)
 
     def display_sqltask_created_and_path_in_clipboard(self,filepath):
         print("\nSQL task created under '"+filepath+"' and path copied to clipboard\n")
@@ -65,6 +73,7 @@ class CreateSQLTaskDisplayer(object):
  without it 'update.sequence' can not be computed and it is default to\
  'PROJECT $Revision: "+rev_no+" $'. Make sure you update it manually!!"
         print(message)
+
     def computing_rev_no(self):
         print ("Computing 'update.sequence' from current SVN number...")
     def update_seq_no_computed(self, number):
@@ -76,6 +85,8 @@ class CreateSQLTaskCommand(object):
                  svn_client= None,
                  clipboard= pyperclip,
                  path=None):
+        self._app_project=None
+        self.env_vars=env_vars
         if initial_context is None:
             app_project=AppProject(env_vars=env_vars)
             initial_context = init(app_project)
@@ -83,12 +94,18 @@ class CreateSQLTaskCommand(object):
             svn_client = EMSvn()
         self.path=path
         self.svn_client=svn_client
-        self.env_vars=env_vars
         self.initial_context=initial_context
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
+    @property
+    def app_project(self):
+        if not self._app_project:
+            self._app_project=AppProject(env_vars=self.env_vars)
+        return self._app_project
 
     def run(self):
+        if not self.path:
+            self.path = self._compute_path()
         if os.path.exists(self.path) and not\
                 self._user_wants_to_override():
             return
@@ -99,6 +116,21 @@ class CreateSQLTaskCommand(object):
         sqltask.write(document)
         self.clipboard.copy(self.path)
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
+
+    @property
+    def emproject(self):
+        return self.app_project.emproject
+
+    def _compute_path(self):
+        repo_modules_path=self.emproject.paths['repo_modules'].path
+        options=next(os.walk(repo_modules_path))[1]
+        options.append("PRJCoreEmail")
+        module_name=self.displayer.ask_for_sqlmodulename(options)
+        sqltask_name=self.displayer.ask_for_sqltaskname(options)
+
+        release_name="Pacificorp_R_0_0_1"
+        return os.path.join(self.app_project.emproject.root,
+                             "modules/"+module_name+"/sqlScripts/oracle/updates/"+release_name+"/"+sqltask_name)
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "n"
 

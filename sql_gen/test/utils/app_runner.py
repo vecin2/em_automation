@@ -47,6 +47,9 @@ class AppRunner():
                           self._dict_to_str(config))
         return self
 
+    def _em_path(self,key):
+        return AppProject(env_vars=self.env_vars).emproject.paths[key].path
+
     def _app_path(self,key):
         return AppProject(env_vars=self.env_vars).paths[key].path
 
@@ -164,6 +167,12 @@ class CreateSQLTaskAppRunner(AppRunner):
 
     def with_svn_rev_no(self,rev_no):
         self.rev_no =rev_no
+        return self
+
+    def with_repo_modules(self, repo_modules):
+        for repo_module in repo_modules:
+            full_dir=os.path.join(self._em_path('repo_modules'),repo_module)
+            os.makedirs(full_dir)
         return self
 
     def run_create_sqltask(self,taskpath=None):

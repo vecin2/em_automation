@@ -18,6 +18,7 @@ def setup_from_file(config_file=None):
     return logging.config.dictConfig(file_config(config_file))
 
 def file_config(config_file):
+    import pdb;pdb.set_trace()
     return yaml.safe_load(_get_content(config_file))
 
 def default_config_file():
