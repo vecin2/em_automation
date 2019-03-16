@@ -1,6 +1,6 @@
 import os
 
-from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand
+from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskFromPathCommand
 
 class CommandFactory(object):
     def __init__(self, env_vars=os.environ):
@@ -10,5 +10,5 @@ class CommandFactory(object):
         return PrintSQLToConsoleCommand(self.env_vars)
 
     def make_create_sqltask_command(self,path):
-        return CreateSQLTaskCommand(path=path)
+        return CreateSQLTaskFromPathCommand(path=path)
 

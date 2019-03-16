@@ -69,7 +69,7 @@ class CreateSQLTaskDisplayer(object):
         print ("Computing 'update.sequence' from current SVN number...")
     def update_seq_no_computed(self, number):
         print("update.sequence is '"+str(number)+"'")
-class CreateSQLTaskCommand(object):
+class CreateSQLTaskFromPathCommand(object):
     def __init__(self,
                  env_vars=os.environ,
                  initial_context=None,

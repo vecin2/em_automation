@@ -7,7 +7,7 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskFromPathCommand
 from sql_gen.app_project import AppProject
 
 class FakeLogger(object):
@@ -106,7 +106,7 @@ class CommandTestFactory(CommandFactory):
     def make_print_sql_to_console_command(self):
         return self.print_to_console_command
 
-    def make_create_sqltask_command(self,path):
+    def make_create_sqltask_frompath_command(self,path):
         self.create_sqltask_command.path =path
         return self.create_sqltask_command
 
@@ -154,7 +154,7 @@ class CreateSQLTaskAppRunner(AppRunner):
         self.clipboard =FakeClipboard()
 
     def _make_command_factory(self):
-        self.command = CreateSQLTaskCommand(
+        self.command = CreateSQLTaskFromPathCommand(
                                 self.env_vars,
                                 self.initial_context,
                                 FakeSvnClient(self.rev_no),
@@ -166,7 +166,7 @@ class CreateSQLTaskAppRunner(AppRunner):
         self.rev_no =rev_no
         return self
 
-    def run_create_sqltask(self,taskpath):
+    def run_create_sqltask(self,taskpath=None):
         self.taskpath =taskpath
         self._run(['.','create-sql',taskpath])
         return self
