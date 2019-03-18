@@ -28,15 +28,6 @@ class FakeAppPrjBuilder(object):
     def build(self):
         return self.app_project
 
-def test_instantiate_defaults_to_em_core_home():
-    prj = AppProject()
-    assert os.path.join(os.environ["EM_CORE_HOME"],"sqltask")==prj.root
-
-def test_instantiate_with_emproject(fs):
-    emproject = EMProject(env_vars={'EM_CORE_HOME':"/home/em/my_project"})
-    prj = AppProject(emproject)
-    assert "/home/em/my_project/sqltask" ==prj.root
-
 def test_instantiate_ad_queryrunner(fs):
     emconfig_content="""
 database.user=sa
@@ -46,7 +37,7 @@ database.port=1433
 database.name=ootb_15_1_fp2
 database.type=sqlServer
 """
-    em_project_home="/home/em/my_prj"
+    em_project_home="/home/em/my_project"
     config_id = EMConfigID("localdev","localhost","ad")
     env_vars={'EM_CORE_HOME':"/home/em/my_project"}
     em_project  = FakeEMProjectBuilder(fs,em_project_home)\
@@ -59,7 +50,7 @@ container.name=ad
 """
     queries_content="""
 v_names__by_ed=SELECT * FROM verb_name WHERE NAME='{}'"""
-    prj = FakeAppPrjBuilder(em_project,fs)\
+    prj = FakeAppPrjBuilder(em_project,fs,env_vars)\
                     .add_config(config_content)\
                     .set_ad_queries(queries_content)\
                     .build()
