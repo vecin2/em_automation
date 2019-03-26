@@ -1,5 +1,7 @@
 import os
 import sql_gen
+from collections import defaultdict
+
 from sql_gen.config import ConfigFile
 from .ccadmin import CCAdmin
 from sql_gen.exceptions import CCAdminException,ConfigFileNotFoundException,ConfigException,EnvVarNotFoundException,InvalidEnvVarException,InvalidFileSystemPathException
@@ -118,7 +120,7 @@ class EMProject(object):
 
     def prefix(self):
         custom_repo_modules = self._get_repo_custom_modules()
-        if len(custom_repo_modules)>=2:
+        if len(custom_repo_modules)>0:
             return self._extract_module_prefix(custom_repo_modules[0])
 
         return ""
@@ -132,15 +134,21 @@ class EMProject(object):
             else:
                 break
         #result is now SPENC
-        return result[:-1]
+        if len(result) >3:
+            return result[:-1]
+        return ""
 
     def _get_repo_custom_modules(self):
         repo_modules= self.paths['repo_modules'].listdir()
-        result=[]
+        result=defaultdict(list)
         for module in repo_modules:
-            if len(self._extract_module_prefix(module)) >2:
-                result.append(module)
-        return result
+            prefix =self._extract_module_prefix(module)
+            if prefix:
+                result[prefix].append(module)
+        for key in result:
+            if len(result[key])>1:
+                return result[key]
+        return []
 
     def product_layout(self):
         return ProjectLayout(self.config()['product.home'],PATHS)

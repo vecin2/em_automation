@@ -9,14 +9,16 @@ def prj_builder(fs, root='/home/em'):
     return FakeEMProjectBuilder(fs,root)
 
 
-def test_project_prefix_from_em_core_home_must_have_at_least_two_modules(fs):
+def test_project_prefix_computes_when_exist_a_minimum_of_modules(fs):
     em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
                             .add_repo_module("SPENContactHistory")\
                             .build()
     assert "SPEN" == em_project.prefix()
 
-def test_project_prefix_from_em_core_home_must_have_at_least_two_modules(fs):
-    em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
+def test_project_prefix_returns_empty_if_not_enough_prj_modules(fs):
+    em_project = prj_builder(fs).add_repo_module("CAI")\
+                                .add_repo_module("IMAP")\
+                                .add_repo_module("SPENCoreEntities")\
                             .build()
     assert "" == em_project.prefix()
 
