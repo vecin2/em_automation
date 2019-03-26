@@ -124,11 +124,10 @@ class CreateSQLTaskCommand(object):
     def _compute_path(self):
         repo_modules_path=self.emproject.paths['repo_modules'].path
         options=next(os.walk(repo_modules_path))[1]
-        options.append("PRJCoreEmail")
         module_name=self.displayer.ask_for_sqlmodulename(options)
         sqltask_name=self.displayer.ask_for_sqltaskname(options)
 
-        release_name="Pacificorp_R_0_0_1"
+        release_name=self.app_project.config['db.release.version']
         return os.path.join(self.app_project.emproject.root,
                              "modules/"+module_name+"/sqlScripts/oracle/updates/"+release_name+"/"+sqltask_name)
     def _user_wants_to_override(self):

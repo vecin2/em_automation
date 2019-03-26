@@ -110,6 +110,7 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(app_runner,fs
 
     app_runner.with_emproject_under("/em/prj")\
                .with_repo_modules(["PRJCoreEmail","PRJCustomer"])\
+               .with_app_config({'db.release.version':'Pacificorp_R_0_0_1'})\
                .using_templates_under("/templates")\
                .user_inputs("PRJCoreEmail")\
                .user_inputs("rewireEditEmail")\
