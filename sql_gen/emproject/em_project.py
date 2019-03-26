@@ -17,6 +17,7 @@ class EMConfigID(object):
         self.container_name = container_name
 
 PATHS={"ccadmin"         : "bin",
+       "sql_modules"     : "modules",
        "repo_modules"    : "repository/default",
        "config"          : "work/config",
        "show_config_txt" : "work/config/show-config-txt"

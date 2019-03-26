@@ -2,7 +2,7 @@ import os
 
 import pyperclip
 
-from sql_gen.ui.utils import select_string_noprompt,select_string
+from sql_gen.ui.utils import select_string_noprompt,prompt_suggestions
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.emsvn import EMSvn
@@ -59,7 +59,7 @@ class CreateSQLTaskDisplayer(object):
 
     def ask_for_sqlmodulename(self,options):
         text= "\nPlease enter the sql module name: "
-        return select_string(text,options)
+        return prompt_suggestions(text,options)
 
     def ask_for_sqltaskname(self,options):
         text= "\nPlease enter the task name (e.g. overrideCustomer): "
@@ -122,14 +122,18 @@ class CreateSQLTaskCommand(object):
         return self.app_project.emproject
 
     def _compute_path(self):
-        repo_modules_path=self.emproject.paths['repo_modules'].path
-        options=next(os.walk(repo_modules_path))[1]
+        prj_repo_modules_path=self.emproject.paths['sql_modules'].path
+        options = self._get_modules(prj_repo_modules_path)
+
         module_name=self.displayer.ask_for_sqlmodulename(options)
         sqltask_name=self.displayer.ask_for_sqltaskname(options)
 
         release_name=self.app_project.config['db.release.version']
         return os.path.join(self.app_project.emproject.root,
                              "modules/"+module_name+"/sqlScripts/oracle/updates/"+release_name+"/"+sqltask_name)
+    def _get_modules(self, key_path):
+        return next(os.walk(key_path))[1]
+
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "n"
 

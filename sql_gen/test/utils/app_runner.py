@@ -169,9 +169,9 @@ class CreateSQLTaskAppRunner(AppRunner):
         self.rev_no =rev_no
         return self
 
-    def with_repo_modules(self, repo_modules):
+    def with_sql_modules(self, repo_modules):
         for repo_module in repo_modules:
-            full_dir=os.path.join(self._em_path('repo_modules'),repo_module)
+            full_dir=os.path.join(self._em_path('sql_modules'),repo_module)
             os.makedirs(full_dir)
         return self
 

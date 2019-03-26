@@ -93,6 +93,7 @@ def test_svn_throws_exception_returns_default_rev_no(app_runner,fs):
     fs.create_dir("/em/prj")
 
     app_runner.with_emproject_under("/em/prj")\
+               .with_app_config({'svn.rev.no.offset':'11'})\
                .with_svn_rev_no(Exception("an error ocurred"))\
                .using_templates_under("/templates")\
                .select_template('bye.sql',{'name':'Frank'})\
@@ -109,7 +110,7 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(app_runner,fs
     fs.create_dir("/em/prj")
 
     app_runner.with_emproject_under("/em/prj")\
-               .with_repo_modules(["PRJCoreEmail","PRJCustomer"])\
+               .with_sql_modules(["PRJCoreEmail","PRJCustomer"])\
                .with_app_config({'db.release.version':'Pacificorp_R_0_0_1'})\
                .using_templates_under("/templates")\
                .user_inputs("PRJCoreEmail")\
