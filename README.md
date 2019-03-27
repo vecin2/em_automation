@@ -35,7 +35,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
       
 # Basic Usage
 This section run through the steps of generating a SQL script:
-
+You can 
 - [Add a new template](#adding-new-templates) called `change_verb_context2.sql`:
 ```sql
 UPDATE EVA_CONTEXT_VERB_ENTRY
@@ -365,5 +365,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk4NDQyNTE3Myw5NTMzMDQ0NTldfQ==
+eyJoaXN0b3J5IjpbLTMwNDY4NDcwMCw5NTMzMDQ0NTldfQ==
 -->
