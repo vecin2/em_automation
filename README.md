@@ -171,15 +171,7 @@ Name is '{{ camelcase(display_name }}'
 #Rendered
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
-```
-#Template
- {% set process_desc_id = prj_prefix()+ entity_def_name %}
-Process descriptor id is {{process_desc_id }}
 
-#Rendered
-Process descriptor id is ABC
-Name is changeTheAddress
-```
 ## String Python Builtin Functions
 Python string functions can be used within templates, for example:
 
@@ -305,6 +297,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIyODIyNTM4NywtNDM3NDIyODExLDk1Mz
+eyJoaXN0b3J5IjpbLTkxOTI1MzY0OSwtNDM3NDIyODExLDk1Mz
 MwNDQ1OV19
 -->
