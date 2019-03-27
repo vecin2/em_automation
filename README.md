@@ -152,8 +152,9 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
-## Available Objects
+## Objects in context
 ```
+There is a set of objects which included whithin the template context and they allow 
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
@@ -316,6 +317,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUxOTk5NTE0OSwtNDM3NDIyODExLDk1Mz
-MwNDQ1OV19
+eyJoaXN0b3J5IjpbLTM5ODc1NjEwOCwtNTE5OTk1MTQ5LC00Mz
+c0MjI4MTEsOTUzMzA0NDU5XX0=
 -->
