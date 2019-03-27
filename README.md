@@ -163,10 +163,12 @@ It retrieves a list of relative ids for the key set passed. For example:
  - _keynames.V: retrieves a list of the verbs relative ids
 
 ### _db
-It allows to run db queries. 
- - _db.list.v_by_
- - _db.find.pd_by_ed_n_vname
+It allows to run a predefined set of queries defined in a filedd
+ - _db.list.v_names_by_ed(entitfy_def_id)
+ - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
  
+ ### _database
+ I
  ### _emprj
  It extract different information from the current EM project:
  
@@ -332,6 +334,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2NzY1NjI0MTUsLTUxOTk5NTE0OSwtND
-M3NDIyODExLDk1MzMwNDQ1OV19
+eyJoaXN0b3J5IjpbODk2Nzg5NDAyLC01MTk5OTUxNDksLTQzNz
+QyMjgxMSw5NTMzMDQ0NTldfQ==
 -->
