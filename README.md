@@ -171,7 +171,6 @@ Name is '{{ camelcase(display_name }}'
 #Rendered
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
-
 ```
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
@@ -181,7 +180,7 @@ For example with a set modules like
 #With a foder strtuctre like this under $EM_CORE_HOME
 /repository/default
 				|__ ABCContactHistory
-				|__ ABCCasHandling
+				|__ ABCCaseHandling
 				|__ ...
 
 #Template
@@ -317,6 +316,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjcxMTg0NTE1LC00Mzc0MjI4MTEsOTUzMz
-A0NDU5XX0=
+eyJoaXN0b3J5IjpbLTExNTgzMTE4MjAsLTQzNzQyMjgxMSw5NT
+MzMDQ0NTldfQ==
 -->
