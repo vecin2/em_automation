@@ -152,6 +152,25 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
+## Available Objects
+```
+**prj_prefix**()
+It  returns the project prefix of the current `EM_CORE_HOME` project. 
+It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
+For example with a set modules like
+```sql
+#With a foder strtuctre like this under $EM_CORE_HOME
+/repository/default
+				|__ ABCContactHistory
+				|__ ABCCaseHandling
+				|__ ...
+#Template
+ {% set process_desc_id = _emprj.prefix()+ entity_def_name %}
+Process descriptor id is {{process_desc_id }}
+#Rendered
+Process descriptor id is ABC
+Name is changeTheAddress
+```
 
 ## Global Functions
 There is a set of builtin global functions which can be used when writting templates.  Functions can be invoke within blocks `{% %}` or within statements `{{ }}`.
@@ -297,6 +316,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkxOTI1MzY0OSwtNDM3NDIyODExLDk1Mz
+eyJoaXN0b3J5IjpbLTUxOTk5NTE0OSwtNDM3NDIyODExLDk1Mz
 MwNDQ1OV19
 -->
