@@ -355,3 +355,15 @@ When creating new filter we need to implement  not only `apply` but  `get_templa
 _class_ sql_gen.filters.**DescriptionFilter**()
 		func :: **get_template_filter**()
 It returns the function which implements the jinja filter.
+
+
+
+
+
+
+
+
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMTk4NDQyNTE3M119
+-->
