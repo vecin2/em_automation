@@ -80,7 +80,7 @@ This applies as well when running upgrades and any python command it - e.g `pyth
 
 ###  Install builtin Templates
 For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
-Copy this folder under your `%EM_HOME_CORE%` so new creates templates are not lost when upgrading. As well committing in the project folder will allow commit it so other developers can benefit from it.
+These Templates will be provided on demand. 
 
 ### Windows Console Tools
 If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
@@ -88,7 +88,6 @@ If you find the Windows console is too slow, e.g no path autocompletion,  hard c
 - [git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well and several linux commands. 
 - [cygwin](https://www.cygwin.com/): a large collection of GNU and Open - Source tools which provide functionality similar to a Linux distribution on Windows. 
  
-
 # Template Design
 
 How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. 
@@ -318,6 +317,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY5NzY3NzU0MSwtNDM3NDIyODExLDk1Mz
-MwNDQ1OV19
+eyJoaXN0b3J5IjpbNjcxMTg0NTE1LC00Mzc0MjI4MTEsOTUzMz
+A0NDU5XX0=
 -->
