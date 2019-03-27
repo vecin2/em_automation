@@ -43,8 +43,8 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 # User installation
 
-- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
- - When running the installation make sure to select the checkbox to add python3 to your system path
+- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
+ - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
  - In windows add the following to you path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
  - Copy the template folder to some location in your filesystem. For example under the current EM project. 
@@ -318,5 +318,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MTM0MzQ0NzYsOTUzMzA0NDU5XX0=
+eyJoaXN0b3J5IjpbLTQzNzQyMjgxMSw5NTMzMDQ0NTldfQ==
 -->
