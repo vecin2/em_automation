@@ -170,7 +170,8 @@ It allows to run a predefined set of queries defined in a file called "queries.s
  ### _database
  It allows running free form queries:
  -_database.find("SELECT * FROM VERB where name='my_verb'")
- -_database.list("SELECT NAME
+ -_database.list("SELECT NAME FROM VERB where name like '%create%'")
+ 
  ### _emprj
  It extract different information from the current EM project:
  
@@ -336,6 +337,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzcyNzYwMDA5LC01MTk5OTUxNDksLTQzNz
-QyMjgxMSw5NTMzMDQ0NTldfQ==
+eyJoaXN0b3J5IjpbLTIxMDUxNTM5OCwtNTE5OTk1MTQ5LC00Mz
+c0MjI4MTEsOTUzMzA0NDU5XX0=
 -->
