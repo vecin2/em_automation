@@ -79,8 +79,7 @@ python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
 ###  Install builtin Templates
-For EM developement there are a set templates wh
-A set of builtin templates are downloaded when running pip install. They are located under `%PYTHON_HOME%/Lib\site-packages\sql_gen\templates`
+For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
 Copy this folder under your `%EM_HOME_CORE%` so new creates templates are not lost when upgrading. As well committing in the project folder will allow commit it so other developers can benefit from it.
 
 ### Windows Console Tools
@@ -319,6 +318,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTcxMDQyNDQ2NywtNDM3NDIyODExLDk1Mz
+eyJoaXN0b3J5IjpbMTY5NzY3NzU0MSwtNDM3NDIyODExLDk1Mz
 MwNDQ1OV19
 -->
