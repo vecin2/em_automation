@@ -159,7 +159,8 @@ There is a set of objects which included whithin the template context and they p
 The objects are put into context with underscore (_) prefix this is to avoid clashing with template variables.
 
 ### _keynames ###
-It retrieves a list of relative ids for the ID passed. 
+It retrieves a list of relative ids for the key set passed. For example:
+ - _keynames.ED: retrieves a list of the enti
 
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
@@ -323,6 +324,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzNjkwMTMyOCwtNTE5OTk1MTQ5LC00Mz
-c0MjI4MTEsOTUzMzA0NDU5XX0=
+eyJoaXN0b3J5IjpbLTY2NTQ4NTIxLC01MTk5OTUxNDksLTQzNz
+QyMjgxMSw5NTMzMDQ0NTldfQ==
 -->
