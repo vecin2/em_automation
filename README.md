@@ -172,17 +172,6 @@ Name is '{{ camelcase(display_name }}'
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
 ```
-**prj_prefix**()
-It  returns the project prefix of the current `EM_CORE_HOME` project. 
-It looks for modules under `$EM_CORE_HOME/repository/default` starting with at least 3 uppercase letters. It throws an exception if it can't find any.
-For example with a set modules like
-```sql
-#With a foder strtuctre like this under $EM_CORE_HOME
-/repository/default
-				|__ ABCContactHistory
-				|__ ABCCaseHandling
-				|__ ...
-
 #Template
  {% set process_desc_id = prj_prefix()+ entity_def_name %}
 Process descriptor id is {{process_desc_id }}
@@ -316,6 +305,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNTgzMTE4MjAsLTQzNzQyMjgxMSw5NT
-MzMDQ0NTldfQ==
+eyJoaXN0b3J5IjpbMTIyODIyNTM4NywtNDM3NDIyODExLDk1Mz
+MwNDQ1OV19
 -->
