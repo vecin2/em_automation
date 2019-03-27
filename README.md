@@ -38,7 +38,8 @@ To create a new template:
 - Create an empty file with the same name pointing to the previous file under `$SQL_TEMPLATES_PATH/menu` - make sure the names match otherwise it will not show up in the menu when running the application.
 
 #### Hide a Template
-Template can be hidden by simply not creating the shorcut
+A hidden template is a template that is not found 
+Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
 
 It is a good practice to reuse templates to avoid duplicating SQL code. Therefore a template can be created to support other templates but it shouldn't be displayed to users. Instead display only the wrapping templates.
 
@@ -319,5 +320,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0NTE2MTU0MzAsOTUzMzA0NDU5XX0=
+eyJoaXN0b3J5IjpbMTU2NzA1MTYzNCw5NTMzMDQ0NTldfQ==
 -->
