@@ -153,15 +153,18 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 Please enter 'my_variable_value`:
 ```
 ## Objects in context
-```
 There is a set of objects which included whithin the template context and they provide support when writting templates.
 
 The objects are put into context with underscore (_) prefix this is to avoid clashing with template variables.
 
-### _keynames ###
+### _keynames
 It retrieves a list of relative ids for the key set passed. For example:
- - _keynames.ED: retrieves a list of the enti
+ - _keynames.ED: retrieves a list of the entity defintions relative ids
+ - _keynames.V: retrieves a list of the verbs relative ids
 
+### _db
+It allows to run db queries:
+ - _db.list
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
@@ -324,6 +327,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTY2NTQ4NTIxLC01MTk5OTUxNDksLTQzNz
-QyMjgxMSw5NTMzMDQ0NTldfQ==
+eyJoaXN0b3J5IjpbMTE1NTU3OTU4MiwtNTE5OTk1MTQ5LC00Mz
+c0MjI4MTEsOTUzMzA0NDU5XX0=
 -->
