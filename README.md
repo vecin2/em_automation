@@ -154,7 +154,9 @@ Please enter 'my_variable_value`:
 ```
 ## Objects in context
 ```
-There is a set of objects which included whithin the template context and they allow 
+There is a set of objects which included whithin the template context and they provide support when writting templates.
+The objects are put into context with underscore (_) prefix to 
+###_k
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
@@ -317,6 +319,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM5ODc1NjEwOCwtNTE5OTk1MTQ5LC00Mz
+eyJoaXN0b3J5IjpbMTE4NTU5NzY1OSwtNTE5OTk1MTQ5LC00Mz
 c0MjI4MTEsOTUzMzA0NDU5XX0=
 -->
