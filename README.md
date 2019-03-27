@@ -165,6 +165,11 @@ It retrieves a list of relative ids for the key set passed. For example:
 ### _db
 It allows to run db queries. 
  - _db.list.v_by_
+ - _db.find.pd_by_ed_n_vname
+ 
+ ### _emprj
+ It extract different information from the current EM project:
+ 
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
@@ -327,6 +332,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTczNTE3ODk2OSwtNTE5OTk1MTQ5LC00Mz
-c0MjI4MTEsOTUzMzA0NDU5XX0=
+eyJoaXN0b3J5IjpbLTE2NzY1NjI0MTUsLTUxOTk5NTE0OSwtND
+M3NDIyODExLDk1MzMwNDQ1OV19
 -->
