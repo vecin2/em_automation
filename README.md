@@ -10,9 +10,6 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
 - [Basic Usage](#basic-usage)
-    + [Creating  a SQL Task](#creating--a-sql-task)
-    + [Exiting the application](#exiting-the-application)
-    + [Show help](#show-help)
     + [Adding New Templates](#adding-new-templates)
       - [Hidding a Template](#hidding-a-template)
 - [User installation](#user-installation)
@@ -32,50 +29,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
 
-      
-# Basic Usage
-This section run through the steps of generating a SQL script:
-You can 
-- [Add a new template](#adding-new-templates) called `change_verb_context2.sql`:
-```sql
-UPDATE EVA_CONTEXT_VERB_ENTRY
-SET (CONFIG_ID)= (@CC.{{new_config_id | description("new_config_id (e.g. Home, CustomerPostIdentify, ...)")}})
-where CONFIG_ID = @CC.{{old_config_id} | default("NULL")}
-and VERB = '{{verb_name}} ';
-```
-- Run the application by simply typing `sqltask` in the comand line. The new template should show as one of the options.
--  Select the template, and starting filling the values as they are prompted:
-```bash
-	new_config_id (e.g. Home, CustomerPostIdentify, ...): 
-	old_config_id (default is NULL): 
-	verb_name: 
-```
-- Assuming `Customer`, `Home` and `indentifyCustomer` are entered as values the template will be render and printed out as following:
-```sql
-	UPDATE EVA_CONTEXT_VERB_ENTRY
-	SET (CONFIG_ID)= (@CC.Customer)
-	where CONFIG_ID = @CC.Home
-	and VERB = 'identifyCustomer';
-```
-### Create  a SQL Task
-``` 
-sqltask -d modules/ABCustomer/sqlScripts/oracle/updates/Project_R1_0_0/add_policy_to_Customer_table
-```
-Where `d` value is the SQL task relative path from the current `EM_CORE_HOME`. The template will be rendered to file called `tableData.sql` and an `update.sequence` file will generated as well.
-
-### Exit the application
-At any point press `Ctrl+c` or `Ctrl+d` to exit.  When using Gitbash in Windows it might require to hit `Enter` after  `Ctrl+c` or `Ctl+d`.
-
-### Show help
-Running `sqltask -h`  to show a help description:
-```
-optional arguments:
-  -h, --help         show this help message and exit
-  -d DIR, --dir DIR  It's the directory where the sql task will be
-                     written to.
-                     Its a relative path from $EM_CORE_HOME to, e.g.
-                     modules/GSCCoreEntites...
-```
+## Basic Usage      
 ### Add New Templates 
 
 To create a new template:
@@ -365,5 +319,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMwNDY4NDcwMCw5NTMzMDQ0NTldfQ==
+eyJoaXN0b3J5IjpbLTE0NTE2MTU0MzAsOTUzMzA0NDU5XX0=
 -->
