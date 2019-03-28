@@ -14,6 +14,7 @@ PATHS= {
          "core_config"    : "config/core.properties",
          "ad_queries"     : "config/ad_queries.sql",
          "logging_config" : "config/logging.yaml",
+         "templates"      : "templates",
          "logs"           : "logs"
         }
 
@@ -45,7 +46,7 @@ class AppProject(object):
 
     @property
     def root(self):
-        return os.path.join(self.emproject.root,"sqltask")
+        return os.path.join(self.emproject.root,"devtask")
 
     @property
     def ad_queryrunner(self):

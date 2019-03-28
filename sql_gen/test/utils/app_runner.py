@@ -30,7 +30,7 @@ class AppRunner():
         return self
 
     def add_template(self, name, content):
-        path="/em/prj/sqltask/templates/"
+        path="/em/prj/devtask/templates/"
         self.fs.create_file(path+"say_hello.sql", contents=content)
         return self
 

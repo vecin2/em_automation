@@ -1,5 +1,6 @@
 from . import globals as template_globals
 from . import filters as template_filters
+from sql_gen.app_project import AppProject
 from sql_gen.exceptions import EnvVarNotFoundException
 from sql_gen.docugen.env_builder import EnvBuilder
 import os
@@ -12,7 +13,7 @@ class EMTemplatesEnv():
         if templates_path_env_name in env_vars:
             templates_path =env_vars[templates_path_env_name]
         elif em_prj_env_name in env_vars:
-            templates_path = os.path.join(env_vars[em_prj_env_name],"sqltask","templates")
+            templates_path = AppProject(env_vars).paths["templates"].path
         else:
             error_msg="Templates path can not be determined from environment variables. "+\
             "Please add '"+em_prj_env_name+"' to your environment variables "+\
