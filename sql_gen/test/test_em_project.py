@@ -9,6 +9,25 @@ def prj_builder(fs, root='/home/em'):
     return FakeEMProjectBuilder(fs,root)
 
 
+def make_valid_em_folder_layout(fs,root):
+    return FakeEMProjectBuilder(fs,root).make_valid_em_folder_layout()
+
+def test_computes_root_cwd_is_em_root(fs):
+    make_valid_em_folder_layout(fs,'opt/em/project')
+    os.chdir('/opt/em/project')
+    assert "/opt/em/project" == EMProject({}).root
+
+def test_computes_root_when_cwd_is_em_subfolder(fs):
+    make_valid_em_folder_layout(fs,'opt/em/project')
+    os.chdir('/opt/em/project/config')
+    assert "/opt/em/project" == EMProject({}).root
+
+def test_it_uses_env_var_when_cwd_not_within_emproject(fs):
+    make_valid_em_folder_layout(fs,'opt/em/project')
+    os.chdir('/opt/em/')
+    assert "/opt/em/project" == EMProject(
+                                    env_vars={'EM_CORE_HOME':'/opt/em/project'}).root
+
 def test_project_prefix_computes_when_exist_a_minimum_of_modules(fs):
     em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
                             .add_repo_module("SPENContactHistory")\

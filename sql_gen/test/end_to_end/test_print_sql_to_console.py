@@ -62,6 +62,16 @@ def test_computes_templates_path_from_prj_path(app_runner,fs):
                .assert_rendered_sql("hello!")\
                .assert_all_input_was_read()
 
+def test_computes_templates_path_from_current_path(app_runner):
+    app_runner.and_prj_built_under("/em/prj")\
+               .from_current_dir("/em/prj")\
+               .add_template("say_bye.sql","bye!")\
+               .select_template('say_bye.sql',{})\
+               .saveAndExit()\
+               .run()\
+               .assert_rendered_sql("bye!")\
+               .assert_all_input_was_read()
+
 def test_select_and_render_no_vals_template(app_runner,fs):
     fs.create_file("/templates/say_hello.sql", contents="hello!")
     app_runner.with_emproject_under("/em/prj")\

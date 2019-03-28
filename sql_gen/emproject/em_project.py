@@ -29,11 +29,34 @@ MANDATORY_KEYS=["ccadmin",
 
 ENV_VAR_NAME='EM_CORE_HOME'
 def current_prj_path(env_vars):
-    if ENV_VAR_NAME not in env_vars:
+    em_root= get_em_root_from_cwd()
+    if em_root:
+        return em_root
+    elif ENV_VAR_NAME not in env_vars:
         help_text="It should contain the path of your current EM project."
         raise EnvVarNotFoundException(ENV_VAR_NAME,help_text)
 
     return env_vars[ENV_VAR_NAME]
+
+def get_em_root_from_cwd():
+    path=os.getcwd()
+    return get_em_root_from_path(path)
+
+def get_em_root_from_path(path):
+    if is_em_root(path):
+        return path
+    parent =os.path.abspath(os.path.join(path, os.pardir))
+    if parent == path:
+        return ""
+    return get_em_root_from_path(parent)
+
+
+def is_em_root(path):
+    return os.path.exists(os.path.join(path,"bin")) and\
+            os.path.exists(os.path.join(path,"config")) and\
+            os.path.exists(os.path.join(path,"components")) and\
+            os.path.exists(os.path.join(path,"repository"))
+
 def get_prj_home(env_vars):
     result = current_prj_path(env_vars)
     if not os.path.exists(result):

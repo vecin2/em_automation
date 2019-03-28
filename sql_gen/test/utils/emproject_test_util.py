@@ -41,6 +41,12 @@ class FakeEMProjectBuilder():
     def add_config_settings(self, config_id, settings_map):
         self.config_map[config_id] = settings_map
 
+    def make_valid_em_folder_layout(self):
+        self.fs.create_dir(os.path.join(self.root,"bin"))
+        self.fs.create_dir(os.path.join(self.root,"config"))
+        self.fs.create_dir(os.path.join(self.root,"components"))
+        self.fs.create_dir(os.path.join(self.root,"repository"))
+
     def _config_env_machine_container(self,
                                  env_name,
                                  machine_name,

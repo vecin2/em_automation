@@ -11,15 +11,15 @@ class EMTemplatesEnv():
         templates_path_env_name='SQL_TEMPLATES_PATH'
         em_prj_env_name='EM_CORE_HOME'
         if templates_path_env_name in env_vars:
-            templates_path =env_vars[templates_path_env_name]
-        elif em_prj_env_name in env_vars:
-            templates_path = AppProject(env_vars).paths["templates"].path
+            templates_path = env_vars[templates_path_env_name]
         else:
-            error_msg="Templates path can not be determined from environment variables. "+\
-            "Please add '"+em_prj_env_name+"' to your environment variables "+\
-            "(so templates path can be computes)"\
-            "or, explicetely  add '"+templates_path_env_name+"'."
-            raise ValueError(error_msg)
+             try:
+                 app_prj=AppProject(env_vars)
+                 templates_path = app_prj.paths["templates"].path
+             except:
+                 error_msg="Templates path can not be determined from current directory or from environment variables. "+\
+                 "Please make sure you running this command from within an EM project folder. Otherwise, if you want to run it from anywhere within your filesystem, add '"+em_prj_env_name+"' to your environment variables (so templates path can be computes) or, add '"+templates_path_env_name+"'."
+                 raise ValueError(error_msg)
         if not os.path.exists(templates_path):
             error_msg="Templates path '"+templates_path+"' does not exist. "+\
             "Make sure the directory is created and it contains templates"

@@ -25,37 +25,20 @@ class AttrDict(object):
         return super().__dir__() + [str(k) for k in self.keys()]
 
 class CallableFormatString(object):
-    def __init__(self,string):
+    def __init__(self,key,string):
+       self.key =key
        self.string = string
+
     def __call__(self,*args,**kwargs):
+        return self.format_string(*args,**kwargs)
+
+    def format_string(self,*args,**kwargs):
         args_expected=self.count_placeholders(self.string)
         args_given=len(args)+len(kwargs)
 
         error_msg= "Method '"+self.key+"' takes "+str(args_expected)+ " params ("+ str(args_given)+" given)"
         assert args_expected==args_given, error_msg
-        formatted_query = self.string.format(*args,**kwargs)
-        return formatted_query
-
-
-class CallableDBQuery(CallableFormatString):
-    def __init__(self,op_name,key,string,emdb):
-       super().__init__(string)
-       #self.string = string
-       self.key = key
-       self.emdb = emdb
-       self.op_name=op_name
-
-    def __call__(self,*args,**kwargs):
-        args_expected=self.count_placeholders(self.string)
-        args_given=len(args)+len(kwargs)
-
-        error_msg= "Method '"+self.key+"' takes "+str(args_expected)+ " params ("+ str(args_given)+" given)"
-        assert args_expected==args_given, error_msg
-        formatted_query = self.string.format(*args,**kwargs)
-        #formatted_query =super().__call__(self.string)
-
-        function = getattr(self.emdb,self.op_name)
-        return function(formatted_query)
+        return self.string.format(*args,**kwargs)
 
     def count_placeholders(self,fmt):
         count = 0
@@ -64,6 +47,25 @@ class CallableDBQuery(CallableFormatString):
             if x[1] is not None:
                 count += 1
         return count
+
+class CallableDBQuery(CallableFormatString):
+    def __init__(self,op_name,key,string,emdb):
+       super().__init__(key,string)
+       self.emdb = emdb
+       self.op_name=op_name
+
+    def __call__(self,*args,**kwargs):
+        formatted_query = super().__call__(*args,**kwargs)
+        function = getattr(self.emdb,self.op_name)
+        return function(formatted_query)
+
+
+class QueryDict(AttrDict):
+    def __init__(self,query_dict):
+        super().__init__(query_dict)
+
+    def __getattr__(self, item):
+        return CallableFormatString(item,super().__getattr__(item))
 
 class DBOperation(AttrDict):
     def __init__(self,op_name,query_dict,emdb_loader):

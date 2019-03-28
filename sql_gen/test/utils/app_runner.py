@@ -9,6 +9,7 @@ from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
 from sql_gen.app_project import AppProject
+from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 class FakeLogger(object):
     def debug(self):
@@ -31,7 +32,7 @@ class AppRunner():
 
     def add_template(self, name, content):
         path="/em/prj/devtask/templates/"
-        self.fs.create_file(path+"say_hello.sql", contents=content)
+        self.fs.create_file(os.path.join(path,name), contents=content)
         return self
 
     def select_template(self, template_option,values):
@@ -42,6 +43,14 @@ class AppRunner():
 
     def user_inputs(self, user_input):
         self.inputs.append(user_input)
+        return self
+
+    def from_current_dir(self, cwd):
+        os.chdir(cwd)
+        return self
+
+    def and_prj_built_under(self, path):
+        FakeEMProjectBuilder(self.fs,root=path).make_valid_em_folder_layout()
         return self
 
     def with_emproject_under(self,emproject_path):
