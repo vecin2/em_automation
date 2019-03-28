@@ -68,7 +68,6 @@ def test_keep_trailing_newline_doesnot_work():
     assert "hola juan\n\n    hola pedro" == rendered_text
 
 def test_replicate_issue():
-    templates_path =os.environ['SQL_TEMPLATES_PATH']
     env = Environment( trim_blocks=True,
                         lstrip_blocks=True
                         )

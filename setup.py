@@ -14,7 +14,7 @@ setuptools.setup(
         url="https://bfs-eng-can05.kana-test.com/dgarcia/em_automation",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        package_data = {'sql_gen': ['template/*.*', 'template/*/*.*','log/*.yaml']},
+        package_data = {'sql_gen': ['log/*.yaml']},
         install_requires=['Jinja2','pymssql','fuzzyfinder','prompt_toolkit','svn','pyperclip','PyYAML','cx-Oracle'],
         extra_require={
             ':"linux" in sys_platform':[

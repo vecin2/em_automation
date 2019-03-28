@@ -18,7 +18,8 @@ class FakeLogger(object):
     def error(self):
         """"""
 class AppRunner():
-    def __init__(self):
+    def __init__(self,fs=None):
+        self.fs=fs
         self.original_stdin = sys.stdin
         self.inputs=[]
         self.env_vars={}
@@ -26,6 +27,11 @@ class AppRunner():
 
     def saveAndExit(self):
         self.user_inputs("x")
+        return self
+
+    def add_template(self, name, content):
+        path="/em/prj/sqltask/templates/"
+        self.fs.create_file(path+"say_hello.sql", contents=content)
         return self
 
     def select_template(self, template_option,values):
@@ -114,8 +120,8 @@ class CommandTestFactory(CommandFactory):
         return self.create_sqltask_command
 
 class PrintSQLToConsoleAppRunner(AppRunner):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,fs=None):
+        super().__init__(fs=fs)
 
     def run(self,app =None):
         self._run(['.','print-sql'],app=app)

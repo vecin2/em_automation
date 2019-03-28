@@ -4,8 +4,8 @@ from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
 from sql_gen.exceptions import EnvVarNotFoundException
 
 @pytest.fixture
-def app_runner():
-    app_runner = PrintSQLToConsoleAppRunner()
+def app_runner(fs):
+    app_runner = PrintSQLToConsoleAppRunner(fs=fs)
     yield app_runner
     app_runner.teardown()
 
@@ -54,8 +54,8 @@ def test_asks_for_template_until_valid_entry(app_runner,fs):
                .assert_all_input_was_read()
 
 def test_computes_templates_path_from_prj_path(app_runner,fs):
-    fs.create_file("/em/prj/sqltask/templates/say_hello.sql", contents="hello!")
     app_runner.with_emproject_under("/em/prj")\
+               .add_template("say_hello.sql","hello!")\
                .select_template('1. say_hello.sql',{})\
                .saveAndExit()\
                .run()\
