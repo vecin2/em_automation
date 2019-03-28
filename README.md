@@ -10,9 +10,6 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
 - [Basic Usage](#basic-usage)
-    + [Creating  a SQL Task](#creating--a-sql-task)
-    + [Exiting the application](#exiting-the-application)
-    + [Show help](#show-help)
     + [Adding New Templates](#adding-new-templates)
       - [Hidding a Template](#hidding-a-template)
 - [User installation](#user-installation)
@@ -32,50 +29,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
 
-      
-# Basic Usage
-This section run through the steps of generating a SQL script:
-
-- [Add a new template](#adding-new-templates) called `change_verb_context2.sql`:
-```sql
-UPDATE EVA_CONTEXT_VERB_ENTRY
-SET (CONFIG_ID)= (@CC.{{new_config_id | description("new_config_id (e.g. Home, CustomerPostIdentify, ...)")}})
-where CONFIG_ID = @CC.{{old_config_id} | default("NULL")}
-and VERB = '{{verb_name}} ';
-```
-- Run the application by simply typing `sqltask` in the comand line. The new template should show as one of the options.
--  Select the template, and starting filling the values as they are prompted:
-```bash
-	new_config_id (e.g. Home, CustomerPostIdentify, ...): 
-	old_config_id (default is NULL): 
-	verb_name: 
-```
-- Assuming `Customer`, `Home` and `indentifyCustomer` are entered as values the template will be render and printed out as following:
-```sql
-	UPDATE EVA_CONTEXT_VERB_ENTRY
-	SET (CONFIG_ID)= (@CC.Customer)
-	where CONFIG_ID = @CC.Home
-	and VERB = 'identifyCustomer';
-```
-### Create  a SQL Task
-``` 
-sqltask -d modules/ABCustomer/sqlScripts/oracle/updates/Project_R1_0_0/add_policy_to_Customer_table
-```
-Where `d` value is the SQL task relative path from the current `EM_CORE_HOME`. The template will be rendered to file called `tableData.sql` and an `update.sequence` file will generated as well.
-
-### Exit the application
-At any point press `Ctrl+c` or `Ctrl+d` to exit.  When using Gitbash in Windows it might require to hit `Enter` after  `Ctrl+c` or `Ctl+d`.
-
-### Show help
-Running `sqltask -h`  to show a help description:
-```
-optional arguments:
-  -h, --help         show this help message and exit
-  -d DIR, --dir DIR  It's the directory where the sql task will be
-                     written to.
-                     Its a relative path from $EM_CORE_HOME to, e.g.
-                     modules/GSCCoreEntites...
-```
+## Basic Usage      
 ### Add New Templates 
 
 To create a new template:
@@ -84,14 +38,13 @@ To create a new template:
 - Create an empty file with the same name pointing to the previous file under `$SQL_TEMPLATES_PATH/menu` - make sure the names match otherwise it will not show up in the menu when running the application.
 
 #### Hide a Template
-Template can be hidden by simply not creating the shorcut
-
-It is a good practice to reuse templates to avoid duplicating SQL code. Therefore a template can be created to support other templates but it shouldn't be displayed to users. Instead display only the wrapping templates.
+A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
+Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
 
 # User installation
 
-- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
- - When running the installation make sure to select the checkbox to add python3 to your system path
+- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
+ - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
  - In windows add the following to you path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
  - Copy the template folder to some location in your filesystem. For example under the current EM project. 
@@ -126,8 +79,8 @@ python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
 ###  Install builtin Templates
-A set of builtin templates are downloaded when running pip install. They are located under `%PYTHON_HOME%/Lib\site-packages\sql_gen\templates`
-Copy this folder under your `%EM_HOME_CORE%` so new creates templates are not lost when upgrading. As well committing in the project folder will allow commit it so other developers can benefit from it.
+For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
+These Templates will be provided on demand. 
 
 ### Windows Console Tools
 If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
@@ -135,7 +88,6 @@ If you find the Windows console is too slow, e.g no path autocompletion,  hard c
 - [git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well and several linux commands. 
 - [cygwin](https://www.cygwin.com/): a large collection of GNU and Open - Source tools which provide functionality similar to a Linux distribution on Windows. 
  
-
 # Template Design
 
 How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. 
@@ -200,6 +152,46 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
+## Objects in context
+There is a set of objects which included whithin the template context and they provide support when writting templates.
+
+The objects are put into context with underscore (_) prefix this is to avoid clashing with template variables.
+
+### _keynames
+It retrieves a list of relative ids for the key set passed. For example:
+ - _keynames.ED: retrieves a list of the entity defintions relative ids
+ - _keynames.V: retrieves a list of the verbs relative ids
+
+### _db
+It allows to run a predefined set of queries defined in a file called "queries.sql":
+ - _db.list.v_names_by_ed(entitfy_def_id)
+ - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
+ 
+ ### _database
+ It allows running free form queries:
+ -_database.find("SELECT * FROM VERB where name='my_verb'")
+ -_database.list("SELECT NAME FROM VERB where name like '%create%'")
+ 
+ ### _emprj
+ It extract different information from the current EM project:
+ 
+**prj_prefix**()
+It  returns the project prefix of the current `EM_CORE_HOME` project. 
+It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
+For example with a set modules like
+```sql
+#With a foder strtuctre like this under $EM_CORE_HOME
+/repository/default
+				|__ ABCContactHistory
+				|__ ABCCaseHandling
+				|__ ...
+#Template
+ {% set process_desc_id = _emprj.prefix()+ entity_def_name %}
+Process descriptor id is {{process_desc_id }}
+#Rendered
+Process descriptor id is ABC
+Name is changeTheAddress
+```
 
 ## Global Functions
 There is a set of builtin global functions which can be used when writting templates.  Functions can be invoke within blocks `{% %}` or within statements `{{ }}`.
@@ -220,26 +212,6 @@ Name is '{{ camelcase(display_name }}'
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
 
-```
-**prj_prefix**()
-It  returns the project prefix of the current `EM_CORE_HOME` project. 
-It looks for modules under `$EM_CORE_HOME/repository/default` starting with at least 3 uppercase letters. It throws an exception if it can't find any.
-For example with a set modules like
-```sql
-#With a foder strtuctre like this under $EM_CORE_HOME
-/repository/default
-				|__ ABCContactHistory
-				|__ ABCCasHandling
-				|__ ...
-
-#Template
- {% set process_desc_id = prj_prefix()+ entity_def_name %}
-Process descriptor id is {{process_desc_id }}
-
-#Rendered
-Process descriptor id is ABC
-Name is changeTheAddress
-```
 ## String Python Builtin Functions
 Python string functions can be used within templates, for example:
 
@@ -355,3 +327,15 @@ When creating new filter we need to implement  not only `apply` but  `get_templa
 _class_ sql_gen.filters.**DescriptionFilter**()
 		func :: **get_template_filter**()
 It returns the function which implements the jinja filter.
+
+
+
+
+
+
+
+
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
+-->
