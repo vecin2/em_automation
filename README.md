@@ -227,7 +227,7 @@ Process descriptor id is {{process_desc_id }}
 Process descriptor id is Customer
 ```
 ## Include
-Include allows wrapping other templates so they can be reuse and avoid SQL code duplication. 
+Include allows wrapping other templates so they can be reused and avoid SQL code duplication. 
 ```sql
 #Compute descriptor id  which is used in 'add_process_descriptor.sql'
 {% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
