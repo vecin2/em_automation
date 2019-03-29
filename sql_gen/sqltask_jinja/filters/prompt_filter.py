@@ -21,7 +21,7 @@ class PromptFilter:
             key = self._render_arg(arg.arg,context)
             result = dict[key]
         else:
-            raise ValueError("Filters at the moment only support collections,contants and vairables."+\
+            raise ValueError("Filters at the moment only support collections,contants and variables."+\
                     "But you passed something else, maybe a function? "+str(arg))
         logger.debug("Argument resolved to: "+ str(result))
         return result
