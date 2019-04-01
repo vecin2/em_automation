@@ -31,11 +31,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 
 ## Basic Usage      
 ### Add New Templates 
-
-To create a new template:
-
-- Create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
-- Create an empty file with the same name pointing to the previous file under `$SQL_TEMPLATES_PATH/menu` - make sure the names match otherwise it will not show up in the menu when running the application.
+To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
 #### Hide a Template
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
