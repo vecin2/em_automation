@@ -143,6 +143,8 @@ class EMProject(object):
             raise ConfigException(error_msg)
 
     def prefix(self):
+        sql_gen.logger.debug("Computing Prefix, config_id is: "+
+                                str(self.default_config_id))
         if self.default_config_id and 'project.prefix' in self.config():
             return self.config()['project.prefix']
 
@@ -171,7 +173,6 @@ class EMProject(object):
         result=defaultdict(list)
         for module in repo_modules:
             prefix =self._extract_module_prefix(module)
-            sql_gen.logger.debug("Prefix is: "+prefix)
             if prefix:
                 result[prefix].append(module)
         sql_gen.logger.debug("Modules dict is "+str(result))

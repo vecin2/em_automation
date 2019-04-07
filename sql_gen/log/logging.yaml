@@ -31,7 +31,7 @@ handlers:
 
 loggers:
     app_logger:
-        level: DEBUG
+        level: INFO
         handlers: [info_file_handler, error_file_handler,console]
         propagate: no
 
