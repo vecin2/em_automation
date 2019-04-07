@@ -143,6 +143,9 @@ class EMProject(object):
             raise ConfigException(error_msg)
 
     def prefix(self):
+        if self.default_config_id and 'project.prefix' in self.config():
+            return self.config()['project.prefix']
+
         custom_repo_modules = self._get_repo_custom_modules()
         if len(custom_repo_modules)>0:
             return self._extract_module_prefix(custom_repo_modules[0])
@@ -157,18 +160,21 @@ class EMProject(object):
                 result +=c
             else:
                 break
-        #result is now SPENC
-        if len(result) >3:
+        #result is now PCC from PCCoreEntities
+        if len(result) >2:
             return result[:-1]
         return ""
 
     def _get_repo_custom_modules(self):
         repo_modules= self.paths['repo_modules'].listdir()
+        sql_gen.logger.debug("Computing repo custom modules")
         result=defaultdict(list)
         for module in repo_modules:
             prefix =self._extract_module_prefix(module)
+            sql_gen.logger.debug("Prefix is: "+prefix)
             if prefix:
                 result[prefix].append(module)
+        sql_gen.logger.debug("Modules dict is "+str(result))
         for key in result:
             if len(result[key])>1:
                 return result[key]

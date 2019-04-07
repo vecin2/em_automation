@@ -28,11 +28,17 @@ def test_it_uses_env_var_when_cwd_not_within_emproject(fs):
     assert "/opt/em/project" == EMProject(
                                     env_vars={'EM_CORE_HOME':'/opt/em/project'}).root
 
+local_config_id=EMConfigID("localdev",
+                           "localhost",
+                           "ad")
+
 def test_project_prefix_computes_when_exist_a_minimum_of_modules(fs):
-    em_project = prj_builder(fs).add_repo_module("SPENCoreEntities")\
-                            .add_repo_module("SPENContactHistory")\
+    em_project = prj_builder(fs).add_repo_module("PCCoreEntities")\
+                            .add_repo_module("PCContactHistory")\
+                            .add_config(local_config_id, "")\
                             .build()
-    assert "SPEN" == em_project.prefix()
+    em_project.set_default_config_id(local_config_id)
+    assert "PC" == em_project.prefix()
 
 def test_project_prefix_returns_empty_if_not_enough_prj_modules(fs):
     em_project = prj_builder(fs).add_repo_module("CAI")\
@@ -45,8 +51,8 @@ def test_project_prefix_empty_if_not_repo_modules_created(fs):
     em_project = prj_builder(fs).build()
     assert "" ==em_project.prefix()
 
-def test_project_prefix_empty_if_no_module_with_3_uppercase(fs):
-    em_project = prj_builder(fs).add_repo_module("other").build()
+def test_project_prefix_empty_if_no_module_with_2_uppercase(fs):
+    em_project = prj_builder(fs).add_repo_module("Other").build()
     assert "" ==em_project.prefix()
 
 def test_project_prefix_empty_if_not_custom_module_created(fs):
@@ -60,9 +66,14 @@ def test_project_prefix_skip_modules_without_3_uppercase(fs):
                                 .build()
     assert "SPEN" == em_project.prefix()
 
-local_config_id=EMConfigID("localdev",
-                           "localhost",
-                           "ad")
+def test_project_prefix_in_config_overrides_computation(fs):
+    em_project  = FakeEMProjectBuilder(fs)\
+                    .add_repo_module("SPENCoreEntities")\
+                    .add_repo_module("SPENContactHistory")\
+                    .add_config(local_config_id, "project.prefix=GSC")\
+                    .build()
+    em_project.set_default_config_id(local_config_id)
+    assert "GSC" == em_project.prefix()
 
 def make_emproject(root):
     return EMProject(env_vars={'EM_CORE_HOME': root})
