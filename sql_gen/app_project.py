@@ -15,6 +15,7 @@ PATHS= {
          "ad_queries"     : "config/ad_queries.sql",
          "logging_config" : "config/logging.yaml",
          "templates"      : "templates",
+         "test_templates" : "test_templates",
          "logs"           : "logs"
         }
 

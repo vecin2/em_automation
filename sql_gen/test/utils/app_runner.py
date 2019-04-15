@@ -7,9 +7,10 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand
 from sql_gen.app_project import AppProject
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 class FakeLogger(object):
     def debug(self):
@@ -25,13 +26,14 @@ class AppRunner():
         self.inputs=[]
         self.env_vars={}
         self.initial_context={}
+        self.command=None
 
     def saveAndExit(self):
         self.user_inputs("x")
         return self
 
     def add_template(self, name, content):
-        path="/em/prj/devtask/templates/"
+        path = EMTemplatesEnv().get_templates_path(self.env_vars)
         self.fs.create_file(os.path.join(path,name), contents=content)
         return self
 
@@ -117,9 +119,11 @@ class DummyEnvironment(object):
 class CommandTestFactory(CommandFactory):
     def __init__(self,
             print_to_console_command=None,
-            create_sqltask_command=None):
+            create_sqltask_command=None,
+            test_sql_templates_commmand=None):
         self.print_to_console_command=print_to_console_command
         self.create_sqltask_command=create_sqltask_command
+        self.test_sql_templates_commmand=test_sql_templates_commmand
 
     def make_print_sql_to_console_command(self):
         return self.print_to_console_command
@@ -127,6 +131,10 @@ class CommandTestFactory(CommandFactory):
     def make_create_sqltask_command(self,path):
         self.create_sqltask_command.path =path
         return self.create_sqltask_command
+
+    def make_test_sql_templates_command(self):
+        return self.test_sql_templates_commmand
+
 
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self,fs=None):
@@ -166,7 +174,6 @@ class FakeClipboard():
 class CreateSQLTaskAppRunner(AppRunner):
     def __init__(self):
         super().__init__()
-        self.command =None
         self.rev_no="0"
         self.taskpath=""
         self.clipboard =FakeClipboard()
@@ -207,5 +214,25 @@ class CreateSQLTaskAppRunner(AppRunner):
 
     def assert_path_copied_to_sys_clipboard(self):
         assert self.taskpath == self.clipboard.paste()
+        return self
+
+class TemplatesAppRunner(AppRunner):
+    def __init__(self,fs):
+        super().__init__(fs=fs)
+
+    def _make_command_factory(self):
+        self.command = TestTemplatesCommand(
+                                self.env_vars,
+                                self.initial_context)
+        return CommandTestFactory(
+                test_sql_templates_commmand=self.command)
+
+    def add_test(self, name, template_vars, content):
+        path =self._app_path("test_templates")
+        test_content="-- "+str(template_vars)+'\n'+content
+        self.fs.create_file(os.path.join(path,name), contents=test_content)
+        return self
+    def run(self):
+        self._run(['.','test-sql-templates'])
         return self
 

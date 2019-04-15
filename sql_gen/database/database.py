@@ -97,12 +97,16 @@ class EMDatabase(object):
         return result
 
     def _run_query(self,query):
-        cursor = self._conn().cursor()
         start_time = time.time()
-        cursor.execute(query)
+        cursor = self.execute(query)
         query_time = str(time.time() - start_time)
         sql_gen.logger.debug("Query run: "+query)
         sql_gen.logger.debug("Query tooked "+ query_time)
+        return cursor
+
+    def execute(self,query):
+        cursor =self._conn().cursor()
+        cursor.execute(query)
         return cursor
 
     def _conn(self):

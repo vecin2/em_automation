@@ -2,6 +2,7 @@
 Usage:
     dtask print-sql
     dtask create-sql [<directory>]
+    dtask test-sql-templates
     dtask -h | --help
 
 Examples:

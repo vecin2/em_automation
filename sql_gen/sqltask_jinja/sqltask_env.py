@@ -6,7 +6,7 @@ from sql_gen.docugen.env_builder import EnvBuilder
 import os
 
 class EMTemplatesEnv():
-    def extract_templates_path(self,env_vars):
+    def get_templates_path(self,env_vars):
         templates_path=""
         templates_path_env_name='SQL_TEMPLATES_PATH'
         em_prj_env_name='EM_CORE_HOME'
@@ -20,6 +20,10 @@ class EMTemplatesEnv():
                  error_msg="Templates path can not be determined from current directory or from environment variables. "+\
                  "Please make sure you running this command from within an EM project folder. Otherwise, if you want to run it from anywhere within your filesystem, add '"+em_prj_env_name+"' to your environment variables (so templates path can be computes) or, add '"+templates_path_env_name+"'."
                  raise ValueError(error_msg)
+        return templates_path
+
+    def extract_templates_path(self,env_vars):
+        templates_path = self.get_templates_path(env_vars)
         if not os.path.exists(templates_path):
             error_msg="Templates path '"+templates_path+"' does not exist. "+\
             "Make sure the directory is created and it contains templates"

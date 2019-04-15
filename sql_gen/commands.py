@@ -1,5 +1,11 @@
 import os
+import sys
+import ast
+import re
 
+from io import StringIO
+
+import pytest
 import pyperclip
 
 from sql_gen.ui.utils import select_string_noprompt,prompt_suggestions
@@ -78,6 +84,7 @@ class CreateSQLTaskDisplayer(object):
         print ("Computing 'update.sequence' from current SVN number...")
     def update_seq_no_computed(self, number):
         print("update.sequence is '"+str(number)+"'")
+
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
@@ -176,3 +183,62 @@ class SQLTask(object):
             f.write(self.table_data)
         with open(os.path.join(self.path,"update.sequence"),"w") as f:
             f.write(self.update_sequence)
+
+class TestTemplatesCommand(PrintSQLToConsoleCommand):
+    def __init__(self,
+                 env_vars=os.environ,
+                 initial_context=None):
+        super().__init__(env_vars=env_vars,
+                         initial_context=initial_context)
+        self.inputs=[]
+
+    def run(self):
+        app_project = AppProject(env_vars=self.env_vars)
+        testpath=app_project.paths["test_templates"].path+"/tmp"
+        pytest.main(['-x',testpath])
+        #for filename in os.listdir(testpath):
+        #    filepath = os.path.join(testpath,filename)
+        #    print("***** testpath is ******"+ filepath)
+        #    self._run_test(filepath)
+
+    def _run_test(self,filepath):
+            sys.stdin = StringIO(self._user_input_to_str(filepath))
+            super().run()
+            test_file = open(filepath,"r+")
+            expected = self._remove_first_line(test_file.read())
+            print("expected is "+ expected)
+            print("sql_printed is  "+ self.sql_printed())
+            assert expected  == self.sql_printed()
+
+    def _user_input_to_str(self,filepath):
+        filename =os.path.basename(filepath) 
+        self.inputs.append(self._remove_suffix("test_",filename))
+        with open(filepath) as f:
+             first_line = self._remove_suffix("--",f.readline())
+             temp_values =ast.literal_eval(first_line)
+        for key in temp_values:
+            self.inputs.append(temp_values[key])
+        self.inputs.append("x")
+        return "\n".join([input for input in self.inputs])
+
+    def _remove_suffix(self,prefix, string):
+        if string.startswith(prefix):
+            return string[len(prefix):].strip()
+        return string
+
+    def _remove_first_line(self,string):
+        print("string is "+string)
+        result= re.sub(r'^[^\n]*\n', '', string)
+        print("filepath is "+result)
+        return result.replace("\n","")
+
+
+
+        #app_runner = PrintSQLToConsoleAppRunner()
+        #app_runner.using_templates_under("/templates")\
+        #           .select_template('1. greeting.sql',{'name':'David'})\
+        #           .saveAndExit()\
+        #           .run()\
+        #           .assert_rendered_sql("hello David!")\
+        #           .assert_all_input_was_read()
+
