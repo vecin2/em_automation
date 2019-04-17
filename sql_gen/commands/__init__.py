@@ -1,5 +1,5 @@
-from sql_gen.commands.all_commands import CreateSQLTaskCommand,SQLTask
 from sql_gen.commands.print_sql_cmd import PrintSQLToConsoleDisplayer, PrintSQLToConsoleCommand
+from sql_gen.commands.create_sql_cmd import CreateSQLTaskCommand,SQLTask
 from sql_gen.commands.verify_templates_cmd import TestTemplatesCommand,TestGenerator
 
 __all__ = [ 
