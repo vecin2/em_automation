@@ -16,6 +16,7 @@ PATHS= {
          "logging_config" : "config/logging.yaml",
          "templates"      : "templates",
          "test_templates" : "test_templates",
+         "test_templates_tmp" : "test_templates/.tmp",
          "logs"           : "logs"
         }
 

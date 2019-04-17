@@ -5,7 +5,8 @@ from sql_gen.docugen.completer import SuggestionCompleter
 
 def prompt(text,completer=None):
     try:
-        if not sys.stdout.isatty():
+        if not sys.stdout.isatty() or\
+            not sys.stdin.isatty():
             #return input(text)
             print(text)
             return sys.stdin.readline().strip()

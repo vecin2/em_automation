@@ -7,7 +7,7 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,TestGenerator
 from sql_gen.app_project import AppProject
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -216,18 +216,43 @@ class CreateSQLTaskAppRunner(AppRunner):
         assert self.taskpath == self.clipboard.paste()
         return self
 
+class FakePytest(object):
+    def main(params,directory):
+        """do nothing"""
+
+class FakeTestGenerator(TestGenerator):
+    def __init__(self,env_vars=None):
+        super().__init__(env_vars)
+        self.tests =[]
+        self.env_vars = env_vars
+    def gen_rendered_sql_test(self, *args,**kwargs):
+        super().gen_rendered_sql_test(kwargs)
+        self.tests.append(kwargs)
+
 class TemplatesAppRunner(AppRunner):
-    def __init__(self,fs):
+    def __init__(self,fs,capsys=None):
         super().__init__(fs=fs)
+        self.capsys = capsys
+        self.test_generator = FakeTestGenerator(self.env_vars)
+        self.tests=[]
 
     def _make_command_factory(self):
         self.command = TestTemplatesCommand(
                                 self.env_vars,
-                                self.initial_context)
+                                self.initial_context,
+                                FakePytest())
         return CommandTestFactory(
                 test_sql_templates_commmand=self.command)
 
+    def make_test_dir(self):
+        path =self._app_path("test_templates")
+        self.fs.create_dir(path)
+        return self
+
     def add_test(self, name, template_vars, content):
+        self.tests.append({"name": name,
+                           "template_vars":template_vars,
+                           "content": content})
         path =self._app_path("test_templates")
         test_content="-- "+str(template_vars)+'\n'+content
         self.fs.create_file(os.path.join(path,name), contents=test_content)
@@ -235,4 +260,30 @@ class TemplatesAppRunner(AppRunner):
     def run(self):
         self._run(['.','test-sql-templates'])
         return self
+
+    def assert_no_of_gen_tests(self,expected_no_of_tests):
+        path =self._app_path("test_templates_tmp")
+        number_of_tests =len([name for name in os.listdir(path) if os.path.isfile(os.path.join(path, name))])
+        assert expected_no_of_tests == number_of_tests
+
+    def assert_message_printed(self,expected):
+        captured = self.capsys.readouterr()
+        assert expected == captured.out
+        return self
+
+    def generates_no_test(self):
+        assert 0 == len(self.test_generator.tests)
+        return self
+
+    def generates_test(self,**params):
+        assert params == self.test_generator.tests.pop(0)
+        return self
+
+    def assert_generate_tests(self,**test_data):
+        test_generator =  TestGenerator()
+        test_generator.generate(**test_data)
+        testfile =open(self.command.testfilepath())
+        test_content=testfile.read()
+        testfile.close()
+        assert test_generator.content ==test_content
 

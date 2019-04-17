@@ -7,6 +7,7 @@ from io import StringIO
 
 import pytest
 import pyperclip
+from jinja2 import Template
 
 from sql_gen.ui.utils import select_string_noprompt,prompt_suggestions
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -184,44 +185,126 @@ class SQLTask(object):
         with open(os.path.join(self.path,"update.sequence"),"w") as f:
             f.write(self.update_sequence)
 
+class TestGenerator(object):
+    #render_sql_test_content=
+    def __init__(self,env_vars=None):
+        self.tests =[]
+        self.env_vars = env_vars
+        self.testdir =None
+        self.content=""
+
+    def testfilepath(self):
+            return self.testdir+"/test_all_templates.py"
+
+    def set_testdir(self,testdir):
+        self.testdir = testdir
+
+    def generate(self,**kwargs):
+        test_content="""
+def test_rendering_{{template_name}}_matches_expected_sql():
+    assert "{{expected}}" == "{{actual}}"
+"""
+        template = Template(test_content)
+        if self.content:
+            self.content +="\n\n"
+        current_content = template.render(kwargs)
+        self.content +=current_content
+        return current_content
+
+    def gen_rendered_sql_test(self, **kwargs):
+        test_file = open(self.testfilepath(),"w")
+        test_file.write(self.generate(**kwargs))
+        test_file.close()
+
+class TestTemplatesCommandDisplayer(object):
+    def test_folder_does_no_exist(self,directory):
+        print("Test folder '"+directory+"' does not exist.")
+
 class TestTemplatesCommand(PrintSQLToConsoleCommand):
     def __init__(self,
                  env_vars=os.environ,
-                 initial_context=None):
+                 initial_context=None,
+                 pytest=pytest,
+                 testgen= None):
         super().__init__(env_vars=env_vars,
                          initial_context=initial_context)
         self.inputs=[]
+        self.app_project = AppProject(env_vars=self.env_vars)
+        self.pytest =pytest
+        self.displayer = TestTemplatesCommandDisplayer()
+        if not testgen:
+            testgen = TestGenerator(self.env_vars)
+        self.testgen =testgen
+
+    def testfilepath(self):
+            return self._tmp_folder()+"/test_all_templates.py"
 
     def run(self):
-        app_project = AppProject(env_vars=self.env_vars)
-        testpath=app_project.paths["test_templates"].path+"/tmp"
-        pytest.main(['-x',testpath])
-        #for filename in os.listdir(testpath):
-        #    filepath = os.path.join(testpath,filename)
-        #    print("***** testpath is ******"+ filepath)
-        #    self._run_test(filepath)
+        testpath=self.app_project.paths["test_templates"].path
+        if not os.path.exists(testpath):
+            self.displayer.test_folder_does_no_exist(testpath)
+            return
+        for filename in os.listdir(testpath):
+            filepath = os.path.join(testpath,filename)
+            if self._is_valid_test_file(filepath):
+                self._generate_test(filepath)
+        self.pytest.main(['-x','-v',self._tmp_folder()])
+
+    def _is_valid_test_file(self,filepath):
+            filename = os.path.basename(filepath)
+            extension = os.path.splitext(filename)[1]
+            return os.path.isfile(filepath)\
+                    and extension==".sql"\
+                    and self._matches_template(filename)
+
+    def _matches_template(self, test_file):
+        path = EMTemplatesEnv().get_templates_path(self.env_vars)
+        for template_file in os.listdir(path):
+            template_name = os.path.splitext(template_file)[0]
+            if template_name == self._extract_template_name(test_file):
+                return True
+
+        return False
+
+    def _tmp_folder(self):
+        tmp_testdir=self.app_project.paths["test_templates_tmp"].path
+        if not os.path.exists(tmp_testdir):
+            os.makedirs(tmp_testdir)
+        return tmp_testdir
+
+    def _generate_test(self,filepath):
+        filename =os.path.basename(filepath) 
+        test_file = open(filepath,"r+")
+        expected = self._remove_first_line(test_file.read())
+        actual =self._run_test(filepath)
+        template_name =self._extract_template_name(filename)
+        self.testgen.set_testdir(self._tmp_folder())
+        self.testgen.gen_rendered_sql_test(template_name=template_name,
+                                          expected=expected,
+                                          actual=actual)
 
     def _run_test(self,filepath):
             sys.stdin = StringIO(self._user_input_to_str(filepath))
             super().run()
             test_file = open(filepath,"r+")
             expected = self._remove_first_line(test_file.read())
-            print("expected is "+ expected)
-            print("sql_printed is  "+ self.sql_printed())
-            assert expected  == self.sql_printed()
+            return self.sql_printed()
 
     def _user_input_to_str(self,filepath):
         filename =os.path.basename(filepath) 
-        self.inputs.append(self._remove_suffix("test_",filename))
+        self.inputs.append(self._remove_prefix("test_",filename))
         with open(filepath) as f:
-             first_line = self._remove_suffix("--",f.readline())
+             first_line = self._remove_prefix("--",f.readline())
              temp_values =ast.literal_eval(first_line)
         for key in temp_values:
             self.inputs.append(temp_values[key])
         self.inputs.append("x")
         return "\n".join([input for input in self.inputs])
 
-    def _remove_suffix(self,prefix, string):
+    def _extract_template_name(self,filename):
+        return self._remove_prefix("test_",filename).split(".")[0]
+
+    def _remove_prefix(self,prefix, string):
         if string.startswith(prefix):
             return string[len(prefix):].strip()
         return string
