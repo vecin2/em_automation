@@ -1,7 +1,7 @@
-
-from sql_gen.commands.all_commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskDisplayer,CreateSQLTaskCommand,SQLTask
-from sql_gen.commands.verify_templates_cmd import TestTemplatesCommand,TestGenerator,TestTemplatesCommandDisplayer
+from sql_gen.commands.all_commands import CreateSQLTaskCommand,SQLTask
+from sql_gen.commands.print_sql_cmd import PrintSQLToConsoleDisplayer, PrintSQLToConsoleCommand
+from sql_gen.commands.verify_templates_cmd import TestTemplatesCommand,TestGenerator
 
 __all__ = [ 
-        'PrintSQLToConsoleDisplayer','TestTemplatesCommand','PrintSQLToConsoleCommand','CreateSQLTaskDisplayer','CreateSQLTaskCommand','SQLTask','TestGenerator','TestTemplatesCommandDisplayer','TestTemplatesCommand','PrintSQLToConsoleDisplayer','PrintSQLToConsoleCommand','CreateSQLTaskDisplayer','CreateSQLTaskCommand'
+        'PrintSQLToConsoleDisplayer','TestTemplatesCommand','PrintSQLToConsoleCommand','CreateSQLTaskCommand','SQLTask','TestGenerator','TestTemplatesCommand'
 ]
