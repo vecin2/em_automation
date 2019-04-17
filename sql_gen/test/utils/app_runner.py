@@ -7,7 +7,7 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,TestGenerator
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,SourceTestBuilder
 from sql_gen.app_project import AppProject
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -220,20 +220,11 @@ class FakePytest(object):
     def main(params,directory):
         """do nothing"""
 
-class FakeTestGenerator(TestGenerator):
-    def __init__(self,env_vars=None):
-        super().__init__(env_vars)
-        self.tests =[]
-        self.env_vars = env_vars
-    def gen_rendered_sql_test(self, *args,**kwargs):
-        super().gen_rendered_sql_test(kwargs)
-        self.tests.append(kwargs)
 
 class TemplatesAppRunner(AppRunner):
     def __init__(self,fs,capsys=None):
         super().__init__(fs=fs)
         self.capsys = capsys
-        self.test_generator = FakeTestGenerator(self.env_vars)
         self.tests=[]
 
     def _make_command_factory(self):
@@ -272,19 +263,14 @@ class TemplatesAppRunner(AppRunner):
         return self
 
     def generates_no_test(self):
-        assert 0 == len(self.test_generator.tests)
-        return self
-
-    def generates_test(self,**params):
-        assert params == self.test_generator.tests.pop(0)
-        return self
+        assert not os.path.exists(self.command.generated_test_filepath())
 
     def assert_generate_tests(self,test_data_list):
-        test_generator =  TestGenerator()
+        source_builder =  SourceTestBuilder()
         for test_data in test_data_list:
-            test_generator.generate(**test_data)
-            testfile =open(self.command.testfilepath())
+            source_builder.add_expected_sql_test(**test_data)
+            testfile =open(self.command.generated_test_filepath())
             test_content=testfile.read()
             testfile.close()
-        assert test_generator.content ==test_content
+        assert source_builder.content ==test_content
 

@@ -1,7 +1,7 @@
 import pytest
 
 from sql_gen.test.utils.app_runner import TemplatesAppRunner
-from sql_gen.exceptions import EnvVarNotFoundException
+from sql_gen.commands.verify_templates_cmd import SourceTestBuilder
 
 @pytest.fixture
 def app_runner(fs,capsys):
