@@ -279,11 +279,12 @@ class TemplatesAppRunner(AppRunner):
         assert params == self.test_generator.tests.pop(0)
         return self
 
-    def assert_generate_tests(self,**test_data):
+    def assert_generate_tests(self,test_data_list):
         test_generator =  TestGenerator()
-        test_generator.generate(**test_data)
-        testfile =open(self.command.testfilepath())
-        test_content=testfile.read()
-        testfile.close()
+        for test_data in test_data_list:
+            test_generator.generate(**test_data)
+            testfile =open(self.command.testfilepath())
+            test_content=testfile.read()
+            testfile.close()
         assert test_generator.content ==test_content
 

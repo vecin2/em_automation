@@ -36,19 +36,25 @@ def test_testname_not_sql_ext_does_not_run(app_runner,fs):
                .run()\
                .generates_no_test()
 
-def test_generates_test_succesfully_render_sql(app_runner,fs):
+def test_generates_test_expected_sql(app_runner,fs):
+    gen_greeting_test={"template_name":"greeting",
+                       "expected":"hello John!",
+                       "actual":"hello John!"}
     app_runner.with_emproject_under("/em/prj")\
                .and_prj_built_under("/em/prj")\
                .add_template("greeting.sql","hello {{name}}!")\
                .make_test_dir()\
                .add_test("test_greeting.sql",{"name":"John"},"hello John!")\
                .run()\
-               .assert_generate_tests(template_name="greeting",
-                                      expected="hello John!",
-                                      actual="hello John!")
+               .assert_generate_tests([gen_greeting_test])
 
-@pytest.mark.skip
-def test_generates_multiple_test_succesfully_render_sql(app_runner,fs):
+def test_generates_multiple_test_expected_sql(app_runner,fs):
+    gen_hello_test={"template_name":"hello",
+                       "expected":"hello Fred!",
+                       "actual":"hello Fred!"}
+    gen_bye_test={"template_name":"bye",
+                       "expected":"bye Mark!",
+                       "actual":"bye Mark!"}
     app_runner.with_emproject_under("/em/prj")\
                .and_prj_built_under("/em/prj")\
                .add_template("hello.sql","hello {{name}}!")\
@@ -57,9 +63,4 @@ def test_generates_multiple_test_succesfully_render_sql(app_runner,fs):
                .add_test("test_hello.sql",{"name":"Fred"},"hello Fred!")\
                .add_test("test_bye.sql",{"name":"Mark"},"bye Mark!")\
                .run()\
-               .generates_test(expected="hello Fred!",
-                               actual="hello Fred!",
-                               template_name="hello")\
-               .generates_test(expected="bye Mark!",
-                               actual="bye Mark!",
-                               template_name="bye")
+               .assert_generate_tests([gen_hello_test,gen_bye_test])

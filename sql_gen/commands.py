@@ -211,10 +211,6 @@ def test_rendering_{{template_name}}_matches_expected_sql():
         self.content +=current_content
         return current_content
 
-    def gen_rendered_sql_test(self, **kwargs):
-        test_file = open(self.testfilepath(),"w")
-        test_file.write(self.generate(**kwargs))
-        test_file.close()
 
 class TestTemplatesCommandDisplayer(object):
     def test_folder_does_no_exist(self,directory):
@@ -228,7 +224,6 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
                  testgen= None):
         super().__init__(env_vars=env_vars,
                          initial_context=initial_context)
-        self.inputs=[]
         self.app_project = AppProject(env_vars=self.env_vars)
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
@@ -248,6 +243,10 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
             filepath = os.path.join(testpath,filename)
             if self._is_valid_test_file(filepath):
                 self._generate_test(filepath)
+        if self.testgen.content:
+            test_file = open(self.testfilepath(),"w")
+            test_file.write(self.testgen.content)
+            test_file.close()
         self.pytest.main(['-x','-v',self._tmp_folder()])
 
     def _is_valid_test_file(self,filepath):
@@ -279,7 +278,7 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
         actual =self._run_test(filepath)
         template_name =self._extract_template_name(filename)
         self.testgen.set_testdir(self._tmp_folder())
-        self.testgen.gen_rendered_sql_test(template_name=template_name,
+        self.testgen.generate(template_name=template_name,
                                           expected=expected,
                                           actual=actual)
 
@@ -292,14 +291,15 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
 
     def _user_input_to_str(self,filepath):
         filename =os.path.basename(filepath) 
-        self.inputs.append(self._remove_prefix("test_",filename))
+        inputs=[]
+        inputs.append(self._remove_prefix("test_",filename))
         with open(filepath) as f:
              first_line = self._remove_prefix("--",f.readline())
              temp_values =ast.literal_eval(first_line)
         for key in temp_values:
-            self.inputs.append(temp_values[key])
-        self.inputs.append("x")
-        return "\n".join([input for input in self.inputs])
+            inputs.append(temp_values[key])
+        inputs.append("x")
+        return "\n".join([input for input in inputs])
 
     def _extract_template_name(self,filename):
         return self._remove_prefix("test_",filename).split(".")[0]
