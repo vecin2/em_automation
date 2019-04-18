@@ -1,5 +1,5 @@
 from sql_gen.database import EMDatabase
-from sql_gen.emproject import EMProject,EMConfigID
+from sql_gen.emproject import EMProject,EMConfigID,emproject_home
 from sql_gen.database import QueryRunner,Connector
 from sql_gen.config import ConfigFile
 from sql_gen.utils.filesystem import ProjectLayout,Path
@@ -34,6 +34,13 @@ class AppProject(object):
         self._logger = None
         self.env_vars = env_vars
 
+    @staticmethod
+    def home_path(env_vars):
+        emprj_home= emproject_home(env_vars)
+        return os.path.join(emprj_home,"devtask")
+
+    def make(path=None):
+        return AppProject(path)
     @property
     def emproject(self):
         if not self._emproject:

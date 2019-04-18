@@ -27,14 +27,21 @@ class PrintSQLToConsoleDisplayer(object):
         return self.rendered_text
 
 class PrintSQLToConsoleCommand(object):
-    """Command which generates a SQL script from a template and it prints the ouput to console"""
+    """Command which generates a SQL script from a template and it prints the output to console"""
     def __init__(self, env_vars=os.environ,
-            initial_context=None):
+            initial_context=None,
+            emprj_path =None,
+            templates_path=None):
         if initial_context is None:
-            initial_context=init(AppProject(env_vars=env_vars))
-        self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
+            if emprj_path:
+                initial_context = init(emprj_path=emprj_path)
+            else:
+                initial_context=init(AppProject(env_vars=env_vars))
+        if templates_path:
+            self.templates_path = templates_path
+        else:
+            self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.initial_context =initial_context
-        self.env_vars = env_vars
 
     def run(self):
         self.doc_writer = PrintSQLToConsoleDisplayer()

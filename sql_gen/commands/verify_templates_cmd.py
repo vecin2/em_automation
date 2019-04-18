@@ -53,6 +53,9 @@ class TestFileParser(object):
     def _first_line(self,string):
         return string.split("\n")[0]
 
+    def _extract_template_filename(self,filename):
+        return self._remove_prefix("test_",filename)
+
     def _remove_prefix(self,prefix, string):
         if string.startswith(prefix):
             return string[len(prefix):].strip()
@@ -68,14 +71,14 @@ class TestTemplatesCommandDisplayer(object):
     def test_folder_does_no_exist(self,directory):
         print("Test folder '"+directory+"' does not exist.")
 
-class TestTemplatesCommand(PrintSQLToConsoleCommand):
+class TestTemplatesCommand(object):
     def __init__(self,
-                 env_vars=os.environ,
-                 initial_context=None,
+                 apprunner = None,
+                 env_vars = None,
                  pytest=pytest,
                  source_builder= None):
-        super().__init__(env_vars=env_vars,
-                         initial_context=initial_context)
+        self.apprunner= apprunner
+        self.env_vars=env_vars
         self.app_project = AppProject(env_vars=self.env_vars)
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
@@ -131,30 +134,13 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
         filename =os.path.basename(filepath) 
         test_file = open(filepath,"r+")
         expected = self.parser.parse_expected_sql(test_file.read())
-        actual =self._run_test(filepath)
+        #apprunner = AppRunner(env_vars=self.env_vars,initial_context=self.initial_context)
+        actual =self.apprunner._run_test(filepath)
         template_file = self._extract_template_filename(filename)
         template_name = os.path.splitext(template_file)[0]
         self.source_builder.add_expected_sql_test(template_name=template_name,
                                           expected=expected,
                                           actual=actual)
-
-    def _run_test(self,filepath):
-            sys.stdin = StringIO(self._user_input_to_str(filepath))
-            super().run()
-            test_file = open(filepath,"r+")
-            expected = self.parser.parse_expected_sql(test_file.read())
-            return self.sql_printed()
-
-    def _user_input_to_str(self,filepath):
-        filename =os.path.basename(filepath) 
-        inputs=[]
-        inputs.append(self._extract_template_filename(filename))
-        with open(filepath) as f:
-             temp_values = self.parser.parse_values(f.read())
-        for key in temp_values:
-            inputs.append(temp_values[key])
-        inputs.append("x")
-        return "\n".join([input for input in inputs])
 
     def _extract_template_filename(self,filename):
         return self._remove_prefix("test_",filename)
@@ -171,6 +157,32 @@ class TestTemplatesCommand(PrintSQLToConsoleCommand):
             test_file.close()
 
 
+class AppRunner(PrintSQLToConsoleCommand):
+    def __init__(self,env_vars=os.environ, initial_context=None):
+        self.parser =TestFileParser()
+        emprj_path= AppProject.home_path(env_vars)
+        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
+        super().__init__(initial_context=initial_context,
+                         emprj_path=emprj_path,
+                         templates_path =templates_path)
+
+    def _run_test(self,filepath):
+            sys.stdin = StringIO(self._user_input_to_str(filepath))
+            self.run()
+            test_file = open(filepath,"r+")
+            expected = self.parser.parse_expected_sql(test_file.read())
+            return self.sql_printed()
+
+    def _user_input_to_str(self,filepath):
+        filename =os.path.basename(filepath) 
+        inputs=[]
+        inputs.append(self.parser._extract_template_filename(filename))
+        with open(filepath) as f:
+             temp_values = self.parser.parse_values(f.read())
+        for key in temp_values:
+            inputs.append(temp_values[key])
+        inputs.append("x")
+        return "\n".join([input for input in inputs])
 
         #app_runner = PrintSQLToConsoleAppRunner()
         #app_runner.using_templates_under("/templates")\

@@ -8,6 +8,7 @@ import pyperclip
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,SourceTestBuilder
+from sql_gen.commands.verify_templates_cmd import AppRunner as AppRunner2
 from sql_gen.app_project import AppProject
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -228,9 +229,10 @@ class TemplatesAppRunner(AppRunner):
         self.tests=[]
 
     def _make_command_factory(self):
+        apprunner = AppRunner2(self.env_vars, self.initial_context)
         self.command = TestTemplatesCommand(
+                                apprunner,
                                 self.env_vars,
-                                self.initial_context,
                                 FakePytest())
         return CommandTestFactory(
                 test_sql_templates_commmand=self.command)
