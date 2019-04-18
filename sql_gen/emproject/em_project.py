@@ -74,16 +74,19 @@ def emproject_home(env_vars=os.environ):
 
 
 class EMProject(object):
-    def __init__(self,ccadmin_client=None,env_vars=None):
+    def __init__(self,
+                 ccadmin_client=None,
+                 env_vars=None,
+                 emprj_path=None):
         self.env_vars =env_vars
-        self._root = None
+        self._root = emprj_path
         self._paths= None
         self._ccadmin_client = ccadmin_client
         self.default_config_id =None
 
     @property
     def root(self):
-        if not self._paths:
+        if not self._root:
             self._root= emproject_home(self.env_vars)
         return self._root
 

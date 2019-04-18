@@ -8,8 +8,9 @@ import pyperclip
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,SourceTestBuilder
-from sql_gen.commands.verify_templates_cmd import AppRunner as AppRunner2
+from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.app_project import AppProject
+from sql_gen.emproject.em_project import emproject_home
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
@@ -20,32 +21,17 @@ class FakeLogger(object):
         """"""
     def error(self):
         """"""
-class AppRunner():
+class AppRunner(FillTemplateAppRunner):
     def __init__(self,fs=None):
+        super().__init__()
         self.fs=fs
-        self.original_stdin = sys.stdin
-        self.inputs=[]
         self.env_vars={}
         self.initial_context={}
         self.command=None
 
-    def saveAndExit(self):
-        self.user_inputs("x")
-        return self
-
     def add_template(self, name, content):
         path = EMTemplatesEnv().get_templates_path(self.env_vars)
         self.fs.create_file(os.path.join(path,name), contents=content)
-        return self
-
-    def select_template(self, template_option,values):
-        self.user_inputs(template_option)
-        for value in values.values():
-            self.user_inputs(value)
-        return self
-
-    def user_inputs(self, user_input):
-        self.inputs.append(user_input)
         return self
 
     def from_current_dir(self, cwd):
@@ -109,9 +95,6 @@ class AppRunner():
             input("check")
         assert "EOF" in str(excinfo.value)
         return self
-
-    def teardown(self):
-        sys.stdin = self.original_stdin
 
 class DummyEnvironment(object):
     def list_templates(self):
@@ -229,11 +212,13 @@ class TemplatesAppRunner(AppRunner):
         self.tests=[]
 
     def _make_command_factory(self):
-        apprunner = AppRunner2(self.env_vars, self.initial_context)
+        templates_path =EMTemplatesEnv().extract_templates_path(self.env_vars)
+        emprj_path= emproject_home(self.env_vars)
         self.command = TestTemplatesCommand(
-                                apprunner,
-                                self.env_vars,
-                                FakePytest())
+                                FakePytest(),
+                                templates_path=templates_path,
+                                emprj_path=emprj_path,
+                                initial_context=self.initial_context)
         return CommandTestFactory(
                 test_sql_templates_commmand=self.command)
 

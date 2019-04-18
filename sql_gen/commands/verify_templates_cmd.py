@@ -73,18 +73,20 @@ class TestTemplatesCommandDisplayer(object):
 
 class TestTemplatesCommand(object):
     def __init__(self,
-                 apprunner = None,
-                 env_vars = None,
                  pytest=pytest,
-                 source_builder= None):
-        self.apprunner= apprunner
-        self.env_vars=env_vars
-        self.app_project = AppProject(env_vars=self.env_vars)
+                 templates_path=None,
+                 emprj_path=None,
+                 initial_context=None):
+        self.templates_path = templates_path
+        self.emprj_path = emprj_path
+        self.initial_context = initial_context
+        self.apprunner = FileAppRunner(templates_path, 
+                                  emprj_path,
+                                  initial_context)
+        self.app_project = AppProject(emprj_path=emprj_path)
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
-        if not source_builder:
-            source_builder = SourceTestBuilder()
-        self.source_builder =source_builder
+        self.source_builder = SourceTestBuilder()
         self.parser = TestFileParser()
 
     def generated_test_filepath(self):
@@ -123,8 +125,7 @@ class TestTemplatesCommand(object):
                     and self._matches_template(filename)
 
     def _matches_template(self, test_file):
-        path = EMTemplatesEnv().get_templates_path(self.env_vars)
-        for template_file in os.listdir(path):
+        for template_file in os.listdir(self.templates_path):
             if template_file == self._extract_template_filename(test_file):
                 return True
 
@@ -134,7 +135,6 @@ class TestTemplatesCommand(object):
         filename =os.path.basename(filepath) 
         test_file = open(filepath,"r+")
         expected = self.parser.parse_expected_sql(test_file.read())
-        #apprunner = AppRunner(env_vars=self.env_vars,initial_context=self.initial_context)
         actual =self.apprunner._run_test(filepath)
         template_file = self._extract_template_filename(filename)
         template_name = os.path.splitext(template_file)[0]
@@ -157,38 +157,55 @@ class TestTemplatesCommand(object):
             test_file.close()
 
 
-class AppRunner(PrintSQLToConsoleCommand):
-    def __init__(self,env_vars=os.environ, initial_context=None):
+class FillTemplateAppRunner():
+    def __init__(self):
+        self.original_stdin = sys.stdin
+        self.inputs=[]
+
+    def saveAndExit(self):
+        self.user_inputs("x")
+        return self
+
+    def select_template(self, template_option,values):
+        self.user_inputs(template_option)
+        for value in values.values():
+            self.user_inputs(value)
+        return self
+
+    def user_inputs(self, user_input):
+        self.inputs.append(user_input)
+        return self
+
+    def teardown(self):
+        sys.stdin = self.original_stdin
+
+class FileAppRunner(FillTemplateAppRunner):
+    def __init__(self,templates_path,emprj_path, initial_context=None):
+        super().__init__()
         self.parser =TestFileParser()
-        emprj_path= AppProject.home_path(env_vars)
-        templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
-        super().__init__(initial_context=initial_context,
-                         emprj_path=emprj_path,
-                         templates_path =templates_path)
+        self.print_sql_cmd = PrintSQLToConsoleCommand(
+                            initial_context=initial_context,
+                            emprj_path=emprj_path,
+                            templates_path =templates_path)
 
     def _run_test(self,filepath):
-            sys.stdin = StringIO(self._user_input_to_str(filepath))
-            self.run()
-            test_file = open(filepath,"r+")
-            expected = self.parser.parse_expected_sql(test_file.read())
-            return self.sql_printed()
+        sys.stdin = StringIO(self._user_input_to_str(filepath))
+        self.run()
+        test_file = open(filepath,"r+")
+        expected = self.parser.parse_expected_sql(test_file.read())
+        return self.print_sql_cmd.sql_printed()
+
+    def run(self):
+        self.print_sql_cmd.run()
+        self.inputs.clear()
+        self.teardown()
 
     def _user_input_to_str(self,filepath):
         filename =os.path.basename(filepath) 
-        inputs=[]
-        inputs.append(self.parser._extract_template_filename(filename))
         with open(filepath) as f:
+             template_name =self.parser._extract_template_filename(filename)
              temp_values = self.parser.parse_values(f.read())
-        for key in temp_values:
-            inputs.append(temp_values[key])
-        inputs.append("x")
+             self.select_template(template_name,temp_values)
+        self.saveAndExit()
+        inputs = self.inputs
         return "\n".join([input for input in inputs])
-
-        #app_runner = PrintSQLToConsoleAppRunner()
-        #app_runner.using_templates_under("/templates")\
-        #           .select_template('1. greeting.sql',{'name':'David'})\
-        #           .saveAndExit()\
-        #           .run()\
-        #           .assert_rendered_sql("hello David!")\
-        #           .assert_all_input_was_read()
-

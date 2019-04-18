@@ -26,13 +26,14 @@ MANDATORY_KEYS=["config",
                 ]
 
 class AppProject(object):
-    def __init__(self,env_vars=None):
+    def __init__(self,env_vars=None,emprj_path=None):
         self._config_file=None
         self._ad_query_runner=None
         self._emproject = None
         self._paths =None
         self._logger = None
         self.env_vars = env_vars
+        self.emprj_path =emprj_path
 
     @staticmethod
     def home_path(env_vars):
@@ -44,7 +45,9 @@ class AppProject(object):
     @property
     def emproject(self):
         if not self._emproject:
-            self._emproject = EMProject(env_vars=self.env_vars)
+            self._emproject = EMProject(
+                                env_vars=self.env_vars,
+                                emprj_path=self.emprj_path)
         return self._emproject
 
     @property
