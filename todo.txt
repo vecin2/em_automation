@@ -1,3 +1,6 @@
+clean code
+
+
 1. sqltask bootstrap will create the base configuration settings
 2. Approaches to python configuration (Resolve properties within properties)
 

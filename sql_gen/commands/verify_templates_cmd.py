@@ -44,29 +44,6 @@ def test_rendering_{{template_name}}_matches_expected_sql():
         return result
 
 
-class TestFileParser(object):
-    def parse_values(self,string):
-        first_line = self._first_line(string)
-        str_values = self._remove_prefix("--",first_line)
-        return ast.literal_eval(str_values)
-
-    def _first_line(self,string):
-        return string.split("\n")[0]
-
-    def _extract_template_filename(self,filename):
-        return self._remove_prefix("test_",filename)
-
-    def _remove_prefix(self,prefix, string):
-        if string.startswith(prefix):
-            return string[len(prefix):].strip()
-        return string
-
-    def parse_expected_sql(self,string):
-       return self._remove_first_line(string)
-
-    def _remove_first_line(self,string):
-        return re.sub(r'^[^\n]*\n', '', string)
-
 class TestTemplatesCommandDisplayer(object):
     def test_folder_does_no_exist(self,directory):
         print("Test folder '"+directory+"' does not exist.")
@@ -76,10 +53,8 @@ class TestLoader(object):
         self.testpath=testpath
         self.templates_path=templates_path
         self.parser = TestFileParser()
-    def load_tests(self):
-        return self._get_valid_tests()
 
-    def _get_valid_tests(self):
+    def load_tests(self):
         result =[]
         testpath = self.testpath
         for filename in os.listdir(testpath):
@@ -99,7 +74,6 @@ class TestLoader(object):
         for template_file in os.listdir(self.templates_path):
             if template_file == self.parser._extract_template_filename(test_file):
                 return True
-
         return False
 
 
@@ -126,6 +100,29 @@ class TestSQLFile(object):
     def values(self):
         return self.parser.parse_values(self.content)
 
+
+class TestFileParser(object):
+    def parse_values(self,string):
+        first_line = self._first_line(string)
+        str_values = self._remove_prefix("--",first_line)
+        return ast.literal_eval(str_values)
+
+    def _first_line(self,string):
+        return string.split("\n")[0]
+
+    def _extract_template_filename(self,filename):
+        return self._remove_prefix("test_",filename)
+
+    def _remove_prefix(self,prefix, string):
+        if string.startswith(prefix):
+            return string[len(prefix):].strip()
+        return string
+
+    def parse_expected_sql(self,string):
+       return self._remove_first_line(string)
+
+    def _remove_first_line(self,string):
+        return re.sub(r'^[^\n]*\n', '', string)
 
 class TestTemplatesCommand(object):
     def __init__(self,
@@ -176,11 +173,11 @@ class TestTemplatesCommand(object):
         return self.source_builder.content
 
     def _generate_test(self,testfile):
-        filepath = testfile.filepath
         expected = testfile.expected_sql()
         actual =self.apprunner.run_test(testfile)
         template_name = testfile.template_name()
-        self.source_builder.add_expected_sql_test(template_name=template_name,
+        self.source_builder.add_expected_sql_test(
+                                          template_name=template_name,
                                           expected=expected,
                                           actual=actual)
 
