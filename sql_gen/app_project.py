@@ -40,8 +40,8 @@ class AppProject(object):
         emprj_home= emproject_home(env_vars)
         return os.path.join(emprj_home,"devtask")
 
-    def make(path=None):
-        return AppProject(path)
+    def make(emprj_path=None):
+        return AppProject(emprj_path=emprj_path)
     @property
     def emproject(self):
         if not self._emproject:

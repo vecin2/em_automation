@@ -12,9 +12,9 @@ class Keynames(object):
     def load(self):
         return self
 
-def init(app=None,path=None):
-    if path:
-        app = AppProject.make(path=path)
+def init(app=None,emprj_path=None):
+    if emprj_path:
+        app = AppProject.make(emprj_path)
     template_API ={'_keynames'   : Keynames(app),
                   '_db'          :  app.ad_queryrunner,
                   '_database'    : app.addb,

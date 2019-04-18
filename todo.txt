@@ -1,4 +1,7 @@
-clean code
+default is all
+change to pass --render-sql
+rename test type
+
 
 
 1. sqltask bootstrap will create the base configuration settings

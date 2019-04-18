@@ -31,6 +31,29 @@ def test_rendering_{{template_name}}_matches_expected_sql():
         self.content +=current_content
         return current_content
 
+    def add_db_schema_test(self,**kwargs):
+        test_content="""
+from sql_gen.app_project import AppProject
+import sqlparse
+def test_{{template_name}}_runs_succesfully():
+    query={{query}}
+    emprj_path={{emprj_path}}
+    app_project = AppProject(emprj_path=emprj_path)
+    formatted_query=sqlparse.format(query,strip_comments=True).strip()
+    sql_stmps =sqlparse.split(formatted_query)
+    for stmp in sql_stmps:
+        print("stmp*******"+ stmp)
+        app_project.addb.execute(stmp)
+"""
+        kwargs["query"]=self.convert_to_src(kwargs["query"])
+        kwargs["emprj_path"]=self.convert_to_src(kwargs["emprj_path"])
+        template = Template(test_content)
+        if self.content:
+            self.content +="\n\n"
+        current_content = template.render(kwargs)
+        self.content +=current_content
+        return current_content
+
     def convert_to_src(self,string):
         lines = string.splitlines()
         result="("
@@ -129,7 +152,9 @@ class TestTemplatesCommand(object):
                  pytest=pytest,
                  templates_path=None,
                  emprj_path=None,
-                 initial_context=None):
+                 initial_context=None,
+                 verbose_mode="-v",
+                 test_group="all"):
         self.emprj_path = emprj_path
         self.initial_context = initial_context
         self.apprunner = FileAppRunner(templates_path, 
@@ -140,9 +165,11 @@ class TestTemplatesCommand(object):
         self.displayer = TestTemplatesCommandDisplayer()
         self.source_builder = SourceTestBuilder()
         self.test_loader = TestLoader(self.all_tests_path,templates_path)
+        self.verbose_mode=verbose_mode
+        self.test_group=test_group
 
     def generated_test_filepath(self):
-            return self._tmp_folder()+"/test_all_templates.py"
+            return self._tmp_folder()+"/test_expected_sql.py"
 
     def _tmp_folder(self):
         tmp_testdir=self.app_project.paths["test_templates_tmp"].path
@@ -158,8 +185,11 @@ class TestTemplatesCommand(object):
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
+        original_stdout = sys.stdout
+        sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
         self._create_test_file(self._generate_all_tests())
-        self.pytest.main(['-x','-v',self._tmp_folder()])
+        sys.stdout = original_stdout
+        self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
 
     def _create_test_file(self,source):
         if source:
@@ -176,10 +206,17 @@ class TestTemplatesCommand(object):
         expected = testfile.expected_sql()
         actual =self.apprunner.run_test(testfile)
         template_name = testfile.template_name()
-        self.source_builder.add_expected_sql_test(
+        if self.test_group == "all" or\
+                self.test_group == "expected-sql":
+            self.source_builder.add_expected_sql_test(
                                           template_name=template_name,
                                           expected=expected,
                                           actual=actual)
+        elif self.test_group == "run-on-db":
+            self.source_builder.add_db_schema_test(
+                                          template_name=template_name,
+                                          query=expected,
+                                          emprj_path=self.emprj_path)
 
 
 class FillTemplateAppRunner():

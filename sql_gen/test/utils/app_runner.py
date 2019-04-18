@@ -112,11 +112,12 @@ class CommandTestFactory(CommandFactory):
     def make_print_sql_to_console_command(self):
         return self.print_to_console_command
 
-    def make_create_sqltask_command(self,path):
-        self.create_sqltask_command.path =path
+    def make_create_sqltask_command(self,args):
+        self.create_sqltask_command.path = args['<directory>']
         return self.create_sqltask_command
 
-    def make_test_sql_templates_command(self):
+    def make_test_sql_templates_command(self,args):
+        self.test_sql_templates_commmand.test_group=args['--tests']
         return self.test_sql_templates_commmand
 
 
@@ -235,6 +236,12 @@ class TemplatesAppRunner(AppRunner):
         test_content="-- "+str(template_vars)+'\n'+content
         self.fs.create_file(os.path.join(path,name), contents=test_content)
         return self
+    def run_test_render_sql(self):
+        self._run(['.','test-sql-templates','--tests=expected-sql'])
+        return self
+    def run_test_with_db(self):
+        self._run(['.','test-sql-templates','--tests=run-on-db'])
+        return self
     def run(self):
         self._run(['.','test-sql-templates'])
         return self
@@ -255,7 +262,10 @@ class TemplatesAppRunner(AppRunner):
     def assert_generate_tests(self,test_data_list):
         source_builder =  SourceTestBuilder()
         for test_data in test_data_list:
-            source_builder.add_expected_sql_test(**test_data)
+            if test_data['tests']=='run-on-db':
+                source_builder.add_db_schema_test(**test_data)
+            else:
+                source_builder.add_expected_sql_test(**test_data)
             testfile =open(self.command.generated_test_filepath())
             test_content=testfile.read()
             testfile.close()

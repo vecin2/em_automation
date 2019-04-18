@@ -2,7 +2,7 @@
 Usage:
     dtask print-sql
     dtask create-sql [<directory>]
-    dtask test-sql-templates
+    dtask test-sql-templates [-q|-v] [--tests=<group>]
     dtask -h | --help
 
 Examples:
@@ -10,7 +10,8 @@ Examples:
     dtask create-sql modules/PCCoreContactHistory/sqlScripts/oracle/updates/Pacificorp_R_0_0_1/overrideViewContactHistory
 
 Options:
-    -h --help     Show this screen.
+    --tests=<group>  Test which will run (all,expected-sql,run-on-db) [default: all].
+    -h --help     Show usage examples
 """
 from docopt import docopt
 

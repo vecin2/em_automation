@@ -13,12 +13,11 @@ class SysArgParser (object):
     def parse(self):
         args = arg_parser.parse()
         if args['create-sql']:
-            path = args['<directory>']
-            return self.command_factory.make_create_sqltask_command(path)
+            return self.command_factory.make_create_sqltask_command(args)
         elif args['print-sql']:
             return self.command_factory.make_print_sql_to_console_command()
         elif args['test-sql-templates']:
-            return self.command_factory.make_test_sql_templates_command()
+            return self.command_factory.make_test_sql_templates_command(args)
 
     def parse_args(self):
         arguments = docopt(__doc__, version='dtask 0.1')

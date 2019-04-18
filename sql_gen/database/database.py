@@ -106,8 +106,14 @@ class EMDatabase(object):
 
     def execute(self,query):
         cursor =self._conn().cursor()
-        cursor.execute(query)
+        cursor.execute(self._sanitise(query))
         return cursor
+
+    def _sanitise(self,query):
+        #allows execute queries finished with ';'
+        if query [-1:] ==";":
+            return query[:-1]
+        return query
 
     def _conn(self):
         if not self._connection:

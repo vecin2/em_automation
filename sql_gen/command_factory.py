@@ -1,6 +1,8 @@
 import os
 
 from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand,TestTemplatesCommand
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.emproject.em_project import emproject_home
 
 class CommandFactory(object):
     def __init__(self, env_vars=os.environ):
@@ -9,8 +11,20 @@ class CommandFactory(object):
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(self.env_vars)
 
-    def make_create_sqltask_command(self,path):
+    def make_create_sqltask_command(self,args):
+        path = args['<directory>']
         return CreateSQLTaskCommand(path=path)
 
-    def make_test_sql_templates_command(self):
-        return TestTemplatesCommand()
+    def make_test_sql_templates_command(self,args):
+        templates_path =EMTemplatesEnv().extract_templates_path(self.env_vars)
+        emprj_path= emproject_home(self.env_vars)
+        if args["-q"]:
+            verbose_mode= "-q"
+        elif args["-v"]:
+            verbose_mode= "-vv"
+        else:
+            verbose_mode="-v"
+        return TestTemplatesCommand(templates_path=templates_path,
+                                    emprj_path=emprj_path,
+                                    verbose_mode=verbose_mode,
+                                    test_group=args['--tests'])

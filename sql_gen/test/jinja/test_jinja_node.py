@@ -312,7 +312,6 @@ class TreeDrawer(object):
         for node in node.iter_child_nodes():
             self.generic_visit(node,spacer)
 
-print ("**********hiaaa*********")
 draw_visitor =TreeDrawer()
 draw_visitor.print_node(template)
 print (draw_visitor.draw)
