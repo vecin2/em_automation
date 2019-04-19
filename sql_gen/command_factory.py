@@ -1,4 +1,5 @@
 import os
+import pytest
 
 from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand,TestTemplatesCommand
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -24,7 +25,10 @@ class CommandFactory(object):
             verbose_mode= "-vv"
         else:
             verbose_mode="-v"
-        return TestTemplatesCommand(templates_path=templates_path,
+        return TestTemplatesCommand(self.make_pytest(),
+                                    templates_path=templates_path,
                                     emprj_path=emprj_path,
                                     verbose_mode=verbose_mode,
                                     test_group=args['--tests'])
+    def make_pytest(self):
+        return pytest

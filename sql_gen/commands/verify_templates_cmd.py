@@ -15,7 +15,23 @@ from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 class SourceTestBuilder(object):
     def __init__(self):
         self.content=""
+        self.apprunner =None
 
+    def build(self,testfile,cmd):
+        expected = testfile.expected_sql()
+        actual =self.apprunner.run_test(testfile)
+        template_name = testfile.template_name()
+        if cmd.test_group == "all" or\
+                cmd.test_group == "expected-sql":
+            self.add_expected_sql_test(
+                                          template_name=template_name,
+                                          expected=expected,
+                                          actual=actual)
+        elif cmd.test_group == "run-on-db":
+            self.add_db_schema_test(
+                                          template_name=template_name,
+                                          query=expected,
+                                          emprj_path=cmd.emprj_path)
     def add_expected_sql_test(self,**kwargs):
         test_content="""
 def test_rendering_{{template_name}}_matches_expected_sql():
@@ -62,6 +78,24 @@ def test_{{template_name}}_runs_succesfully():
                 result +="\""
         result +=")"
         return result
+
+class ExpectedSQLTestBuilder(SourceTestBuilder):
+    def __init__(self):
+        super().__init__()
+    def build(self,testfile,cmd):
+        expected = testfile.expected_sql()
+        actual =self.apprunner.run_test(testfile)
+        template_name = testfile.template_name()
+        if cmd.test_group == "all" or\
+                cmd.test_group == "expected-sql":
+            self.add_expected_sql_test(
+                                          template_name=template_name,
+                                          expected=expected,
+                                          actual=actual)
+
+class RunOnDBTestBuilder(SourceTestBuilder):
+    def __init__(self):
+        super().__init__()
 
 
 class TestTemplatesCommandDisplayer(object):
@@ -158,12 +192,26 @@ class TestTemplatesCommand(object):
                                   emprj_path,
                                   initial_context)
         self.app_project = AppProject(emprj_path=emprj_path)
+        self._source_builder=None
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
-        self.source_builder = SourceTestBuilder()
         self.test_loader = TestLoader(self.all_tests_path,templates_path)
         self.verbose_mode=verbose_mode
         self.test_group=test_group
+
+    @property
+    def source_builder(self):
+        if not self._source_builder:
+            self._source_builder = self.make_source_builder(self.test_group)
+            self._source_builder.apprunner = self.apprunner
+        return self._source_builder
+
+    def make_source_builder(self, test_type):
+        if test_type == "all" or\
+                test_type == "expected-sql":
+                return ExpectedSQLTestBuilder()
+        elif self.test_group == "run-on-db":
+            return RunOnDBTestBuilder()
 
     def generated_test_filepath(self):
             return self._tmp_folder()+"/test_expected_sql.py"
@@ -209,20 +257,7 @@ class TestTemplatesCommand(object):
         return self.source_builder.content
 
     def _generate_test(self,testfile):
-        expected = testfile.expected_sql()
-        actual =self.apprunner.run_test(testfile)
-        template_name = testfile.template_name()
-        if self.test_group == "all" or\
-                self.test_group == "expected-sql":
-            self.source_builder.add_expected_sql_test(
-                                          template_name=template_name,
-                                          expected=expected,
-                                          actual=actual)
-        elif self.test_group == "run-on-db":
-            self.source_builder.add_db_schema_test(
-                                          template_name=template_name,
-                                          query=expected,
-                                          emprj_path=self.emprj_path)
+        self.source_builder.build(testfile,self)
 
 
 class FillTemplateAppRunner():
