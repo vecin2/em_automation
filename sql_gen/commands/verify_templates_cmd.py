@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import ast
+import shutil
 from io import StringIO
 
 from jinja2 import Template
@@ -39,11 +40,7 @@ def test_{{template_name}}_runs_succesfully():
     query={{query}}
     emprj_path={{emprj_path}}
     app_project = AppProject(emprj_path=emprj_path)
-    formatted_query=sqlparse.format(query,strip_comments=True).strip()
-    sql_stmps =sqlparse.split(formatted_query)
-    for stmp in sql_stmps:
-        print("stmp*******"+ stmp)
-        app_project.addb.execute(stmp)
+    app_project.addb.execute(query)
 """
         kwargs["query"]=self.convert_to_src(kwargs["query"])
         kwargs["emprj_path"]=self.convert_to_src(kwargs["emprj_path"])
@@ -171,11 +168,19 @@ class TestTemplatesCommand(object):
     def generated_test_filepath(self):
             return self._tmp_folder()+"/test_expected_sql.py"
 
+    @property
+    def tmp_testdir(self):
+        return self.app_project.paths["test_templates_tmp"].path
+
     def _tmp_folder(self):
-        tmp_testdir=self.app_project.paths["test_templates_tmp"].path
-        if not os.path.exists(tmp_testdir):
-            os.makedirs(tmp_testdir)
-        return tmp_testdir
+        if not os.path.exists(self.tmp_testdir):
+            os.makedirs(self.tmp_testdir)
+        return self.tmp_testdir
+
+    def _recreate_tmp_folder(self):
+        if os.path.exists(self.tmp_testdir):
+            shutil.rmtree(self.tmp_testdir)
+        self._tmp_folder()
 
     @property
     def all_tests_path(self):
@@ -186,6 +191,7 @@ class TestTemplatesCommand(object):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
         original_stdout = sys.stdout
+        self._recreate_tmp_folder()
         sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
         self._create_test_file(self._generate_all_tests())
         sys.stdout = original_stdout

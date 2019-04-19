@@ -2,6 +2,7 @@ import pymssql
 import cx_Oracle
 from sql_gen.exceptions import DatabaseError
 import sql_gen
+from sql_gen.database.sqlparser import SQLParser
 import time
 
 class SQLRow(dict):
@@ -106,14 +107,17 @@ class EMDatabase(object):
 
     def execute(self,query):
         cursor =self._conn().cursor()
-        cursor.execute(self._sanitise(query))
+        for statement in self._parse_statements(query):
+            try:
+                cursor.execute(statement)
+            except Exception as excinfo:
+                print("The following statement failed:\n"+statement)
+                raise
+
         return cursor
 
-    def _sanitise(self,query):
-        #allows execute queries finished with ';'
-        if query [-1:] ==";":
-            return query[:-1]
-        return query
+    def _parse_statements(self,query):
+        return SQLParser().parse_runnable_statements(query)
 
     def _conn(self):
         if not self._connection:
