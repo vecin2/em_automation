@@ -7,7 +7,7 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,SourceTestBuilder
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.em_project import emproject_home
@@ -239,9 +239,15 @@ class TemplatesAppRunner(AppRunner):
     def run_test_render_sql(self):
         self._run(['.','test-sql-templates','--tests=expected-sql'])
         return self
+
     def run_test_with_db(self):
         self._run(['.','test-sql-templates','--tests=run-on-db'])
         return self
+
+    def run_test_all(self):
+        self._run(['.','test-sql-templates','--tests=all'])
+        return self
+
     def run(self):
         self._run(['.','test-sql-templates'])
         return self
@@ -259,15 +265,9 @@ class TemplatesAppRunner(AppRunner):
     def generates_no_test(self):
         assert not os.path.exists(self.command.generated_test_filepath())
 
-    def assert_generate_tests(self,test_data_list):
-        source_builder =  SourceTestBuilder()
-        for test_data in test_data_list:
-            if test_data['tests']=='run-on-db':
-                source_builder.add_db_schema_test(**test_data)
-            else:
-                source_builder.add_expected_sql_test(**test_data)
-            testfile =open(self.command.generated_test_filepath())
-            test_content=testfile.read()
-            testfile.close()
-        assert source_builder.content ==test_content
+    def assert_generated_tests(self, expected_source):
+        testfile =open(self.command.generated_test_filepath())
+        test_content=testfile.read()
+        testfile.close()
+        assert expected_source.to_string() ==test_content
 

@@ -4,8 +4,8 @@ VALUES (
 	 @CC.{{config_id | suggest(config_ids) |
 	          description("config_id (e.g. Home, CustomerPostIdentify, Customer)" )}},--config_id
   	 @ENV.Dflt, --config_env_id
-  	 {{verb_name |
-  	    description('verb name (e.g. launchIdentifyPlanMember)')}}, --verb_name
+  	 '{{verb_name |
+  	    description('verb name (e.g. launchIdentifyPlanMember)')}}', --verb_name
   	 @ET.{{entity_type}}, --entity_type
   	 @ENV.Dflt, --entity_def_type_env_id
   	 1, --sequence_number

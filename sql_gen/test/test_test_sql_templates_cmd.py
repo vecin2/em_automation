@@ -1,5 +1,5 @@
 import pytest
-from sql_gen.commands.verify_templates_cmd import TestFileParser,SourceTestBuilder
+from sql_gen.commands.verify_templates_cmd import TestFileParser,PythonModuleTemplate
 
 def test_parse_template_values():
     parser = TestFileParser()
@@ -26,7 +26,7 @@ def test_parse_multiple_lines_expected_sql():
     actual =parser.parse_expected_sql(string)
     assert_equal_sql("hello Martin!\nThis is David",actual)
 
-source = SourceTestBuilder()
+source = PythonModuleTemplate()
 def test_convert_one_line_str_to_source():
     string ="Hello Mark"
     assert string == eval(source.convert_to_src(string))

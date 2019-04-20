@@ -12,61 +12,33 @@ from sql_gen.commands import PrintSQLToConsoleCommand
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
-class SourceTestBuilder(object):
-    def __init__(self):
-        self.content=""
-        self.apprunner =None
+class SourceCode(object):
+    def __init__(self,imports=[],content=""):
+        self.imports=[]
+        self.add_imports(imports)
+        self.content=content
 
-    def build(self,testfile,cmd):
-        expected = testfile.expected_sql()
-        actual =self.apprunner.run_test(testfile)
-        template_name = testfile.template_name()
-        if cmd.test_group == "all" or\
-                cmd.test_group == "expected-sql":
-            self.add_expected_sql_test(
-                                          template_name=template_name,
-                                          expected=expected,
-                                          actual=actual)
-        elif cmd.test_group == "run-on-db":
-            self.add_db_schema_test(
-                                          template_name=template_name,
-                                          query=expected,
-                                          emprj_path=cmd.emprj_path)
-    def add_expected_sql_test(self,**kwargs):
-        test_content="""
-def test_rendering_{{template_name}}_matches_expected_sql():
-    expected={{expected}}
-    actual={{actual}}
-    assert expected == actual
-"""
-        kwargs["expected"]=self.convert_to_src(kwargs["expected"])
-        kwargs["actual"]=self.convert_to_src(kwargs["actual"])
-        template = Template(test_content)
+    def add(self,source_code):
+        self.add_imports(source_code.imports)
         if self.content:
-            self.content +="\n\n"
-        current_content = template.render(kwargs)
-        self.content +=current_content
-        return current_content
+            self.content+="\n"
+        self.content+=source_code.content
+        return self
+    def add_imports(self,imports):
+        for import_stmt in imports:
+            if import_stmt not in self.imports:
+                self.imports.append(import_stmt)
 
-    def add_db_schema_test(self,**kwargs):
-        test_content="""
-from sql_gen.app_project import AppProject
-import sqlparse
-def test_{{template_name}}_runs_succesfully():
-    query={{query}}
-    emprj_path={{emprj_path}}
-    app_project = AppProject(emprj_path=emprj_path)
-    app_project.addb.execute(query)
-"""
-        kwargs["query"]=self.convert_to_src(kwargs["query"])
-        kwargs["emprj_path"]=self.convert_to_src(kwargs["emprj_path"])
-        template = Template(test_content)
-        if self.content:
-            self.content +="\n\n"
-        current_content = template.render(kwargs)
-        self.content +=current_content
-        return current_content
+    def to_string(self):
+        content =""
+        if self.imports:
+            content = "\n".join(self.imports)
+            content +="\n\n"
 
+        content += self.content
+        return content
+
+class PythonModuleTemplate(object):
     def convert_to_src(self,string):
         lines = string.splitlines()
         result="("
@@ -79,23 +51,92 @@ def test_{{template_name}}_runs_succesfully():
         result +=")"
         return result
 
-class ExpectedSQLTestBuilder(SourceTestBuilder):
-    def __init__(self):
-        super().__init__()
-    def build(self,testfile,cmd):
+class RunOnDBTestTemplate(PythonModuleTemplate):
+    def render(self,**kwargs):
+        imports=["from sql_gen.app_project import AppProject",
+                "import sqlparse"]
+        test_content="""
+def test_{{template_name}}_runs_succesfully():
+    query={{query}}
+    emprj_path={{emprj_path}}
+    app_project = AppProject(emprj_path=emprj_path)
+    app_project.addb.execute(query)
+"""
+        kwargs["query"]=self.convert_to_src(kwargs["query"])
+        kwargs["emprj_path"]=self.convert_to_src(kwargs["emprj_path"])
+        template = Template(test_content)
+        test_content= template.render(**kwargs)
+        source_code = SourceCode(imports= imports, content=test_content)
+        return source_code
+
+class ExpectedSQLTestTemplate(PythonModuleTemplate):
+    def render(self,**kwargs):
+        imports=[]
+        test_content="""
+def test_rendering_{{template_name}}_matches_expected_sql():
+    expected={{expected}}
+    actual={{actual}}
+    assert expected == actual
+"""
+        kwargs["expected"]=self.convert_to_src(kwargs["expected"])
+        kwargs["actual"]=self.convert_to_src(kwargs["actual"])
+        template = Template(test_content)
+        test_content = template.render(kwargs)
+        return  SourceCode(imports= imports, content=test_content)
+
+class TestGenerator(object):
+    def __init__(self,emprj_path=None,test_type=None,apprunner=None):
+        self.content=SourceCode()
+        self.apprunner =apprunner
+        self.emprj_path=emprj_path
+        self.test_type= test_type
+
+    def build(self,testfile,emprj_path=None):
+        return self.run_builders(self.get_builders(),testfile)
+
+    def run_builders(self,builders,testfile):
+        for builder in builders:
+            builder.apprunner = self.apprunner
+            self.content.add(builder.build(testfile))
+
+    def get_builders(self):
+        result =[]
+        if self.test_type == "all":
+                result.append(ExpectedSQLTestBuilder(self.emprj_path))
+                result.append(RunOnDBTestBuilder(self.emprj_path,
+                                                 self.apprunner))
+        elif self.test_type == "expected-sql":
+                result.append(ExpectedSQLTestBuilder(self.emprj_path))
+        elif self.test_type == "run-on-db":
+                result.append(RunOnDBTestBuilder(self.emprj_path,
+                                                 self.apprunner))
+        return result
+
+class ExpectedSQLTestBuilder(object):
+    def __init__(self,emprj_path):
+        self.emprj_path=emprj_path
+
+    def build(self,testfile,emprj_path=None):
         expected = testfile.expected_sql()
         actual =self.apprunner.run_test(testfile)
         template_name = testfile.template_name()
-        if cmd.test_group == "all" or\
-                cmd.test_group == "expected-sql":
-            self.add_expected_sql_test(
-                                          template_name=template_name,
-                                          expected=expected,
-                                          actual=actual)
+        return ExpectedSQLTestTemplate().render(
+                                  template_name=template_name,
+                                  expected=expected,
+                                  actual=actual)
 
-class RunOnDBTestBuilder(SourceTestBuilder):
-    def __init__(self):
-        super().__init__()
+
+class RunOnDBTestBuilder(object):
+    def __init__(self,emprj_path,apprunner):
+        self.emprj_path=emprj_path
+        self.apprunner =apprunner
+
+    def build(self,testfile,emprj_path=None):
+        actual =self.apprunner.run_test(testfile)
+        return RunOnDBTestTemplate().render(
+                              template_name=testfile.template_name(),
+                              query=testfile.expected_sql(),
+                              emprj_path=self.emprj_path)
 
 
 class TestTemplatesCommandDisplayer(object):
@@ -192,7 +233,7 @@ class TestTemplatesCommand(object):
                                   emprj_path,
                                   initial_context)
         self.app_project = AppProject(emprj_path=emprj_path)
-        self._source_builder=None
+        self._test_generator=None
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
         self.test_loader = TestLoader(self.all_tests_path,templates_path)
@@ -200,18 +241,13 @@ class TestTemplatesCommand(object):
         self.test_group=test_group
 
     @property
-    def source_builder(self):
-        if not self._source_builder:
-            self._source_builder = self.make_source_builder(self.test_group)
-            self._source_builder.apprunner = self.apprunner
-        return self._source_builder
+    def test_generator(self):
+        if not self._test_generator:
+            self._test_generator =  TestGenerator(self.emprj_path,
+                                                  self.test_group,
+                                                  self.apprunner)
+        return self._test_generator
 
-    def make_source_builder(self, test_type):
-        if test_type == "all" or\
-                test_type == "expected-sql":
-                return ExpectedSQLTestBuilder()
-        elif self.test_group == "run-on-db":
-            return RunOnDBTestBuilder()
 
     def generated_test_filepath(self):
             return self._tmp_folder()+"/test_expected_sql.py"
@@ -246,18 +282,16 @@ class TestTemplatesCommand(object):
         self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
 
     def _create_test_file(self,source):
-        if source:
+        if source.to_string():
             test_file = open(self.generated_test_filepath(),"w")
-            test_file.write(source)
+            test_file.write(source.to_string())
             test_file.close()
 
     def _generate_all_tests(self):
         for testfile in self.test_loader.load_tests():
-            self._generate_test(testfile)
-        return self.source_builder.content
+            self.test_generator.build(testfile)
+        return self.test_generator.content
 
-    def _generate_test(self,testfile):
-        self.source_builder.build(testfile,self)
 
 
 class FillTemplateAppRunner():
