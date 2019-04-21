@@ -2,7 +2,7 @@ import pymssql
 import cx_Oracle
 from sql_gen.exceptions import DatabaseError
 import sql_gen
-from sql_gen.database.sqlparser import SQLParser
+from sql_gen.database.sqlparser import SQLParser,RelativeIdLoader
 import time
 
 class SQLRow(dict):
@@ -117,7 +117,7 @@ class EMDatabase(object):
         return cursor
 
     def _parse_statements(self,query):
-        return SQLParser().parse_runnable_statements(query)
+        return SQLParser(RelativeIdLoader(self)).parse_runnable_statements(query)
 
     def _conn(self):
         if not self._connection:

@@ -9,10 +9,16 @@ storage_table = {
                 }
 
 class RelativeIdLoader(object):
-    def __init__(self,storage_table=storage_table):
+    def __init__(self,db=None,storage_table=storage_table):
         self.storage_table =storage_table
+        self.db =db
     def load(self,keyset,keyname):
-        return self.storage_table[keyset][keyname]
+        query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
+        result =self.db.find(query.format(keyset,keyname))
+        return result["ID"]
+        #db.execute("SELECT ID FROM CCADMIN_IDMAP "\
+        #            where keyset = '"++"' AND KEYNAME ='{}'")
+        #db.find.id_by_keyname_n_keyset(keyset,keyname)[ID]
 
 class RelativeId(object):
     relativeid_exp="(?<=[^\w])@\w*\.\w*"

@@ -64,6 +64,11 @@ class QueryDict(AttrDict):
     def __init__(self,query_dict):
         super().__init__(query_dict)
 
+    @staticmethod
+    def get_instance():
+        """"""
+
+
     def __getattr__(self, item):
         return CallableFormatString(item,super().__getattr__(item))
 

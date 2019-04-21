@@ -276,7 +276,7 @@ class TestTemplatesCommand(object):
             return
         original_stdout = sys.stdout
         self._recreate_tmp_folder()
-        sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
+        #sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
         self._create_test_file(self._generate_all_tests())
         sys.stdout = original_stdout
         self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
