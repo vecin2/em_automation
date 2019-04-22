@@ -2,7 +2,7 @@
 Usage:
     dtask print-sql
     dtask create-sql [<directory>]
-    dtask test-sql [-q|-v|-vv] [--tests=<group>]
+    dtask test-sql [-q|-v|-vv] [--tests=<group>] [--reuse-tests]
     dtask -h | --help
 
 Examples:
@@ -11,7 +11,8 @@ Examples:
 
 Options:
     --tests=<group>  Test which will run (all,expected-sql,run-on-db) [default: all].
-    -h --help     Show usage examples
+    --reuse-tests    It runs tests under .tmp folder without recreate them.
+    -h --help        Show usage examples
 """
 from docopt import docopt
 

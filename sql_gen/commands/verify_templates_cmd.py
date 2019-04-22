@@ -230,7 +230,9 @@ class TestTemplatesCommand(object):
                  emprj_path=None,
                  initial_context=None,
                  verbose_mode="-v",
-                 test_group="all"):
+                 test_group="all",
+                 reuse_tests=False):
+        self.reuse_tests=reuse_tests
         self.emprj_path = emprj_path
         self.initial_context = initial_context
         self.apprunner = FileAppRunner(templates_path, 
@@ -278,11 +280,12 @@ class TestTemplatesCommand(object):
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
-        original_stdout = sys.stdout
-        self._recreate_tmp_folder()
-        #sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
-        self._create_test_file(self._generate_all_tests())
-        sys.stdout = original_stdout
+        if not self.reuse_tests:
+            #original_stdout = sys.stdout
+            self._recreate_tmp_folder()
+            #sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
+            self._create_test_file(self._generate_all_tests())
+            #sys.stdout = original_stdout
         self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
 
     def _create_test_file(self,source):
