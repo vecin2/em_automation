@@ -71,11 +71,14 @@ def test_{{template_name}}_runs_succesfully():
 
 class ExpectedSQLTestTemplate(PythonModuleTemplate):
     def render(self,**kwargs):
-        imports=[]
+        imports=["from sql_gen.database.sqlparser import SQLParser"]
         test_content="""
 def test_rendering_{{template_name}}_matches_expected_sql():
     expected={{expected}}
+    sqlparser =SQLParser()
+    expected =sqlparser.parse_assertable_statements(expected)
     actual={{actual}}
+    actual =sqlparser.parse_assertable_statements(actual)
     assert expected == actual
 """
         kwargs["expected"]=self.convert_to_src(kwargs["expected"])
@@ -118,6 +121,7 @@ class ExpectedSQLTestBuilder(object):
 
     def build(self,testfile,emprj_path=None):
         expected = testfile.expected_sql()
+        app_project = AppProject(emprj_path=self.emprj_path)
         actual =self.apprunner.run_test(testfile)
         template_name = testfile.template_name()
         return ExpectedSQLTestTemplate().render(

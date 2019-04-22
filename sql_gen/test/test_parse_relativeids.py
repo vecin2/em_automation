@@ -1,6 +1,11 @@
-from sql_gen.database.sqlparser import RelativeId, RelativeIdLoader,RelativeIdReplacer,SQLParser
+from sql_gen.database.sqlparser import RelativeId, RelativeIdReplacer,SQLParser
 
 
+class FakeRelativeIdLoader(object):
+    def __init__(self,storage_table=None):
+        self.storage_table =storage_table
+    def load(self,keyset,keyname):
+        return self.storage_table[keyset][keyname]
 
 def assert_relative_ids(expected_list, sqltext):
     assert expected_list == RelativeIdReplacer().find_all(sqltext)
@@ -21,7 +26,7 @@ def test_replace_ids():
     table = {"CC": {"Home": 123, "Admin":234},
              "ED": {"Agent": 345, "ContactHistory": 567}
             }
-    loader = RelativeIdLoader(table)
+    loader = FakeRelativeIdLoader(storage_table=table)
     replacer = RelativeIdReplacer(loader)
     assert_replace_ids(replacer,"(123)","(@CC.Home)")
     assert_replace_ids(replacer,"(123,123)","(@CC.Home,@CC.Home)")
@@ -69,7 +74,7 @@ VALUES (
     table = {"ED": {"customerID": 3},
              "ENV": {"Dflt": 66}
             }
-    loader = RelativeIdLoader(table)
+    loader = FakeRelativeIdLoader(table)
 
     assert [statement1, statement2] == SQLParser(loader).parse_runnable_statements(sqltext)
 

@@ -85,7 +85,7 @@ class EMDatabase(object):
     def find(self,query):
         result = self.fetch(query)
         if not result or len(result)>1:
-            raise LookupError("Expected to find one record but query returned None or more than one. If you expect more that one record use fetch instead")
+            raise LookupError("Expected to find one record but query '"+query+"' returned None or more than one. If you expect more that one record use fetch instead")
         return result[0]
 
     def fetch(self, query):

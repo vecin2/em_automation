@@ -2,7 +2,7 @@
 Usage:
     dtask print-sql
     dtask create-sql [<directory>]
-    dtask test-sql-templates [-q|-v] [--tests=<group>]
+    dtask test-sql [-q|-v|-vv] [--tests=<group>]
     dtask -h | --help
 
 Examples:

@@ -16,7 +16,7 @@ class SysArgParser (object):
             return self.command_factory.make_create_sqltask_command(args)
         elif args['print-sql']:
             return self.command_factory.make_print_sql_to_console_command()
-        elif args['test-sql-templates']:
+        elif args['test-sql']:
             return self.command_factory.make_test_sql_templates_command(args)
 
     def parse_args(self):

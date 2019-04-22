@@ -13,6 +13,7 @@ from sql_gen.app_project import AppProject
 from sql_gen.emproject.em_project import emproject_home
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.database.sqlparser import SQLParser
 
 class FakeLogger(object):
     def debug(self):
@@ -237,19 +238,19 @@ class TemplatesAppRunner(AppRunner):
         self.fs.create_file(os.path.join(path,name), contents=test_content)
         return self
     def run_test_render_sql(self):
-        self._run(['.','test-sql-templates','--tests=expected-sql'])
+        self._run(['.','test-sql','--tests=expected-sql'])
         return self
 
     def run_test_with_db(self):
-        self._run(['.','test-sql-templates','--tests=run-on-db'])
+        self._run(['.','test-sql','--tests=run-on-db'])
         return self
 
     def run_test_all(self):
-        self._run(['.','test-sql-templates','--tests=all'])
+        self._run(['.','test-sql','--tests=all'])
         return self
 
     def run(self):
-        self._run(['.','test-sql-templates'])
+        self._run(['.','test-sql'])
         return self
 
     def assert_no_of_gen_tests(self,expected_no_of_tests):

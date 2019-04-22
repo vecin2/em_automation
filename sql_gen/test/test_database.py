@@ -12,8 +12,8 @@ def test_find_throws_exception_if_more_than_one_found():
     fake_db = EMDatabase(fake_conn)
 
     with pytest.raises(LookupError) as e_info:
-        fake_db.find("")
-    assert "Expected to find one record but query returned None or more than one. If you expect more that one record use fetch instead" == str(e_info.value)
+        fake_db.find("SELECT * FROM VERB")
+    assert "Expected to find one record but query 'SELECT * FROM VERB' returned None or more than one. If you expect more that one record use fetch instead" == str(e_info.value)
 
 def test_find_returns_when_only_one_result_is_returned():
     fake_cursor =[("ID", "NAME"),

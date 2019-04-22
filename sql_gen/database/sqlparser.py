@@ -14,8 +14,11 @@ class RelativeIdLoader(object):
         self.db =db
     def load(self,keyset,keyname):
         query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
+        #try:
         result =self.db.find(query.format(keyset,keyname))
         return result["ID"]
+        #except LookupError as excinfo:
+        #    return self.generate_id(keyset,keyname)
         #db.execute("SELECT ID FROM CCADMIN_IDMAP "\
         #            where keyset = '"++"' AND KEYNAME ='{}'")
         #db.find.id_by_keyname_n_keyset(keyset,keyname)[ID]
@@ -78,3 +81,10 @@ class SQLParser(object):
         sqltext = self.strip_comments(sqltext)
         return self.split(sqltext)
 
+    def parse_assertable_statements(self,sqltext):
+        sqltext = self.strip_comments(sqltext)
+        sqltext = sqltext.replace(" ","")
+        sqltext = sqltext.replace("\t","")
+        sqltext = sqltext.replace("\r","")
+        sqltext = sqltext.replace("\n","")
+        return self.split(sqltext)
