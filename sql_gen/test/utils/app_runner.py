@@ -7,7 +7,7 @@ import pyperclip
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
-from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand
+from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,RunSQLCommand
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.em_project import emproject_home
@@ -105,10 +105,12 @@ class CommandTestFactory(CommandFactory):
     def __init__(self,
             print_to_console_command=None,
             create_sqltask_command=None,
-            test_sql_templates_commmand=None):
+            test_sql_templates_commmand=None,
+            run_sql_command=None):
         self.print_to_console_command=print_to_console_command
         self.create_sqltask_command=create_sqltask_command
         self.test_sql_templates_commmand=test_sql_templates_commmand
+        self.run_sql_command = run_sql_command
 
     def make_print_sql_to_console_command(self):
         return self.print_to_console_command
@@ -120,6 +122,10 @@ class CommandTestFactory(CommandFactory):
     def make_test_sql_templates_command(self,args):
         self.test_sql_templates_commmand.test_group=args['--tests']
         return self.test_sql_templates_commmand
+
+    def make_run_sql_command(self,env_vars):
+        return self.run_sql_command
+
 
 
 class PrintSQLToConsoleAppRunner(AppRunner):
@@ -272,3 +278,23 @@ class TemplatesAppRunner(AppRunner):
         testfile.close()
         assert expected_source.to_string() ==test_content
 
+
+class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
+    """"""
+    def __ini__(self,fs):
+        super().__init__(fs=fs)
+
+    def assert_sql_executed(self,sql):
+        assert sql == self.command.sql_printed()
+        return self
+
+    def run(self,app =None):
+        self._run(['.','run-sql'],app=app)
+        return self
+
+    def _make_command_factory(self):
+        self.command = RunSQLCommand(
+                                env_vars=self.env_vars,
+                                initial_context=self.initial_context)
+        return CommandTestFactory(
+                run_sql_command=self.command)

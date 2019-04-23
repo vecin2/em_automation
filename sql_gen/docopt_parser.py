@@ -3,6 +3,7 @@ Usage:
     dtask print-sql
     dtask create-sql [<directory>]
     dtask test-sql [-q|-v|-vv] [--tests=<group>] [--reuse-tests]
+    dtask run-sql
     dtask -h | --help
 
 Examples:

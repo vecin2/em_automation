@@ -18,6 +18,8 @@ class SysArgParser (object):
             return self.command_factory.make_print_sql_to_console_command()
         elif args['test-sql']:
             return self.command_factory.make_test_sql_templates_command(args)
+        elif args['run-sql']:
+            return self.command_factory.make_run_sql_command(args)
 
     def parse_args(self):
         arguments = docopt(__doc__, version='dtask 0.1')
