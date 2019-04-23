@@ -8,7 +8,7 @@ storage_table = {
                  "ET":{"Agent":602}
                 }
 
-class RelativeIdLoader(object):
+class NonConflictRelativeIdLoader(object):
     def __init__(self,db=None):
         self.db =db
     def load(self,keyset,keyname):
@@ -26,6 +26,32 @@ class RelativeIdLoader(object):
         else:
             result -=1
             return result
+
+class RelativeIdLoader(object):
+    def __init__(self,db=None):
+        self.db =db
+    def load(self,keyset,keyname):
+        query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
+        try:
+            result =self.db.find(query.format(keyset,keyname))
+            return result["ID"]
+        except LookupError as excinfo:
+            return self.generate_id(keyset,keyname)
+    #def generate_id(self,keyset,keyname):
+    #    query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id"
+    #    result =self.db.list(query.format(keyset))[0]
+    #    if result >0:
+    #        return -1
+    #    else:
+    #        result -=1
+    #        return result
+    def generate_id(self,keyset,keyname):
+        query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"
+        result =self.db.list(query.format(keyset))
+        if result:
+            max_id = result[0]
+            return max_id +1
+
 
 class RelativeId(object):
     relativeid_exp="(?<=[^\w])@\w*\.\w*"
@@ -80,8 +106,11 @@ class SQLParser(object):
             result.append(statement)
         return result
 
+    def parse_relative_ids(self,sqltext):
+        return self.relativeId_replacer.replace(sqltext)
+
     def parse_runnable_statements(self,sqltext):
-        sqltext = self.relativeId_replacer.replace(sqltext)
+        sqltext = self.parse_relative_ids(sqltext)
         sqltext = self.strip_comments(sqltext)
         return self.split(sqltext)
 

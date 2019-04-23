@@ -54,13 +54,15 @@ class PythonModuleTemplate(object):
 class RunOnDBTestTemplate(PythonModuleTemplate):
     def render(self,**kwargs):
         imports=["from sql_gen.app_project import AppProject",
+                "from sql_gen.database.sqlparser import SQLParser, RelativeIdLoader",
                 "import sqlparse"]
         test_content="""
 def test_{{template_name}}_runs_succesfully():
     query={{query}}
     emprj_path={{emprj_path}}
     app_project = AppProject(emprj_path=emprj_path)
-    app_project.addb.execute(query)
+    sqlparser =SQLParser(RelativeIdLoader())
+    app_project.addb.execute(query,sqlparser=sqlparser)
 """
         kwargs["query"]=self.convert_to_src(kwargs["query"])
         kwargs["emprj_path"]=self.convert_to_src(kwargs["emprj_path"])

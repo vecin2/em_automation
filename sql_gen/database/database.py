@@ -105,7 +105,7 @@ class EMDatabase(object):
         sql_gen.logger.debug("Query tooked "+ query_time)
         return cursor
 
-    def execute(self,query):
+    def execute(self,query,sqlparser=SQLParser()):
         cursor =self._conn().cursor()
         for statement in self._parse_statements(query):
             try:
