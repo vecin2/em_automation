@@ -280,13 +280,16 @@ class TestTemplatesCommand(object):
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
+        if self.verbose_mode != "-vv":
+            original_stdout = sys.stdout
+            stdout_file =self._tmp_folder()+"/run_test.log"
+            sys.stdout = open(stdout_file,"w")
         if not self.reuse_tests:
-            #original_stdout = sys.stdout
             self._recreate_tmp_folder()
-            #sys.stdout = open(self._tmp_folder()+"/run_test.log","w")
             self._create_test_file(self._generate_all_tests())
-            #sys.stdout = original_stdout
-        self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
+        if self.verbose_mode != "-vv":
+            sys.stdout = original_stdout
+        output =self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
 
     def _create_test_file(self,source):
         if source.to_string():

@@ -5,6 +5,7 @@
 *.swl
 *.swk
 *.swj
+*.swi
 *.pyc
 **/.cache/
 **/.pytest_cache/
