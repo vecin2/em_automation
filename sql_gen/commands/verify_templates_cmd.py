@@ -3,11 +3,13 @@ import sys
 import re
 import ast
 import shutil
+import sqlparse
 from io import StringIO
 
 from jinja2 import Template
 import pytest
 
+import sql_gen
 from sql_gen.commands import PrintSQLToConsoleCommand
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -220,7 +222,11 @@ class TestFileParser(object):
     def parse_values(self,string):
         first_line = self._first_line(string)
         str_values = self._remove_prefix("--",first_line)
-        return ast.literal_eval(str_values)
+        try:
+            return ast.literal_eval(str_values)
+        except Exception as excinfo:
+            sql_gen.logger.debug("Unable to parse values from first line; '"+first_line+"'")
+            return {}
 
     def _first_line(self,string):
         return string.split("\n")[0]
@@ -234,7 +240,8 @@ class TestFileParser(object):
         return string
 
     def parse_expected_sql(self,string):
-       return self._remove_first_line(string)
+       return sqlparse.format(string,strip_comments=True).strip()
+       #return self._remove_first_line(string)
 
     def _remove_first_line(self,string):
         return re.sub(r'^[^\n]*\n', '', string)

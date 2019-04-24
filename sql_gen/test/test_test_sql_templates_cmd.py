@@ -8,12 +8,18 @@ def test_parse_template_values():
     values =parser.parse_values(string)
     assert {'name':'Marlon'} == values
 
+def test_parse_empty_values_if_not_dictionary():
+    parser = TestFileParser()
+    string=("--{'name':'Marlon'}\n"
+            "hello Marlon!")
+    values =parser.parse_values(string)
+    assert {'name':'Marlon'} == values
+
 def test_parse_one_line_expected_sql():
     parser = TestFileParser()
-    string=("--{'name':'Martin'}\n"
-            "hello Martin!")
-    actual =parser.parse_expected_sql(string)
-    assert_equal_sql("hello Martin!",actual)
+    string=("hello Martin!")
+    assert {} ==parser.parse_values(string)
+    assert "hello Martin!" ==parser.parse_expected_sql(string)
 
 def assert_equal_sql(expected, actual):
     assert expected == actual
@@ -25,6 +31,7 @@ def test_parse_multiple_lines_expected_sql():
             "This is David")
     actual =parser.parse_expected_sql(string)
     assert_equal_sql("hello Martin!\nThis is David",actual)
+
 
 source = PythonModuleTemplate()
 def test_convert_one_line_str_to_source():
