@@ -157,11 +157,25 @@ class TestLoader(object):
 
     def load_tests(self):
         result =[]
+        for filepath in self._list_all_test_files():
+                result.append(TestSQLFile(filepath))
+        return result
+
+    def load_test(self,test_name):
+        testpath = self.testpath
+        for filepath in self._list_all_test_files():
+            filename= os.path.basename(filepath)
+            if test_name == filename:
+                    return TestSQLFile(filepath)
+        return None
+
+    def _list_all_test_files(self):
+        result =[]
         testpath = self.testpath
         for filename in os.listdir(testpath):
             filepath = os.path.join(testpath,filename)
             if self._is_valid_test_file(filepath):
-                result.append(TestSQLFile(filepath))
+                result.append(filepath)
         return result
 
     def _is_valid_test_file(self,filepath):
@@ -233,11 +247,12 @@ class TestTemplatesCommand(object):
                  initial_context=None,
                  verbose_mode="-v",
                  test_group="all",
+                 test_name=None,
                  reuse_tests=False):
         self.reuse_tests=reuse_tests
         self.emprj_path = emprj_path
         self.initial_context = initial_context
-        self.apprunner = FileAppRunner(templates_path, 
+        self.apprunner = FileAppRunner(templates_path,
                                   emprj_path,
                                   initial_context)
         self.app_project = AppProject(emprj_path=emprj_path)
@@ -247,6 +262,7 @@ class TestTemplatesCommand(object):
         self.test_loader = TestLoader(self.all_tests_path,templates_path)
         self.verbose_mode=verbose_mode
         self.test_group=test_group
+        self.test_name =test_name
 
     @property
     def test_generator(self):
@@ -300,9 +316,18 @@ class TestTemplatesCommand(object):
             test_file.close()
 
     def _generate_all_tests(self):
-        for testfile in self.test_loader.load_tests():
+        for testfile in self._get_tests_to_run():
             self.test_generator.build(testfile)
         return self.test_generator.content
+
+    def _get_tests_to_run(self):
+        if self.test_name:
+            testfile = self.test_loader.load_test(self.test_name)
+            if testfile:
+                return [testfile]
+            return []
+        return self.test_loader.load_tests()
+
 
 
 

@@ -121,6 +121,7 @@ class CommandTestFactory(CommandFactory):
 
     def make_test_sql_templates_command(self,args):
         self.test_sql_templates_commmand.test_group=args['--tests']
+        self.test_sql_templates_commmand.test_name=args['--test-name']
         return self.test_sql_templates_commmand
 
     def make_run_sql_command(self,env_vars):
@@ -255,6 +256,10 @@ class TemplatesAppRunner(AppRunner):
         self._run(['.','test-sql','--tests=all'])
         return self
 
+    def run_one_test(self,test_name):
+        self._run(['.','test-sql','--test-name='+test_name])
+        return self
+
     def run(self):
         self._run(['.','test-sql'])
         return self
@@ -282,7 +287,7 @@ class TemplatesAppRunner(AppRunner):
 class FakeDB(object):
     def __init__(self):
         self.executed_sql=""
-    def execute(self,sql,commit=None):
+    def execute(self,sql,commit=None,verbose='q'):
         self.executed_sql+=sql
 
 class RunSQLAppRunner(PrintSQLToConsoleAppRunner):

@@ -39,7 +39,7 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         return self.displayer.confirm_run_sql(self.sql_printed()) == 'y'
 
     def run_sql(self):
-        self._db().execute(self.sql_printed(),commit=True)
+        self._db().execute(self.sql_printed(),commit=True,verbose='v')
 
     def _db(self):
         return self.initial_context["_database"]

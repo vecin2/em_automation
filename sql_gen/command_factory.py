@@ -33,6 +33,7 @@ class CommandFactory(object):
                                     emprj_path=emprj_path,
                                     verbose_mode=verbose_mode,
                                     test_group=args['--tests'],
+                                    test_name=args['--test-name'],
                                     reuse_tests=args['--reuse-tests'])
     def make_pytest(self):
         return pytest

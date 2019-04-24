@@ -1,7 +1,7 @@
 import pytest
 
 from sql_gen.test.utils.app_runner import TemplatesAppRunner
-from sql_gen.commands.verify_templates_cmd import RunOnDBTestTemplate,ExpectedSQLTestTemplate
+from sql_gen.commands.verify_templates_cmd import RunOnDBTestTemplate,ExpectedSQLTestTemplate,SourceCode
 
 @pytest.fixture
 def app_runner(fs,capsys):
@@ -102,4 +102,36 @@ def test_generates_all(app_runner,fs):
                .add_test("test_verb.sql",{"column":"name"},"select name from verb")\
                .run_test_all()\
                .assert_generated_tests(expected_sql)
+
+def test_run_only_template(app_runner,fs):
+    check_sql = ExpectedSQLTestTemplate().render(
+                            template_name="verb",
+                            expected="select name from verb",
+                            actual="select name from verb")
+    run_on_db = RunOnDBTestTemplate().render(
+                           template_name="verb",
+                           query="select name from verb",
+                           emprj_path="/em/prj")
+    expected_sql = check_sql.add(run_on_db)
+
+    app_runner.with_emproject_under("/em/prj")\
+               .and_prj_built_under("/em/prj")\
+               .add_template("verb.sql","select {{column}} from verb")\
+               .add_template("verb2.sql","select {{column}} from verb")\
+               .make_test_dir()\
+               .add_test("test_verb.sql",{"column":"name"},"select name from verb")\
+               .add_test("test_verb2.sql",{"column":"id"},"select name from verb")\
+               .run_one_test("test_verb.sql")\
+               .assert_generated_tests(expected_sql)
+
+def test_run_only_template_wrong_name_does_not_run_anything(app_runner,fs):
+    app_runner.with_emproject_under("/em/prj")\
+               .and_prj_built_under("/em/prj")\
+               .add_template("verb.sql","select {{column}} from verb")\
+               .add_template("verb2.sql","select {{column}} from verb")\
+               .make_test_dir()\
+               .add_test("test_verb.sql",{"column":"name"},"select name from verb")\
+               .add_test("test_verb2.sql",{"column":"id"},"select name from verb")\
+               .run_one_test("test_wrong_name.sql")\
+               .generates_no_test()
 

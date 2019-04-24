@@ -2,7 +2,7 @@
 Usage:
     dtask print-sql
     dtask create-sql [<directory>]
-    dtask test-sql [-q|-v|-vv] [--tests=<group>] [--reuse-tests]
+    dtask test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
     dtask run-sql
     dtask -h | --help
 
@@ -11,9 +11,10 @@ Examples:
     dtask create-sql modules/PCCoreContactHistory/sqlScripts/oracle/updates/Pacificorp_R_0_0_1/overrideViewContactHistory
 
 Options:
-    --tests=<group>  Test which will run (all,expected-sql,run-on-db) [default: all].
-    --reuse-tests    It runs tests under .tmp folder without recreate them.
-    -h --help        Show usage examples
+    --tests=<group>         Test which will run (all,expected-sql,run-on-db) [default: all].
+    --test-name=<test-file> It runs only one file  (e.g --test-name=test_verb.sql)
+    --reuse-tests           It runs tests under .tmp folder without recreate them.
+    -h --help               Show usage examples
 """
 from docopt import docopt
 

@@ -110,7 +110,8 @@ class EMDatabase(object):
         for statement in self._parse_statements(query):
             try:
                 cursor.execute(statement)
-                print (statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
+                if verbose == 'v':
+                    print (statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
             except Exception as excinfo:
                 print("The following statement failed:\n"+statement)
                 raise
