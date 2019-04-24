@@ -105,16 +105,22 @@ class EMDatabase(object):
         sql_gen.logger.debug("Query tooked "+ query_time)
         return cursor
 
-    def execute(self,query,sqlparser=SQLParser()):
+    def execute(self,query,sqlparser=SQLParser(),commit=False,verbose='q'):
         cursor =self._conn().cursor()
         for statement in self._parse_statements(query):
             try:
                 cursor.execute(statement)
+                print (statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
             except Exception as excinfo:
                 print("The following statement failed:\n"+statement)
                 raise
 
+        if commit:
+            self.commit()
         return cursor
+
+    def commit(self):
+        self._conn().commit()
 
     def _parse_statements(self,query):
         return SQLParser(RelativeIdLoader(self)).parse_runnable_statements(query)

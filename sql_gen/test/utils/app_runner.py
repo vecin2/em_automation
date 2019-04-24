@@ -279,16 +279,27 @@ class TemplatesAppRunner(AppRunner):
         assert expected_source.to_string() ==test_content
 
 
+class FakeDB(object):
+    def __init__(self):
+        self.executed_sql=""
+    def execute(self,sql,commit=None):
+        self.executed_sql+=sql
+
 class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
     """"""
-    def __ini__(self,fs):
+    def __init__(self,fs):
         super().__init__(fs=fs)
+        self.fakedb = FakeDB()
 
     def assert_sql_executed(self,sql):
-        assert sql == self.command.sql_printed()
+        assert sql == self.fakedb.executed_sql
+        return self
+    def confirmRun(self):
+        self.user_inputs("y")
         return self
 
     def run(self,app =None):
+        self.initial_context["_database"]=self.fakedb
         self._run(['.','run-sql'],app=app)
         return self
 

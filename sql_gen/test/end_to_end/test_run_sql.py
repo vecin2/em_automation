@@ -16,6 +16,7 @@ def test_executes_template_filled_against_db(app_runner,fs):
     app_runner.using_templates_under("/templates")\
                .select_template('1. greeting.sql',{'name':'David'})\
                .saveAndExit()\
+               .confirmRun()\
                .run()\
                .assert_sql_executed("hello David!")\
                .assert_all_input_was_read()

@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand,TestTemplatesCommand
+from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand,TestTemplatesCommand,RunSQLCommand
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.emproject.em_project import emproject_home
 
@@ -11,6 +11,9 @@ class CommandFactory(object):
 
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(self.env_vars)
+
+    def make_run_sql_command(self,env_vars):
+        return RunSQLCommand(self.env_vars)
 
     def make_create_sqltask_command(self,args):
         path = args['<directory>']
