@@ -1,7 +1,5 @@
-@EC.{{category_id | suggest(_keynames.EC)}}, -- CATEGORY_ID
-{% set entity_def_ids = _keynames.ED %}
-{% set category_ids = _keynames.EC %}
-{% set entity_display_name = tmp | description("entity_display_name") %}
+{% set entity_id = tmp1 | description("entity_id")%}
+{% set entity_display_name = tmp | description("entity_display_name") | default(entity_id)%}
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, IS_DELETED, IS_BASIC, ICON_PATH, INSTANCE_ICON_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, SUPPORTS_READONLY) VALUES (
 @ED.{{entity_id}}, -- ID
 @ENV.Dflt, -- ENV_ID
@@ -16,7 +14,7 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 'Y', -- IS_BASIC
 NULL, -- ICON_PATH
 NULL, -- INSTANCE_ICON_PATH
-@ED.{{super_entity_definition | suggest(entity_def_ids) | default ("PersistableEntity")}}, -- SUPER_ENTITY_DEFINITION
+@ED.{{super_entity_definition | suggest(_keynames.ED) | default ("PersistableEntity")}}, -- SUPER_ENTITY_DEFINITION
 @ENV.Dflt, -- SUPER_ENTITY_DEFINITION_ENV_ID
 'Y' --SUPPORTS_READONLY
 );
