@@ -7,6 +7,8 @@ class Keynames(object):
         self.dbfactory =dbfactory
     def __getitem__(self,name):
         return self.list(name)
+    def __getattr__(self,name):
+        return self.list(name)
     def list(self,keyset):
         return self.dbfactory.addb.list("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"'")
     def load(self):

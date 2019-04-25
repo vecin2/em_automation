@@ -1,4 +1,4 @@
-from jinja2.nodes import List,Name,Const,Getitem
+from jinja2.nodes import List,Name,Const,Getitem,Getattr
 from sql_gen import logger
 
 class PromptFilter:
@@ -20,7 +20,12 @@ class PromptFilter:
             dict = self._render_arg(arg.node,context)
             key = self._render_arg(arg.arg,context)
             result = dict[key]
+        elif isinstance(arg,Getattr):
+            value = context.resolve(arg.node.name)
+            result = value.__getattr__(arg.attr)
+            
         else:
+            print(str(arg))
             raise ValueError("Filters at the moment only support collections,contants and variables."+\
                     "But you passed something else, maybe a function? "+str(arg))
         logger.debug("Argument resolved to: "+ str(result))
