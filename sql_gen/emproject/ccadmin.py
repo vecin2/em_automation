@@ -1,6 +1,7 @@
 import sql_gen
 import os
 from sql_gen import logger
+from sql_gen.exceptions import CCAdminException
 
 class CCAdmin(object):
     show_config_content=""
