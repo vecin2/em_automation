@@ -1,7 +1,7 @@
 {#
-To extend entity we create a new entity with same object path and interface as the current one. 
-This will be the base entity.
-Then we update the current entity to inherit from the  new created entity
+To extend entity we create a new "Base" entity pointing to the OTB  object and interface.
+Then we update the OTB entity to point to our extended object
+and to inherit from the new created entity
 #}
 
 {{ base_entity_name | description("Entity name you would like to extend(e.g CustomerED)")}}
