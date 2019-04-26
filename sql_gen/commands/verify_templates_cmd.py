@@ -314,7 +314,7 @@ class TestTemplatesCommand(object):
             self._create_test_file(self._generate_all_tests())
         if self.verbose_mode != "-vv":
             sys.stdout = original_stdout
-        output =self.pytest.main(['-x',self.verbose_mode,self._tmp_folder()])
+        output =self.pytest.main([self.verbose_mode,self._tmp_folder()])
 
     def _create_test_file(self,source):
         if source.to_string():
