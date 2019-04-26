@@ -36,7 +36,7 @@ def test_testname_not_sql_ext_does_not_run(app_runner,fs):
                .run()\
                .generates_no_test()
 
-def test_generates_test_expected_sql(app_runner,fs):
+def test_generates_test_expected_sql_from_dict(app_runner,fs):
     expected_sql = ExpectedSQLTestTemplate().render(
                             template_name="greeting",
                             expected="hello John!",
@@ -46,6 +46,19 @@ def test_generates_test_expected_sql(app_runner,fs):
                .add_template("greeting.sql","hello {{name}}!")\
                .make_test_dir()\
                .add_test("test_greeting.sql",{"name":"John"},"hello John!")\
+               .run_test_render_sql()\
+               .assert_generated_tests(expected_sql)
+
+def test_generates_test_expected_sql_from_list(app_runner,fs):
+    expected_sql = ExpectedSQLTestTemplate().render(
+                            template_name="greeting",
+                            expected="hello John!",
+                            actual="hello John!")
+    app_runner.with_emproject_under("/em/prj")\
+               .and_prj_built_under("/em/prj")\
+               .add_template("greeting.sql","hello {{name}}!")\
+               .make_test_dir()\
+               .add_test("test_greeting.sql",None,"hello John!",["John"])\
                .run_test_render_sql()\
                .assert_generated_tests(expected_sql)
 

@@ -218,7 +218,6 @@ class TemplatesAppRunner(AppRunner):
     def __init__(self,fs,capsys=None):
         super().__init__(fs=fs)
         self.capsys = capsys
-        self.tests=[]
 
     def _make_command_factory(self):
         templates_path =EMTemplatesEnv().extract_templates_path(self.env_vars)
@@ -236,14 +235,18 @@ class TemplatesAppRunner(AppRunner):
         self.fs.create_dir(path)
         return self
 
-    def add_test(self, name, template_vars, content):
-        self.tests.append({"name": name,
-                           "template_vars":template_vars,
-                           "content": content})
+    def add_test(self, name, template_vars, content, template_vars_list=None):
         path =self._app_path("test_templates")
-        test_content="-- "+str(template_vars)+'\n'+content
+        test_data_object=self._get_template_vars(template_vars,template_vars_list)
+        test_content="-- "+str(test_data_object)+'\n'+content
         self.fs.create_file(os.path.join(path,name), contents=test_content)
         return self
+    def _get_template_vars(self,template_vars,template_vars_list):
+        if template_vars:
+            return template_vars
+        else:
+            return template_vars_list
+
     def run_test_render_sql(self):
         self._run(['.','test-sql','--tests=expected-sql'])
         return self

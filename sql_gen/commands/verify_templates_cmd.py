@@ -347,9 +347,13 @@ class FillTemplateAppRunner():
         self.user_inputs("x")
         return self
 
-    def select_template(self, template_option,values):
-        self.user_inputs(template_option)
-        for value in values.values():
+    def select_template(self, template_name,values):
+        self.user_inputs(template_name)
+        if isinstance(values,dict):
+            value_list=list(values.values())
+        else:
+            value_list = values
+        for value in value_list:
             self.user_inputs(value)
         return self
 

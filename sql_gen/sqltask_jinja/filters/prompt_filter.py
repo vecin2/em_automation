@@ -23,8 +23,8 @@ class PromptFilter:
         elif isinstance(arg,Getattr):
             value = context.resolve(arg.node.name)
             result = value.__getattr__(arg.attr)
-            
         else:
+#Getattr(node=Name(name='_keynames', ctx='load'), attr='EC', ctx='load')
             print(str(arg))
             raise ValueError("Filters at the moment only support collections,contants and variables."+\
                     "But you passed something else, maybe a function? "+str(arg))
