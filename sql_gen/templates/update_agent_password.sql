@@ -4,4 +4,4 @@ set PASSWORD = (select PASSWORD from AGENT where username ='{{agent_b | descript
  SALT = (select SALT from agent where username = '{{agent_b}}'),
  EXPIRES = (select EXPIRES from AGENT where USERNAME = '{{agent_b}}'),
  DISABLED ='no'
-where USERNAME in ('{{agent_a}}')
+where USERNAME in ('{{agent_a | suggest([_db.list.agent_usernames()])}}')

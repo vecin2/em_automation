@@ -9,6 +9,8 @@ class PromptFilter:
         return result
 
     def _render_arg(self,arg,context):
+        error_msg= "Filters at the moment only support collections,contants and variables."+\
+                    "But you passed something else, maybe a function? "
         logger.debug("Render argument '"+str(arg)+"' within filter "+self.filter.name)
         if isinstance(arg,List):
             result = self._render_list(arg,context)
@@ -21,13 +23,16 @@ class PromptFilter:
             key = self._render_arg(arg.arg,context)
             result = dict[key]
         elif isinstance(arg,Getattr):
-            value = context.resolve(arg.node.name)
-            result = value.__getattr__(arg.attr)
+            try:
+                value = context.resolve(arg.node.name)
+                result = value.__getattr__(arg.attr)
+            except Exception:
+                print(str(arg))
+                raise ValueError(error_msg +"\n"+str(arg))
+
         else:
-#Getattr(node=Name(name='_keynames', ctx='load'), attr='EC', ctx='load')
             print(str(arg))
-            raise ValueError("Filters at the moment only support collections,contants and variables."+\
-                    "But you passed something else, maybe a function? "+str(arg))
+            raise ValueError(error_msg +"\n"+str(arg))
         logger.debug("Argument resolved to: "+ str(result))
         return result
 
