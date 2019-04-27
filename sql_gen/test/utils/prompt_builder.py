@@ -45,7 +45,11 @@ class _TestPromptBuilder(object):
         return self
 
     def does_not_prompt(self):
-        assert None == self._parser().next_prompt(self.template_values)
+        next_prompt =self._parser().next_prompt(self.template_values)
+        if not next_prompt:
+            assert True
+            return
+        assert None == next_prompt.get_display_text()
 
     def assert_display_msg(self,msg, prompt):
         assert msg +": " == prompt.get_display_text()
