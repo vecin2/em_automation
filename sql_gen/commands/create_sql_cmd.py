@@ -4,6 +4,7 @@ import pyperclip
 
 from sql_gen.ui.utils import select_string_noprompt,prompt_suggestions
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import init
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
