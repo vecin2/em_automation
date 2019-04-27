@@ -2,7 +2,8 @@ from sql_gen.test.utils.draw_trees import TreeDrawer
 from jinja2 import  Environment,Template
 from jinja2.compiler import generate
 from jinja2.utils import concat
-from sql_gen.sql_gen.environment_selection import  EMTemplatesEnv
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+
 
 text ='''
  {% set tmp_pd_type = process_descriptor_type      | description('type_id (0=regular process, 2=action, 3=sla)')
@@ -11,7 +12,11 @@ text ='''
  {% set repository_path =         tmp_repo_path | codepath()
 						   | default (suggested_ext_path) %}
 '''
-env = EMTemplatesEnv().get_env()
+text="""
+{% if enter_user_name %}
+    {{ username }}
+{% endif %}"""
+env = EMTemplatesEnv().make_env("/opt/em/projects/Pacificorp/trunk/devtask/templates")
 t =env.from_string(text)
 #t = Template(text)
 print("***printing template rendered****")
