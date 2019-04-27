@@ -98,3 +98,13 @@ def test_suggest_should_resolve_vars():
             .with_values({})\
             .should_prompt_next_suggesting("name",[1,2,3])
 
+def test_if_tag_does_not_prompt_if_condition_not_met():
+    template_str="""
+{% if enter_user_name %}
+    {{ username }}
+{% endif %}"""
+    template(template_str)\
+            .with_values({})\
+            .should_prompt_next("enter_user_name")\
+            .with_values({"enter_user_name":True})\
+            .does_not_prompt()
