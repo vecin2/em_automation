@@ -12,15 +12,16 @@ text ='''
  {% set repository_path =         tmp_repo_path | codepath()
 						   | default (suggested_ext_path) %}
 '''
-text="""
+text=""""
 {% if enter_user_name %}
-    {{ username }}
+    {% set process_descriptor_ref_id = process_descriptor_id %}
 {% endif %}"""
 env = EMTemplatesEnv().make_env("/opt/em/projects/Pacificorp/trunk/devtask/templates")
 t =env.from_string(text)
 #t = Template(text)
 print("***printing template rendered****")
-print(t.render({}))
+#print(t.render({"process_descriptor_id":"hola"}))
+print(t.render({"enter_user_name":True}))
 
 tree = t.environment.parse(text)
 print("***printing tree****")
@@ -28,6 +29,6 @@ TreeDrawer().print_node(tree)
 print("****Generated root function****")
 print(generate(tree, t.environment, "pedro", "<<ast>>"))
 context =t.new_context({})
-rendered_text =concat(t.root_render_func(context))
+#rendered_text =concat(t.root_render_func(context))
 print("context looks like "+str(context))
 print("context vars looks like "+str(context.vars))

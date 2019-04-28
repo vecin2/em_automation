@@ -4,7 +4,17 @@ from . import source_inspector
 from sql_gen.sqltask_jinja.filters.codepath import codepath
 from sql_gen.sqltask_jinja.filters.description import description
 from sql_gen.sqltask_jinja.filters.suggest import suggest
+from jinja2 import StrictUndefined,Undefined,UndefinedError
+from jinja2.runtime import missing
 
+class TraceUndefined(Undefined):
+    executed_vars={}
+    def __init__(self, hint=None, obj=missing, name=None, exc=UndefinedError):
+        TraceUndefined.executed_vars[name]=True
+        super().__init__(hint = hint,
+                         obj= missing,
+                         name= name,
+                         exc =exc)
 
 class EnvBuilder(object):
     def __init__(self):
@@ -41,7 +51,8 @@ class EnvBuilder(object):
                       loader=self._get_loader(),
                       trim_blocks=True,
                       lstrip_blocks=True,
-                      keep_trailing_newline=False #default
+                      keep_trailing_newline=False, #default
+                      undefined=TraceUndefined
                       )
         self._build_globals(env)
         self._build_filters(env)

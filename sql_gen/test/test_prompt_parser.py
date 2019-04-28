@@ -106,5 +106,5 @@ def test_if_tag_does_not_prompt_if_condition_not_met():
     template(template_str)\
             .with_values({})\
             .should_prompt_next("enter_user_name")\
-            .with_values({"enter_user_name":True})\
+            .with_values({"enter_user_name":False})\
             .does_not_prompt()

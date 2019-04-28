@@ -9,6 +9,7 @@ from jinja2.nodes import Call,Name
 from sql_gen.docugen.prompt import Prompt
 from sql_gen import logger
 from sql_gen.docugen.template_context import TemplateContext
+from sql_gen.docugen.env_builder import TraceUndefined
 
 class PromptParser(object):
     def __init__(self,template):
@@ -93,10 +94,19 @@ class PromptVisitor(NodeVisitor):
         if node.name not in template_values \
                 and node.name in meta.find_undeclared_variables(self.ast)\
                 and (not isinstance(node.parent,Call) or node.parent.node != node)\
-                and not self._has_been_visit(node.name):
+                and not self._has_been_visit(node.name)\
+                and self._is_executed(node.name,template_values):
                 self.names_visited.append(node.name)
                 return Prompt(node.name, [])
         return None
+
+    def _is_executed(self,var_name,template_values):
+        try:
+            template_values.resolve(var_name)
+        except Exception as exc_info:
+            if var_name in  TraceUndefined.executed_vars:
+                return True
+        return False
 
     def _has_been_visit(self,node_name):
         return node_name in self.names_visited
