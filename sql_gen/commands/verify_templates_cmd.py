@@ -99,22 +99,26 @@ class TestGenerator(object):
         self.test_type= test_type
 
     def build(self,testfile,emprj_path=None):
-        return self.run_builders(self.get_builders(),testfile)
+        return self.run_builders(self.get_builders(testfile),testfile)
 
     def run_builders(self,builders,testfile):
         for builder in builders:
             builder.apprunner = self.apprunner
             self.content.add(builder.build(testfile))
 
-    def get_builders(self):
+    def get_builders(self,testfile):
         result =[]
         if self.test_type == "all":
+                print ("Generating expected-sql test for "+testfile.template_name())
                 result.append(ExpectedSQLTestBuilder(self.emprj_path))
+                print ("Generating run-on-db test for "+testfile.template_name())
                 result.append(RunOnDBTestBuilder(self.emprj_path,
                                                  self.apprunner))
         elif self.test_type == "expected-sql":
+                print ("Generating expected-sql test for "+testfile.template_name())
                 result.append(ExpectedSQLTestBuilder(self.emprj_path))
         elif self.test_type == "run-on-db":
+                print ("Generating run-on-db test for "+testfile.template_name())
                 result.append(RunOnDBTestBuilder(self.emprj_path,
                                                  self.apprunner))
         return result

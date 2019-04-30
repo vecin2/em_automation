@@ -1,0 +1,5 @@
+--["1"]
+update FC_GLOBALS 
+ set STRING_VALUE ='1'
+ where name ='STALE_CACHE_PRESERVE_WINDOW_SIZE'
+

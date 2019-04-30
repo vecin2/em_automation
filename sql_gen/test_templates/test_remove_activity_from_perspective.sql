@@ -1,4 +1,4 @@
---["Home","searchContactHistory","ContactHistoryEntitiyDefinition"]
+--["Home","ContactHistoryEntitiyDefinition","searchContactHistory"]
 DELETE FROM EVA_CONTEXT_VERB_ENTRY
 where CONFIG_ID = @CC.Home
 and VERB = 'searchContactHistory'
