@@ -79,6 +79,7 @@ class RelativeIdReplacer(object):
         self.loader = loader
     REG_EXP="(?<=[^\w])@\w*\.\w*"
     def find_all(self,sqltext):
+        #matches pattern @ET.inlineSearch
         ids =re.findall(self.REG_EXP,sqltext)
         #remove duplicates
         return list(set(ids))

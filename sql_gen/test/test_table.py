@@ -1,5 +1,5 @@
 import pytest
-from sql_gen.database.sqltable import SQLTable,SQLRow,Matcher
+from sql_gen.database.sqltable import SQLTable,SQLRow,Matcher,ExpressionFilter
 
 
 def test_list_of_dicts():
@@ -28,12 +28,47 @@ def test_table_where(table):
     assert "search" == table.where(id="1")[0]["NAME"]
     assert 1 == table.where(name="search",id=1)[0]["ID"]
     assert 0 == len(table.where(name="search",id=2))
-    #assert 1 == len(table.where("ID >1"))
+    assert 1 == len(table.where("ID >1"))
+
+def run_reg_expression(var1, expected_operator, var2, expression):
+    expr_filter = ExpressionFilter(expression)
+    assert expected_operator == expr_filter.operator
+    assert var1 == expr_filter.key
+    assert var2 == expr_filter.value
+
+def fail_reg_expression(message,expression):
+    with pytest.raises(ValueError) as excinfo:
+        expr_filter = ExpressionFilter(expression)
+    assert message in str(excinfo)
+
+
+def test_expr_filter_constructor():
+    fail_reg_expression("Invalid operator '<>'","a <> b")
+    run_reg_expression("a","<","b","a<b")
+    run_reg_expression("a",">","b","a>b")
+    run_reg_expression("a","==","b","a==b")
+    run_reg_expression("a","!=","b","a!=b")
+    run_reg_expression("a","<=","b","a<=b")
+    run_reg_expression("a",">=","b","a>=b")
+    run_reg_expression("a","<","b","a < b")
+
+def run_exp_filter_test(expected, expr, table):
+    table1 = table.clone()
+    expr_filter = ExpressionFilter(expr)
+    assert expected == expr_filter.apply(table1).rows
+
+def test_expr_filter(table):
+    run_exp_filter_test([{"ID":1,"NAME":"search"}],"ID<2",table)
+    run_exp_filter_test([{"ID":2,"NAME":"inlinelist"}],"ID>1",table)
+    run_exp_filter_test([{"ID":2,"NAME":"inlinelist"}],"ID>=2",table)
+    run_exp_filter_test([{"ID":1,"NAME":"search"},
+                         {"ID":2,"NAME":"inlinelist"}],"ID<=2",table)
+    run_exp_filter_test([{"ID":1,"NAME":"search"} ],"ID!=2",table)
 
 def run_match_test(value1 ,value2):
     return Matcher.match(value1,value2)
+
 def test_comparator():
     assert True == run_match_test(1,1)
     assert True == run_match_test(1,"1")
-    assert True == run_match_test("1",1)
     assert True == run_match_test("1",1)

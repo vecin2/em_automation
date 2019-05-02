@@ -90,7 +90,7 @@ class PromptVisitor(NodeVisitor):
         try:
             return getattr(importlib.import_module("sql_gen.sqltask_jinja.filters."+filter_name), filter_name.capitalize()+"Filter") 
         except ModuleNotFoundError as excinfo:
-            logger.info("Found a  filter "+filter_name+"which is not implemented in sqltask")
+            logger.info("Found filter "+filter_name+" which is not implemented in sqltask")
             return None
 
     def visit_Name(self,node,template_values={}):

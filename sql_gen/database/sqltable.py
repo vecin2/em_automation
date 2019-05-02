@@ -1,5 +1,8 @@
-import sql_gen
+import re
+
 from prettytable import PrettyTable
+
+import sql_gen
 
 class SQLTable(object):
     def __init__(self, rows_dict=None):
@@ -25,35 +28,30 @@ class SQLTable(object):
             prettytable.add_row(list(row.values()))
         return str(prettytable)
 
+    def to_str(self):
+        return str(self)
     def append(self, row):
         self.rows.append(row)
 
     def clone(self):
         return SQLTable(self.rows.copy())
 
-    def where(self,*args,**kwargs):
+    def where(self,expression=None,**kwargs):
         result =self.clone()
-        filters =self._get_filters(*args,**kwargs)
+        filters =self._get_filters(expression,**kwargs)
         for sqlfilter in filters:
            result =sqlfilter.apply(result)
         return result
 
-    def _get_filters(self,*args,**kwargs):
+    def _get_filters(self,expression,**kwargs):
         filters = self._get_keyvalue_filters(**kwargs)
-        #filters.extend(self._get_expr_filters(args))
+        if expression:
+            filters.append(ExpressionFilter(expression))
         return filters
 
     def _get_keyvalue_filters(self,**kwargs):
         filters=[]
         for key in kwargs:
-            upper_key = key.upper()
-            value =kwargs[key]
-            filters.append(KeyValueFilter(key.upper(),value))
-        return filters
-
-    def _get_expr_filters(self,*args):
-        filters=[]
-        for expr in args:
             upper_key = key.upper()
             value =kwargs[key]
             filters.append(KeyValueFilter(key.upper(),value))
@@ -78,12 +76,7 @@ class SQLRow(dict):
     def _headers(self):
         return list(self.keys())
 
-
-class KeyValueFilter(object):
-    def __init__(self,key,value):
-        self.key =key
-        self.value =value
-
+class TableFilter(object):
     def apply(self,table):
         result = SQLTable()
         for row in table:
@@ -91,22 +84,55 @@ class KeyValueFilter(object):
                 result.append(row)
         return result
 
+class KeyValueFilter(TableFilter):
+    def __init__(self,key,value):
+        self.key =key
+        self.value =value
+
+    def is_valid(self,row):
+        expression =str(self.key)+"=="+str(self.value)
+        return ExpressionFilter(expression).is_valid(row)
+
+class ExpressionFilter(TableFilter):
+    def __init__(self,expression):
+        self.operator =self._parse_operator(expression)
+        try:
+            splitted = re.split(self.operator,expression)
+            self.key =splitted[0].strip()
+            self.value =splitted[1].strip()
+        except Exception as exception:
+            raise ValueError("Unable to parse expression '"+expression+"'. Expression format should be: <COLUMN_NAME> [>|>=|<|<=|==!=|=] <value>")
+
+    def _parse_operator(self,expression):
+        operator = re.findall("^\w*(.*?)\w*$",expression)[0].strip()
+        valid_operators=["=","<",">","<=",">=","==","!="]
+        if operator in valid_operators:
+            return operator
+        else:
+            self._raise_invalid_operator(expression,operator,valid_operators)
+
+    def _raise_invalid_operator(self,expression,operator,valid_operators):
+        raise ValueError("Invalid operator '"+operator+"' within expression '"+expression+"'. Valid operators are: "+ str(valid_operators)) 
+
     def is_valid(self,row):
         return self.key in row\
-                    and Matcher.match(row[self.key],self.value)
+                    and Matcher.match(row[self.key],self.value,self.operator)
 
 class Matcher(object):
     @staticmethod
-    def match(value1, value2):
+    def match(value1, value2,operator="=="):
         type1 = type(value1)
-        sql_gen.logger.info("Matching '"+ str(value1) + "' of  type '"+str(type1)+"'"+\
-                              "with '"+str(value2)+"' of type '"+str(type(value2))+"'.")
         value2_cast =type1(value2)
-        result = value1 == value2_cast
+        result = eval("value1" +operator + "value2_cast")
         if result:
-            sql_gen.logger.info("They match!")
+            match="Mached!"
         else:
-            sql_gen.logger.info("They dont match")
+            match="Do not match"
+        expression=str(value1) +" ("+str(type(value1))+") "\
+                +operator+ " "\
+                +str(value2)+" ("+str(type(value2))+")"\
+                +"-->" +match
+        sql_gen.logger.info(expression)
         return result
 
 
