@@ -3,16 +3,9 @@ import cx_Oracle
 from sql_gen.exceptions import DatabaseError
 import sql_gen
 from sql_gen.database.sqlparser import SQLParser,RelativeIdLoader
+from sql_gen.database.sqltable import SQLTable,SQLRow
 import time
 
-class SQLRow(dict):
-    def __init(self, dict_row):
-        dict.__init__(self,dict_row)
-
-    def __getitem__(self,key):
-        if dict.__getitem__(self,key) is None:
-            return "NULL"
-        return dict.__getitem__(self,key)
 
 class Connector(object):
     """It acts a wrapper of several connector libraries. This allows to use different types of DBs, e.g. sqlserver or oracle."""
@@ -93,7 +86,7 @@ class EMDatabase(object):
             sql_gen.logger.debug("Returning from cache")
             return self.queries_cache[query]
         cursor = self._run_query(query)
-        result = self._extract_rowlist(cursor)
+        result = SQLTable(self._extract_rowlist(cursor))
         self.queries_cache[query]=result
         return result
 
@@ -113,7 +106,8 @@ class EMDatabase(object):
                 if verbose == 'v':
                     print (statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
             except Exception as excinfo:
-                print("The following statement failed:\n"+statement)
+                print("The following statement failed:\n"+statement+"\n"\
+                        "Due to: "+ str(excinfo))
                 raise
 
         if commit:

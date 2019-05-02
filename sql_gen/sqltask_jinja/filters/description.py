@@ -1,6 +1,6 @@
 from sql_gen.sqltask_jinja.filters import PromptFilter
 
-def description(value, description):
+def description(value, description,table=None):
     return value
 
 def get_template_filter():
@@ -11,4 +11,11 @@ class DescriptionFilter(PromptFilter):
         self.filter = jinja_filter;
 
     def apply(self, prompt,context):
-        prompt.display_text = self._render_args(context)[0]
+        resolved_args=self._render_args(context)
+        display_text=""
+        if len(resolved_args) >1:
+            table =resolved_args[1]
+            display_text +=str(table)+"\n"
+        display_text+=resolved_args[0]
+        prompt.display_text = display_text
+        #prompt.display_text =str(x)+"\n"

@@ -1,11 +1,4 @@
-*.swm
-*.swn
-*.swo
-*.swp
-*.swl
-*.swk
-*.swj
-*.swi
+*.sw[a-z]
 *.pyc
 **/.cache/
 **/.pytest_cache/

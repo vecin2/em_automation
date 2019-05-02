@@ -5,7 +5,7 @@
 	{% set old_pd = _db.find.pd_by_ed_n_vname(entity_def_id,verb_name) %}
 
  {# Request add_process_desc_variables using old pd #}
- {% set config_id = 	  tmp_pd_config        	   | description("config_id, default fetched from current value")
+ {% set config_id = 	  tmp_pd_config        	   | description("config_id, default fetched from current value",old_pd)
 			  	  	           | default(old_pd['CONFIG_ID']) %}
 
  {% set process_descriptor_type = tmp_pd_type      | description('type_id (0=regular process, 2=action, 3=sla)')
