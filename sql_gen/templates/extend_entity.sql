@@ -4,7 +4,8 @@ Then we update the OTB entity to point to our extended object
 and to inherit from the new created entity
 #}
 
-{{ base_entity_name | description("Entity name you would like to extend(e.g CustomerED)")}}
+{{ base_entity_id | description("Entity name you would like to extend(e.g CustomerED)") | suggest(_keynames.ED)}}
+{% set base_entity = _db.find.ed_by_id(base_entity_id) %}
 {% set entity_name = "Base"+base_entity_name %}
 {{ interface_path | description("Interface path you would like to override (e.g. CoreEntities.API.Interfaces.EICustomer)")}}
 {{ object_path | description("Logical object path you would like to override(e.g CoreEntities.Implementation.Customer.Customer):")}}

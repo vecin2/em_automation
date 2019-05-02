@@ -30,11 +30,32 @@ class SQLTable(object):
 
     def to_str(self):
         return str(self)
+
     def append(self, row):
         self.rows.append(row)
 
     def clone(self):
         return SQLTable(self.rows.copy())
+
+    def column(self, column_name):
+        try:
+            if not self.rows:
+                self._handle_invalid_column(column_name)
+            return [row[column_name] for row in self.rows]
+        except KeyError:
+            self._handle_invalid_column(column_name)
+
+    def _handle_invalid_column(self,column_name):
+            error_msg="Trying to extract column '"+ column_name+"' but it doesn't exist."
+            if self.rows:
+                column_names = self.rows[0]._headers()
+                error_msg += " Did you mean any of the following "+str(column_names)
+            else:
+                error_msg += " Table is empty!"
+            raise KeyError(error_msg)
+
+    def find(self,expression=None,**kwargs):
+        return self.where(expression,**kwargs)[0]
 
     def where(self,expression=None,**kwargs):
         result =self.clone()

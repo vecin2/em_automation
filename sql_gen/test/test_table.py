@@ -30,6 +30,15 @@ def test_table_where(table):
     assert 0 == len(table.where(name="search",id=2))
     assert 1 == len(table.where("ID >1"))
 
+def test_table_column(table):
+    assert [1,2] == table.column("ID")
+
+def test_table_column_invalid_name(table):
+    with pytest.raises (KeyError) as excinfo:
+        table.column("IDs")
+    with pytest.raises (KeyError) as excinfo:
+        SQLTable().column("IDs")
+
 def run_reg_expression(var1, expected_operator, var2, expression):
     expr_filter = ExpressionFilter(expression)
     assert expected_operator == expr_filter.operator

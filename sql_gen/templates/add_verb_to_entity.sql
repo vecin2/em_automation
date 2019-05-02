@@ -53,7 +53,7 @@ INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_E
 '{{is_user_visible | description("is_user_visible (Y/N)")}}' -- IS_USER_VISIBLE
 );
 
-{% set entity = _db.find.ed_by_relid(entity_def_id) %}
+{% set entity = _db.find.ed_by_id(entity_def_id) %}
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
 'VerbED',-- OBJECT_TYPE
 '{{entity["NAME"]}}__{{process_descriptor_id}}',-- OBJECT_INSTANCE
