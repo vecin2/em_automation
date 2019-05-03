@@ -30,6 +30,11 @@ def test_table_where(table):
     assert 0 == len(table.where(name="search",id=2))
     assert 1 == len(table.where("ID >1"))
 
+def test_table_where_string_with_spaces(table):
+    displayName="Contact search"
+    table.append(SQLRow({"ID":3,"NAME":displayName}))
+    assert 3 == table.where("NAME=="+displayName)[0]["ID"]
+
 def test_table_column(table):
     assert [1,2] == table.column("ID")
 
@@ -60,6 +65,7 @@ def test_expr_filter_constructor():
     run_reg_expression("a","<=","b","a<=b")
     run_reg_expression("a",">=","b","a>=b")
     run_reg_expression("a","<","b","a < b")
+    run_reg_expression("a b","==","a b","a b == a b")
 
 def run_exp_filter_test(expected, expr, table):
     table1 = table.clone()

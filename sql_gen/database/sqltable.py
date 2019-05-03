@@ -21,6 +21,9 @@ class SQLTable(object):
         return self.rows.__iter__()
 
     def __repr__(self):
+        return (self.rows.__repr__())
+
+    def __str__(self):
         prettytable = PrettyTable()
         if self.rows:
             prettytable.field_names = self.rows[0]._headers()
@@ -89,6 +92,9 @@ class SQLRow(dict):
         return dict.__getitem__(self,key)
 
     def __repr__(self):
+        return str(super().__repr__())
+
+    def __str__(self):
         prettytable = PrettyTable()
         prettytable.field_names = self._headers()
         prettytable.add_row(list(self.values()))
@@ -125,7 +131,7 @@ class ExpressionFilter(TableFilter):
             raise ValueError("Unable to parse expression '"+expression+"'. Expression format should be: <COLUMN_NAME> [>|>=|<|<=|==!=|=] <value>")
 
     def _parse_operator(self,expression):
-        operator = re.findall("^\w*(.*?)\w*$",expression)[0].strip()
+        operator = re.findall("^[\w\s]*(.*?)[\w\s]*$",expression)[0].strip()
         valid_operators=["=","<",">","<=",">=","==","!="]
         if operator in valid_operators:
             return operator
