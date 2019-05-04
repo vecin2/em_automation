@@ -28,7 +28,7 @@ class Connector(object):
             cursor = self.do_connect()
         except Exception as excinfo:
             sql_gen.logger.exception(excinfo)
-            raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.user="+self.user+"\nReason was: "+str(excinfo)+". Please notice that variables are not rendered, if the property is assigned another property replace it for its value.\nIf you change EM config properties, for the changes to be picked you need to run 'ccadmin show-config -Dformat=txt'")
+            raise DatabaseError("Unable to connect to database with params:\n  database.name="+self.database+"\n  database.port="+str(self.port)+"\n  database.user="+self.user+"\nReason was: "+str(excinfo)+".\nIf you change EM config properties, for the changes to be picked you need to run 'ccadmin show-config -Dformat=txt'")
         if not cursor:
             raise ValueError(self._get_conn_error_msg(self.dbtype))
         else:

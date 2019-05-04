@@ -23,13 +23,8 @@ class PromptFilter:
             key = self._render_arg(arg.arg,context)
             result = dict[key]
         elif isinstance(arg,Getattr):
-            try:
                 value = context.resolve(arg.node.name)
                 result = value.__getattr__(arg.attr)
-            except Exception:
-                print(str(arg))
-                raise ValueError(error_msg +"\n"+str(arg))
-
         else:
             print(str(arg))
             raise ValueError(error_msg +"\n"+str(arg))

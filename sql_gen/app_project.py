@@ -13,6 +13,7 @@ PATHS= {
          "config"         : "config",
          "core_config"    : "config/core.properties",
          "ad_queries"     : "config/ad_queries.sql",
+         "context_values"  : "config/context_values.yaml",
          "logging_config" : "config/logging.yaml",
          "templates"      : "templates",
          "test_templates" : "test_templates",

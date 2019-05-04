@@ -1,3 +1,6 @@
+import yaml
+
+import sql_gen
 from sql_gen.database.query_runner import QueryDict
 from sql_gen.config import ConfigFile
 from sql_gen.app_project import AppProject
@@ -23,5 +26,17 @@ def init(app=None,emprj_path=None):
                   '_Query'       : QueryDict(ConfigFile(app.paths["ad_queries"].path).properties),
                   '_emprj'       : app.emproject
                  }
+    template_API.update(context_values(app.paths['context_values'].path))
     return template_API
+
+def context_values(filepath):
+    try:
+        with open(filepath, 'r') as stream:
+            yaml_dict = yaml.safe_load(stream)
+            return yaml_dict
+    except FileNotFoundError as exc:
+        sql_gen.logger.warning("No context values are added, context config file '"+filepath+"' does not exist")
+        return {}
+    except yaml.YAMLError as exc:
+        sql_gen.logger.warning("No context values are added, context config file '"+filepath+"' does not exist")
 
