@@ -10,7 +10,7 @@ from sql_gen.docugen.template_filler import TemplateFiller
 class TemplateSelectorDisplayer(object):
     def ask_for_template(self,options):
         text="\nStart typing the template name('x' - Save && Exit): "
-        return select_option(text, options)
+        return select_option(text, options,10)
 
 class TemplateSelector(object):
     def __init__(self,templates_path):

@@ -263,6 +263,10 @@ class TemplatesAppRunner(AppRunner):
         self._run(['.','test-sql','--test-name='+test_name])
         return self
 
+    def run_assertion_test(self,assertion_type):
+        self._run(['.','test-sql','--assertion='+assertion_type])
+        return self
+
     def run(self):
         self._run(['.','test-sql'])
         return self

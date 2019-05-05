@@ -1,8 +1,8 @@
---{"entity_id":"Agreement","entity_display_name":"Agreement","logical_object_path":"PacificorpAccount.Implementation.Objects.Agreement","interface_path":"PacificorpAccount.API.EIAgreement","super_entity_definition":"PersistableEntity","category_id":"Pacificorp"}
+--{"entity_id":"Agreement","entity_display_name":"Agreement","logical_object_path":"PacificorpAccount.Implementation.Objects.Agreement","interface_path":"PacificorpAccount.API.EIAgreement","is_basic":"Y","super_entity_definition":"PersistableEntity","supports_readonly":"Y","category_id":"Pacificorp","_locale":"en-US"}
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, IS_DELETED, IS_BASIC, ICON_PATH, INSTANCE_ICON_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, SUPPORTS_READONLY) VALUES (
 @ED.Agreement, -- ID
 @ENV.Dflt, -- ENV_ID
-'Agreement', -- NAME 
+'AgreementED', -- NAME 
 'Agreement', -- UUID 
 'Agreement', -- TYPE_UUID 
 @ET.Agreement, -- TYPE_ID
@@ -17,7 +17,6 @@ NULL, -- INSTANCE_ICON_PATH
 @ENV.Dflt, -- SUPER_ENTITY_DEFINITION_ENV_ID
 'Y' --SUPPORTS_READONLY
 );
-
 INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
 @EC.Pacificorp, -- CATEGORY_ID
 @ENV.Dflt, -- CATEGORY_ENV_ID

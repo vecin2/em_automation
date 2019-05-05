@@ -9,7 +9,9 @@ def prompt(text,completer=None):
             not sys.stdin.isatty():
             #return input(text)
             print(text)
-            return sys.stdin.readline().strip()
+            user_input= sys.stdin.readline().strip()
+            print(user_input)
+            return user_input
         else:
             return tk_prompt(text,completer=completer)
     except EOFError:
@@ -37,11 +39,15 @@ class MenuOption(object):
     def __repr__(self):
         return str(self.code) +". "+self.name
 
-def select_option(text, option_list):
+def select_option(text, option_list,no_of_retries):
     option =None
-    while option is None:
+    counter =0
+    while option is None and counter < no_of_retries:
         user_input =prompt_suggestions(text,option_list)
         option = match_options(user_input,option_list)
+        counter += 1
+    if not option:
+        raise ValueError("Too many wrong attempts")
     return option
 
 def select_string(text, string_list):

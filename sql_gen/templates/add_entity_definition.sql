@@ -16,7 +16,7 @@ NULL, -- ICON_PATH
 NULL, -- INSTANCE_ICON_PATH
 @ED.{{super_entity_definition | suggest(_keynames.ED) | default ("PersistableEntity")}}, -- SUPER_ENTITY_DEFINITION
 @ENV.Dflt, -- SUPER_ENTITY_DEFINITION_ENV_ID
-'{{supports_readonly | description("supports_readonly(Y/N)") | default("Y")}}', -- SUPPORTS_READ_ONLY
+'{{supports_readonly | description("supports_readonly(Y/N)") | default("Y")}}' -- SUPPORTS_READ_ONLY
 );
 INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
 @EC.{{category_id | suggest(_keynames.EC)}}, -- CATEGORY_ID
@@ -30,7 +30,7 @@ INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD
 '{{entity_id}}', -- OBJECT_INSTANCE
 @ED.{{entity_id}}, -- OBJECT_VERSION
 'displayName', -- FIELD_NAME
-'{{locale | default(_default_locale)}}', -- LOCALE
+'{{locale | default(_locale)}}', -- LOCALE
 'default', -- LOOKUP_LOCALE
 '{{entity_display_name}}', --TEXT
 'N' --IS_DELETED
