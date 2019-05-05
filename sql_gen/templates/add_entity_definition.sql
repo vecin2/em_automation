@@ -1,5 +1,5 @@
 {% set tmp = entity_id | description("Please enter the entity_id, e.g Policy,PRJCustomer - do not add 'ED' at the end")%}
-{% set tmp = entity_display_name | default(entity_id)%}
+{% set tmp = display_name | default(entity_id)%}
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, IS_DELETED, IS_BASIC, ICON_PATH, INSTANCE_ICON_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, SUPPORTS_READONLY) VALUES (
 @ED.{{entity_id}}, -- ID
 @ENV.Dflt, -- ENV_ID
@@ -25,13 +25,7 @@ INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_E
 @ENV.Dflt -- ENTITY_ENV_ID
 );
 
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'EntityDefinitionED', -- OBJECT_TYPE
-'{{entity_id}}', -- OBJECT_INSTANCE
-@ED.{{entity_id}}, -- OBJECT_VERSION
-'displayName', -- FIELD_NAME
-'{{locale | default(_locale)}}', -- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{entity_display_name}}', --TEXT
-'N' --IS_DELETED
-);
+{% set object_type ="EntityDefinitionED" %}
+{% set object_instance = entity_id %}
+{% set keyset="ED"%}
+{% include 'add_localised_field.sql' %}
