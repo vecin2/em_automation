@@ -108,3 +108,14 @@ def test_if_tag_does_not_prompt_if_condition_not_met():
             .should_prompt_next("enter_user_name")\
             .with_values({"enter_user_name":False})\
             .does_not_prompt()
+
+def test_variables_with_store_context_do_not_prompt():
+    template_str= """{{is_instance }}
+    {% if is_instance == 'N'%} {% set is_instance_default = 'N' %} {%endif%}
+    '{{is_instance_default | description("is_instance_default (Y/N)")}}', -- IS_INSTANCE_DEFAULT
+    """
+    template(template_str)\
+            .with_values({})\
+            .should_prompt_next("is_instance")\
+            .with_values({"is_instance":"Y"})\
+            .should_prompt_next("is_instance_default (Y/N)")\

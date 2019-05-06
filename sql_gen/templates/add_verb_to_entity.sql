@@ -47,6 +47,7 @@ INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_E
 @ENV.Dflt, -- ENTITY_DEF_ENV_ID
 '{{is_instance | description("is_instance (Y/N)")}}', --IS_INSTANCE
 'N', -- IS_DEFAULT
+{% if is_instance == 'N'%} {% set is_instance_default = 'N' %} {%endif%}
 '{{is_instance_default | description("is_instance_default (Y/N)")}}', -- IS_INSTANCE_DEFAULT
 '{{is_user_visible | description("is_user_visible (Y/N)")}}' -- IS_USER_VISIBLE
 );

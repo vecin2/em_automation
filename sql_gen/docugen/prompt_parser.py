@@ -98,6 +98,7 @@ class PromptVisitor(NodeVisitor):
         #and they are not the node value of CallNode
         if node.name not in template_values \
                 and node.name in meta.find_undeclared_variables(self.ast)\
+                and node.ctx == 'load'\
                 and (not isinstance(node.parent,Call) or node.parent.node != node)\
                 and not self._has_been_visit(node.name)\
                 and self._is_executed(node.name,template_values):
