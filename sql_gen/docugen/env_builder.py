@@ -1,9 +1,13 @@
-from jinja2 import Environment, FileSystemLoader
 import os,sys
+
+from jinja2 import Environment
+from jinja2 import FileSystemLoader as JinjaFileSystemLoader
 from . import source_inspector
+
 from sql_gen.sqltask_jinja.filters.codepath import codepath
 from sql_gen.sqltask_jinja.filters.description import description
 from sql_gen.sqltask_jinja.filters.suggest import suggest
+from sql_gen.sqltask_jinja.filters.other import split_uppercase
 from jinja2 import StrictUndefined,Undefined,UndefinedError
 from jinja2.runtime import missing
 
@@ -15,6 +19,26 @@ class TraceUndefined(Undefined):
                          obj= missing,
                          name= name,
                          exc =exc)
+
+class FileSystemLoader(JinjaFileSystemLoader):
+    def __init__(self, searchpath, encoding='utf-8', followlinks=False):
+        super().__init__(searchpath,encoding,followlinks)
+
+    def list_templates(self):
+        found = set()
+        for searchpath in self.searchpath:
+            walk_dir = os.walk(searchpath, followlinks=self.followlinks)
+            for dirpath, dirnames, filenames in walk_dir:
+                for filename in filenames:
+                    template = os.path.join(dirpath, filename) \
+                        [len(searchpath):].strip(os.path.sep) \
+                                          .replace(os.path.sep, '/')
+                    if template[:2] == './':
+                        template = template[2:]
+                    if template not in found\
+                            and ".sql" == os.path.splitext(template)[1]:
+                        found.add(template)
+        return sorted(found)
 
 class EnvBuilder(object):
     def __init__(self):
@@ -66,6 +90,7 @@ class EnvBuilder(object):
         env.filters['codepath']= codepath
         env.filters['description']= description
         env.filters['suggest']= suggest
+        env.filters['split_uppercase']= split_uppercase
         #if self.filters_package:
         #    functions = source_inspector.extract_pkg_funcs_list_by_name(
         #                    self.filters_package,

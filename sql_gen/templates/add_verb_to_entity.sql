@@ -1,10 +1,8 @@
-
-
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED,TYPE) VALUES (
 @PD.{{process_descriptor_id | description('Enter the new relative verb id e.g PCCustomerInlineSearch')}}, -- ID
 @ENV.Dflt, -- ENV_ID
 '{{process_descriptor_id}}', -- NAME
-'{{repository_path | codepath()}}', -- REPOSITORY_PATH
+'{{repository_path | codepath() | replace(".xml","")}}', -- REPOSITORY_PATH
 NULL, --CONFIG_PROCESS_ID
 'N', --IS_DELETED
 0 --TYPE
