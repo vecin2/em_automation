@@ -37,20 +37,17 @@ class RelativeIdLoader(object):
             return result["ID"]
         except LookupError as excinfo:
             return self.generate_id(keyset,keyname)
-    #def generate_id(self,keyset,keyname):
-    #    query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id"
-    #    result =self.db.list(query.format(keyset))[0]
-    #    if result >0:
-    #        return -1
-    #    else:
-    #        result -=1
-    #        return result
+
     def generate_id(self,keyset,keyname):
         query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"
         result =self.db.list(query.format(keyset))
         if result:
             max_id = result[0]
-            return max_id +1
+            generated_id = max_id +1
+            insert_id_query="INSERT INTO CCADMIN_IDMAP (KEYSET,KEYNAME,ID) "+\
+                            "VALUES ('"+keyset+"','"+keyname+"','"+str(generated_id)+"');"
+            self.db.execute(insert_id_query)
+            return generated_id
 
 
 class RelativeId(object):
