@@ -10,10 +10,10 @@ NULL, --CONFIG_PROCESS_ID
 
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
 'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path}}', -- OBJECT_INSTANCE
+'{{process_descriptor_id}}__{{repository_path}} | replace(".","/")}}', -- OBJECT_INSTANCE
 $PD.{{process_descriptor_id}}, -- OBJECT_VERSION
 'displayName', -- FIELD_NAME
-'en-US', -- LOCALE
+'{{_locale}}', -- LOCALE
 'default', -- LOOKUP_LOCALE
 '{{process_descriptor_id}}', -- TEXT
 'N'
@@ -21,10 +21,10 @@ $PD.{{process_descriptor_id}}, -- OBJECT_VERSION
 
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
 'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path}}', -- OBJECT_INSTANCE
+'{{process_descriptor_id}}__{{repository_path}} | replace(".","/")', -- OBJECT_INSTANCE
 $PD.{{process_descriptor_id}}, -- OBJECT_VERSION
 'description', -- FIELD_NAME
-'en-US', -- LOCALE
+'{{_locale}}', -- LOCALE
 'default', -- LOOKUP_LOCALE
 '{{process_descriptor_id}}', -- TEXT
 'N'
@@ -41,7 +41,7 @@ NULL, --CONFIG_ID
 {% set entity_ids = _keynames.ED %}
 INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_ENV_ID, IS_INSTANCE, IS_DEFAULT, IS_INSTANCE_DEFAULT, IS_USER_VISIBLE) VALUES (
 @V.{{process_descriptor_id}}, --ID
-'{{process_descriptor_id}}', -- NAME
+'{{verb_name}}', -- NAME
 @PDR.{{process_descriptor_id}}, --PROCESS_DESC_REF_ID
 @ED.{{entity_def_id | suggest(entity_ids)}}, -- ENTITY_DEF_ID
 @ENV.Dflt, -- ENTITY_DEF_ENV_ID

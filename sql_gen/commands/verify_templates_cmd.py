@@ -45,13 +45,15 @@ class PythonModuleTemplate(object):
         lines = string.splitlines()
         result="("
         for i,line in enumerate(lines):
-            result += "\""+line
+            result += "\""+self.scape(line)
             if i != len(lines)-1:
                 result +="\\n\""+"\n\t"
             else:
                 result +="\""
         result +=")"
         return result
+    def scape(self,string):
+        return string.replace('"','\\"')
 
 class RunOnDBTestTemplate(PythonModuleTemplate):
     def render(self,**kwargs):

@@ -42,3 +42,6 @@ def test_convert_multiple_line_str_to_source():
     string ="Hello Mark\nHow are you?"
     assert string == eval(source.convert_to_src(string))
 
+def test_convert_str_to_source_scapes_quotes():
+    string ='Hello "Animal"'
+    assert string == eval(source.convert_to_src(string))
