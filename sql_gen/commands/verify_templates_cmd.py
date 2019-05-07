@@ -85,7 +85,7 @@ def test_rendering_{{template_name}}_matches_expected_sql():
     expected =sqlparser.parse_assertable_statements(expected)
     actual={{actual}}
     actual =sqlparser.parse_assertable_statements(actual)
-    assert expected == actual
+    assert actual == expected
 """
         kwargs["expected"]=self.convert_to_src(kwargs["expected"])
         kwargs["actual"]=self.convert_to_src(kwargs["actual"])

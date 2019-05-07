@@ -1,34 +1,4 @@
-INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED,TYPE) VALUES (
-@PD.{{process_descriptor_id | description('Enter the new relative verb id e.g PCCustomerInlineSearch')}}, -- ID
-@ENV.Dflt, -- ENV_ID
-'{{process_descriptor_id}}', -- NAME
-'{{repository_path | codepath() | replace(".xml","")}}', -- REPOSITORY_PATH
-NULL, --CONFIG_PROCESS_ID
-'N', --IS_DELETED
-0 --TYPE
-);
-
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path}} | replace(".","/")}}', -- OBJECT_INSTANCE
-$PD.{{process_descriptor_id}}, -- OBJECT_VERSION
-'displayName', -- FIELD_NAME
-'{{_locale}}', -- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{process_descriptor_id}}', -- TEXT
-'N'
-);
-
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path}} | replace(".","/")', -- OBJECT_INSTANCE
-$PD.{{process_descriptor_id}}, -- OBJECT_VERSION
-'description', -- FIELD_NAME
-'{{_locale}}', -- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{process_descriptor_id}}', -- TEXT
-'N'
-);
+{% include 'add_process_descriptor.sql' %}
 
 INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) VALUES (
 @PDR.{{process_descriptor_id}}, --ID
@@ -56,7 +26,7 @@ INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_E
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
 'VerbED',-- OBJECT_TYPE
 '{{entity["NAME"]}}__{{process_descriptor_id}}',-- OBJECT_INSTANCE
-$V.{{process_descriptor_id}},-- OBJECT_VERSION
+@V.{{process_descriptor_id}},-- OBJECT_VERSION
 'displayName',-- FIELD_NAME
 'en-US',-- LOCALE
 'default', -- LOOKUP_LOCALE
@@ -67,7 +37,7 @@ $V.{{process_descriptor_id}},-- OBJECT_VERSION
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
 'VerbED',-- OBJECT_TYPE
 '{{entity["NAME"]}}__{{process_descriptor_id}}',-- OBJECT_INSTANCE
-$V.{{process_descriptor_id}},-- OBJECT_VERSION
+@V.{{process_descriptor_id}},-- OBJECT_VERSION
 'description', -- FIELD_NAME
 'en-US',-- LOCALE
 'default', -- LOOKUP_LOCALE

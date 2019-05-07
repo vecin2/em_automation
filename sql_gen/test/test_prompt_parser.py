@@ -76,11 +76,15 @@ def test_prompts_var_passed_to_global_function():
     template("{% set name = camelcase(a_var)%}").with_values({})\
                                        .should_prompt_next("a_var")
 
-def test_include_should_prompt_vars_from_included_template_in_order():
+def test_include_should_prompt_vars_recursively_from_included_template_in_order():
     template("{% include 'hello_world' %}.  I am Juan {{last_name}}")\
-            .and_template("hello_world","Hello {{name}}")\
+            .and_template("hello_world","{{greeting}} {%include 'first_name.txt'%}")\
+            .and_template("first_name.txt","{{name}}")\
             .with_values({})\
-            .should_prompt_next("name")
+            .should_prompt_next("greeting")\
+            .with_values({"greeting":"Hi"})\
+            .should_prompt_next("name")\
+            #.renders("hhh",{"greeting":"hello", "name":"pedro"})
 
 def test_should_not_prompt_var_which_is_set_within_included_template():
     template("{% include 'set_name' %}. I am {{name}} {{last_name}}")\

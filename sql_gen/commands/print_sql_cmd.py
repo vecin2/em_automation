@@ -14,6 +14,7 @@ class PrintSQLToConsoleDisplayer(object):
         self.render_sql(content)
 
     def render_sql(self,sql_to_render):
+        print("\n")
         print(sql_to_render)
         self._append_rendered_text(sql_to_render)
 

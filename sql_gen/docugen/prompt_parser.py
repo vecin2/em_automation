@@ -21,9 +21,9 @@ class PromptParser(object):
     def _join_included_templates(self,template):
         logger.debug("Joining included templates under one single AST")
         ast =self._extract_template_ast(template)
-        TemplateJoiner(self.env).visit(ast)
+        exploded_ast =TemplateJoiner(self.env).visit(ast)
         logger.debug("Finishing joining templates")
-        return ast
+        return exploded_ast
 
     def _extract_template_ast(self,template):
         self.template_name = template.name
@@ -42,8 +42,10 @@ class TemplateJoiner(NodeTransformer):
     def visit_Include(self,node):
         template_name = node.template.value
         source = self.env.loader.get_source(self.env,template_name)[0]
-        #swap the include nodor for the template tree
-        return self.env.parse(source).body[0]
+        #swap the include node for the template tree recursively
+        ast1 = self.env.parse(source)
+        visited =self.visit(ast1)
+        return ast1.body
 
 class PromptVisitor(NodeVisitor):
     def __init__(self,ast):

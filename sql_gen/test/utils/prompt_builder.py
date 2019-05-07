@@ -54,4 +54,7 @@ class _TestPromptBuilder(object):
     def assert_display_msg(self,msg, prompt):
         assert msg +": " == prompt.get_display_text()
 
+    def renders(self,expected_text,context):
+        assert self._template().render(context) == expected_text
+
 
