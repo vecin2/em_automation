@@ -11,25 +11,12 @@ VALUES (
 	    default ('0') }} --type
        );
 
-
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path | replace(".","/")}}', -- OBJECT_INSTANCE
-@PD.{{process_descriptor_id}}, -- OBJECT_VERSION
-'displayName', -- FIELD_NAME
-'{{_locale}}', -- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{process_descriptor_id}}', -- TEXT
-'N'
-);
-
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'ProcessDescriptorED', -- OBJECT_TYPE
-'{{process_descriptor_id}}__{{repository_path | replace(".","/")}}', -- OBJECT_INSTANCE
-@PD.{{process_descriptor_id}}, -- OBJECT_VERSION
-'description', -- FIELD_NAME
-'{{_locale}}', -- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{process_descriptor_id}}', -- TEXT
-'N'
-);
+{% set object_type ="ProcessDescriptorED" %}
+{% set slash_repo_path =repository_path | replace(".","/") %} 
+{% set object_instance = process_descriptor_id+"__"+ slash_repo_path %}
+{% set object_version = '@PD.' +process_descriptor_id %}
+{% set display_name = process_descriptor_id %}
+{% set field_name = "displayName" %}
+{% include 'add_localised_field.sql' %}
+{% set field_name = "description" %}
+{% include 'add_localised_field.sql' %}
