@@ -1,18 +1,22 @@
+{% set tmp = verb_name %}
+{% set default_display_name =  verb_name | split_uppercase() %}
+{% set verb_display_name = tmp1 | description("verb_display_name")
+			       | default(default_display_name)%}
+{% set tmp = entity_def_id | suggest(_keynames.ED) %}
+{% set capitalized_verb_name = verb_name | capitalize() %}
+{% set default_verb_id = _prjprefix+entity_def_id+capitalized_verb_name %}
+{% set verb_id = tmp44 | default(default_verb_id) %}
+{% set process_descriptor_id = verb_id %}
 {% include 'add_process_descriptor.sql' %}
 
-INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) VALUES (
-@PDR.{{process_descriptor_id}}, --ID
-@PD.{{process_descriptor_id}}, --PROCESS_DESCRIPTOR_ID
-@ENV.Dflt, --PROCESS_DESCRIPTOR_ENV_ID
-NULL, --CONFIG_ID
-'N' -- IS_SHARED
-);
+{% set process_descriptor_ref_id = verb_id %}
+{% include 'hidden_templates/add_process_descriptor_ref.sql' %}
 
 {% set entity_ids = _keynames.ED %}
 INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_ENV_ID, IS_INSTANCE, IS_DEFAULT, IS_INSTANCE_DEFAULT, IS_USER_VISIBLE) VALUES (
-@V.{{process_descriptor_id}}, --ID
+@V.{{verb_id}}, --ID
 '{{verb_name}}', -- NAME
-@PDR.{{process_descriptor_id}}, --PROCESS_DESC_REF_ID
+@PDR.{{process_descriptor_ref_id}}, --PROCESS_DESC_REF_ID
 @ED.{{entity_def_id | suggest(entity_ids)}}, -- ENTITY_DEF_ID
 @ENV.Dflt, -- ENTITY_DEF_ENV_ID
 '{{is_instance | description("is_instance (Y/N)")}}', --IS_INSTANCE
@@ -23,24 +27,12 @@ INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_E
 );
 
 {% set entity = _db.find.ed_by_id(entity_def_id) %}
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'VerbED',-- OBJECT_TYPE
-'{{entity["NAME"]}}__{{process_descriptor_id}}',-- OBJECT_INSTANCE
-@V.{{process_descriptor_id}},-- OBJECT_VERSION
-'displayName',-- FIELD_NAME
-'en-US',-- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{verb_display_name}}', -- TEXT
-'N'
-);
+{% set object_type = "VerbED" %}
+{% set object_instance =  entity["NAME"]+"__"+verb_name %}
+{% set object_version = "@V."+verb_id %}
+{% set display_name = verb_display_name %}
+{% set field_name= 'displayName'  %}
+{% include 'add_localised_field.sql' %}
 
-INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (
-'VerbED',-- OBJECT_TYPE
-'{{entity["NAME"]}}__{{process_descriptor_id}}',-- OBJECT_INSTANCE
-@V.{{process_descriptor_id}},-- OBJECT_VERSION
-'description', -- FIELD_NAME
-'en-US',-- LOCALE
-'default', -- LOOKUP_LOCALE
-'{{verb_display_name}}', -- TEXT
-'N'
-);
+{% set field_name= 'description'  %}
+{% include 'add_localised_field.sql' %}
