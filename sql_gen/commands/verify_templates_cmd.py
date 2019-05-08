@@ -1,6 +1,7 @@
 import os
 import sys
 import re
+import time
 import ast
 import shutil
 import sqlparse
@@ -308,6 +309,7 @@ class TestTemplatesCommand(object):
         return self.app_project.paths["test_templates"].path
 
     def run(self):
+        start_time = time.time()
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
@@ -321,6 +323,7 @@ class TestTemplatesCommand(object):
         if self.verbose_mode != "-vv":
             sys.stdout = original_stdout
         output =self.pytest.main([self.verbose_mode,self._tmp_folder()])
+        print("--- Run in %s seconds ---" % (time.time() - start_time))
 
     def _create_test_file(self,source):
         if source.to_string():

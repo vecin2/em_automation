@@ -1,11 +1,10 @@
-{% set tmp = verb_name %}
 {% set default_display_name =  verb_name | split_uppercase() %}
 {% set verb_display_name = tmp1 | description("verb_display_name")
 			       | default(default_display_name)%}
 {% set tmp = entity_def_id | suggest(_keynames.ED) %}
 {% set capitalized_verb_name = verb_name | capitalize() %}
-{% set default_verb_id = _prjprefix+entity_def_id+capitalized_verb_name %}
-{% set verb_id = tmp44 | default(default_verb_id) %}
+{% set default_verb_id = entity_def_id+capitalized_verb_name %}
+{% set verb_id = tmp2 | description("verb_id") | default(default_verb_id) %}
 {% set process_descriptor_id = verb_id %}
 {% include 'add_process_descriptor.sql' %}
 
