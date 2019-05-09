@@ -9,7 +9,7 @@ class PromptFilter:
         return result
 
     def _render_arg(self,arg,context):
-        error_msg= "Filters at the moment only support collections,contants and variables."+\
+        error_msg= "Filters at the moment only support collections,contants, variables and _keynames. "+\
                     "But you passed something else, maybe a function? "
         logger.debug("Render argument '"+str(arg)+"' within filter "+self.filter.name)
         if isinstance(arg,List):

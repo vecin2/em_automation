@@ -6,7 +6,7 @@
 {%set seq_no_desc =perspective_verbs.to_str()+"\n"+"sequence_number"%}
 {% set tmp =sequence_number | description(seq_no_desc) %}
 {% set to_update = perspective_verbs.where("SEQUENCE_NUMBER>="+sequence_number)%}
-
+{#
 --updating sequence numbers
 {% for item in to_update %}
 
@@ -17,6 +17,7 @@ and ENTITY_DEF_TYPE_ID = @ET.{{item.ET_KEYNAME}}
 and VERB = '{{item.VERB}}'
 
 {% endfor %}
+#}
 
 --inserting new activity in specific sequence no
 INSERT INTO EVA_CONTEXT_VERB_ENTRY (CONFIG_ID,CONFIG_ENV_ID,VERB,ENTITY_DEF_TYPE_ID,ENTITY_DEF_TYPE_ENV_ID,SEQUENCE_NUMBER,RELEASE_ID) 
