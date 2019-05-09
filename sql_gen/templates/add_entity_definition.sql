@@ -31,4 +31,5 @@ INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_E
 {% set object_instance = entity_id %}
 {% set object_version = "@ED." +entity_id %}
 {% set field_name = "displayName" %}
+{% set text = display_name %}
 {% include 'add_localised_field.sql' %}

@@ -1,4 +1,4 @@
---["inlineEdit","Inline Edit","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","0","en-US","Y","N","Y"]
+--["inlineEdit","Inline Edit","Allows editing the customer inline","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","0","en-US","Y","N","Y"]
 
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED,TYPE) VALUES (
 @PD.PCCustomerInlineEdit, -- ID
@@ -70,6 +70,6 @@ INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD
 'description', -- FIELD_NAME
 'en-US',-- LOCALE
 'default', -- LOOKUP_LOCALE
-'Inline Edit', -- TEXT
+'Allows editing the customer inline', -- TEXT
 'N'
 );

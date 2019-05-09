@@ -5,6 +5,6 @@ INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD
 '{{field_name}}', -- FIELD_NAME
 '{{locale | default(_locale)}}', -- LOCALE
 'default', -- LOOKUP_LOCALE
-'{{display_name}}', --TEXT
+'{{text}}', --TEXT
 'N' --IS_DELETED
 );

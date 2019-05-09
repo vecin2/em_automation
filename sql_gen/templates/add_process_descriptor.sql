@@ -15,7 +15,7 @@ VALUES (
 {% set slash_repo_path =repository_path | replace(".","/") %} 
 {% set object_instance = process_descriptor_id+"__"+ slash_repo_path %}
 {% set object_version = '@PD.' +process_descriptor_id %}
-{% set display_name = process_descriptor_id %}
+{% set text = process_descriptor_id %}
 {% set field_name = "displayName" %}
 {% include 'add_localised_field.sql' %}
 {% set field_name = "description" %}
