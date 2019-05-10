@@ -7,7 +7,6 @@ FROM LOCALISED_FIELD
 WHERE OBJECT_VERSION = @ED.{{entity_id}}
 AND OBJECT_TYPE = 'EntityDefinitionED';
 
-DELETE
-FROM CCADMIN_IDMAP
-WHERE KEYSET = 'ED'
-AND ID =@ED.{{entity_id}};
+{% set keyset ="ED" %}
+{% set keyname =entity_id %}
+{% include 'hidden_templates/remove_idmap.sql' %}

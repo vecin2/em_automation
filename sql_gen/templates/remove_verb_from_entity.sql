@@ -8,7 +8,6 @@ WHERE ID = @V.{{verb_id | suggest(verb_ids)}}
 and ENTITY_DEF_ID=@ED.{{entity_id}};
 
 
-DELETE
-FROM CCADMIN_IDMAP
-WHERE KEYSET = 'V'
-AND ID =@V.{{verb_id}};
+{% set keyset ="V" %}
+{% set keyname =verb_id %}
+{% include 'hidden_templates/remove_idmap.sql' %}
