@@ -1,4 +1,4 @@
---["inlineEdit","Inline Edit","Allows editing the customer inline","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","Verb","en-US","Y","N","Y"]
+--["inlineEdit","Inline Edit","Allows editing the customer inline","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","","en-US","Y","N","Y"]
 
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED,TYPE) VALUES (
 @PD.PCCustomerInlineEdit, -- ID
