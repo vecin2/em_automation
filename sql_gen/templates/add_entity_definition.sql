@@ -24,8 +24,13 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 NULL, -- ICON_PATH
 NULL -- INSTANCE_ICON_PATH
 );
+{% set tmp6 = category_id | suggest(_keynames.EC) | default(_entity_category) %}
+{% set category = _db.fetch.category_by_id %}
+{% if category_id not in _keynames.EC %}
+{% include 'add_category.sql' %}
+{% endif %}
 INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
-@EC.{{category_id | suggest(_keynames.EC) | default(_entity_category)}}, -- CATEGORY_ID
+@EC.{{category_id}}, -- CATEGORY_ID
 @ENV.Dflt, -- CATEGORY_ENV_ID
 @ED.{{entity_id}}, -- ENTITY_ID
 @ENV.Dflt -- ENTITY_ENV_ID
