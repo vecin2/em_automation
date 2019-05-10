@@ -6,9 +6,9 @@ VALUES (
 	 '{{ repository_path | codepath() | replace(".xml","") }}', --repository_path 
 	 {{ config_id | default('NULL') }}, --config_id
 	 'N', --is_deleted
-	 {{ process_descriptor_type |
-	    description('type_id (0=regular process, 2=action, 3=sla)')|
-	    default ('0') }} --type
+	 @PDT.{{ process_descriptor_type |
+	         suggest(_keynames.PDT) |
+	         default ('Verb') }} --type
        );
 
 {% set object_type ="ProcessDescriptorED" %}

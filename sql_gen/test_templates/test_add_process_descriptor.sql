@@ -1,4 +1,4 @@
---["PRJsearchBasicCustomer","Customer.Process.SearchBasicCustomer","NULL","0","en-US"]
+--["PRJsearchBasicCustomer","Customer.Process.SearchBasicCustomer","NULL","Verb","en-US"]
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED, TYPE)
 VALUES (
          @PD.PRJsearchBasicCustomer, --id
@@ -7,7 +7,7 @@ VALUES (
          'Customer.Process.SearchBasicCustomer', --repository_path
          NULL, --config_id
          'N', --is_deleted
-         0 --type
+         @PDT.Verb --type
        );
 
 
