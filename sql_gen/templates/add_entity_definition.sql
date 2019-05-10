@@ -5,7 +5,7 @@
 			   | default(default_display_name)%}
 {% set description = tmp5 | description("description") 
 			   | default(default_display_name)%}
-INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, IS_DELETED, IS_BASIC, SUPPORTS_READONLY,ICON_PATH, INSTANCE_ICON_PATH) VALUES (
+INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, IS_DELETED, IS_BASIC, SUPPORTS_READONLY,IS_EXPANDABLE,ICON_PATH, INSTANCE_ICON_PATH) VALUES (
 @ED.{{entity_id}}, -- ID
 @ENV.Dflt, -- ENV_ID
 '{{entity_name}}', -- NAME
@@ -20,6 +20,7 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 'N', -- IS_DELETED
 '{{is_basic | description("is_basic(Y/N)") | default("Y")}}', -- IS_BASIC
 '{{supports_readonly | description("supports_readonly(Y/N)") | default("Y")}}', -- SUPPORTS_READ_ONLY
+'{{is_expandable | description("is_expandable(Y/N)") | default("N")}}', --IS_EXPANDABLE
 NULL, -- ICON_PATH
 NULL -- INSTANCE_ICON_PATH
 );
