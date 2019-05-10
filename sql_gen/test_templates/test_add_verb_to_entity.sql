@@ -1,4 +1,4 @@
---["inlineEdit","Inline Edit","Allows editing the customer inline","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","0","en-US","Y","N","Y"]
+--["inlineEdit","Inline Edit","Allows editing the customer inline","Customer","PCCustomerInlineEdit","PCCustomer.Verbs.CustomerInlineEdit","NULL","Verb","en-US","Y","N","Y"]
 
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED,TYPE) VALUES (
 @PD.PCCustomerInlineEdit, -- ID
@@ -7,7 +7,7 @@ INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PR
 'PCCustomer.Verbs.CustomerInlineEdit', -- REPOSITORY_PATH
 NULL, --CONFIG_PROCESS_ID
 'N', --IS_DELETED
-0 --TYPE
+@PDT.Verb --TYPE
 );
 
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (

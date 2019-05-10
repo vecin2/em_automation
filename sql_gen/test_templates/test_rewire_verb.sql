@@ -1,4 +1,4 @@
--- {"entity_def_id":"Customer","verb_name":"identifyCustomer","config_id":"NULL","type_id":"0","repository_path":"GSC1CoreEntities.Implementation.Customer.Verbs.IdentifyCustomerWrapper","_locale":"en-US"}
+-- {"entity_def_id":"Customer","verb_name":"identifyCustomer","config_id":"NULL","type_id":"Verb","repository_path":"GSC1CoreEntities.Implementation.Customer.Verbs.IdentifyCustomerWrapper","_locale":"en-US"}
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED, TYPE)
 VALUES (
 	 @PD.GSC1CustomerIdentifycustomer, --id
@@ -7,7 +7,7 @@ VALUES (
 	 'GSC1CoreEntities.Implementation.Customer.Verbs.IdentifyCustomerWrapper', --repository_path
 	 NULL, --config_id
 	 'N', --is_deleted
-	 0 --type
+	 @PDT.Verb --type
 );
 
 INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD_NAME, LOCALE, LOOKUP_LOCALE,TEXT,IS_DELETED) VALUES (

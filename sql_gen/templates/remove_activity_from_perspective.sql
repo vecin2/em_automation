@@ -20,7 +20,8 @@ where CONFIG_ID = @CC.{{perspective_id}}
 and VERB = '{{verb_to_remove["VERB"]}}'
 and ENTITY_DEF_TYPE_ID= @ET.{{verb_to_remove["ET_KEYNAME"]}};
 
-{% set to_update = verbs.where("SEQUENCE_NUMBER>"+verb_to_remove["SEQUENCE_NUMBER"] | string)%}
+{% set to_update = verbs.where("SEQUENCE_NUMBER >"+
+			        verb_to_remove["SEQUENCE_NUMBER"] | string)%}
 
 
 --updating sequence numbers
