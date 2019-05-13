@@ -1,9 +1,9 @@
 {% set tmp = entity_id | description("Please enter the entity_id, e.g Policy,PRJCustomer - do not add 'ED' at the end")%}
 {% set entity_name=entity_id+"ED" %}
-{% set default_display_name = entity_id | split_uppercase() %}
-{% set display_name = tmp1 | description("display_name") 
+{% set default_display_name = entity_id %}
+{% set display_name = tmp_display_name | description("display_name") 
 			   | default(default_display_name)%}
-{% set description = tmp5 | description("description") 
+{% set description = tmp_description | description("description") 
 			   | default(default_display_name)%}
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, IS_DELETED, IS_BASIC, SUPPORTS_READONLY,IS_EXPANDABLE,ICON_PATH, INSTANCE_ICON_PATH) VALUES (
 @ED.{{entity_id}}, -- ID

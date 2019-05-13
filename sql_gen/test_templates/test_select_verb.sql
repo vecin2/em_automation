@@ -1,2 +1,0 @@
--- {"column":"NAME"}
-SELECT NAME FROM EVA_VERB;

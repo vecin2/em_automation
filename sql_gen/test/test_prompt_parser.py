@@ -123,3 +123,12 @@ def test_variables_with_store_context_do_not_prompt():
             .should_prompt_next("is_instance")\
             .with_values({"is_instance":"Y"})\
             .should_prompt_next("is_instance_default (Y/N)")\
+
+def test_does_not_resolve_undefined_vars_within_filters():
+    template_str= """{% set display_name = tmp1 | default(other_name)%}
+    """
+    with pytest.raises(KeyError) as excinfo:
+        template(template_str)\
+                .with_values({})\
+                .should_prompt_next("tmp1")\
+

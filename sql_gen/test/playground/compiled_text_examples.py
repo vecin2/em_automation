@@ -13,15 +13,16 @@ text ='''
 						   | default (suggested_ext_path) %}
 '''
 text=""""
-{% if enter_user_name %}
-    {% set process_descriptor_ref_id = process_descriptor_id %}
-{% endif %}"""
+{% set entity_name=entity_id+"ED" %}
+{% set default_display_name = entity_id %}
+{% set display_name = tmp1 | default(default_display_name)%}
+"""
 env = EMTemplatesEnv().make_env("/opt/em/projects/Pacificorp/trunk/devtask/templates")
-t =env.from_string(text)
+#t =env.from_string(text)
+t = env.get_template("extend_entity_copy.sql")
 #t = Template(text)
 print("***printing template rendered****")
-#print(t.render({"process_descriptor_id":"hola"}))
-print(t.render({"enter_user_name":True}))
+print(t.render({"entity_name":"Contact"}))
 
 tree = t.environment.parse(text)
 print("***printing tree****")
