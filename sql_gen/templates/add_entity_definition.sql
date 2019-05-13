@@ -25,16 +25,20 @@ NULL, -- ICON_PATH
 NULL -- INSTANCE_ICON_PATH
 );
 {% set tmp6 = category_id | suggest(_keynames.EC) | default(_entity_category) %}
-{% set category = _db.fetch.category_by_id %}
-{% if category_id not in _keynames.EC %}
+{# Category can be null is this template is included, e.g extended_entity.
+In that case we dont want to insert in EVA_CATEGORY_ENTRY#}
+{% if category_id != "NULL" %}
+  {% set category = _db.fetch.category_by_id(category_id) %}
+  {% if category_id not in _keynames.EC %}
 {% include 'add_category.sql' %}
+  {% endif %}
+  INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
+  @EC.{{category_id}}, -- CATEGORY_ID
+  @ENV.Dflt, -- CATEGORY_ENV_ID
+  @ED.{{entity_id}}, -- ENTITY_ID
+  @ENV.Dflt -- ENTITY_ENV_ID
+  );
 {% endif %}
-INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
-@EC.{{category_id}}, -- CATEGORY_ID
-@ENV.Dflt, -- CATEGORY_ENV_ID
-@ED.{{entity_id}}, -- ENTITY_ID
-@ENV.Dflt -- ENTITY_ENV_ID
-);
 
 {% set object_type ="EntityDefinitionED" %}
 {% set object_instance = entity_name %}
