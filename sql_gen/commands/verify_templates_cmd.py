@@ -147,7 +147,6 @@ class RunOnDBTestBuilder(object):
         self.apprunner =apprunner
 
     def build(self,testfile,emprj_path=None):
-        actual =self.apprunner.run_test(testfile)
         return RunOnDBTestTemplate().render(
                               template_name=testfile.template_name(),
                               query=testfile.expected_sql(),
