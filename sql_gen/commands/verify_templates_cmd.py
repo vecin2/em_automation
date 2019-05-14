@@ -314,7 +314,7 @@ class TestTemplatesCommand(object):
             return
         if self.verbose_mode != "-vv":
             original_stdout = sys.stdout
-            stdout_file =self._tmp_folder()+"/run_test.log"
+            stdout_file =self.app_project.paths["logs"].path+"/run_test.log"
             sys.stdout = open(stdout_file,"w")
         if not self.reuse_tests:
             self._recreate_tmp_folder()
