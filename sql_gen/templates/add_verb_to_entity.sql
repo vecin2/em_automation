@@ -32,7 +32,7 @@ INSERT INTO EVA_VERB (ID, NAME, PROCESS_DESC_REF_ID, ENTITY_DEF_ID, ENTITY_DEF_E
 '{{is_user_visible | description("is_user_visible (Y/N)")}}' -- IS_USER_VISIBLE
 );
 
-{% set entity = _db.find.ed_by_id(entity_def_id) %}
+{% set entity = _db.find.ed_by_keyname(entity_def_id) %}
 {% set object_type = "VerbED" %}
 {% set object_instance =  entity["NAME"]+"__"+verb_name %}
 {% set object_version = "@V."+verb_id %}

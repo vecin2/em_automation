@@ -1,4 +1,4 @@
---["VerbAudit"]
+--{"entity_id":"VerbAudit"}
 DELETE FROM EVA_ENTITY_DEFINITION 
 WHERE ID = @ED.VerbAudit;
 
