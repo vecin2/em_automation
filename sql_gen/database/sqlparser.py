@@ -28,15 +28,36 @@ class NonConflictRelativeIdLoader(object):
             return result
 
 class RelativeIdLoader(object):
+    keynames_cache={}
     def __init__(self,db=None):
         self.db =db
+        #cache to avoid generating id multiple times
     def load(self,keyset,keyname):
-        query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
-        try:
-            result =self.db.find(query.format(keyset,keyname))
-            return result["ID"]
-        except LookupError as excinfo:
-            return self.generate_id(keyset,keyname)
+        id = self._get_from_cache(keyset,keyname)
+        if id:
+            return id
+        else:
+            result = self.compute_id(keyset,keyname)
+            self._cache(keyset,keyname,result)
+            return result
+
+    def _cache(self,keyset,keyname,value):
+        key=keyset+"."+keyname
+        RelativeIdLoader.keynames_cache[key]=value
+
+    def _get_from_cache(self,keyset,keyname):
+        key=keyset+"."+keyname
+        if key in RelativeIdLoader.keynames_cache:
+            return RelativeIdLoader.keynames_cache[key]
+        return None
+
+    def compute_id(self,keyset,keyname):
+            query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
+            try:
+                result =self.db.find(query.format(keyset,keyname))
+                return result["ID"]
+            except LookupError as excinfo:
+                return self.generate_id(keyset,keyname)
 
     def generate_id(self,keyset,keyname):
         query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"

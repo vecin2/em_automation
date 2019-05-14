@@ -95,15 +95,6 @@ def test_parse_update_syntax():
     run_test_parse_update(
                       "UPDATE VERB SET ID=1",
                       "UPDATE VERB SET ID=1")
-    em_notation="""UPDATE EVA_ENTITY_DEFINITION
-SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('PRJContact.Implementation.Contact.PRJContact', 'PRJContact.API.EIPRJContact', @ED.BaseContact, @ENV.Dflt) WHERE ID = @ED.Contact AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
-"""
-    sql_notation= """"UPDATE EVA_ENTITY_DEFINITION
-SET LOGICAL_OBJ_PATH='PRJContact.Implementation.Contact.PRJContact', INTERFACE_PATH='PRJContact.API.EIPRJContact', SUPER_ENTITY_DEFINITION=@ED.BaseContact, SUPER_ENTITY_DEFINITION_ENV_ID=@ENV.Dflt WHERE ID = @ED.Contact AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
-"""
-    run_test_parse_update(
-                      sql_notation,
-                      em_notation)
     run_test_parse_update(
                       "SELECT * FROM VERB",
                       "SELECT * FROM VERB")
