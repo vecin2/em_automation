@@ -2,19 +2,20 @@ import yaml
 
 import sql_gen
 from sql_gen.database.query_runner import QueryDict
+from sql_gen.database.sqlparser import RelativeIdLoader
 from sql_gen.config import ConfigFile
 from sql_gen.app_project import AppProject
 
 class Keynames(object):
     def __init__(self,dbfactory):
         self.dbfactory =dbfactory
+        self._id_loader = None
+
     def __getitem__(self,name):
         return self.list(name)
 
     def get_full(self,keyset,id):
-        if id == "NULL":
-            return id
-        return "@"+keyset+"."+self.dbfactory.addb.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
+        return self.id_loader().full_id(keyset,id)
 
     def __getattr__(self,name):
         if name.startswith("FULL_"):
@@ -27,8 +28,14 @@ class Keynames(object):
         else:
             return self.list(name)
 
+    def id_loader(self):
+        if not self._id_loader:
+            self._id_loader = RelativeIdLoader(self.dbfactory.addb)
+        return self._id_loader
+
     def list(self,keyset):
-        return self.dbfactory.addb.list("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"'")
+        return self.id_loader().list(keyset)
+
     def load(self):
         return self
 

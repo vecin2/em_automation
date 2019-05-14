@@ -2,7 +2,7 @@ INSERT INTO EVA_CATEGORY (ID,ENV_ID,PARENT_CATEGORY_ID,PARENT_CATEGORY_ENV_ID,EN
 VALUES (
 	@EC.{{category_id}}, --ID
 	@ENV.Dflt, --ENV_ID
-	@EC.{{parent_category_id | suggest(_keynames.ED)}}, --PARENT_CATEGORY_ID
+	@EC.{{parent_category_id | suggest(_keynames.EC)}}, --PARENT_CATEGORY_ID
 	@ENV.Dflt, --PARENT_CATEGORY_ENV_ID
 	@ED.EntityDefinition, --ENTITY_DEF_ID
 	@ENV.Dflt, --ENTITY_DEF_ENV_ID

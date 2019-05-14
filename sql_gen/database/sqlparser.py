@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 import sqlparse
 
 storage_table = {
@@ -29,6 +30,7 @@ class NonConflictRelativeIdLoader(object):
 
 class RelativeIdLoader(object):
     keynames_cache={}
+    keyset_cache=defaultdict(list)
     def __init__(self,db=None):
         self.db =db
         #cache to avoid generating id multiple times
@@ -38,12 +40,41 @@ class RelativeIdLoader(object):
             return id
         else:
             result = self.compute_id(keyset,keyname)
-            self._cache(keyset,keyname,result)
+            self._cache_keyname(keyset,keyname,result)
             return result
 
-    def _cache(self,keyset,keyname,value):
+    def list(self,keyset):
+        result =  self._list_from_cache(keyset)
+        if result:
+            return result
+        else:
+            result = self._fetch_keyset(keyset)
+            _cache_keyset(keyset,result)
+            return result
+    def full_id(self,keyset,id):
+        if id == "NULL":
+            return id
+        return "@"+keyset+"."+self.db.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
+
+
+    def _fetch_keyset(self,keyset):
+        result = self.db.fetch("SELECT KEYNAME,ID FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"'")
+        self._cache_keyset(keyset,result)
+        return result.column("KEYNAME")
+
+    def _cache_keyset(self,keyset,result):
+        for record in result:
+            self._cache_keyname(keyset,record["KEYNAME"],record["ID"])
+
+    def _list_from_cache(self,keyset):
+        if keyset in RelativeIdLoader.keyset_cache:
+            return RelativeIdLoader.keyset_cache[keyset]
+
+    def _cache_keyname(self,keyset,keyname,value):
         key=keyset+"."+keyname
-        RelativeIdLoader.keynames_cache[key]=value
+        if key not in RelativeIdLoader.keynames_cache:
+            RelativeIdLoader.keynames_cache[key]=value
+            RelativeIdLoader.keyset_cache[keyset].append(keyname)
 
     def _get_from_cache(self,keyset,keyname):
         key=keyset+"."+keyname

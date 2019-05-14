@@ -33,7 +33,7 @@ NULL -- INSTANCE_ICON_PATH
 In that case we dont want to insert in EVA_CATEGORY_ENTRY#}
 {% if __category_id != "NULL" %}
   {% set category = _db.fetch.category_by_keyname(__category_id) %}
-  {% if __category_id not in _keynames.EC %}
+  {% if category | length ==  0%}
 {% include 'add_category.sql' %}
   {% endif %}
   INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
