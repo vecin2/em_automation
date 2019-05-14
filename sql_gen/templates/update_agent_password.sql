@@ -5,5 +5,4 @@ set PASSWORD = (select PASSWORD from AGENT where username ='{{username_to_copy_f
  SALT = (select SALT from agent where username = '{{username_to_copy_from}}'),
  EXPIRES = (select EXPIRES from AGENT where USERNAME = '{{username_to_copy_from}}'),
  DISABLED ='no'
-
 where USERNAME in ('{{username | suggest(usernames)}}');

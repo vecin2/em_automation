@@ -151,19 +151,29 @@ class SQLParser(object):
         first_word= query.split(" ")[0]
         if first_word.upper() == "UPDATE":
             set_clause =self.extract_set_group(query)
-            classic_syntax = self.convert_set_clause(set_clause)
-            return query.replace(set_clause,classic_syntax)
+            if self.is_em_syntax(set_clause):
+                classic_syntax = self.convert_set_clause(set_clause)
+                return query.replace(set_clause,classic_syntax)
         return query
 
     def extract_set_group(self,s):
         return self.get_text_in_between(s,"SET","WHERE")
+
+    def is_em_syntax(self,string):
+        no_spaces_str =string.replace(" ","")
+        matches = re.findall('\(.*\)=\(.*\)',no_spaces_str)
+        if len(matches) ==1 and matches[0] ==no_spaces_str:
+            return True
+        return False
 
     def convert_set_clause(self,string):
         before_equals=string.split("=")[0]
         after_equals=string.split("=")[1]
         column_names = self.get_text_in_between(before_equals,"(",")").split(",")
         values = self.get_text_in_between(after_equals,"(",")").split(",")
-        return self.equalize_items_str(column_names,values)
+        if column_names and values:
+            return self.equalize_items_str(column_names,values)
+        return string
 
     def equalize_items_str(self,list1,list2):
         result=""
@@ -174,11 +184,15 @@ class SQLParser(object):
         return result
 
     def get_text_in_between(self,s,start,end):
-        where_index =s.upper().rfind(end)
-        if where_index <0:
-            where_index =len(s)
-        set_index =s.upper().find(start)
-        return s[set_index+len(start):where_index].strip()
+        end_index =s.upper().rfind(end)
+        if end_index <0:
+            end_index =len(s)
+        start_index =s.upper().find(start)
+        text_in_btw = s[start_index+len(start):end_index].strip()
+        if s == text_in_btw:
+            return ""
+        return text_in_btw
+
 
     def split(self,sqltext):
         result =[]
@@ -194,9 +208,7 @@ class SQLParser(object):
         return self.relativeId_replacer.replace(sqltext)
 
     def parse_runnable_statements(self,sqltext):
-        #sqltext = self.parse_relative_ids(sqltext)
-        #sqltext = self.strip_comments(sqltext)
-        #sqltext = self.parse_update_stmt(sqltext)
+        sqltext = self.strip_comments(sqltext)
         statements = self.split(sqltext)
         result =[]
         for stmt in statements:
@@ -205,7 +217,6 @@ class SQLParser(object):
 
     def parse_runnable_stament(self,statement):
             statement = self.parse_relative_ids(statement)
-            statement = self.strip_comments(statement)
             return self.parse_update_stmt(statement)
 
     def parse_assertable_statements(self,sqltext):
