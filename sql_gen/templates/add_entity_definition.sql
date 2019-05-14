@@ -28,6 +28,8 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 NULL, -- ICON_PATH
 NULL -- INSTANCE_ICON_PATH
 );
+
+
 {% set __category_id = category_id | suggest(_keynames.EC) | default(_entity_category) %}
 {# Category can be null is this template is included, e.g extended_entity.
 In that case we dont want to insert in EVA_CATEGORY_ENTRY#}
