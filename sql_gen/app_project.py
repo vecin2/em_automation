@@ -39,7 +39,12 @@ class AppProject(object):
     @staticmethod
     def home_path(env_vars):
         emprj_home= emproject_home(env_vars)
-        return os.path.join(emprj_home,"devtask")
+        if os.file.exists(os.path.join(emprj_home,".devtask")):
+            with open(destask_filepath) as f:
+                devtaskpath = f.read()
+        else:
+            devtaskpath="devtask"
+        return os.path.join(emprj_home,devtask)
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
