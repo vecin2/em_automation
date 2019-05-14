@@ -35,13 +35,9 @@ class RelativeIdLoader(object):
         self.db =db
         #cache to avoid generating id multiple times
     def load(self,keyset,keyname):
-        id = self._get_from_cache(keyset,keyname)
-        if id:
-            return id
-        else:
-            result = self.compute_id(keyset,keyname)
-            self._cache_keyname(keyset,keyname,result)
-            return result
+        result = self.compute_id(keyset,keyname)
+        self._cache_keyname(keyset,keyname,result)
+        return result
 
     def list(self,keyset):
         result =  self._list_from_cache(keyset)
@@ -51,6 +47,7 @@ class RelativeIdLoader(object):
             result = self._fetch_keyset(keyset)
             _cache_keyset(keyset,result)
             return result
+
     def full_id(self,keyset,id):
         if id == "NULL":
             return id

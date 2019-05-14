@@ -4,7 +4,7 @@
 {% else %}
   {% set entity_id = __entity_name %}
 {%endif%}
-{% set default_display_name = entity_id %}
+{% set default_display_name = entity_id | split_uppercase() %}
 {% set int_display_name = entity_display_name | description("display_name") 
 			   | default(default_display_name)%}
 {% set int_description = entity_description | description("description") 
