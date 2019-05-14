@@ -11,7 +11,7 @@ def app_runner(fs,capsys):
 
 
 def test_no_test_folder_prints_error(app_runner,fs):
-    expected="Test folder '/em/prj/devtask/test_templates' does not exist.\n"
+    expected="Test folder '/em/prj/project/devtask/test_templates' does not exist.\n"
     app_runner.with_emproject_under("/em/prj")\
                .and_prj_built_under("/em/prj")\
                .add_template("greeting.sql","hello {{name}}!")\

@@ -39,7 +39,7 @@ class AppProject(object):
     @staticmethod
     def home_path(env_vars):
         emprj_home= emproject_home(env_vars)
-        if os.file.exists(os.path.join(emprj_home,".devtask")):
+        if os.path.file.exists(os.path.join(emprj_home,".devtask")):
             with open(destask_filepath) as f:
                 devtaskpath = f.read()
         else:
@@ -64,7 +64,14 @@ class AppProject(object):
 
     @property
     def root(self):
-        return os.path.join(self.emproject.root,"devtask")
+        emprj_home= self.emproject.root
+        destask_filepath =os.path.join(emprj_home,".devtask")
+        if os.path.isfile(destask_filepath):
+            with open(destask_filepath) as f:
+                devtaskpath = f.readline().strip()
+        else:
+            devtaskpath =os.path.join("project","devtask")
+        return os.path.join(self.emproject.root,devtaskpath)
 
     @property
     def ad_queryrunner(self):
