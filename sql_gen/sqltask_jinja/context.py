@@ -10,6 +10,10 @@ class Keynames(object):
         self.dbfactory =dbfactory
     def __getitem__(self,name):
         return self.list(name)
+
+    def get(self,keyset,id):
+        return self.dbfactory.addb.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
+
     def __getattr__(self,name):
         if name.startswith("FULL_"):
             name = name.replace("FULL_","")
