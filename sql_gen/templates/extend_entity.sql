@@ -21,5 +21,5 @@ Then we update the OTB entity to point to our extended object and to inherit fro
 {%include 'add_entity_definition.sql' %}
 
 
---UPDATE EVA_ENTITY_DEFINITION
---SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('{{int_child_object_path}}', '{{int_child_interface_path}}', @ED.{{entity_id}}, @ENV.Dflt) WHERE ID = @ED.{{extended_entity_id}} AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
+UPDATE EVA_ENTITY_DEFINITION
+SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('{{int_child_object_path}}', '{{int_child_interface_path}}', @ED.{{entity_id}}, @ENV.Dflt) WHERE ID = @ED.{{extended_entity_id}} AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;

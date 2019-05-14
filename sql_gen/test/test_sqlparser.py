@@ -1,3 +1,4 @@
+import pytest
 from sql_gen.database.sqlparser import RelativeId, RelativeIdReplacer,SQLParser
 
 
@@ -77,4 +78,52 @@ VALUES (
     loader = FakeRelativeIdLoader(table)
 
     assert [statement1, statement2] == SQLParser(loader).parse_runnable_statements(sqltext)
+
+
+
+def run_test_parse_update(expected, query):
+    assert expected == SQLParser().parse_update_stmt(query)
+
+def test_parse_update_syntax():
+    run_test_parse_update(
+                      "UPDATE VERB SET NAME='search'",
+                      "UPDATE VERB SET (NAME)=('search')")
+    run_test_parse_update(
+                      "UPDATE VERB SET ID=1, NAME='search'",
+                      "UPDATE VERB SET (ID,NAME)=(1,'search')")
+
+    run_test_parse_update(
+                      "UPDATE VERB SET ID=1",
+                      "UPDATE VERB SET ID=1")
+    em_notation="""UPDATE EVA_ENTITY_DEFINITION
+SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('PRJContact.Implementation.Contact.PRJContact', 'PRJContact.API.EIPRJContact', @ED.BaseContact, @ENV.Dflt) WHERE ID = @ED.Contact AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
+"""
+    sql_notation= """"UPDATE EVA_ENTITY_DEFINITION
+SET LOGICAL_OBJ_PATH='PRJContact.Implementation.Contact.PRJContact', INTERFACE_PATH='PRJContact.API.EIPRJContact', SUPER_ENTITY_DEFINITION=@ED.BaseContact, SUPER_ENTITY_DEFINITION_ENV_ID=@ENV.Dflt WHERE ID = @ED.Contact AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
+"""
+    run_test_parse_update(
+                      sql_notation,
+                      em_notation)
+    run_test_parse_update(
+                      "SELECT * FROM VERB",
+                      "SELECT * FROM VERB")
+
+def run_extract_set_group(expected,string):
+    assert expected== SQLParser().extract_set_group(string)
+
+def test_extract_set_group():
+    run_extract_set_group("(ID,NAME)=(1,'search')" , "UPDATE VERB SET (ID,NAME)=(1,'search')")
+    run_extract_set_group("(ID)=(1)" , "UPDATE VERB SET (ID)=(1)")
+    run_extract_set_group("(ID)=(1)" , "UPDATE VERB SET (ID)=(1) WHERE ID>1")
+    run_extract_set_group("(ID)=(1)" , "UPDATE VERB SET (ID)=(1) where ID>1")
+    run_extract_set_group("(ID)=(1)" , "UPDATE VERB set (ID)=(1) where ID>1")
+
+
+
+def assert_convert_to_set_clause(expected, string):
+    assert expected == SQLParser().convert_set_clause(string)
+
+def test_parse_set_clause():
+    assert_convert_to_set_clause("a=b, b=c", "(a,b)=(b,c)")
+    assert_convert_to_set_clause("a=b", "(a)=(b)")
 

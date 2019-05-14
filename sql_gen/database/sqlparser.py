@@ -95,22 +95,66 @@ class SQLParser(object):
     def strip_comments(self,sqltext):
         return sqlparse.format(sqltext,strip_comments=True).strip()
 
+    def parse_update_stmt(self,query):
+        first_word= query.split(" ")[0]
+        if first_word.upper() == "UPDATE":
+            set_clause =self.extract_set_group(query)
+            classic_syntax = self.convert_set_clause(set_clause)
+            return query.replace(set_clause,classic_syntax)
+        return query
+
+    def extract_set_group(self,s):
+        return self.get_text_in_between(s,"SET","WHERE")
+
+    def convert_set_clause(self,string):
+        before_equals=string.split("=")[0]
+        after_equals=string.split("=")[1]
+        column_names = self.get_text_in_between(before_equals,"(",")").split(",")
+        values = self.get_text_in_between(after_equals,"(",")").split(",")
+        return self.equalize_items_str(column_names,values)
+
+    def equalize_items_str(self,list1,list2):
+        result=""
+        for index, column_name in enumerate(list1):
+            if result:
+                result +=", "
+            result += column_name+"="+list2[index]
+        return result
+
+    def get_text_in_between(self,s,start,end):
+        where_index =s.upper().rfind(end)
+        if where_index <0:
+            where_index =len(s)
+        set_index =s.upper().find(start)
+        return s[set_index+len(start):where_index].strip()
+
     def split(self,sqltext):
         result =[]
         for statement in sqlparse.split(sqltext):
             #remove semicolon - otherwise throws exc when run
-            if statement and statement[-1:]==";":
-                statement = statement[:-1]
-            result.append(statement)
+            if statement :
+                if statement[-1:]==";":
+                    statement = statement[:-1]
+                result.append(statement)
         return result
 
     def parse_relative_ids(self,sqltext):
         return self.relativeId_replacer.replace(sqltext)
 
     def parse_runnable_statements(self,sqltext):
-        sqltext = self.parse_relative_ids(sqltext)
-        sqltext = self.strip_comments(sqltext)
-        return self.split(sqltext)
+        #sqltext = self.parse_relative_ids(sqltext)
+        #sqltext = self.strip_comments(sqltext)
+        #sqltext = self.parse_update_stmt(sqltext)
+        statements = self.split(sqltext)
+        result =[]
+        for stmt in statements:
+            result.append(self.parse_runnable_stament(stmt))
+        return result
+
+    def parse_runnable_stament(self,statement):
+            statement = self.parse_relative_ids(statement)
+            statement = self.strip_comments(statement)
+            return self.parse_update_stmt(statement)
 
     def parse_assertable_statements(self,sqltext):
         sqltext = self.strip_comments(sqltext)
