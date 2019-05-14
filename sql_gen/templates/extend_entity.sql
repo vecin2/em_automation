@@ -5,7 +5,7 @@ Then we update the OTB entity to point to our extended object and to inherit fro
 {% set tmp = extended_entity_id | description("Entity keyname you would like to extend(e.g Contact)") | suggest(_keynames.ED) %}
 
 {# We create a new "base" entity using the values from the extended entity#}
-{% set extended_entity = _db.find.ed_by_id_n_locale(extended_entity_id) %}
+{% set extended_entity = _db.find.ed_by_keyname_n_locale(extended_entity_id) %}
 {% set entity_name = "Base"+extended_entity["NAME"] %}
 {% set entity_display_name = extended_entity['DISPLAY_NAME'] +" Base Class" %}
 {% set entity_description = extended_entity['DESCRIPTION'] +" Base Class" %}

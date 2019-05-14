@@ -2,7 +2,7 @@
 {% set __entity_type = entity_type | suggest(_keynames.ET) %}
 {% set verb_names = _db.list.v_names_by_et(__entity_type) %}
 {% set __verb_name = verb_name | suggest(verb_names)%}
-{% set perspective_verbs = _db.fetch.v_by_pers_id(__perspective_id) %}
+{% set perspective_verbs = _db.fetch.v_by_pers_keyname(__perspective_id) %}
 {%set seq_no_desc ="All the activities sequence numbers are 1 by default. This shows the activities in alphabetical order.\n"+
 		   "Please notice that changing the Context within 'Manage Context' admin screen overrides sequence numbers and set them matching the screen order.\n"
 		   "Notice that you local environment configuration might ddiffer from the environment where this script will be released"

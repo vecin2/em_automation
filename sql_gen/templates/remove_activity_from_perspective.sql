@@ -1,5 +1,5 @@
 {% set __perspective_id =perspective_id | suggest(_keynames.CC)%}
-{% set verbs =_db.fetch.v_by_pers_id(__perspective_id)%}
+{% set verbs =_db.fetch.v_by_pers_keyname(__perspective_id)%}
 {% set verb_display_names =verbs.column("VERB")%}
 {% set v_to_remove_desc = "Verbs on perspective:\n"+verbs | string()+"\nEnter the verb name you want to remove"%}
 {% set __verb_name_to_remove = verb_name_to_remove | description(v_to_remove_desc) |suggest(verb_display_names) %}

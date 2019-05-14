@@ -7,7 +7,7 @@ VALUES (
 	@ED.EntityDefinition, --ENTITY_DEF_ID
 	@ENV.Dflt, --ENTITY_DEF_ENV_ID
 	@RELEASE.ID,
-	{% set parent_category = _db.find.category_by_id(parent_category_id) %}
+	{% set parent_category = _db.find.category_by_keyname(parent_category_id) %}
 	'{{parent_category["SYSTEM_NAME"]+"->"+category_id}}' --SYSTEM_NAME
        );
 
