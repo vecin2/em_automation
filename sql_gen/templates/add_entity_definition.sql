@@ -1,5 +1,9 @@
-{% set tmp = entity_id | description("Please enter the entity_id, e.g Policy,PRJCustomer - do not add 'ED' at the end")%}
-{% set entity_name=entity_id+"ED" %}
+{% set tmp = entity_name | description("Please enter the entity_name, e.g 'PRJCustomerED' (by convention finishes in ED)")%}
+{% if entity_name.endswith('ED') %}
+  {% set entity_id = entity_name[:-2] %}
+{% else %}
+  {% set entity_id = entity_name %}
+{%endif%}
 {% set default_display_name = entity_id %}
 {% set int_display_name = entity_display_name | description("display_name") 
 			   | default(default_display_name)%}

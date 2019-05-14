@@ -11,8 +11,10 @@ class Keynames(object):
     def __getitem__(self,name):
         return self.list(name)
 
-    def get(self,keyset,id):
-        return self.dbfactory.addb.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
+    def get_full(self,keyset,id):
+        if id == "NULL":
+            return id
+        return "@"+keyset+"."+self.dbfactory.addb.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
 
     def __getattr__(self,name):
         if name.startswith("FULL_"):
