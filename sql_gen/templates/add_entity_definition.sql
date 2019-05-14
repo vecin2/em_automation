@@ -1,8 +1,8 @@
-{% set tmp = entity_name | description("Please enter the entity_name, e.g 'PRJCustomerED' (by convention finishes in ED)")%}
-{% if entity_name.endswith('ED') %}
-  {% set entity_id = entity_name[:-2] %}
+{% set __entity_name = entity_name | description("Please enter the entity_name, e.g 'PRJCustomerED' (by convention finishes in ED)")%}
+{% if __entity_name.endswith('ED') %}
+  {% set entity_id = __entity_name[:-2] %}
 {% else %}
-  {% set entity_id = entity_name %}
+  {% set entity_id = __entity_name %}
 {%endif%}
 {% set default_display_name = entity_id %}
 {% set int_display_name = entity_display_name | description("display_name") 
@@ -12,9 +12,9 @@
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, IS_DELETED, IS_BASIC, SUPPORTS_READONLY,IS_EXPANDABLE,ICON_PATH, INSTANCE_ICON_PATH) VALUES (
 @ED.{{entity_id}}, -- ID
 @ENV.Dflt, -- ENV_ID
-'{{entity_name}}', -- NAME
-'{{entity_name}}', -- UUID
-'{{entity_name}}', -- TYPE_UUID
+'{{__entity_name}}', -- NAME
+'{{__entity_name}}', -- UUID
+'{{__entity_name}}', -- TYPE_UUID
 @ET.{{entity_id}}, -- TYPE_ID
 @ENV.Dflt, -- TYPE_ENV_ID
 '{{logical_object_path  | codepath() | replace(".xml","")}}', -- LOGICAL_OBJECT_PATH
@@ -28,16 +28,16 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 NULL, -- ICON_PATH
 NULL -- INSTANCE_ICON_PATH
 );
-{% set tmp6 = category_id | suggest(_keynames.EC) | default(_entity_category) %}
+{% set __category_id = category_id | suggest(_keynames.EC) | default(_entity_category) %}
 {# Category can be null is this template is included, e.g extended_entity.
 In that case we dont want to insert in EVA_CATEGORY_ENTRY#}
-{% if category_id != "NULL" %}
-  {% set category = _db.fetch.category_by_id(category_id) %}
-  {% if category_id not in _keynames.EC %}
+{% if __category_id != "NULL" %}
+  {% set category = _db.fetch.category_by_id(__category_id) %}
+  {% if __category_id not in _keynames.EC %}
 {% include 'add_category.sql' %}
   {% endif %}
   INSERT INTO EVA_CATEGORY_ENTRY(CATEGORY_ID, CATEGORY_ENV_ID, ENTITY_ID, ENTITY_ENV_ID) VALUES (
-  @EC.{{category_id}}, -- CATEGORY_ID
+  @EC.{{__category_id}}, -- CATEGORY_ID
   @ENV.Dflt, -- CATEGORY_ENV_ID
   @ED.{{entity_id}}, -- ENTITY_ID
   @ENV.Dflt -- ENTITY_ENV_ID
@@ -45,7 +45,7 @@ In that case we dont want to insert in EVA_CATEGORY_ENTRY#}
 {% endif %}
 
 {% set object_type ="EntityDefinitionED" %}
-{% set object_instance = entity_name %}
+{% set object_instance = __entity_name %}
 {% set object_version = "@ED." +entity_id %}
 {% set field_name = "displayName" %}
 {% set text = int_display_name %}

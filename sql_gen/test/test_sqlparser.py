@@ -48,6 +48,7 @@ def test_splits_multiple_runnable_stmts():
     stmt1="SELECT * FROM VERB"
     stmt2="SELECT * FROM ENTITY"
     assert [stmt1,stmt2]==SQLParser().split(sqltext)
+    assert [stmt1]==SQLParser().split("SELECT * FROM VERB;\n--hello ")
 
 def test_parse_full_sql():
     sqltext="""
