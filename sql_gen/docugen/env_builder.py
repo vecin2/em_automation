@@ -7,7 +7,7 @@ from . import source_inspector
 from sql_gen.sqltask_jinja.filters.codepath import codepath
 from sql_gen.sqltask_jinja.filters.description import description
 from sql_gen.sqltask_jinja.filters.suggest import suggest
-from sql_gen.sqltask_jinja.filters.other import split_uppercase
+from sql_gen.sqltask_jinja.filters.other import split_uppercase,objectname,objectpath
 from jinja2 import StrictUndefined,Undefined,UndefinedError
 from jinja2.runtime import missing
 
@@ -91,6 +91,8 @@ class EnvBuilder(object):
         env.filters['description']= description
         env.filters['suggest']= suggest
         env.filters['split_uppercase']= split_uppercase
+        env.filters['objectname']= objectname
+        env.filters['objectpath']= objectpath
         #if self.filters_package:
         #    functions = source_inspector.extract_pkg_funcs_list_by_name(
         #                    self.filters_package,
