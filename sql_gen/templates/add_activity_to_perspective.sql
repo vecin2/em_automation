@@ -11,7 +11,7 @@
 {% if __is_alphabetical_order == "Y"%}
 	{% set __sequence_number = 1 %}
 UPDATE EVA_CONTEXT_VERB_ENTRY
-SET SEQUENCE_NUMBER = 1
+SET (SEQUENCE_NUMBER) = (1)
 where CONFIG_ID = @CC.{{__perspective_id}};
 {% else %}
 	{% set seq_no_desc =perspective_verbs.to_str()+"\n"+"In which sequence number should this activity be displayed? (this will increase the higher sequence numbers)"%}
