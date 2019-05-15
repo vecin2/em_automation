@@ -21,7 +21,7 @@ class ConfigFile(object):
     def _read_properties(self,full_path):
         myprops = {}
         if not os.path.exists(full_path):
-            return myprops
+            raise FileNotFoundError("Try to load config file '"+full_path+"' but it does not exist")
         with open(full_path, 'r') as f:
                 for line in f:
                     line = line.rstrip() #removes trailing whitespace and '\n'

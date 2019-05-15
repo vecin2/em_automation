@@ -16,6 +16,7 @@ def test_creates_sqltask_from_absolute_path(app_runner,fs):
 
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
+               .with_app_config({})\
                .with_svn_rev_no("122")\
                .select_template('greeting.sql',{'name':'David'})\
                .saveAndExit()\
@@ -33,6 +34,7 @@ def test_creates_sqltask_from_relative_path(app_runner,fs):
     os.chdir("/templates")
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
+               .with_app_config({})\
                .with_svn_rev_no("122")\
                .select_template('bye.sql',{'name':'David'})\
                .saveAndExit()\
@@ -60,6 +62,7 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner,fs):
 
     app_runner.with_emproject_under("/em/prj")\
                .using_templates_under("/templates")\
+               .with_app_config({})\
                .with_svn_rev_no("122")\
                .user_inputs("y")\
                .select_template('bye.sql',{'name':'Frank'})\

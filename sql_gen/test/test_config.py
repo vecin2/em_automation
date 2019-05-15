@@ -41,9 +41,11 @@ def test_it_resolve_value_assigned_to_var_multiple_times_no_matter_the_order(fs)
     config_content="db.user=${db.name}\ndb.name=${ad.name}\nad.name=DEV"
     config = make_config(fs,config_content)
     assert "DEV" == config["db.user"]
-def test_get_config_value_when_no_file_exist_returns_empty_dict():
+def test_get_config_value_when_no_file_exist_throws_exception():
     config_home ="/em/project/gsc/config/emautomation.properties"
     fake_logger = FakeLogger()
-    config = ConfigFile(config_home,fake_logger)
-    assert str({}) == str(config.properties)
+    with pytest.raises(FileNotFoundError) as excinfo:
+        config = ConfigFile(config_home,fake_logger)
+        config.properties
+    assert "Try to load config file '"+config_home+"' but it does not exist" in  str(excinfo)
 

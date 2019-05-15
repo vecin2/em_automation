@@ -72,8 +72,10 @@ v__by_name=SELECT * FROM verb_name WHERE NAME='{}' and IS_DELETED='{}'
 
     assert expected_dict == ad.query_dict
 
-def test_make_queries_from_file_does_not_throw_exception_if_file_not_exist():
-    ad=QueryRunner.make_from_file("/queries.sql",db=FakeEMDB())
+def test_make_queries_from_file_does_throws_exception_if_file_not_exist():
+    with pytest.raises(FileNotFoundError) as excinfo:
+        ad=QueryRunner.make_from_file("/queries.sql",db=FakeEMDB())
+    assert "Try to load config file '/queries.sql' but it does not exist" in  str(excinfo)
 
 def test_something():
     fakedb=FakeEMDB()
