@@ -19,6 +19,9 @@ class TraceUndefined(StrictUndefined):
                          obj= missing,
                          name= name,
                          exc =exc)
+    @staticmethod
+    def clear_vars():
+        TraceUndefined.executed_vars={}
 
 class FileSystemLoader(JinjaFileSystemLoader):
     def __init__(self, searchpath, encoding='utf-8', followlinks=False):
