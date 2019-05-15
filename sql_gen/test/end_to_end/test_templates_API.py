@@ -11,6 +11,8 @@ def app_runner():
     yield app_runner
     app_runner.teardown()
 
+#disabled because is a computer specific test. We need to test this part with unit tests
+@pytest.mark.skip
 def test_query_runner(app_runner):
     app = AppProject(os.environ)
     app_runner.with_emproject_under("/opt/em/projects/Pacificorp/trunk")\

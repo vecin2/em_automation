@@ -1,3 +1,4 @@
+import sql_gen
 from sql_gen.database import EMDatabase
 from sql_gen.emproject import EMProject,EMConfigID,emproject_home
 from sql_gen.database import QueryRunner,Connector
@@ -36,16 +37,6 @@ class AppProject(object):
         self.env_vars = env_vars
         self.emprj_path =emprj_path
 
-    @staticmethod
-    def home_path(env_vars):
-        emprj_home= emproject_home(env_vars)
-        if os.path.file.exists(os.path.join(emprj_home,".devtask")):
-            with open(destask_filepath) as f:
-                devtaskpath = f.read()
-        else:
-            devtaskpath="devtask"
-        return os.path.join(emprj_home,devtask)
-
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
     @property
@@ -65,12 +56,12 @@ class AppProject(object):
     @property
     def root(self):
         emprj_home= self.emproject.root
-        destask_filepath =os.path.join(emprj_home,".devtask")
+        destask_filepath =os.path.join(emprj_home,sql_gen.appname)
         if os.path.isfile(destask_filepath):
             with open(destask_filepath) as f:
                 devtaskpath = f.readline().strip()
         else:
-            devtaskpath =os.path.join("project","devtask")
+            devtaskpath =os.path.join("project",sql_gen.appname)
         return os.path.join(self.emproject.root,devtaskpath)
 
     @property
