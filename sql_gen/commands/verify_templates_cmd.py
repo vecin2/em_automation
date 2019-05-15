@@ -312,14 +312,14 @@ class TestTemplatesCommand(object):
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
-        if self.verbose_mode != "-vv":
+        if self.verbose_mode == "-q":
             original_stdout = sys.stdout
-            stdout_file =self._tmp_folder()+"/run_test.log"
-            sys.stdout = open(stdout_file,"w")
+            stdout_file = open(os.devnull, 'w')
+            sys.stdout = stdout_file
         if not self.reuse_tests:
             self._recreate_tmp_folder()
             self._create_test_file(self._generate_all_tests())
-        if self.verbose_mode != "-vv":
+        if self.verbose_mode == "-q":
             sys.stdout = original_stdout
         output =self.pytest.main([self.verbose_mode,self._tmp_folder()])
         print("--- Run in %s seconds ---" % (time.time() - start_time))
