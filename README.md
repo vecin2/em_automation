@@ -234,7 +234,8 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 ```
 ## Naming Convention 
 The following name and convention is used when writing tempaltes:
-template variables names follow snake case e.g "customer_name"
+- Template variables names follow snake case e.g "customer_name"
+ - Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from t
 
 ##  Fomatting 
 All SQL scripts are written in uppercase with the variables in lower case and snake case. 
@@ -338,5 +339,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA0MjkwMTIyOSwtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTgxMjQyNTQxMiwtMjEwNTE1Mzk4XX0=
 -->
