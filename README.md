@@ -239,7 +239,7 @@ All SQL scripts are written in uppercase with the variables in lower case and sn
 #### Inserts
 For easy reading the values inserted are indented within the brackets and a comment with the field name added next to it.
 ```sql
-INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
+INSERT INTO PROCESS_REFERENCE (ID, PROCESS_ID,CONFIG_ID, S_SHARED) 
 VALUES (
         @PDR.{{process_descriptor_ref_id}} --id,
         @PD.{{process_descriptor_id}}, --process_descriptor_id
@@ -333,5 +333,9 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMzgwNjk5MDc0LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
+-->
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMzg0MDM1OTgwLC0yMTA1MTUzOThdfQ==
 -->
