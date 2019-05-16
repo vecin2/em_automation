@@ -30,14 +30,18 @@ class NonConflictRelativeIdLoader(object):
 
 class RelativeIdLoader(object):
     keynames_cache={}
+    #cache to avoid generating id multiple times
     keyset_cache=defaultdict(list)
     def __init__(self,db=None):
         self.db =db
-        #cache to avoid generating id multiple times
     def load(self,keyset,keyname):
-        result = self.compute_id(keyset,keyname)
-        self._cache_keyname(keyset,keyname,result)
-        return result
+        id = self._get_from_cache(keyset,keyname)
+        if id:
+            return id
+        else:
+            result = self.compute_id(keyset,keyname)
+            self._cache_keyname(keyset,keyname,result)
+            return result
 
     def list(self,keyset):
         result =  self._list_from_cache(keyset)
