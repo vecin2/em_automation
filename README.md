@@ -333,5 +333,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbMzgwNjk5MDc0LC0yMTA1MTUzOThdfQ==
 -->
