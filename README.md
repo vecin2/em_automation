@@ -232,11 +232,12 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 {% set process_descriptor_ref_id = process_descriptor_id %}
 {% include 'add_process_descriptor_ref.sql' %}
 ```
+## Naming Convention 
+The following name and convention is used when writing tempaltes:
+template variables names follow snake case e.g "customer_name"
 
-##  Fomatting and Naming Convention 
+##  Fomatting 
 All SQL scripts are written in uppercase with the variables in lower case and snake case. 
-##'
-
 #### Inserts
 For easy reading the values inserted are indented within the brackets and a comment with the field name added next to it.
 ```sql
@@ -337,5 +338,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgwMzA3NjI1MCwtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbMTA0MjkwMTIyOSwtMjEwNTE1Mzk4XX0=
 -->
