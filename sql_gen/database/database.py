@@ -104,7 +104,7 @@ class EMDatabase(object):
             try:
                 cursor.execute(statement)
                 if verbose == 'v':
-                    print (statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
+                    print ("\n"+statement+"\nReturned "+ str(cursor.rowcount)+" row(s)")
             except Exception as excinfo:
                 print("The following statement failed:\n"+statement+"\n"\
                         "Due to: "+ str(excinfo))
