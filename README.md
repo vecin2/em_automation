@@ -198,14 +198,16 @@ Returns the column as a list:
    ```
     
    **str()**
+The string method has been override to use prettyTables:
    ```
-   +------------------------+------------------------+
-|      DISPLAY_NAME      |          VERB             |
+   jk
 +------------------------+------------------------+
-|       Agent Chat              | agentChatStart  |
-|        Make Call        		 |     makeCall   |
-|      Create Case       	     |    createCase  |
-|      Handle Call      	     |    handleCall  |
+|      DISPLAY_NAME      |          VERB          |
++------------------------+------------------------+
+|       Agent Chat       | agentChatStart  		  |
+|        Make Call       |     makeCall   		  |
+|      Create Case       |    createCase  		  |
+|      Handle Call       |    handleCall  		  |
 |    Handle Whitemail    |    handleEmail         |
 +------------------------+------------------------+
 ```
@@ -391,7 +393,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5ODEwNzQ4NDAsNzE4ODY4ODY0LC0xMD
-Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
-MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbLTkyOTA0MzM4NSw3MTg4Njg4NjQsLTEwNj
+gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
+NjcsLTIxMDUxNTM5OF19
 -->
