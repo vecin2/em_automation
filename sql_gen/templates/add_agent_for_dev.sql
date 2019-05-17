@@ -13,4 +13,5 @@ VALUES ('{{username}}','0ef489f','{{name}} {{surname}}',TO_DATE('12/15/2075','MM
 {% set username_to_copy_from = "admin" %}
 {% include 'update_agent_password.sql' %}
 
+--This script is run against the reporting schema when an agent is added via the admin screens and is left here for reference
 --INSERT INTO DIM_AGENT (TENANT_ID, ID, USERNAME, FIRST_NAME, LAST_NAME, PARENT_AGENT_ID) VALUES ('default', 2, 'ccdev', 'Mark', 'Johson', 1000000).

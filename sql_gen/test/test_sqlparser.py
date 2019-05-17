@@ -106,6 +106,21 @@ def test_parse_update_syntax():
     run_test_parse_update(
                       "update VERB SET ID=1",
                       "update VERB SET ID=1")
+    update_query=""" UPDATE EVA_CONTEXT_VERB_ENTRY
+SET (SEQUENCE_NUMBER) = (2)
+where CONFIG_ID = 100
+and ENTITY_DEF_TYPE_ID = 2483
+and VERB = 'launchCobrowse'
+"""
+    expected=""" UPDATE EVA_CONTEXT_VERB_ENTRY
+SET SEQUENCE_NUMBER = 2
+where CONFIG_ID = 100
+and ENTITY_DEF_TYPE_ID = 2483
+and VERB = 'launchCobrowse'
+"""
+    run_test_parse_update(
+                      update_query,
+                    update_query)
     run_test_parse_update(
                       "SELECT * FROM VERB",
                       "SELECT * FROM VERB")

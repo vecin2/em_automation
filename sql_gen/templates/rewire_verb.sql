@@ -16,7 +16,7 @@
 					        | codepath()
 					        | default (suggested_ext_path) %}
 
- {% set process_descriptor_id = _emprj.prefix()+ entity_def_id.capitalize() + __verb_name.capitalize() -%}
+ {% set process_descriptor_id = _prjprefix+ entity_def_id.capitalize() + __verb_name.capitalize() -%}
 
 {% include 'add_process_descriptor.sql' %}
 
