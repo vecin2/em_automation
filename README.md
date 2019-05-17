@@ -167,7 +167,7 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
+It returns a row `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -380,6 +380,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzQ1ODkwOTQxLDE1MjA0MTk3MSwxNzU3ND
-MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbLTEwNjgwODQ2MDUsMTUyMDQxOTcxLDE3NT
+c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
