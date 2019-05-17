@@ -163,8 +163,8 @@ It allows to run a predefined set of queries defined within `config/ad_queries.s
 
 **fetch.<<query_name>>**(_\*query_params_)
 It returns a `SQLTable` object (list of dictionaries). For example:
- - `_db.list.v_names_by_ed(entitfy_id)`
- - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
+ - `_db.fetch.v_names_by_ed(entity_id)`
+
  
 **find.<<query_name>>**(_\*query\_params_)
 It returns a `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
@@ -186,7 +186,10 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
 **column(name)**
 Returns the column as a list:
-   `assert [1,2] == table.column("ID")`
+   ```
+   table =_db.fetch.v_names_by_ed(entity_id)`
+   assert [1,2] == table.column("ID")
+   ```
     
 
 ### _emprj
@@ -370,6 +373,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NzQyNTAwNCwxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTE4MjQyMjQwMDUsMTUyMDQxOTcxLDE3NT
+c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
