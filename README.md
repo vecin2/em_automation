@@ -172,6 +172,10 @@ It returns a `SQLTable` object with one row.  Similar to `fetch` but this is use
 
 ### _database
  Same as `_db` but allows running free form queries instead of dictionary queries:
+**find**(query_string)
+It returns a `SQLTable` object  (list of dictionaries). For example:
+ - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
+ **fetch**(query_string)
  -_database.find("SELECT * FROM VERB where name='my_verb'")
  -_database.list("SELECT NAME FROM VERB where name like '%create%'")
  
@@ -359,6 +363,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQxODM3OTQyNCwxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTE3NjM5OTQzMzYsMTUyMDQxOTcxLDE3NT
+c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
