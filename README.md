@@ -94,7 +94,7 @@ The syntax is defined by python jinja templates. Check the [template Designer Do
 When design templates consider the following:
 -  A value should be prompted with enough information so the user knows how to fill it.
 - When possible provide a subset of values for the user to pick from.
-- Users should NOT be prompted any value that can be computed from some other values - finding the minimum set of values is key. 
+- Users should NOT be prompted any value that can be computed from some other values - finding the minimum number of prompted values is key. 
 - Avoid duplicating SQL code, reuse template by including them within others. So when a product DB table changes it avoids having to change multiple templates.
 - Review existing templates or consult this documentation to understand what filters and templates are available.
 
@@ -418,7 +418,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAxMDc3MjExLDcxODg2ODg2NCwtMTA2OD
-A4NDYwNSwxNTIwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2
-NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTEwODc5MzM5ODksNzE4ODY4ODY0LC0xMD
+Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
+MTY3LC0yMTA1MTUzOThdfQ==
 -->
