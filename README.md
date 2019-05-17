@@ -24,6 +24,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [_keynames](#-keynames)
     + [_db](#-db)
     + [_database](#-database)
+  * [More Available Objects](#more-available-objects)
     + [SQLTable](#sqltable)
     + [SQLRow](#sqlrow)
     + [_emprj](#-emprj)
@@ -40,7 +41,6 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
       - [Running tests](#running-tests)
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
-
 
 ## Basic Usage      
 ### Add New Templates 
@@ -175,7 +175,7 @@ It returns a [SQLTable](#sqltable)  object (list of dictionaries). For example:
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a  [SQLRow](#sqlro object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
+It returns a  [SQLRow](#sqlrow) object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -427,5 +427,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMzMjYwNTcwNSwxNDE0MzY1MTQ5XX0=
+eyJoaXN0b3J5IjpbLTE2NzQ2OTg2MDMsMTQxNDM2NTE0OV19
 -->
