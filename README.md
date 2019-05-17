@@ -198,6 +198,16 @@ Returns the column as a list:
    ```
     
    **str()**
+   +------------------------+------------------------+
+|      DISPLAY_NAME      |          VERB          |
++------------------------+------------------------+
+|       Agent Chat       | agentToAgentChatStart  |
+|        Cobrowse        |     launchCobrowse         |
+|      Create Case       |    launchCreateCase    |
+|      Handle Call       |    handleCall    |
+|    Handle Whitemail    |    handleWhitemail     |
++------------------------+------------------------+
+
 
 ### _emprj
  It extract different information from the current EM project:
@@ -380,7 +390,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzE4ODY4ODY0LC0xMDY4MDg0NjA1LDE1Mj
-A0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUz
-OThdfQ==
+eyJoaXN0b3J5IjpbLTE2NTMzNTgzMTgsNzE4ODY4ODY0LC0xMD
+Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
+MTY3LC0yMTA1MTUzOThdfQ==
 -->
