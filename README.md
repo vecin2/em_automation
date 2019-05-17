@@ -160,7 +160,7 @@ It retrieves a list of relative ids for the key set passed. For example:
 
 ### _db
 It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
-**description**(_value_,  _description_)
+**\_db.list.<<query_name>>(*query_params)
 It shows the `description` when prompting the user. 
 This is not a builtin jinja filter and it does not modify the variable entered by the user. 
  - _db.list.v_names_by_ed(entitfy_def_id)
@@ -352,6 +352,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ1ODkyMDEyNCwxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbNjczNTI4MjUxLDE1MjA0MTk3MSwxNzU3ND
+MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
 -->
