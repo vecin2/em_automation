@@ -161,14 +161,14 @@ It retrieves a list of relative ids for the key set passed. For example:
 ### _db
 It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
 
-**\_db.fetch.<<query_name>>**(*query_params)
+**fetch.<<query_name>>**(*query_params)
 It returns a `SQLTable` object (list of dictionaries). For example:
- - _db.list.v_names_by_ed(entitfy_id)
- - _db.find.pd_by_ed_n_vname(entity_id, v_name)
+ - `_db.list.v_names_by_ed(entitfy_id)`
+ - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
  
-**\_db.find.<<query_name>>**(*query_params)
+**find.<<query_name>>**(*query_params)
 It returns a `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
- - _db.find.pd_by_ed_n_vname(entity_id, v_name)
+ - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 ### _database
  Same as `_db` but allows running free form queries instead of dictionary queries:
@@ -176,7 +176,8 @@ It returns a `SQLTable` object with one row.  Similar to `fetch` but this is use
  -_database.list("SELECT NAME FROM VERB where name like '%create%'")
  
 ### SQLTable
-This object is not in context but is retrieve by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from teh 
+This object is not in context but is retrieve by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
+**
 ### _emprj
  It extract different information from the current EM project:
  
@@ -358,6 +359,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTgwNDk2MDcyOCwxNTIwNDE5NzEsMTc1Nz
+eyJoaXN0b3J5IjpbMTQxODM3OTQyNCwxNTIwNDE5NzEsMTc1Nz
 QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
