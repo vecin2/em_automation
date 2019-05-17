@@ -226,9 +226,16 @@ It has two methods overriden:
 
  **[_<<var_name>>_]**
  It retrieves `NULL` as a string if no value is found within the dictionary. 
+ 
 **str()**
-As a list it is overriden to use prettytable.
-
+As a list it is overriden to use prettytable which prints the keys and the values as the following:
+```
++------------------------+---------------------+
+|      NAME			     |         ID    	   |
++------------------------+---------------------+
+|       Agent Chat     	 |   		1      	   |
++------------------------+---------------------+
+```
 This is object is not context neither. I
 ### _emprj
  It extract different information from the current EM project:
@@ -411,7 +418,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEyNzgzMDE0MjcsNzE4ODY4ODY0LC0xMD
-Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
-MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbMTAxMDc3MjExLDcxODg2ODg2NCwtMTA2OD
+A4NDYwNSwxNTIwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2
+NywtMjEwNTE1Mzk4XX0=
 -->
