@@ -183,7 +183,13 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 
  
 ### SQLTable
-This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
+This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. As a list you access it with python list methods, for example:
+   ```
+   table =_db.fetch.v_names_by_ed(entity_id)`
+   assert [1,2] == table.column("ID")
+   ```
+ It has the following method to allow extract data from the query result easily:
+
 **column(name)**
 Returns the column as a list:
    ```
@@ -191,6 +197,7 @@ Returns the column as a list:
    assert [1,2] == table.column("ID")
    ```
     
+   
 
 ### _emprj
  It extract different information from the current EM project:
@@ -373,6 +380,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4MjQyMjQwMDUsMTUyMDQxOTcxLDE3NT
-c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbNzQ1ODkwOTQxLDE1MjA0MTk3MSwxNzU3ND
+MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
 -->
