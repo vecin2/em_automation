@@ -170,12 +170,12 @@ It retrieves a list of relative ids for the key set passed. For example:
 It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
 
 **fetch.<<query_name>>**(_\*query_params_)
-It returns a [SQLTable](#SQLTable)  object (list of dictionaries). For example:
+It returns a [SQLTable](#sqltable)  object (list of dictionaries). For example:
  - `_db.fetch.v_names_by_ed(entity_id)`
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a  [SQLTable](#SQLRow) object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
+It returns a  [SQLRow](#sqlro object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -183,11 +183,12 @@ It returns a  [SQLTable](#SQLRow) object. It is similar to `fetch` but this is u
  Same as `_db` but allows running free form queries instead of dictionary queries:
  
 **fetch**(_query_string_)
-Similar to th previous `fetch` but it takes an SQL string instead. For example:
- -`_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
+Similar to `_db.fetch` but it takes an SQL string instead. For example:
+ `_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
  
  **find**(_query_string_)
- -`_database.find("SELECT * FROM VERB where name='my_verb'")`
+ Similar to `_db.find` but it takes an SQL string instead. For example:
+ `_database.find("SELECT * FROM VERB where name='my_verb'")`
 
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
@@ -426,5 +427,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTU4MjkxOTEwLDE0MTQzNjUxNDldfQ==
+eyJoaXN0b3J5IjpbMTMzMjYwNTcwNSwxNDE0MzY1MTQ5XX0=
 -->
