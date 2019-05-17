@@ -226,17 +226,17 @@ Process descriptor id is Customer
 Include allows wrapping other templates so they can be reused and avoid SQL code duplication. 
 ```sql
 #Compute descriptor id  which is used in 'add_process_descriptor.sql'
-{% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
+{% set process_id = __prjprefix + entity_def_id.capitalize() + verb_name.capitalize() -%}
 
-{% include 'add_process_descriptor.sql' %}
-{% set process_descriptor_ref_id = process_descriptor_id %}
-{% include 'add_process_descriptor_ref.sql' %}
+{% include 'add_descriptor.sql' %}
+{% set descriptor_ref_id = descriptor_id %}
+{% include 'add_descriptor_ref.sql' %}
 ```
 ## Naming Convention 
 The following name and convention is used when writing tempaltes:
 - Template variables names follow snake case e.g "customer_name"
  - Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables
- - Internal variables are named as the variabled but prefixing two underscores. Internal variables are used when we want to prompt a var
+ - Internal variables are named as the variabled but prefixing two underscores. Internal variables are used when we capturing a value that will be used later on within the same template.
 ```
 {% set __entity_display_name = entity_display_name 
 								   | default(default_display_name)%}
@@ -350,6 +350,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDc4NjUzNjE1LDE1MjA0MTk3MSwxNzU3ND
-MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbMTkwMDI5NzIzMywxNTIwNDE5NzEsMTc1Nz
+QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
