@@ -156,6 +156,15 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
+**description**(_value_,  _description_)
+It shows the `description` when prompting the user. 
+This is not a builtin jinja filter and it does not modify the variable entered by the user. 
+
+```sql
+{{ my_variable| description("Please enter 'my_variable_value`') }}
+
+#prompts
+Please enter 'my_variable_value`:
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
 
@@ -390,7 +399,7 @@ Test can run with pytest: py.test from the project top folder
 Globals functions can easily implemented by adding the function to the `globals.py` module. The function is added automatically to the template enviroment and therefore available for templates to use it.
 
 ### Implementing new  Filters
-Filters leave under the  package called `/filters` whith the class name matching the capitalize name of the filter +"Filter". For example:
+ Filters are picked up by the environment by name convention. The system looks for classes under the `/filters` whith the class name matching the capitalize name of the filter +"Filter". For example:
  ```sql
  #Template
  {{ var_name | default("Test default") }}
@@ -427,5 +436,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExNTIxMDU3NjEsMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbLTEzODQ3NTEyODIsMTQxNDM2NTE0OV19
 -->
