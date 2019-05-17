@@ -167,7 +167,7 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a row `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
+It returns a dictionary which a  row `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -186,7 +186,7 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. As a list you access it with python list methods, for example:
    ```
    table =_db.fetch.v_names_by_ed(entity_id)`
-   assert [1,2] == table.column("ID")
+   assert {"ID":1, "NAME":"search"} == table[0]
    ```
  It has the following method to allow extract data from the query result easily:
 
@@ -380,6 +380,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNjgwODQ2MDUsMTUyMDQxOTcxLDE3NT
-c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbMTY4OTI1NDQ1MSwtMTA2ODA4NDYwNSwxNT
+IwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1
+Mzk4XX0=
 -->
