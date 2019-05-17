@@ -170,7 +170,7 @@ It retrieves a list of relative ids for the key set passed. For example:
 It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
 
 **fetch.<<query_name>>**(_\*query_params_)
-It returns a `SQLTable` object (list of dictionaries). For example:
+It returns a [SQLTable](#SQLTable)  object (list of dictionaries). For example:
  - `_db.fetch.v_names_by_ed(entity_id)`
 
  
@@ -426,5 +426,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg2MjQ4OTM4MywxNDE0MzY1MTQ5XX0=
+eyJoaXN0b3J5IjpbMTczMjc0MzA5MSwxNDE0MzY1MTQ5XX0=
 -->
