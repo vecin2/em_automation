@@ -236,7 +236,7 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 The following name and convention is used when writing tempaltes:
 - Template variables names follow snake case e.g "customer_name"
  - Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables
- - Auxiliary variables are named as the variabled but prefixing two underscores:
+ - Auxiliary variables are named as the variabled but prefixing two underscores. Auxili
 ```
 {% set __entity_display_name = entity_display_name 
 								   | description("display_name") 
@@ -351,6 +351,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM1MTk0MDM5NywxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbMzE5MTcyNDEsMTUyMDQxOTcxLDE3NTc0Mz
+A2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
