@@ -223,10 +223,10 @@ Process descriptor id is {{process_desc_id }}
 Process descriptor id is Customer
 ```
 ## Include
-Include allows wrapping other templates so they can be reused and avoid SQL code duplication. 
+Include allows wrapping other templates so they can be reused and avoid SQL code duplication.  We might want to set some of variables contained within the included template before call that
 ```sql
 #Compute descriptor id  which is used in 'add_process_descriptor.sql'
-{% set process_id = __prjprefix + entity_def_id.capitalize() + verb_name.capitalize() -%}
+{% set process_id = __prjprefix + entity_id.capitalize() + verb_name.capitalize() -%}
 
 {% include 'add_descriptor.sql' %}
 {% set descriptor_ref_id = descriptor_id %}
@@ -350,6 +350,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkwMDI5NzIzMywxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTE1Nzk1ODY5MzgsMTUyMDQxOTcxLDE3NT
+c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
