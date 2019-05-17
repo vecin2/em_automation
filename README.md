@@ -67,7 +67,7 @@ python3 -m  pip  install sqltask
 ``` 
 
 ### Multiple versions of python 
- If you have multiple versions of python installed make sure you are using version 3 by running instead:
+ If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
@@ -75,8 +75,8 @@ python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
 ###  Install builtin Templates
-For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
-These Templates will be provided on demand. 
+For EM developement there are a set templates which provide a based for mutitple tasks, e.g add/remove verbs, extend entities, add activities to context, etc.
+These Templates can be provided on demand. 
 
 
 # Template Design
@@ -413,7 +413,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQxODc1MTg3OCw3MTg4Njg4NjQsLTEwNj
+eyJoaXN0b3J5IjpbLTE5NTcxNDE4OCw3MTg4Njg4NjQsLTEwNj
 gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
 NjcsLTIxMDUxNTM5OF19
 -->
