@@ -201,15 +201,17 @@ Returns the column as a list:
 The string method has been override to use prettyTables:
    ```
    table =_db.fetch.v_names_by_context(context_id)`
-   {% set description = table | string %}
-   {{ display_name | description(
+   {% set context_verbs_desc = table | string %}
+   {{ display_name | description(context_verbs_desc) }}
+
+{# Displays #}
 +------------------------+------------------------+
 |      DISPLAY_NAME      |          VERB          |
 +------------------------+------------------------+
-|       Agent Chat       | agentChatStart  		  |
+|       Agent Chat       |   agentChatStart       |
 |        Make Call       |     makeCall   		  |
 |      Create Case       |    createCase  		  |
-|      Handle Call       |    handleCall  		  |
+|      Get Call          |      getCall  	  	  |
 |    Handle Whitemail    |    handleEmail         |
 +------------------------+------------------------+
 ```
@@ -395,7 +397,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc3MTk0NTI1MSw3MTg4Njg4NjQsLTEwNj
-gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
-NjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbLTUxMDYyMzg3LDcxODg2ODg2NCwtMTA2OD
+A4NDYwNSwxNTIwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2
+NywtMjEwNTE1Mzk4XX0=
 -->
