@@ -178,14 +178,14 @@ It returns a `SQLTable` object with one row.  Similar to `fetch` but this is use
 It returns a `SQLTable` object (list of dictionaries). For example:
  -`_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
  
- **find**(query_string)
+ **find**(_query_string_)
  -`_database.find("SELECT * FROM VERB where name='my_verb'")`
 
  
 ### SQLTable
-This object is not in context but is retrieve by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
+This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
 **column(name)**
-
+Returns the column as a list:
    `assert [1,2] == table.column("ID")`
     
 
@@ -370,6 +370,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5OTk0Njc0NDEsMTUyMDQxOTcxLDE3NT
-c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbLTE1NzQyNTAwNCwxNTIwNDE5NzEsMTc1Nz
+QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
