@@ -164,8 +164,13 @@ It allows to run a predefined set of queries defined within `config/ad_queries.s
 **\_db.fetch.<<query_name>>**(*query_params)
 It returns a `SQLTable` object (list of dictionaries). For example
  - _db.list.v_names_by_ed(entitfy_id)
- - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
+ - _db.find.pd_by_ed_n_vname(entity_id, v_name)
  
+**\_db.find.<<query_name>>**(*query_params)
+It returns a `SQLTable` object with one row. If none or more than one if found it throws an exception. This is used when searching by a unique constraint field so we want to notify th
+ - _db.list.v_names_by_ed(entitfy_id)
+ - _db.find.pd_by_ed_n_vname(entity_id, v_name)
+
 ### _database
  Same as `_db` but allows running free form queries instead of dictionary queries:
  -_database.find("SELECT * FROM VERB where name='my_verb'")
@@ -352,6 +357,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjA2OTM2MDU3MCwxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbMTI3MTcyMTc1LDE1MjA0MTk3MSwxNzU3ND
+MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
 -->
