@@ -281,7 +281,7 @@ handlers:
 loggers:
     app_logger:
         level: INFO
-        handlers: [console,info_file_handler, error_file_handler]
+        handlers: [console,info_file_handler]
         propagate: no
 root:
     level: INFO
@@ -347,6 +347,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTc1NzQzMDY1NSwtMjA5Mzk5NDE2NywtMj
-EwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTIxMjQ5OTkyMywxNzU3NDMwNjU1LC0yMD
+kzOTk0MTY3LC0yMTA1MTUzOThdfQ==
 -->
