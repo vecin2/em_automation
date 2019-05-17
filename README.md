@@ -171,12 +171,12 @@ It takes a list of suggestions which are prompted to the user when asking for th
 ```sql
 {{ object_name| suggest(["Customer","Chat"]) }}
 ```
-**split_uppercase**(_value_, suggestions)
-This filter does not affect the prompted text. It modifies the variable splitting the words when it finds a 
+**split_uppercase**(_value_, )
+This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
 It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
-{{ object_name| suggest(["Customer","Chat"]) }}
-
+{% verb_keyname = "PRJCustomer"split_uppercase() }}
+```
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
 
@@ -448,5 +448,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjQ2MjY1MTQ5LDE0MTQzNjUxNDldfQ==
+eyJoaXN0b3J5IjpbOTA4MTQ1MTMsMTQxNDM2NTE0OV19
 -->
