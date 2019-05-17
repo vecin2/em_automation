@@ -1,28 +1,41 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 # sqltask - an sql generator for EM projects
-sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse th template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
+sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse the template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
 
-Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values, and they should minimize user interactions, avoiding asking for values that could be computed.
+Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling the values, and they minimize user interactions avoiding asking for values that could be computed.
 
 
 # Table Of Contents
-
-- [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
+- [sqltask - an sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
-- [Basic Usage](#basic-usage)
-    + [Adding New Templates](#adding-new-templates)
-      - [Hidding a Template](#hidding-a-template)
+  * [Basic Usage](#basic-usage)
+    + [Add New Templates](#add-new-templates)
+      - [Hide a Template](#hide-a-template)
 - [User installation](#user-installation)
-    + [Windows Console Tools](#windows-console-tools)
+    + [Upgrade](#upgrade)
+    + [Multiple versions of python](#multiple-versions-of-python)
+    + [Install builtin Templates](#install-builtin-templates)
 - [Template Design](#template-design)
+  * [General guidelines](#general-guidelines)
   * [Filters](#filters)
     + [Concatenate multiple filters](#concatenate-multiple-filters)
     + [List of Builtin filters](#list-of-builtin-filters)
+  * [Objects in context](#objects-in-context)
+    + [_keynames](#-keynames)
+    + [_db](#-db)
+    + [_database](#-database)
+    + [_emprj](#-emprj)
+  * [More Available Objects](#more-available-objects)
+    + [SQLTable](#sqltable)
+    + [SQLRow](#sqlrow)
   * [Global Functions](#global-functions)
-  * [List of Global Functions](#list-of-global-functions)
+    + [List of Builtin Global Functions](#list-of-builtin-global-functions)
   * [String Python Builtin Functions](#string-python-builtin-functions)
-  * [Fomatting and Naming Convention](#fomatting-and-naming-convention)
+  * [Include](#include)
+  * [Naming Convention](#naming-convention)
+  * [Fomatting](#fomatting)
       - [Inserts](#inserts)
+- [Logging](#logging)
 - [Build Extensions](#build-extensions)
     + [Developer Setup](#developer-setup)
       - [Running tests](#running-tests)
@@ -67,7 +80,7 @@ python3 -m  pip  install sqltask
 ``` 
 
 ### Multiple versions of python 
- If you have multiple versions of python installed make sure you are using version 3 by running instead:
+ If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
@@ -75,15 +88,10 @@ python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
 ###  Install builtin Templates
-For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
-These Templates will be provided on demand. 
+For EM developement there are a set templates which provide a based for mutitple tasks, e.g add/remove verbs, extend entities, add activities to context, etc.
+These Templates can be provided on demand. 
 
-### Windows Console Tools
-If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
-- [Clink]( http://mridgers.github.io/clink/): very light weight tool which add a set features to the Windows console.
-- [git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well and several linux commands. 
-- [cygwin](https://www.cygwin.com/): a large collection of GNU and Open - Source tools which provide functionality similar to a Linux distribution on Windows. 
- 
+
 # Template Design
 
 How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. 
@@ -94,12 +102,12 @@ The syntax is defined by python jinja templates. Check the [template Designer Do
 When design templates consider the following:
 -  A value should be prompted with enough information so the user knows how to fill it.
 - When possible provide a subset of values for the user to pick from.
-- Users should NOT be prompted any value that can be computed from some other values - finding the minimum set of values is key. 
+- Users should NOT be prompted any value that can be computed from some other values - finding the minimum number of prompted values is key for a good template.
 - Avoid duplicating SQL code, reuse template by including them within others. So when a product DB table changes it avoids having to change multiple templates.
 - Review existing templates or consult this documentation to understand what filters and templates are available.
 
 To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates. 
-You can check as well the existing templates for a goo understanding on how these elements are applied.
+You can check as well the existing templates for a good understanding on how these elements are applied.
 
 ## Filters
 Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which can modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
@@ -148,10 +156,33 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
+**codepath**(_value_)
+It autocompletes the repository paths from both product and project.
+This is not a builtin jinja filter and it does not modify the variable entered by the user. 
+
+```sql
+{{ object_path| codepath() }}
+
+#prompts and when the user start typing it autocompletes
+'object`: Customer.Objects.
+```
+**suggest**(_value_, suggestions)
+It takes a list of suggestions which are prompted to the user when asking for the value.
+```sql
+{{ object_name| suggest(["Customer","Chat"]) }}
+```
+**split_uppercase**(_value_, )
+This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
+It takes a list of suggestions which are prompted to the user when asking for the value.
+```sql
+{% verb_keyname = "customerInlineSearch" |split_uppercase() }}
+# Sets verb keyname to "Customer Inline Search"
+
+```
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
 
-The objects are put into context with underscore (_) prefix this is to avoid clashing with template variables.
+The objects are put into context with underscore (_) prefix this is to avoid clashing with template variables names.
 
 ### _keynames
 It retrieves a list of relative ids for the key set passed. For example:
@@ -159,18 +190,29 @@ It retrieves a list of relative ids for the key set passed. For example:
  - _keynames.V: retrieves a list of the verbs relative ids
 
 ### _db
-It allows to run a predefined set of queries defined in a file called "queries.sql":
- - _db.list.v_names_by_ed(entitfy_def_id)
- - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
+It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
+
+**fetch.<<query_name>>**(_\*query_params_)
+It returns a [SQLTable](#sqltable)  object (list of dictionaries). For example:
+ - `_db.fetch.v_names_by_ed(entity_id)`
+
  
- ### _database
- It allows running free form queries:
- -_database.find("SELECT * FROM VERB where name='my_verb'")
- -_database.list("SELECT NAME FROM VERB where name like '%create%'")
+**find.<<query_name>>**(_\*query\_params_)
+It returns a  [SQLRow](#sqlrow) object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
+ - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
+
+
+### _database
+ Same as `_db` but allows running free form queries instead of dictionary queries:
  
- ### _emprj
- It extract different information from the current EM project:
+**fetch**(_query_string_)
+Similar to `_db.fetch` but it takes an SQL string instead. For example:
+ `_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
  
+ **find**(_query_string_)
+ Similar to `_db.find` but it takes an SQL string instead. For example:
+ `_database.find("SELECT * FROM VERB where name='my_verb'")`
+
 **prj_prefix**()
 It  returns the project prefix of the current `EM_CORE_HOME` project. 
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
@@ -182,12 +224,72 @@ For example with a set modules like
 				|__ ABCCaseHandling
 				|__ ...
 #Template
- {% set process_desc_id = _emprj.prefix()+ entity_def_name %}
-Process descriptor id is {{process_desc_id }}
-#Rendered
-Process descriptor id is ABC
-Name is changeTheAddress
+ {% set process_id = __prj.prefix() %}
+Process id is {{process_id }}
+#Renders
+Process id is ABC
 ```
+### _emprj
+ It extract different information from the current EM project:
+ 
+
+## More Available Objects
+### SQLTable
+This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. As a list you access it with python list methods, for example:
+   ```
+   table =_db.fetch.v_names_by_ed(entity_id)`
+   assert {"ID":1, "NAME":"search"} == table[0]
+   ```
+ It has the following method to allow extract data from the query result easily:
+
+**column(name)**
+Returns the column as a list:
+   ```
+   table =_db.fetch.v_names_by_ed(entity_id)`
+   assert [1,2] == table.column("ID")
+   ```
+    
+   **str()**
+The string method has been override to use prettyTables:
+   ```
+   table =_db.fetch.v_names_by_context(context_id)`
+   {% set context_verbs_desc = table | string %}
+   {{ display_name | description(context_verbs_desc) }}
+
+{# Displays #}
++------------------------+------------------------+
+|      DISPLAY_NAME      |          VERB          |
++------------------------+------------------------+
+|       Agent Chat       |   agentChatStart       |
+|        Make Call       |     makeCall   		  |
+|      Create Case       |    createCase  		  |
+|      Get Call          |      getCall  	  	  |
+|    Handle Whitemail    |    handleEmail         |
++------------------------+------------------------+
+```
+
+### SQLRow
+`SQLTable` object is composed of a list of `SQLRow` objects. It is an extension of a dictionary so you can access it with regular python dictionary methods:
+   ```
+   row =_db.find.v_by_id(id)`
+   assert 1 == row["ID"]
+   ```
+It has two methods overriden:
+
+ **[_<<var_name>>_]**
+ It retrieves `NULL` as a string if no value is found within the dictionary. 
+ 
+**str()**
+As a list it is overriden to use prettytable which prints the keys and the values as the following:
+```
++------------------------+---------------------+
+|      NAME			     |         ID    	   |
++------------------------+---------------------+
+|       Agent Chat     	 |   		1      	   |
++------------------------+---------------------+
+```
+
+
 
 ## Global Functions
 There is a set of builtin global functions which can be used when writting templates.  Functions can be invoke within blocks `{% %}` or within statements `{{ }}`.
@@ -204,10 +306,10 @@ It  returns the _value_ passed in camelcase:
 Display Name is  '{{display_name}}'
 Name is '{{ camelcase(display_name }}'
 
-#Rendered
+#Renders
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
-
+```
 ## String Python Builtin Functions
 Python string functions can be used within templates, for example:
 
@@ -219,39 +321,46 @@ It returns the current string capitalize.
 {% set process_desc_id = entity_def_id.capitalize %}
 Process descriptor id is {{process_desc_id }}
 
-#Rendered
+#Renders
 Process descriptor id is Customer
 ```
 ## Include
-Include allows wrapping other templates so they can be reused and avoid SQL code duplication. 
+Include allows wrapping other templates so they can be reused and avoid SQL code duplication.  We might want to set some variables contained within the included template before call that template so it doesn't prompt them.
 ```sql
 #Compute descriptor id  which is used in 'add_process_descriptor.sql'
-{% set process_descriptor_id = prj_prefix()+ entity_def_id.capitalize() + verb_name.capitalize() -%}
+{% set process_id = __prjprefix + entity_id.capitalize() + verb_name.capitalize() -%}
 
-{% include 'add_process_descriptor.sql' %}
-{% set process_descriptor_ref_id = process_descriptor_id %}
-{% include 'add_process_descriptor_ref.sql' %}
+{% include 'add_descriptor.sql' %}
+{% set descriptor_ref_id = descriptor_id %}
+{% include 'add_descriptor_ref.sql' %}
+```
+## Naming Convention 
+The following name and convention is used when writing tempaltes:
+- Template variables names follow snake case e.g "customer_name"
+ - Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables
+ - Internal variables are named as the variabled but prefixing two underscores. Internal variables are used when we capturing a value that will be used later on within the same template.
+```
+{% set __entity_display_name = entity_display_name 
+								   | default(default_display_name)%}
 ```
 
-##  Fomatting and Naming Convention 
+##  Fomatting 
 All SQL scripts are written in uppercase with the variables in lower case and snake case. 
-
 #### Inserts
 For easy reading the values inserted are indented within the brackets and a comment with the field name added next to it.
 ```sql
-INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
+INSERT INTO PROCESS_REFERENCE (ID, PROCESS_ID,CONFIG_ID, IS_SHARED) 
 VALUES (
-        @PDR.{{process_descriptor_ref_id}} --id,
+        @PDR.{{process_reference_id}} --id,
         @PD.{{process_descriptor_id}}, --process_descriptor_id
-		@ENV.Dflt, --env_id
 		NULL, --config_id
        	'N' --is_shared
        );
 ```
 
 # Logging
-The application logging is configure by default to write to the logs dir within the main application folder. 
-Logging configuration can be modify by creatng a file called `logging.yaml` under the app config folder.
+The application logging is configured by default to write to the logs dir within the main application folder. 
+Logging configuration can be modified by creating a file called `logging.yaml` under the app config folder.
 This is a example of a valid configuration file:
 ```yaml
 version: 1
@@ -260,6 +369,12 @@ formatters:
     simple:
         format: "%(asctime)s - %(levelname)s - %(message)s"
 handlers:
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: simple
+        stream: ext://sys.stdout
+
     info_file_handler:
         class: sql_gen.log.handlers.MakeRotatingFileHandler
         level: INFO
@@ -271,7 +386,7 @@ handlers:
 loggers:
     app_logger:
         level: INFO
-        handlers: [console,info_file_handler, error_file_handler]
+        handlers: [console,info_file_handler]
         propagate: no
 root:
     level: INFO
@@ -330,8 +445,6 @@ It returns the function which implements the jinja filter.
 
 
 
-
-
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbOTE1MjUzODA3XX0=
 -->
