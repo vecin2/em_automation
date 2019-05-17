@@ -175,7 +175,9 @@ It takes a list of suggestions which are prompted to the user when asking for th
 This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
 It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
-{% verb_keyname = "PRJCustomer"split_uppercase() }}
+{% verb_keyname = "PRJCustomerInlineSearch" |split_uppercase() }}
+# Sets verb keyname to "PRJCustomer Inline Sear
+
 ```
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
@@ -448,5 +450,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTA4MTQ1MTMsMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbMjE0MDUzNTE0MiwxNDE0MzY1MTQ5XX0=
 -->
