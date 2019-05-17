@@ -217,12 +217,13 @@ The string method has been override to use prettyTables:
 ```
 
 ### SQLRow
-A `SQLTable` object is composed of a list of `SQLRow` objects. It is an extension of a dictionary so you can access it with regular python dictionary methods:
+`SQLTable` object is composed of a list of `SQLRow` objects. It is an extension of a dictionary so you can access it with regular python dictionary methods:
    ```
-   table =_db.find.v_by_id(id)`
-   assert [1,2] == table.column("ID")
+   row =_db.find.v_by_id(id)`
+   assert 1 == row["ID"]
    ```
  with a couple of overrides:
+ **[<<var_name>>]**
 
 This is object is not context neither. I
 ### _emprj
@@ -406,7 +407,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk1NjIwOTYxMiw3MTg4Njg4NjQsLTEwNj
+eyJoaXN0b3J5IjpbMTY5Nzg1Njk5OSw3MTg4Njg4NjQsLTEwNj
 gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
 NjcsLTIxMDUxNTM5OF19
 -->
