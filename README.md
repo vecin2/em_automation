@@ -1,6 +1,6 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 # sqltask - an sql generator for EM projects
-sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse th template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
+sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse the template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
 
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling template values, and they should minimize user interactions, avoiding asking for values that could be computed.
 
@@ -413,7 +413,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5NTcxNDE4OCw3MTg4Njg4NjQsLTEwNj
-gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
-NjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbMTAwMzk0MjAzLDcxODg2ODg2NCwtMTA2OD
+A4NDYwNSwxNTIwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2
+NywtMjEwNTE1Mzk4XX0=
 -->
