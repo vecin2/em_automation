@@ -166,15 +166,10 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts and when the user start typing it autocompletes
 'object`: Customer.Objects.
 ```
-**suggest**(_value_)
-It autocompletes the repository paths from both product and project.
-This is not a builtin jinja filter and it does not modify the variable entered by the user. 
-
+**suggest**(_value_, suggestions)
+It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
-{{ object_path| codepath() }}
-
-#prompts and when the user start typing it autocompletes
-'object`: Customer.Objects.
+{{ object_name| suggest(["Customer","Chat"]) }}
 ```
 
 ## Objects in context
@@ -448,5 +443,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MzUxMjA3ODksMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbLTIwNTA2MjE1ODIsMTQxNDM2NTE0OV19
 -->
