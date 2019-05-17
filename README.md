@@ -200,7 +200,9 @@ Returns the column as a list:
    **str()**
 The string method has been override to use prettyTables:
    ```
-   jk
+   table =_db.fetch.v_names_by_context(context_id)`
+   {% set description = table | string %}
+   {{ display_name | description(
 +------------------------+------------------------+
 |      DISPLAY_NAME      |          VERB          |
 +------------------------+------------------------+
@@ -393,7 +395,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTkyOTA0MzM4NSw3MTg4Njg4NjQsLTEwNj
+eyJoaXN0b3J5IjpbMTc3MTk0NTI1MSw3MTg4Njg4NjQsLTEwNj
 gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
 NjcsLTIxMDUxNTM5OF19
 -->
