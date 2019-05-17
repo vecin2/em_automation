@@ -175,7 +175,7 @@ It returns a [SQLTable](#SQLTable)  object (list of dictionaries). For example:
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a  `SQLRow` object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
+It returns a  [SQLTable](#SQLRow) object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -183,7 +183,7 @@ It returns a  `SQLRow` object. It is similar to `fetch` but this is used when se
  Same as `_db` but allows running free form queries instead of dictionary queries:
  
 **fetch**(_query_string_)
-It returns a `SQLTable` object (list of dictionaries). For example:
+Similar to th previous `fetch` but it takes an SQL string instead. For example:
  -`_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
  
  **find**(_query_string_)
@@ -426,5 +426,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTczMjc0MzA5MSwxNDE0MzY1MTQ5XX0=
+eyJoaXN0b3J5IjpbNTU4MjkxOTEwLDE0MTQzNjUxNDldfQ==
 -->
