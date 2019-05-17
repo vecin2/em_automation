@@ -161,8 +161,8 @@ It retrieves a list of relative ids for the key set passed. For example:
 ### _db
 It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
 
-**\_db.fetch.<\<query_name>>(*query_params)
-It shows the `description` when prompting the user. 
+**\_db.fetch.<<query_name>>**(*query_params)
+It returns a `SQLTable` object
 This is not a builtin jinja filter and it does not modify the variable entered by the user. 
  - _db.list.v_names_by_ed(entitfy_def_id)
  - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
@@ -353,6 +353,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEyMzM2OTI2NywxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbLTE0NTYyMjY1NjksMTUyMDQxOTcxLDE3NT
+c0MzA2NTUsLTIwOTM5OTQxNjcsLTIxMDUxNTM5OF19
 -->
