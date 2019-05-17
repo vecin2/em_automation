@@ -6,28 +6,41 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 
 
 # Table Of Contents
-
-- [sqltask - a sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
+- [sqltask - an sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
-- [Basic Usage](#basic-usage)
-    + [Adding New Templates](#adding-new-templates)
-      - [Hidding a Template](#hidding-a-template)
+  * [Basic Usage](#basic-usage)
+    + [Add New Templates](#add-new-templates)
+      - [Hide a Template](#hide-a-template)
 - [User installation](#user-installation)
-    + [Windows Console Tools](#windows-console-tools)
+    + [Upgrade](#upgrade)
+    + [Multiple versions of python](#multiple-versions-of-python)
+    + [Install builtin Templates](#install-builtin-templates)
 - [Template Design](#template-design)
+  * [General guidelines](#general-guidelines)
   * [Filters](#filters)
     + [Concatenate multiple filters](#concatenate-multiple-filters)
     + [List of Builtin filters](#list-of-builtin-filters)
+  * [Objects in context](#objects-in-context)
+    + [_keynames](#-keynames)
+    + [_db](#-db)
+    + [_database](#-database)
+    + [SQLTable](#sqltable)
+    + [SQLRow](#sqlrow)
+    + [_emprj](#-emprj)
   * [Global Functions](#global-functions)
-  * [List of Global Functions](#list-of-global-functions)
+    + [List of Builtin Global Functions](#list-of-builtin-global-functions)
   * [String Python Builtin Functions](#string-python-builtin-functions)
-  * [Fomatting and Naming Convention](#fomatting-and-naming-convention)
+  * [Include](#include)
+  * [Naming Convention](#naming-convention)
+  * [Fomatting](#fomatting)
       - [Inserts](#inserts)
+- [Logging](#logging)
 - [Build Extensions](#build-extensions)
     + [Developer Setup](#developer-setup)
       - [Running tests](#running-tests)
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
+
 
 ## Basic Usage      
 ### Add New Templates 
@@ -413,5 +426,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbLTE5ODkwMzAyNDksMTQxNDM2NTE0OV19
 -->
