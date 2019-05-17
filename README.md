@@ -229,6 +229,10 @@ Process id is {{process_id }}
 #Renders
 Process id is ABC
 ```
+### _emprj
+ It extract different information from the current EM project:
+ 
+
 ## More Available Objects
 ### SQLTable
 This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. As a list you access it with python list methods, for example:
@@ -284,10 +288,8 @@ As a list it is overriden to use prettytable which prints the keys and the value
 |       Agent Chat     	 |   		1      	   |
 +------------------------+---------------------+
 ```
-This is object is not context neither. I
-### _emprj
- It extract different information from the current EM project:
- 
+
+
 
 ## Global Functions
 There is a set of builtin global functions which can be used when writting templates.  Functions can be invoke within blocks `{% %}` or within statements `{{ }}`.
@@ -444,5 +446,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4MzY4MzM0Nl19
+eyJoaXN0b3J5IjpbLTE5NjQ3MDgxMV19
 -->
