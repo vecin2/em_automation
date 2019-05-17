@@ -182,7 +182,7 @@ For example with a set modules like
 				|__ ABCCaseHandling
 				|__ ...
 #Template
- {% set process_desc_id = _emprj.prefix()+ entity_def_name %}
+ {% set process_desc_id = __prjprefix()+ entity_def_name %}
 Process descriptor id is {{process_desc_id }}
 #Rendered
 Process descriptor id is ABC
@@ -204,10 +204,10 @@ It  returns the _value_ passed in camelcase:
 Display Name is  '{{display_name}}'
 Name is '{{ camelcase(display_name }}'
 
-#Rendered
+#Renders
 Display Name is 'Change the address'
 Name is 'changeTheAddress'
-
+```
 ## String Python Builtin Functions
 Python string functions can be used within templates, for example:
 
@@ -219,7 +219,7 @@ It returns the current string capitalize.
 {% set process_desc_id = entity_def_id.capitalize %}
 Process descriptor id is {{process_desc_id }}
 
-#Rendered
+#Renders
 Process descriptor id is Customer
 ```
 ## Include
@@ -350,6 +350,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM2MTc3NjQ0MiwxNTIwNDE5NzEsMTc1Nz
-QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
+eyJoaXN0b3J5IjpbNDg0MzIyMzc1LDE1MjA0MTk3MSwxNzU3ND
+MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
 -->
