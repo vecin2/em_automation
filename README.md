@@ -264,6 +264,12 @@ formatters:
     simple:
         format: "%(asctime)s - %(levelname)s - %(message)s"
 handlers:
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: simple
+        stream: ext://sys.stdout
+
     info_file_handler:
         class: sql_gen.log.handlers.MakeRotatingFileHandler
         level: INFO
@@ -341,6 +347,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwNTQyNjE0NzUsLTIwOTM5OTQxNjcsLT
-IxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbMTc1NzQzMDY1NSwtMjA5Mzk5NDE2NywtMj
+EwNTE1Mzk4XX0=
 -->
