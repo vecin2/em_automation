@@ -167,7 +167,7 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 
  
 **find.<<query_name>>**(_\*query\_params_)
-It returns a  `SQLRow` object.onary   Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
+It returns a  `SQLRow` object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
 
@@ -197,7 +197,7 @@ Returns the column as a list:
    assert [1,2] == table.column("ID")
    ```
     
-   
+   **str()**
 
 ### _emprj
  It extract different information from the current EM project:
@@ -380,7 +380,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA2MDg4ODI2MiwtMTA2ODA4NDYwNSwxNT
-IwNDE5NzEsMTc1NzQzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1
-Mzk4XX0=
+eyJoaXN0b3J5IjpbNzE4ODY4ODY0LC0xMDY4MDg0NjA1LDE1Mj
+A0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUz
+OThdfQ==
 -->
