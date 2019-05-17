@@ -222,8 +222,12 @@ The string method has been override to use prettyTables:
    row =_db.find.v_by_id(id)`
    assert 1 == row["ID"]
    ```
- with a couple of overrides:
- **[<<var_name>>]**
+It has two methods overriden:
+
+ **[_<<var_name>>_]**
+ It retrieves `NULL` as a string if no value is found within the dictionary. 
+**str()**
+It is overriden to use pretty
 
 This is object is not context neither. I
 ### _emprj
@@ -407,7 +411,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY5Nzg1Njk5OSw3MTg4Njg4NjQsLTEwNj
+eyJoaXN0b3J5IjpbLTM1MDYwMDc5OCw3MTg4Njg4NjQsLTEwNj
 gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
 NjcsLTIxMDUxNTM5OF19
 -->
