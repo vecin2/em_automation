@@ -254,7 +254,7 @@ VALUES (
 ```
 
 # Logging
-The application logging is configure by default to write to the logs dir within the main application folder. 
+The application logging is configured by default to write to the logs dir within the main application folder. 
 Logging configuration can be modified by creating a file called `logging.yaml` under the app config folder.
 This is a example of a valid configuration file:
 ```yaml
@@ -347,6 +347,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMjQ5OTkyMywxNzU3NDMwNjU1LC0yMD
-kzOTk0MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOT
+M5OTQxNjcsLTIxMDUxNTM5OF19
 -->
