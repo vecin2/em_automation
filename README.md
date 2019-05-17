@@ -227,7 +227,7 @@ It has two methods overriden:
  **[_<<var_name>>_]**
  It retrieves `NULL` as a string if no value is found within the dictionary. 
 **str()**
-It is overriden to use pretty
+As a list it is overriden to use prettytable.
 
 This is object is not context neither. I
 ### _emprj
@@ -411,7 +411,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM1MDYwMDc5OCw3MTg4Njg4NjQsLTEwNj
-gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
-NjcsLTIxMDUxNTM5OF19
+eyJoaXN0b3J5IjpbLTEyNzgzMDE0MjcsNzE4ODY4ODY0LC0xMD
+Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
+MTY3LC0yMTA1MTUzOThdfQ==
 -->
