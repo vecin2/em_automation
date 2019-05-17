@@ -163,12 +163,12 @@ It allows to run a predefined set of queries defined in a file called "queries.s
  - _db.list.v_names_by_ed(entitfy_def_id)
  - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
  
- ### _database
- It allows running free form queries:
+### _database
+ Same as It allows running free form queries:
  -_database.find("SELECT * FROM VERB where name='my_verb'")
  -_database.list("SELECT NAME FROM VERB where name like '%create%'")
  
- ### _emprj
+### _emprj
  It extract different information from the current EM project:
  
 **prj_prefix**()
@@ -349,6 +349,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc3NjYwOTk0MSwxNTIwNDE5NzEsMTc1Nz
+eyJoaXN0b3J5IjpbMTY0MjQ4ODAwMSwxNTIwNDE5NzEsMTc1Nz
 QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
