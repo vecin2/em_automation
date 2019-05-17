@@ -390,7 +390,7 @@ Test can run with pytest: py.test from the project top folder
 Globals functions can easily implemented by adding the function to the `globals.py` module. The function is added automatically to the template enviroment and therefore available for templates to use it.
 
 ### Implementing new  Filters
- Filters are picked up by the environment by name convention. The system looks for classes under the `/filters` whith the class name matching the capitalize name of the filter +"Filter". For example:
+Filters leave under the  package called `/filters` whith the class name matching the capitalize name of the filter +"Filter". For example:
  ```sql
  #Template
  {{ var_name | default("Test default") }}
@@ -427,5 +427,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2NzQ2OTg2MDMsMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbLTExNTIxMDU3NjEsMTQxNDM2NTE0OV19
 -->
