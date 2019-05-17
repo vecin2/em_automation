@@ -189,7 +189,23 @@ It returns a `SQLTable` object (list of dictionaries). For example:
  **find**(_query_string_)
  -`_database.find("SELECT * FROM VERB where name='my_verb'")`
 
- 
+**prj_prefix**()
+It  returns the project prefix of the current `EM_CORE_HOME` project. 
+It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
+For example with a set modules like
+```sql
+#With a foder strtuctre like this under $EM_CORE_HOME
+/repository/default
+				|__ ABCContactHistory
+				|__ ABCCaseHandling
+				|__ ...
+#Template
+ {% set process_id = __prj.prefix() %}
+Process id is {{process_id }}
+#Renders
+Process id is ABC
+```
+## More Available Objects
 ### SQLTable
 This object is not in context but is retrieved by `_db.find` or `db.fetch`. It is a list of dictionaries. As a list you access it with python list methods, for example:
    ```
@@ -248,22 +264,6 @@ This is object is not context neither. I
 ### _emprj
  It extract different information from the current EM project:
  
-**prj_prefix**()
-It  returns the project prefix of the current `EM_CORE_HOME` project. 
-It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
-For example with a set modules like
-```sql
-#With a foder strtuctre like this under $EM_CORE_HOME
-/repository/default
-				|__ ABCContactHistory
-				|__ ABCCaseHandling
-				|__ ...
-#Template
- {% set process_id = __prj.prefix() %}
-Process id is {{process_id }}
-#Renders
-Process id is ABC
-```
 
 ## Global Functions
 There is a set of builtin global functions which can be used when writting templates.  Functions can be invoke within blocks `{% %}` or within statements `{{ }}`.
@@ -426,5 +426,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5ODkwMzAyNDksMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbMTg2MjQ4OTM4MywxNDE0MzY1MTQ5XX0=
 -->
