@@ -159,12 +159,15 @@ It retrieves a list of relative ids for the key set passed. For example:
  - _keynames.V: retrieves a list of the verbs relative ids
 
 ### _db
-It allows to run a predefined set of queries defined in a file called "queries.sql":
+It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
+**description**(_value_,  _description_)
+It shows the `description` when prompting the user. 
+This is not a builtin jinja filter and it does not modify the variable entered by the user. 
  - _db.list.v_names_by_ed(entitfy_def_id)
  - _db.find.pd_by_ed_n_vname(entity_dev_id, v_name)
  
 ### _database
- Same as It allows running free form queries:
+ Same as `_db` but allows running free form queries instead of dictionary queries:
  -_database.find("SELECT * FROM VERB where name='my_verb'")
  -_database.list("SELECT NAME FROM VERB where name like '%create%'")
  
@@ -349,6 +352,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY0MjQ4ODAwMSwxNTIwNDE5NzEsMTc1Nz
+eyJoaXN0b3J5IjpbLTQ1ODkyMDEyNCwxNTIwNDE5NzEsMTc1Nz
 QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
