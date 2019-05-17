@@ -182,11 +182,10 @@ For example with a set modules like
 				|__ ABCCaseHandling
 				|__ ...
 #Template
- {% set process_desc_id = __prjprefix()+ entity_def_name %}
-Process descriptor id is {{process_desc_id }}
-#Rendered
-Process descriptor id is ABC
-Name is changeTheAddress
+ {% set process_id = __prj.prefix() %}
+Process id is {{process_id }}
+#Renders
+Process id is ABC
 ```
 
 ## Global Functions
@@ -350,6 +349,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDg0MzIyMzc1LDE1MjA0MTk3MSwxNzU3ND
-MwNjU1LC0yMDkzOTk0MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbLTc3NjYwOTk0MSwxNTIwNDE5NzEsMTc1Nz
+QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
