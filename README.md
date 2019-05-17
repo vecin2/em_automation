@@ -175,8 +175,8 @@ It takes a list of suggestions which are prompted to the user when asking for th
 This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
 It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
-{% verb_keyname = "PRJCustomerInlineSearch" |split_uppercase() }}
-# Sets verb keyname to "PRJCustomer Inline Sear
+{% verb_keyname = "customerInlineSearch" |split_uppercase() }}
+# Sets verb keyname to "Customer Inline Search"
 
 ```
 ## Objects in context
@@ -443,12 +443,6 @@ It returns the function which implements the jinja filter.
 
 
 
-
-
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
--->
-
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMjE0MDUzNTE0MiwxNDE0MzY1MTQ5XX0=
+eyJoaXN0b3J5IjpbLTU4MzY4MzM0Nl19
 -->
