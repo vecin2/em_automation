@@ -156,15 +156,16 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
-**description**(_value_,  _description_)
-It shows the `description` when prompting the user. 
+**codepath**(_value_,  _description_)
+It autocompletes the repository paths from both product and project.
 This is not a builtin jinja filter and it does not modify the variable entered by the user. 
 
 ```sql
-{{ my_variable| description("Please enter 'my_variable_value`') }}
+{{ my_variable| codep("Please enter 'my_variable_value`') }}
 
 #prompts
 Please enter 'my_variable_value`:
+```
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
 
@@ -436,5 +437,5 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzODQ3NTEyODIsMTQxNDM2NTE0OV19
+eyJoaXN0b3J5IjpbLTIxNjAwNTM2MiwxNDE0MzY1MTQ5XX0=
 -->
