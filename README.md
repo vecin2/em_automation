@@ -78,12 +78,7 @@ This applies as well when running upgrades and any python command it - e.g `pyth
 For EM developement there are a set templates which implement basic tasks, e.g. add a verb, add an entiy, etc...
 These Templates will be provided on demand. 
 
-### Windows Console Tools
-If you find the Windows console is too slow, e.g no path autocompletion,  hard copy and paste, etc, you can  look at other options:
-- [Clink]( http://mridgers.github.io/clink/): very light weight tool which add a set features to the Windows console.
-- [git-bash](https://gitforwindows.org/): its a different terminal which allows  bash-style autocompletion as well and several linux commands. 
-- [cygwin](https://www.cygwin.com/): a large collection of GNU and Open - Source tools which provide functionality similar to a Linux distribution on Windows. 
- 
+
 # Template Design
 
 How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. 
@@ -94,12 +89,12 @@ The syntax is defined by python jinja templates. Check the [template Designer Do
 When design templates consider the following:
 -  A value should be prompted with enough information so the user knows how to fill it.
 - When possible provide a subset of values for the user to pick from.
-- Users should NOT be prompted any value that can be computed from some other values - finding the minimum number of prompted values is key. 
+- Users should NOT be prompted any value that can be computed from some other values - finding the minimum number of prompted values is key for a good template.
 - Avoid duplicating SQL code, reuse template by including them within others. So when a product DB table changes it avoids having to change multiple templates.
 - Review existing templates or consult this documentation to understand what filters and templates are available.
 
 To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates. 
-You can check as well the existing templates for a goo understanding on how these elements are applied.
+You can check as well the existing templates for a good understanding on how these elements are applied.
 
 ## Filters
 Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which can modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
@@ -418,7 +413,7 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwODc5MzM5ODksNzE4ODY4ODY0LC0xMD
-Y4MDg0NjA1LDE1MjA0MTk3MSwxNzU3NDMwNjU1LC0yMDkzOTk0
-MTY3LC0yMTA1MTUzOThdfQ==
+eyJoaXN0b3J5IjpbMTQxODc1MTg3OCw3MTg4Njg4NjQsLTEwNj
+gwODQ2MDUsMTUyMDQxOTcxLDE3NTc0MzA2NTUsLTIwOTM5OTQx
+NjcsLTIxMDUxNTM5OF19
 -->
