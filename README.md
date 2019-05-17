@@ -170,6 +170,7 @@ It returns a `SQLTable` object (list of dictionaries). For example:
 It returns a `SQLTable` object with one row.  Similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if nonne or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
+
 ### _database
  Same as `_db` but allows running free form queries instead of dictionary queries:
  
@@ -183,7 +184,10 @@ It returns a `SQLTable` object (list of dictionaries). For example:
  
 ### SQLTable
 This object is not in context but is retrieve by `_db.find` or `db.fetch`. It is a list of dictionaries. It has the following method to allow extract data from the query result easily:
-**
+**column(name)**
+
+    `assert [1,2] == table.column("ID")`
+
 ### _emprj
  It extract different information from the current EM project:
  
@@ -365,6 +369,6 @@ eyJoaXN0b3J5IjpbLTIxMDUxNTM5OF19
 -->
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEzMTcxNjk4NCwxNTIwNDE5NzEsMTc1Nz
+eyJoaXN0b3J5IjpbLTM1NDUxOTg1NSwxNTIwNDE5NzEsMTc1Nz
 QzMDY1NSwtMjA5Mzk5NDE2NywtMjEwNTE1Mzk4XX0=
 -->
