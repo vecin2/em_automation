@@ -60,7 +60,7 @@ You can install it as a python module or just download the executable.
 	- Change the environment, container and machines names to point to your local environment. 
 	- Change the `db.release.version`  property to point to your current AD release version. 
 - Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
--  Run `sqltask test-sql` from the command line. You should see a bunch of test runningYou are ready to go !
+-  Run `sqltask test-sql` from the command line. You should see a bunch of test running and yu are ready to go!
 
 
 
@@ -460,5 +460,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc0MjgyMjQ0NSw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbMTE2MTMxODY1OSw5MTUyNTM4MDddfQ==
 -->
