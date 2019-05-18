@@ -57,7 +57,9 @@ You can install it as a python module or just download the executable.
 ## Executable
 Download the executable and drop it within the `bin` folder of your current project.
 Unzip  "sqltask.zip" into your `project` folder.
-Open the `core.properties"
+Open the `config/core.properties` file and change the environment, container and machines names to point to your local environment. Change the `db.release.version`  property to point to your current AD release version. 
+
+
 drop it anywhere within your EM project. 
 - Downl
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
@@ -454,5 +456,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTU1Mjk3Mjg4LDkxNTI1MzgwN119
+eyJoaXN0b3J5IjpbMjAyNjM3ODQyNCw5MTUyNTM4MDddfQ==
 -->
