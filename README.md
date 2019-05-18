@@ -9,14 +9,14 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [sqltask - an sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
   * [Basic Usage](#basic-usage)
-    + [Add New Templates](#add-new-templates)
-      - [Hide a Template](#hide-a-template)
+  * [Tutorials](#tutorials)
 - [User installation](#user-installation)
-    + [Upgrade](#upgrade)
+  * [Quick installation](#quick-installation)
+  * [Install as a python module](#install-as-a-python-module)
     + [Multiple versions of python](#multiple-versions-of-python)
-    + [Install builtin Templates](#install-builtin-templates)
 - [Template Design](#template-design)
   * [General guidelines](#general-guidelines)
+  * [Hidden Templates](#hidden-templates)
   * [Filters](#filters)
     + [Concatenate multiple filters](#concatenate-multiple-filters)
     + [List of Builtin filters](#list-of-builtin-filters)
@@ -41,6 +41,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
       - [Running tests](#running-tests)
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
+
 
 ## Basic Usage    
 Create a `hello_world.sql` file under within the`templates` folder.
@@ -77,7 +78,7 @@ python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 -  Unzip  "sqltask.zip" into your `project` folder.
 -  Within the `config/core.properties` file:
 	 -  Change the environment, container and machines names to point to your local environment. 
-	 - Change the `db.release.version`  property to point to your current AD release version. 
+	 - Change the `db.release.version`  property to point to your current AD release version. A
  
 ### Multiple versions of python 
  If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
@@ -447,5 +448,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MTU1NTU5NzddfQ==
+eyJoaXN0b3J5IjpbLTEwMzMyMjg2NjYsLTE2MTU1NTU5NzddfQ
+==
 -->
