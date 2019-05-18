@@ -53,7 +53,10 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 # User installation
 
-You can install it as a python module or use the approp
+You can install it as a python module or just download the executable. 
+## Executable
+There are two components
+- Downl
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
@@ -448,5 +451,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NTc0OTk2MzYsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbNTA2NjIzNjk0LDkxNTI1MzgwN119
 -->
