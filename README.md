@@ -50,11 +50,6 @@ Run dtask print-sql and when prompt select the template `hello_world.sql`. You s
 ## Tutorials
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
-
-#### Hide a Template
-A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
-Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
-
 # Setup
 ## Quick installation
  1. Unzip  "sqltask.zip" into your `project` folder.
@@ -108,6 +103,12 @@ When design templates consider the following:
 
 To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates. 
 You can check as well the existing templates for a good understanding on how these elements are applied.
+
+
+## Hidden Templates
+A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
+Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
+
 
 ## Filters
 Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which can modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
@@ -446,5 +447,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIwOTg3ODE1MzMsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbNjc2OTAxNzY1LDkxNTI1MzgwN119
 -->
