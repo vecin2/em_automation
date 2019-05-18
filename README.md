@@ -51,8 +51,8 @@ To create a new template create a file with `.sql` extension under `$SQL_TEMPLAT
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
 Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
 
-
-# Quick installation
+# Setup
+## Quick installation
  1. Unzip  "sqltask.zip" into your `project` folder.
  2. Within the `config/core.properties` file:
 	 -  Change the environment, container and machines names to point to your local environment. 
@@ -62,7 +62,7 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you want to use them.*
 
-# Install as a python module
+## Install as a python module
 If you are familiar with python another alternative is to install it as a python module:
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
@@ -80,8 +80,6 @@ python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 	 -  Change the environment, container and machines names to point to your local environment. 
 	 - Change the `db.release.version`  property to point to your current AD release version. 
  
-`` 
-
 ### Multiple versions of python 
  If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
 ```
@@ -89,11 +87,6 @@ python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
 
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
-
-###  Install builtin Templates
-For EM developement there are a set templates which provide a based for mutitple tasks, e.g add/remove verbs, extend entities, add activities to context, etc.
-These Templates can be provided on demand. 
-
 
 # Template Design
 
@@ -449,5 +442,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMyODIyOTQ0OSw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbMTYyNTM2MTkwNiw5MTUyNTM4MDddfQ==
 -->
