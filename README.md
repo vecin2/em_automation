@@ -43,7 +43,9 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Implementing new  Filters](#implementing-new--filters)
 
 ## Basic Usage    
-  Create a file under within the`templates` folder, example.sql
+Create a `hello_world.sql` file under within the`templates` folder.
+Add the following text:   `Hello {{ name }}!`
+Run dtask
 ### Add New Templates 
 To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
@@ -442,5 +444,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MDg2MDI3MzQsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbLTEwNTcwODc3OTEsOTE1MjUzODA3XX0=
 -->
