@@ -53,12 +53,14 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 
 # Quick installation
-- Unzip  "sqltask.zip" into your `project` folder.
-- Within the `config/core.properties` file :
-	- Change the environment, container and machines names to point to your local environment. 
-	- Change the `db.release.version`  property to point to your current AD release version. 
-- Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
--  Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
+
+ 1. Unzip  "sqltask.zip" into your `project` folder.
+ 2. Within the `config/core.properties` file :
+	 3. 
+    	- Change the environment, container and machines names to point to your local environment. 
+    	- Change the `db.release.version`  property to point to your current AD release version. 
+    - Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
+    -  Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you to use them.*
 
@@ -456,5 +458,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgzMTEzODAyOCw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbMTQxMzk5MTA1MCw5MTUyNTM4MDddfQ==
 -->
