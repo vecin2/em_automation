@@ -63,8 +63,7 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you to use them.*
 
 # Install as a python module
-drop it anywhere within your EM project. 
-- Downl
+Another alternative if you want to avoid the executable is to install it as a python module:
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
@@ -457,5 +456,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0Njk5MTg2NjAsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbMTgzMTEzODAyOCw5MTUyNTM4MDddfQ==
 -->
