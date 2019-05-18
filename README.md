@@ -51,10 +51,8 @@ To create a new template create a file with `.sql` extension under `$SQL_TEMPLAT
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
 Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
 
-# User installation
 
-You can install it as a python module or just download the executable. 
-## Quick installation
+# Quick installation
 - Unzip  "sqltask.zip" into your `project` folder.
 - Within the `config/core.properties` file :
 	- Change the environment, container and machines names to point to your local environment. 
@@ -62,9 +60,9 @@ You can install it as a python module or just download the executable.
 - Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
 -  Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
-Note, you might get some failures when running the tests depending on the current version of the EM product you are running. This still show the tool is running fine and that you might have to make adjustments if you need to use those templates.
+***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you to use them.*
 
-
+# Install as python 
 drop it anywhere within your EM project. 
 - Downl
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
@@ -461,5 +459,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE5MTIxNzI5NCw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbMTk0MjQ0NzA2LDkxNTI1MzgwN119
 -->
