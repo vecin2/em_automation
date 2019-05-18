@@ -104,12 +104,6 @@ When design templates consider the following:
 To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates. 
 You can check as well the existing templates for a good understanding on how these elements are applied.
 
-
-## Hidden Templates
-A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
-Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
-
-
 ## Filters
 Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which can modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
 
@@ -335,6 +329,13 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 {% set descriptor_ref_id = descriptor_id %}
 {% include 'add_descriptor_ref.sql' %}
 ```
+
+
+## Hidden Templates
+A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
+Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
+
+
 ## Naming Convention 
 The following name and convention is used when writing tempaltes:
 - Template variables names follow snake case e.g "customer_name"
@@ -447,6 +448,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNTExMTM1NTksLTE2MTU1NTU5NzddfQ
-==
+eyJoaXN0b3J5IjpbMTczNDYyNzcxN119
 -->
