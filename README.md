@@ -54,13 +54,12 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 # User installation
 
 You can install it as a python module or just download the executable. 
-## Executable
-Download the executable and drop it within the `bin` folder of your current project.
+## Quick installation
 - Unzip  "sqltask.zip" into your `project` folder.
 - Within the `config/core.properties` file :
 	- Change the environment, container and machines names to point to your local environment. 
 	- Change the `db.release.version`  property to point to your current AD release version. 
-- Drop the executable file within your bin` folder of your current E< project.
+- Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
 
 
 drop it anywhere within your EM project. 
@@ -459,5 +458,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTQ5NDU3NDMxNSw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbLTEwNzkwNDUwMzMsOTE1MjUzODA3XX0=
 -->
