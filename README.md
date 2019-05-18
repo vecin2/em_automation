@@ -71,20 +71,16 @@ If you are familiar with python another alternative is to install it as a python
  - Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
 	- `PYTHON_HOME` is the python installation folder. 
-
 - Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
 ```
 python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
+-  Unzip  "sqltask.zip" into your `project` folder.
+-  Within the `config/core.properties` file:
+	 -  Change the environment, container and machines names to point to your local environment. 
+	 - Change the `db.release.version`  property to point to your current AD release version. 
  
-###  Upgrade
-The application can be updated by running `python3 -m pip install --upgrade sqltask` 
-Otherwise uninstall and intall  by running:
-
-```
-python3 -m  pip  uninstall sqltask
-python3 -m  pip  install sqltask
-``` 
+`` 
 
 ### Multiple versions of python 
  If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
@@ -453,5 +449,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMTkyNTU3NDAsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbLTMyODIyOTQ0OSw5MTUyNTM4MDddfQ==
 -->
