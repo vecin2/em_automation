@@ -45,7 +45,11 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 ## Basic Usage    
 Create a `hello_world.sql` file under within the`templates` folder.
 Add the following text:   `Hello {{ name }}!`
-Run dtask
+Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
+
+Tutorials
+Within the templates is provided a set of tutora
+
 ### Add New Templates 
 To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
@@ -444,5 +448,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNTcwODc3OTEsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbMjAwMzUyNjQ4NSw5MTUyNTM4MDddfQ==
 -->
