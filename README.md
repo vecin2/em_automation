@@ -42,7 +42,8 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
 
-## Basic Usage      
+## Basic Usage    
+  
 ### Add New Templates 
 To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
@@ -52,6 +53,7 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 # User installation
 
+You can install it as a python module or use the approp
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
@@ -446,5 +448,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTE1MjUzODA3LDkxNTI1MzgwN119
+eyJoaXN0b3J5IjpbLTE1NTc0OTk2MzYsOTE1MjUzODA3XX0=
 -->
