@@ -62,18 +62,16 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you to use them.*
 
-# Install as python 
+# Install as a python module
 drop it anywhere within your EM project. 
 - Downl
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
- - In windows add the following to you path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
+	 - In windows can add it by adding the following to your path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
  - Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
 	- `PYTHON_HOME` is the python installation folder. 
-	- `EM_CORE_HOME` is the current EM project, e.g. `/opt/em/projects/gsc` 
-	- `SQL_TEMPLATES_PATH` is the folder containing the sql templates. e.g. `/opt/em/projects/my_project/sql_templates `
 
 - Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
 ```
@@ -459,5 +457,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk0MjQ0NzA2LDkxNTI1MzgwN119
+eyJoaXN0b3J5IjpbLTE0Njk5MTg2NjAsOTE1MjUzODA3XX0=
 -->
