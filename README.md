@@ -55,7 +55,8 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 
 You can install it as a python module or just download the executable. 
 ## Executable
-Download the executable and drop it within the `bin` folder of your current 
+Download the executable and drop it within the `bin` folder of your current project.
+Unzip  "sqltask.zip" into your 
 drop it anywhere within your EM project. 
 - Downl
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
@@ -452,5 +453,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMTE1MDkxOTAsOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbMTk1Mzg3NTgzNiw5MTUyNTM4MDddfQ==
 -->
