@@ -13,10 +13,8 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [User installation](#user-installation)
   * [Quick installation](#quick-installation)
   * [Install as a python module](#install-as-a-python-module)
-    + [Multiple versions of python](#multiple-versions-of-python)
 - [Template Design](#template-design)
   * [General guidelines](#general-guidelines)
-  * [Hidden Templates](#hidden-templates)
   * [Filters](#filters)
     + [Concatenate multiple filters](#concatenate-multiple-filters)
     + [List of Builtin filters](#list-of-builtin-filters)
@@ -32,6 +30,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [List of Builtin Global Functions](#list-of-builtin-global-functions)
   * [String Python Builtin Functions](#string-python-builtin-functions)
   * [Include](#include)
+  *  [Hidden Templates](#hidden-templates)
   * [Naming Convention](#naming-convention)
   * [Fomatting](#fomatting)
       - [Inserts](#inserts)
@@ -80,7 +79,7 @@ python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 	 -  Change the environment, container and machines names to point to your local environment. 
 	 - Change the `db.release.version`  property to point to your current AD release version. A
  
-### Multiple versions of python 
+**Multiple versions of python **
  If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
@@ -448,6 +447,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMzMyMjg2NjYsLTE2MTU1NTU5NzddfQ
+eyJoaXN0b3J5IjpbLTEwNTExMTM1NTksLTE2MTU1NTU5NzddfQ
 ==
 -->
