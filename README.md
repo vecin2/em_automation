@@ -47,11 +47,9 @@ Create a `hello_world.sql` file under within the`templates` folder.
 Add the following text:   `Hello {{ name }}!`
 Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
 
-Tutorials
-Within the templates is provided a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to understand 
+## Tutorials
+Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
-### Add New Templates 
-To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
 #### Hide a Template
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
@@ -448,5 +446,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2OTE1ODc1NjksOTE1MjUzODA3XX0=
+eyJoaXN0b3J5IjpbLTIwOTg3ODE1MzMsOTE1MjUzODA3XX0=
 -->
