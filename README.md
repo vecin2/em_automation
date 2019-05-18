@@ -63,7 +63,7 @@ Template can be hidden by adding the template under a folder called "hidden_temp
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you want to use them.*
 
 # Install as a python module
-Another alternative if you want to avoid the executable is to install it as a python module:
+If you are familiar with python another alternative is to install it as a python module:
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
@@ -76,9 +76,6 @@ Another alternative if you want to avoid the executable is to install it as a py
 ```
 python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
- 
-This should install all the required packages including [jinja2 templates](http://jinja.pocoo.org/).  If you find issues when running sqltask where it can't find jinja you can install it manually by running 
-`python3 -m pip install Jinja2`.
  
 ###  Upgrade
 The application can be updated by running `python3 -m pip install --upgrade sqltask` 
@@ -456,5 +453,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTgyNTgxMTMyNCw5MTUyNTM4MDddfQ==
+eyJoaXN0b3J5IjpbLTEwMTkyNTU3NDAsOTE1MjUzODA3XX0=
 -->
