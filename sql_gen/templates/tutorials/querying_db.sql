@@ -63,6 +63,9 @@ SQLTables
 Tables are retrieved from fetches:
        	{% set fetch_verb= _db.fetch.v_by_pers_keyname("Home") %}
 They can be printed in one the following ways:
-	{% verb_name_desc = "These are the Home perspective verbs "+ fetch_verb | string +"\Please select a verb_name"%}
+	1. Build a description string
+	{% set verb_name_desc = "These are the Home perspective verbs:\n"+ fetch_verb | string +"\nPlease select a verb_name"%}
 	{{ verb_name | description(verb_name_desc) }}
+	2. Pass the table to a description filter a second argument will show it above the description:
+	{{ verb_name_2 | description(verb_name_desc,fetch_verb) }}
 
