@@ -69,3 +69,6 @@ They can be printed in one the following ways:
 	2. Pass the table to a description filter a second argument will show it above the description:
 	{{ verb_name_2 | description(verb_name_desc,fetch_verb) }}
 
+SQLRow
+SQLRow is retrieved by find. Its a ditionary that has pretty printing a default value for null 'NULL'
+
