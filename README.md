@@ -1,4 +1,4 @@
-![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/example.gif)
+![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
 # sqltask - an sql generator for EM projects
 sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse the template to identify the diferent variables and it prompts them to the user. Once all the variables are entered it renders the template and sends the result to the corresponding output.
 
@@ -9,10 +9,12 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [sqltask - an sql generator for EM projects](#sqltask---an-sql-generator-for-em-projects)
 - [Table Of Contents](#table-of-contents)
   * [Basic Usage](#basic-usage)
-  * [Tutorials](#tutorials)
+    + [Add New Templates](#add-new-templates)
+      - [Hide a Template](#hide-a-template)
 - [User installation](#user-installation)
-  * [Quick installation](#quick-installation)
-  * [Install as a python module](#install-as-a-python-module)
+    + [Upgrade](#upgrade)
+    + [Multiple versions of python](#multiple-versions-of-python)
+    + [Install builtin Templates](#install-builtin-templates)
 - [Template Design](#template-design)
   * [General guidelines](#general-guidelines)
   * [Filters](#filters)
@@ -30,7 +32,6 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [List of Builtin Global Functions](#list-of-builtin-global-functions)
   * [String Python Builtin Functions](#string-python-builtin-functions)
   * [Include](#include)
-  *  [Hidden Templates](#hidden-templates)
   * [Naming Convention](#naming-convention)
   * [Fomatting](#fomatting)
       - [Inserts](#inserts)
@@ -41,51 +42,55 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Imlementing new Global functions](#imlementing-new-global-functions)
     + [Implementing new  Filters](#implementing-new--filters)
 
+## Basic Usage      
+### Add New Templates 
+To create a new template create a file with `.sql` extension under `$SQL_TEMPLATES_PATH`
 
-## Basic Usage    
-Create a `hello_world.sql` file under within the`templates` folder.
-Add the following text:   `Hello {{ name }}!`
-Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
-
-## Tutorials
-Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
+#### Hide a Template
+A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
+Template can be hidden by adding the template under a folder called "hidden_templates" within the main template folder.
 
 # User installation
-## Quick installation
- 1. Unzip  "sqltask.zip" into your `project` folder.
- 2. Within the `config/core.properties` file:
-	 -  Change the environment, container and machines names to point to your local environment. 
-	 - Change the `db.release.version`  property to point to your current AD release version. 
- 3. Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
- 4. Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
-***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you want to use them.*
-
-## Install as a python module
-If you are familiar with python another alternative is to install it as a python module:
 - Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
  - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
 - Check the python installation folder was added to the the system path. If is not added you can added manually:
-	 - In windows can add it by adding the following to your path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
+ - In windows add the following to you path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
  - Copy the template folder to some location in your filesystem. For example under the current EM project. 
 - Add the following environment variables:
 	- `PYTHON_HOME` is the python installation folder. 
+	- `EM_CORE_HOME` is the current EM project, e.g. `/opt/em/projects/gsc` 
+	- `SQL_TEMPLATES_PATH` is the folder containing the sql templates. e.g. `/opt/em/projects/my_project/sql_templates `
+
 - Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
 ```
 python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
--  Unzip  "sqltask.zip" into your `project` folder.
--  Within the `config/core.properties` file:
-	 -  Change the environment, container and machines names to point to your local environment. 
-	 - Change the `db.release.version`  property to point to your current AD release version. A
  
-**Multiple versions of python **
+This should install all the required packages including [jinja2 templates](http://jinja.pocoo.org/).  If you find issues when running sqltask where it can't find jinja you can install it manually by running 
+`python3 -m pip install Jinja2`.
+ 
+###  Upgrade
+The application can be updated by running `python3 -m pip install --upgrade sqltask` 
+Otherwise uninstall and intall  by running:
+
+```
+python3 -m  pip  uninstall sqltask
+python3 -m  pip  install sqltask
+``` 
+
+### Multiple versions of python 
  If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
 
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
+
+###  Install builtin Templates
+For EM developement there are a set templates which provide a based for mutitple tasks, e.g add/remove verbs, extend entities, add activities to context, etc.
+These Templates can be provided on demand. 
+
 
 # Template Design
 
@@ -172,7 +177,18 @@ It takes a list of suggestions which are prompted to the user when asking for th
 ```sql
 {% verb_keyname = "customerInlineSearch" |split_uppercase() }}
 # Sets verb keyname to "Customer Inline Search"
-
+```
+**objectname**(_path_)
+It extract the object name from a logical object path
+```sql
+{% set logical_object_path = 'Customer.Implementation.Customer' %}
+Object name is  {{ logical_object_path | objectname() }} == 'Customer'
+```
+**objectdir**(_path_)
+It extract the object dir from a logical object path
+```sql
+{% set logical_object_path_2 = 'Customer.Implementation.Customer' %}
+Object dir is  {{ logical_object_path_2 | objectdir() }} == 'Customer.Imlementation'
 ```
 ## Objects in context
 There is a set of objects which included whithin the template context and they provide support when writting templates.
@@ -329,13 +345,6 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 {% set descriptor_ref_id = descriptor_id %}
 {% include 'add_descriptor_ref.sql' %}
 ```
-
-
-## Hidden Templates
-A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
-Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
-
-
 ## Naming Convention 
 The following name and convention is used when writing tempaltes:
 - Template variables names follow snake case e.g "customer_name"
@@ -448,5 +457,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTczNDYyNzcxN119
+eyJoaXN0b3J5IjpbOTE1MjUzODA3XX0=
 -->

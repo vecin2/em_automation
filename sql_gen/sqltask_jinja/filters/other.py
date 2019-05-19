@@ -11,6 +11,6 @@ def objectname(path):
     path = path.replace(".",os.sep)
     return os.path.basename(path).replace(os.sep,".")
 
-def objectpath(path):
+def objectdir(path):
     path = path.replace(".",os.sep)
     return os.path.dirname(path).replace(os.sep,".")

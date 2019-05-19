@@ -16,8 +16,8 @@ Then we update the OTB entity to point to our extended object and to inherit fro
 {% set supports_readonly = extended_entity['SUPPORTS_READONLY'] %}
 {% set is_expandable = extended_entity['IS_EXPANDABLE'] %}
 {% set category_id = extended_entity["CATEGORY_KEYNAME"] %}
-{% set extension_object_path = _prjprefix + logical_object_path | objectpath +"."+_prjprefix +logical_object_path | objectname %}
-{% set extension_interface_path = _prjprefix + interface_path | objectpath +"." + interface_path | objectname | replace("EI","EI"+_prjprefix)%}
+{% set extension_object_path = _prjprefix + logical_object_path | objectdir +"."+_prjprefix +logical_object_path | objectname %}
+{% set extension_interface_path = _prjprefix + interface_path | objectdir +"." + interface_path | objectname | replace("EI","EI"+_prjprefix)%}
 {% set __child_object_path = child_object_path | default(extension_object_path) | codepath() | replace(".xml","")%}
 {% set __child_interface_path = child_interface_path | default(extension_interface_path) | codepath()| replace(".xml","") %}
 {%include 'add_entity_definition.sql' %}

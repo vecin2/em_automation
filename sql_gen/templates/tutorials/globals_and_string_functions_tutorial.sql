@@ -1,6 +1,6 @@
-
 **Globals**
 Globals are functions which can be invoked within the template expressions
+Currently there is only one global function 'camelcase'
 
 *camelcase*
 {% set relative_id = camelcase(display_name) %}

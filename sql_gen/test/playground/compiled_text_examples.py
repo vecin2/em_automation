@@ -13,16 +13,14 @@ text ='''
 						   | default (suggested_ext_path) %}
 '''
 text=""""
-{% set entity_name=entity_id+"ED" %}
-{% set default_display_name = entity_id %}
-{% set display_name = tmp1 | default(default_display_name)%}
+Hi {{ surname | description("Please enter surname") }} and welcome back Mrs {{ surname }}
 """
 env = EMTemplatesEnv().make_env("/opt/em/projects/Pacificorp/trunk/devtask/templates")
-#t =env.from_string(text)
-t = env.get_template("extend_entity_copy.sql")
+t =env.from_string(text)
+#t = env.get_template("extend_entity_copy.sql")
 #t = Template(text)
 print("***printing template rendered****")
-print(t.render({"entity_name":"Contact"}))
+print(t.render({"entity_id":"Contact"}))
 
 tree = t.environment.parse(text)
 print("***printing tree****")
