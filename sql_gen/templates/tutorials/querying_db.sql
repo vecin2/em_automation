@@ -58,3 +58,11 @@ For example:
 {% set find_ed= _database.find(_Query.ed_by_keyname("Customer")) %}
 Returns:
 	find_ed['NAME']={{find_ed['NAME']}}
+
+SQLTables
+Tables are retrieved from fetches:
+       	{% set fetch_verb= _db.fetch.v_by_pers_keyname("Home") %}
+They can be printed in one the following ways:
+	{% verb_name_desc = "These are the Home perspective verbs "+ fetch_verb | string +"\Please select a verb_name"%}
+	{{ verb_name | description(verb_name_desc) }}
+
