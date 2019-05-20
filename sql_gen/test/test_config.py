@@ -37,10 +37,17 @@ def test_it_resolve_value_assigned_to_var_multiple_times(fs):
     config = make_config(fs,config_content)
     assert "DEV" == config["db.user"]
 
+@pytest.mark.skip
+def test_it_resolve_value_assigned_to_var_concatenated_with_string(fs):
+    config_content="ad.name=DEV\ndb.name=${ad.name}_RS\n"
+    config = make_config(fs,config_content)
+    assert "DEV_RS" == config["db.name"]
+
 def test_it_resolve_value_assigned_to_var_multiple_times_no_matter_the_order(fs):
     config_content="db.user=${db.name}\ndb.name=${ad.name}\nad.name=DEV"
     config = make_config(fs,config_content)
     assert "DEV" == config["db.user"]
+
 def test_get_config_value_when_no_file_exist_throws_exception():
     config_home ="/em/project/gsc/config/emautomation.properties"
     fake_logger = FakeLogger()

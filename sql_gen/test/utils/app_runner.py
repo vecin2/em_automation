@@ -35,9 +35,12 @@ class AppRunner(FillTemplateAppRunner):
         self.command=None
         self._app_project =None
 
-    def add_template(self, name, content):
+    def add_template(self, filepath, content):
+        dirname = os.path.dirname(filepath)
+        name = os.path.basename(filepath)
         path = EMTemplatesEnv().get_templates_path(self.env_vars)
-        self.fs.create_file(os.path.join(path,name), contents=content)
+        full_dir = os.path.join(path,dirname)
+        self._create_file(os.path.join(full_dir,name), content)
         return self
 
     def from_current_dir(self, cwd):
@@ -256,11 +259,14 @@ class TemplatesAppRunner(AppRunner):
         return self
 
 
-    def add_test(self, name, template_vars, content, template_vars_list=None):
-        path =self._app_path("test_templates")
+    def add_test(self, template_path, template_vars, content, template_vars_list=None):
+        dirname = os.path.dirname(template_path)
+        name = os.path.basename(template_path)
+        path =os.path.join(self._app_path("test_templates"),dirname)
         test_data_object=self._get_template_vars(template_vars,template_vars_list)
         test_content="-- "+str(test_data_object)+'\n'+content
-        self.fs.create_file(os.path.join(path,name), contents=test_content)
+        #self.fs.create_file(os.path.join(path,name), contents=test_content)
+        self._create_file(os.path.join(path,name), test_content)
         return self
     def _get_template_vars(self,template_vars,template_vars_list):
         if template_vars is not None:

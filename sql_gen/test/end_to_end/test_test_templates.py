@@ -2,7 +2,7 @@ import pytest
 
 import sql_gen
 from sql_gen.test.utils.app_runner import TemplatesAppRunner
-from sql_gen.commands.verify_templates_cmd import RunOnDBTestTemplate,ExpectedSQLTestTemplate,SourceCode
+from sql_gen.commands.verify_templates_cmd import RunOnDBTestTemplate,ExpectedSQLTestTemplate,SourceCode,UnableToFindTemplateTestTemplate
 
 @pytest.fixture
 def app_runner(fs,capsys):
@@ -19,14 +19,23 @@ def test_no_test_folder_prints_error(app_runner,fs):
                .run()\
                .assert_message_printed(expected)
 
-def test_testname_not_matching_template_does_not_run(app_runner,fs):
+def test_testlocation_not_matching_template_generates_unable_to_find_template_test(app_runner,fs):
+    expected_sql = ExpectedSQLTestTemplate().render(
+                            template_name="bye",
+                            expected="hello John!",
+                            actual="")
+    run_on_db = RunOnDBTestTemplate().render(
+                           template_name="bye",
+                           query="hello John!",
+                           emprj_path="/em/prj")
+    check_sql = expected_sql.add(run_on_db)
     app_runner.with_emproject_under("/em/prj")\
                .and_prj_built_under("/em/prj")\
                .add_template("greeting.sql","hello {{name}}!")\
                .make_test_dir()\
                .add_test("test_bye.sql",{"name":"John"},"hello John!")\
                .run()\
-               .generates_no_test()
+               .assert_generated_tests(check_sql)
 
 def test_testname_not_sql_ext_does_not_run(app_runner,fs):
     app_runner.with_emproject_under("/em/prj")\
@@ -47,6 +56,19 @@ def test_generates_test_expected_sql_from_dict(app_runner,fs):
                .add_template("greeting.sql","hello {{name}}!")\
                .make_test_dir()\
                .add_test("test_greeting.sql",{"name":"John"},"hello John!")\
+               .run_test_render_sql()\
+               .assert_generated_tests(expected_sql)
+
+def test_runs_if_test_location_matches_template(app_runner,fs):
+    expected_sql = ExpectedSQLTestTemplate().render(
+                            template_name="hello",
+                            expected="hola John!",
+                            actual="hola John!")
+    app_runner.with_emproject_under("/em/prj")\
+               .and_prj_built_under("/em/prj")\
+               .add_template("greeting/hello.sql","hola {{name}}!")\
+               .make_test_dir()\
+               .add_test("greeting/test_hello.sql",{"name":"John"},"hola John!")\
                .run_test_render_sql()\
                .assert_generated_tests(expected_sql)
 
@@ -72,7 +94,7 @@ def test_generates_multiple_test_expected_sql(app_runner,fs):
                        template_name="bye",
                        expected="bye Mark!",
                        actual="bye Mark!")
-    expected_source = hello_test.add(bye_test)
+    expected_source = bye_test.add(hello_test)
 
     app_runner.with_emproject_under("/em/prj")\
                .and_prj_built_under("/em/prj")\
@@ -165,3 +187,4 @@ def test_runs_using_context_values_from_test_folder(app_runner,fs):
                .add_test("test_verb.sql",{},"select name from verb where locale ='en-GB'")\
                .run_test_render_sql()\
                .assert_generated_tests(check_sql)
+

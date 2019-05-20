@@ -12,6 +12,7 @@ import pytest
 
 import sql_gen
 from sql_gen.commands import PrintSQLToConsoleCommand
+from sql_gen.docugen.env_builder import FileSystemLoader
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.sqltask_jinja.context import ContextBuilder
@@ -77,6 +78,16 @@ def test_{{template_name}}_runs_succesfully():
         source_code = SourceCode(imports= imports, content=test_content)
         return source_code
 
+class UnableToFindTemplateTestTemplate(PythonModuleTemplate):
+    def render(self,**kwargs):
+        test_content="""
+def test_{{template_name}}_runs_succesfully():
+"""
+        template = Template(test_content)
+        test_content= template.render(**kwargs)
+        source_code = SourceCode(imports= [], content=test_content)
+        return source_code
+
 class ExpectedSQLTestTemplate(PythonModuleTemplate):
     def render(self,**kwargs):
         imports=["from sql_gen.database.sqlparser import SQLParser"]
@@ -85,12 +96,17 @@ def test_rendering_{{template_name}}_matches_expected_sql():
     expected={{expected}}
     sqlparser =SQLParser()
     expected =sqlparser.parse_assertable_statements(expected)
+    {% if actual %}
     actual={{actual}}
     actual =sqlparser.parse_assertable_statements(actual)
+    {% else %}
+    raise LookupError("Unable to find matching template. Make sure the test file matches the template's name and location")
+    {% endif %}
     assert actual == expected
 """
         kwargs["expected"]=self.convert_to_src(kwargs["expected"])
-        kwargs["actual"]=self.convert_to_src(kwargs["actual"])
+        if  kwargs["actual"]:
+            kwargs["actual"]=self.convert_to_src(kwargs["actual"])
         template = Template(test_content)
         test_content = template.render(kwargs)
         return  SourceCode(imports= imports, content=test_content)
@@ -126,6 +142,7 @@ class TestGenerator(object):
                 result.append(RunOnDBTestBuilder(self.emprj_path,
                                                  self.apprunner))
         return result
+
 
 class ExpectedSQLTestBuilder(object):
     def __init__(self,emprj_path):
@@ -181,7 +198,9 @@ class TestLoader(object):
     def _list_all_test_files(self):
         result =[]
         testpath = self.testpath
-        for filename in os.listdir(testpath):
+        filesystemloader=FileSystemLoader(testpath)
+        test_files=filesystemloader.list_templates()
+        for filename in test_files:
             filepath = os.path.join(testpath,filename)
             if self._is_valid_test_file(filepath):
                 result.append(filepath)
@@ -192,7 +211,8 @@ class TestLoader(object):
             extension = os.path.splitext(filename)[1]
             return os.path.isfile(filepath)\
                     and extension==".sql"\
-                    and self._matches_template(filename)
+                    and filename.startswith("test_")
+                    #and self._matches_template(filename)
 
     def _matches_template(self, test_file):
         for template_file in os.listdir(self.templates_path):
@@ -214,6 +234,12 @@ class TestSQLFile(object):
 
     def template_filename(self):
         return self.parser._extract_template_filename(self.filename())
+
+    def template_path(self):
+        test_template_path = self.filepath.split("test_templates/")[1]
+        template_path = test_template_path.replace(self.filename(),
+                                                   self.template_filename())
+        return template_path
 
     def template_name(self):
         return os.path.splitext(self.template_filename())[0]
@@ -399,7 +425,7 @@ class FileAppRunner(FillTemplateAppRunner):
 
     def run_test(self,testfile):
         self.clear_inputs()
-        self.select_template(testfile.template_filename(),
+        self.select_template(testfile.template_path(),
                              testfile.values())
         self.saveAndExit()
         self.run()

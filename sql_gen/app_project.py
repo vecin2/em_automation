@@ -85,13 +85,37 @@ class AppProject(object):
 
     @property
     def addb(self):
+        return self._get_database(
+                host='database.host',
+                user='database.user',
+                password='database.pass',
+                dbname='database.name',
+                port='database.port',
+                dbtype='database.type')
+    @property
+    def rsdb(self):
+        return self._get_database(
+                host='database.reporting.url',
+                user='database.reporting.user',
+                password='database.reporting.pass',
+                dbname='database.name',
+                port='database.port',
+                dbtype='database.type')
+
+    @property
+    def config(self):
+        if not self._config_file:
+            self._config_file = ConfigFile(self.paths["core_config"].path)
+        return self._config_file
+
+    def _get_database(self,host=None,user=None,password=None,dbname=None,port=None,dbtype=None):
         emconfig = self.em_config()
-        host = emconfig['database.host']
-        username = emconfig['database.user']
-        password = emconfig['database.pass']
-        database = emconfig['database.name']
-        port = emconfig['database.port']
-        dbtype = emconfig['database.type']
+        host = emconfig[host]
+        username = emconfig[user]
+        password = emconfig[password]
+        database = emconfig[dbname]
+        port = emconfig[port]
+        dbtype = emconfig[dbtype]
         connector = Connector(host,
                                 username,
                                 password,
@@ -99,11 +123,6 @@ class AppProject(object):
                                 port,
                                 dbtype)
         return EMDatabase(connector)
-    @property
-    def config(self):
-        if not self._config_file:
-            self._config_file = ConfigFile(self.paths["core_config"].path)
-        return self._config_file
 
     def _emconfig_id(self):
         #initialises project using path on
