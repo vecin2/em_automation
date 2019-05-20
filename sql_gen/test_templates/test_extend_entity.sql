@@ -46,4 +46,4 @@ INSERT INTO LOCALISED_FIELD (OBJECT_TYPE, OBJECT_INSTANCE, OBJECT_VERSION, FIELD
 'N' --IS_DELETED
 );
 UPDATE EVA_ENTITY_DEFINITION
-SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('PCFrameworkEVA.Implementation.VirtualEnvironment.Objects.PCVirtualEnvironment', 'PCFrameworkEVA.API.Interfaces.EIPCVirtualEnvironment', @ED.BaseVirtualEnvironment, @ENV.Dflt) WHERE ID = @ED.VirtualEnvironment AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;
+SET (LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID) = ('PRJFrameworkEVA.Implementation.VirtualEnvironment.Objects.PRJVirtualEnvironment', 'PRJFrameworkEVA.API.Interfaces.EIPRJVirtualEnvironment', @ED.BaseVirtualEnvironment, @ENV.Dflt) WHERE ID = @ED.VirtualEnvironment AND ENV_ID = @ENV.Dflt AND RELEASE_ID = @RELEASE.ID;

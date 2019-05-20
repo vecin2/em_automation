@@ -269,7 +269,7 @@ class TestTemplatesCommand(object):
         self.context_builder = self._init_context_builder(self.app_project,context_builder)
         self.apprunner = FileAppRunner(templates_path,
                                   emprj_path,
-                                  context_builder)
+                                  self.context_builder)
         self._test_generator=None
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()

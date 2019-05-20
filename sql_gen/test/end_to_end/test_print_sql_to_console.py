@@ -20,7 +20,8 @@ def test_it_throws_exception_when_templates_path_does_not_exist(app_runner):
         app_runner.using_templates_under("").saveAndExit().run()
     assert "Make sure the directory is created" in str(excinfo.value)
 
-def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(app_runner):
+def test_it_throws_exception_when_run_with_em_context_and_env_var_is_not_set(fs,app_runner):
+    fs.create_dir("/my_templates")
     with pytest.raises(EnvVarNotFoundException) as  excinfo:
         app_runner.using_templates_under("/my_templates")\
                   .saveAndExit()\

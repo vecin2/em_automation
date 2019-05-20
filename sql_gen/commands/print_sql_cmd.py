@@ -38,19 +38,18 @@ class PrintSQLToConsoleCommand(object):
                 context_builder = ContextBuilder(emprj_path=emprj_path)
             else:
                 context_builder=ContextBuilder(AppProject(env_vars=env_vars))
-        self.context = context_builder.build()
         if templates_path:
             self.templates_path = templates_path
         else:
             self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
-        self.context_builder =context_builder.build()
+        self.context_builder =context_builder
 
     def run(self):
         self.doc_writer = PrintSQLToConsoleDisplayer()
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.templates_path,
                             self.doc_writer,
-                            self.context_builder
+                            self.context_builder.build()
                         )
         self.doc_creator.run()
 

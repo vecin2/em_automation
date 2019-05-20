@@ -27,5 +27,5 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         self._db().execute(self.sql_printed(),commit=True,verbose='v')
 
     def _db(self):
-        return self.context_builder["_database"]
+        return self.context_builder.build()["_database"]
 
