@@ -83,7 +83,7 @@ class SQLTable(object):
 
 
 class SQLRow(dict):
-    def __init(self, dict_row):
+    def __init__(self, dict_row):
         dict.__init__(self,dict_row)
 
     def __getitem__(self,key):
