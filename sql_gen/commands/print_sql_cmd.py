@@ -3,7 +3,7 @@ import os
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
-from sql_gen.sqltask_jinja.context import init
+from sql_gen.sqltask_jinja.context import ContextBuilder
 
 class PrintSQLToConsoleDisplayer(object):
     """Prints to console the command output"""
@@ -30,26 +30,27 @@ class PrintSQLToConsoleDisplayer(object):
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the output to console"""
     def __init__(self, env_vars=os.environ,
-            initial_context=None,
+            context_builder=None,
             emprj_path =None,
             templates_path=None):
-        if initial_context is None:
+        if context_builder is None:
             if emprj_path:
-                initial_context = init(emprj_path=emprj_path)
+                context_builder = ContextBuilder(emprj_path=emprj_path)
             else:
-                initial_context=init(AppProject(env_vars=env_vars))
+                context_builder=ContextBuilder(AppProject(env_vars=env_vars))
+        self.context = context_builder.build()
         if templates_path:
             self.templates_path = templates_path
         else:
             self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
-        self.initial_context =initial_context
+        self.context_builder =context_builder.build()
 
     def run(self):
         self.doc_writer = PrintSQLToConsoleDisplayer()
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.templates_path,
                             self.doc_writer,
-                            self.initial_context
+                            self.context_builder
                         )
         self.doc_creator.run()
 

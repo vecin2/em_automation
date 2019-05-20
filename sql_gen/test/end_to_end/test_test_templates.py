@@ -149,3 +149,19 @@ def test_run_only_template_wrong_name_does_not_run_anything(app_runner,fs):
                .run_one_test("test_wrong_name.sql")\
                .generates_no_test()
 
+def test_runs_using_context_values_from_test_folder(app_runner,fs):
+    data = {"_locale":"en-GB"}
+
+    check_sql = ExpectedSQLTestTemplate().render(
+                            template_name="verb",
+                            expected="select name from verb where locale ='en-GB'",
+                            actual="select name from verb where locale ='en-GB'")
+
+    app_runner.with_emproject_under("/em/prj")\
+               .and_prj_built_under("/em/prj")\
+               .add_template("verb.sql","select name from verb where locale ='{{_locale}}'")\
+               .make_test_dir()\
+               .with_test_context_values(data)\
+               .add_test("test_verb.sql",{},"select name from verb where locale ='en-GB'")\
+               .run_test_render_sql()\
+               .assert_generated_tests(check_sql)

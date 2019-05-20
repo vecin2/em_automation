@@ -39,19 +39,41 @@ class Keynames(object):
     def load(self):
         return self
 
-def init(app=None,emprj_path=None):
-    if emprj_path:
-        app = AppProject.make(emprj_path)
-    template_API ={'_keynames'   : Keynames(app),
-                  '_db'          :  app.ad_queryrunner,
-                  '_database'    : app.addb,
-                  '_Query'       : QueryDict(ConfigFile(app.paths["ad_queries"].path).properties),
-                  '_emprj'       : app.emproject
-                 }
-    template_API.update(context_values(app.paths['context_values'].path))
-    return template_API
+class ContextBuilder(object):
+    def __init__(self,app=None,emprj_path=None):
+        self.app = app
+        self.template_API =None
+        self.context_values=None
+        self.context_values_filepath= None
+        if not self.app:
+            self.app = AppProject.make(emprj_path)
 
-def context_values(filepath):
+    def build(self):
+         result =self.build_template_API()
+         result.update(self.build_context_values())
+         return result
+
+    def build_template_API(self):
+        if self.template_API is None:
+            self.template_API= {'_keynames'   : Keynames(self.app),
+                      '_db'          :  self.app.ad_queryrunner,
+                      '_database'    : self.app.addb,
+                      '_Query'       : QueryDict(ConfigFile(self.app.paths["ad_queries"].path).properties),
+                      '_emprj'       : self.app.emproject
+                     }
+        return self.template_API
+
+    def get_context_values_filepath(self):
+        if not self.context_values_filepath:
+            self.context_values_filepath =self.app.paths['context_values'].path
+        return self.context_values_filepath
+
+    def build_context_values(self):
+        if self.context_values is None:
+            self.context_values = yaml_dict(self.get_context_values_filepath())
+        return self.context_values
+
+def yaml_dict(filepath):
     try:
         with open(filepath, 'r') as stream:
             yaml_dict = yaml.safe_load(stream)
@@ -61,4 +83,8 @@ def context_values(filepath):
         return {}
     except yaml.YAMLError as exc:
         sql_gen.logger.warning("No context values are added, context config file '"+filepath+"' does not exist")
+
+
+def init(app=None,emprj_path=None):
+    return ContextBuilder(app,emprj_path).build()
 

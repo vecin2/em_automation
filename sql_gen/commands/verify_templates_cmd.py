@@ -14,6 +14,7 @@ import sql_gen
 from sql_gen.commands import PrintSQLToConsoleCommand
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import ContextBuilder
 
 class SourceCode(object):
     def __init__(self,imports=[],content=""):
@@ -257,18 +258,18 @@ class TestTemplatesCommand(object):
                  pytest=pytest,
                  templates_path=None,
                  emprj_path=None,
-                 initial_context=None,
+                 context_builder=None,
                  verbose_mode="-v",
                  test_group="all",
                  test_name=None,
                  reuse_tests=False):
         self.reuse_tests=reuse_tests
         self.emprj_path = emprj_path
-        self.initial_context = initial_context
+        self.app_project = AppProject(emprj_path=emprj_path)
+        self.context_builder = self._init_context_builder(self.app_project,context_builder)
         self.apprunner = FileAppRunner(templates_path,
                                   emprj_path,
-                                  initial_context)
-        self.app_project = AppProject(emprj_path=emprj_path)
+                                  context_builder)
         self._test_generator=None
         self.pytest =pytest
         self.displayer = TestTemplatesCommandDisplayer()
@@ -276,6 +277,14 @@ class TestTemplatesCommand(object):
         self.verbose_mode=verbose_mode
         self.test_group=test_group
         self.test_name =test_name
+
+    def _init_context_builder(self, app_project,context_builder):
+        if not context_builder:
+            context_builder  =ContextBuilder(app_project)
+        test_context_values_filepath=self.app_project.paths["test_context_values"].path
+        if os.path.exists(test_context_values_filepath):
+            context_builder.context_values_filepath=test_context_values_filepath
+        return context_builder
 
     @property
     def test_generator(self):
@@ -381,10 +390,10 @@ class FillTemplateAppRunner():
         sys.stdin = self.original_stdin
 
 class FileAppRunner(FillTemplateAppRunner):
-    def __init__(self,templates_path,emprj_path, initial_context=None):
+    def __init__(self,templates_path,emprj_path, context_builder=None):
         super().__init__()
         self.print_sql_cmd = PrintSQLToConsoleCommand(
-                            initial_context=initial_context,
+                            context_builder=context_builder,
                             emprj_path=emprj_path,
                             templates_path =templates_path)
 

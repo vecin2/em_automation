@@ -4,6 +4,7 @@ from io import StringIO
 
 import pytest
 import pyperclip
+import yaml
 
 from sql_gen.command_line_app import CommandLineSQLTaskApp
 from sql_gen.command_factory import CommandFactory
@@ -13,6 +14,7 @@ from sql_gen.app_project import AppProject
 from sql_gen.emproject.em_project import emproject_home
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.database.sqlparser import SQLParser
 
 class FakeLogger(object):
@@ -22,13 +24,16 @@ class FakeLogger(object):
         """"""
     def error(self):
         """"""
+
 class AppRunner(FillTemplateAppRunner):
     def __init__(self,fs=None):
         super().__init__()
         self.fs=fs
         self.env_vars={}
-        self.initial_context={}
+        self.template_API={}
+        self.context_values={}
         self.command=None
+        self._app_project =None
 
     def add_template(self, name, content):
         path = EMTemplatesEnv().get_templates_path(self.env_vars)
@@ -53,10 +58,15 @@ class AppRunner(FillTemplateAppRunner):
         return self
 
     def _em_path(self,key):
-        return AppProject(env_vars=self.env_vars).emproject.paths[key].path
+        return self.app_project().emproject.paths[key].path
 
     def _app_path(self,key):
-        return AppProject(env_vars=self.env_vars).paths[key].path
+        return self.app_project().paths[key].path
+
+    def app_project(self):
+        if not self._app_project:
+            self._app_project = AppProject(env_vars=self.env_vars)
+        return self._app_project
 
     def _dict_to_str(self,config):
         return '\n'.join("{!s}={!s}".format(key,val) for (key,val) in config.items())
@@ -72,9 +82,16 @@ class AppRunner(FillTemplateAppRunner):
         self.env_vars['SQL_TEMPLATES_PATH']=templates_path
         return self
 
-    def with_initial_context(self, initial_context):
-        self.initial_context=initial_context
+    def with_template_API(self, template_API):
+        self.template_API=template_API
         return self
+
+    @property
+    def context_builder(self):
+        context_builder = ContextBuilder()
+        context_builder.template_API = self.template_API
+        context_builder.context_values=self.context_values
+        return context_builder
 
     def _run(self,args,app=None):
         sys.argv=args
@@ -127,8 +144,6 @@ class CommandTestFactory(CommandFactory):
     def make_run_sql_command(self,env_vars):
         return self.run_sql_command
 
-
-
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self,fs=None):
         super().__init__(fs=fs)
@@ -145,7 +160,7 @@ class PrintSQLToConsoleAppRunner(AppRunner):
     def _make_command_factory(self):
         self.command = PrintSQLToConsoleCommand(
                                 env_vars=self.env_vars,
-                                initial_context=self.initial_context)
+                                context_builder=self.context_builder)
         return CommandTestFactory(
                 print_to_console_command=self.command)
 
@@ -174,7 +189,7 @@ class CreateSQLTaskAppRunner(AppRunner):
     def _make_command_factory(self):
         self.command = CreateSQLTaskCommand(
                                 self.env_vars,
-                                self.initial_context,
+                                self.context_builder,
                                 FakeSvnClient(self.rev_no),
                                 self.clipboard)
         return CommandTestFactory(
@@ -213,7 +228,6 @@ class FakePytest(object):
     def main(params,directory):
         """do nothing"""
 
-
 class TemplatesAppRunner(AppRunner):
     def __init__(self,fs,capsys=None):
         super().__init__(fs=fs)
@@ -226,7 +240,7 @@ class TemplatesAppRunner(AppRunner):
                                 FakePytest(),
                                 templates_path=templates_path,
                                 emprj_path=emprj_path,
-                                initial_context=self.initial_context)
+                                context_builder=self.context_builder)
         return CommandTestFactory(
                 test_sql_templates_commmand=self.command)
 
@@ -235,6 +249,13 @@ class TemplatesAppRunner(AppRunner):
         self.fs.create_dir(path)
         return self
 
+    def with_test_context_values(self,data):
+        self.context_values = None
+        filepath =self._app_path("test_context_values")
+        self._create_file(filepath,yaml.dump(data))
+        return self
+
+
     def add_test(self, name, template_vars, content, template_vars_list=None):
         path =self._app_path("test_templates")
         test_data_object=self._get_template_vars(template_vars,template_vars_list)
@@ -242,7 +263,7 @@ class TemplatesAppRunner(AppRunner):
         self.fs.create_file(os.path.join(path,name), contents=test_content)
         return self
     def _get_template_vars(self,template_vars,template_vars_list):
-        if template_vars:
+        if template_vars is not None:
             return template_vars
         else:
             return template_vars_list
@@ -311,13 +332,13 @@ class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
         return self
 
     def run(self,app =None):
-        self.initial_context["_database"]=self.fakedb
+        self.template_API["_database"]=self.fakedb
         self._run(['.','run-sql'],app=app)
         return self
 
     def _make_command_factory(self):
         self.command = RunSQLCommand(
                                 env_vars=self.env_vars,
-                                initial_context=self.initial_context)
+                                context_builder=self.context_builder)
         return CommandTestFactory(
                 run_sql_command=self.command)

@@ -4,7 +4,7 @@ import pyperclip
 
 from sql_gen.ui.utils import select_string_noprompt,prompt_suggestions
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
-from sql_gen.sqltask_jinja.context import init
+from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
@@ -40,20 +40,20 @@ class CreateSQLTaskDisplayer(object):
 class CreateSQLTaskCommand(object):
     def __init__(self,
                  env_vars=os.environ,
-                 initial_context=None,
+                 context_builder=None,
                  svn_client= None,
                  clipboard= pyperclip,
                  path=None):
         self._app_project=None
         self.env_vars=env_vars
-        if initial_context is None:
+        if context_builder is None:
             app_project=AppProject(env_vars=env_vars)
-            initial_context = init(app_project)
+            context_builder = ContextBuilder(app_project)
         if svn_client is None:
             svn_client = EMSvn()
         self.path=path
         self.svn_client=svn_client
-        self.initial_context=initial_context
+        self.context_builder=context_builder.build()
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
     @property
@@ -102,7 +102,7 @@ class CreateSQLTaskCommand(object):
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             templates_path,
                             displayer,
-                            self.initial_context)
+                            self.context_builder)
         self.doc_creator.run()
         return displayer.rendered_sql
 

@@ -111,7 +111,7 @@ def test_initial_context_is_used_when_filling_template(app_runner,fs):
     fs.create_file("/templates/hello.sql", contents="hello {{_dummy_note}}!")
 
     app_runner.using_templates_under("/templates")\
-               .with_initial_context(initial_context)\
+               .with_template_API(initial_context)\
                .select_template('hello.sql',{'dummy':'hello'})\
                .saveAndExit()\
                .run()\
