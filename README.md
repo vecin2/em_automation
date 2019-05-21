@@ -1,4 +1,4 @@
-![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/rewiring_verb.gif)
+![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/example.gif)
 # sqltask - an sql generator for EM projects
 sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse the template to identify the diferent variables and it prompts them to the user. The values entered are used to render the template generating a final SQL script, which is then send to the corresponding output.
 
