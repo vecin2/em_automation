@@ -1,5 +1,4 @@
 import os
-import os.sep
 import sys
 import re
 import time
