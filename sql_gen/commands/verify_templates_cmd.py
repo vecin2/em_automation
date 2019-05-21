@@ -1,4 +1,5 @@
 import os
+import os.sep
 import sys
 import re
 import time
@@ -236,7 +237,7 @@ class TestSQLFile(object):
         return self.parser._extract_template_filename(self.filename())
 
     def template_path(self):
-        test_template_path = self.filepath.split("test_templates/")[1]
+        test_template_path = self.filepath.split("test_templates"+os.sep)[1]
         template_path = test_template_path.replace(self.filename(),
                                                    self.template_filename())
         return template_path
