@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="sqltask",
-        version="0.0.1a28",
+        version="0.0.1a30",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",
@@ -28,7 +28,7 @@ setuptools.setup(
             ],
         entry_points = {
             'console_scripts': [
-                'dtask =sql_gen.__main__:main'
+                'sqltask =sql_gen.__main__:main'
                 ],
             }
         )

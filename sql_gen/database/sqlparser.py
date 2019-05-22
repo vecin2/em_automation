@@ -85,11 +85,16 @@ class RelativeIdLoader(object):
 
     def compute_id(self,keyset,keyname):
             query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
-            try:
-                result =self.db.find(query.format(keyset,keyname))
-                return result["ID"]
-            except LookupError as excinfo:
+            result =self.db.fetch(query.format(keyset,keyname))
+            if len(result) == 1:
+                return result[0]["ID"]
+            elif len(result) == 0:
                 return self.generate_id(keyset,keyname)
+            else:
+                error_msg="Found multiple records for keyset '"+keyset+"'"+\
+                            " and keyname'"+keyname+"' combination. There should"+\
+                            " be only one record or none if this is a new entity."
+                raise LookupError(error_msg)
 
     def generate_id(self,keyset,keyname):
         query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"
