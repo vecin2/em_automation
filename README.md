@@ -117,7 +117,7 @@ Altough  we should have almost one sql task filter per each jinja filter, not al
 Filters can be concatenated:
 ```sql
 #template
-{{ my_variable| description('Enter any value' 
+{{ my_variable| description('Enter any value')
               | default('my_variable is not defined')}} 
 
 #prompts
