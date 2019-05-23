@@ -343,8 +343,15 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 ```
 
 ## Organizing Templates
-Templates can be grouped and put into folders. For example we could match a similar grouping to the admin screen where we
-
+Templates can be grouped and put into folders. 
+For example we could match a similar grouping to the admin screens:
+```
+/templates
+	|__ manage_context
+		|__ add_ver
+	|__ ABCCaseHandling
+	|__ ...
+```
 ## Hidden Templates
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
 Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
@@ -462,5 +469,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTc4NDk1NjQxLDE3MzQ2Mjc3MTddfQ==
+eyJoaXN0b3J5IjpbMTUxMTU2NDY3MCwxNzM0NjI3NzE3XX0=
 -->
