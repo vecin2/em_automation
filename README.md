@@ -348,8 +348,12 @@ For example we could match a similar grouping to the admin screens:
 ```
 /templates
 	|__ manage_context
-		|__ add_ver
-	|__ ABCCaseHandling
+		|__ add_activity_to_perspective.sql
+		|__ remove_activity_from_perspetive.sql
+	|__ manage_entity_definitions
+		|__ add_entity_definition.sql
+		|__ extend_entity.sql
+		|__ remove_entity_definition.sql
 	|__ ...
 ```
 ## Hidden Templates
@@ -469,5 +473,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTUxMTU2NDY3MCwxNzM0NjI3NzE3XX0=
+eyJoaXN0b3J5IjpbNDU5ODc4Njg2LDE3MzQ2Mjc3MTddfQ==
 -->
