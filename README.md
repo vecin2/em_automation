@@ -342,7 +342,8 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 {% include 'add_descriptor_ref.sql' %}
 ```
 
-
+## Organizing Templates
+Templates can be move into 
 ## Hidden Templates
 A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
 Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
@@ -460,5 +461,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIzNjM1NzU3NSwxNzM0NjI3NzE3XX0=
+eyJoaXN0b3J5IjpbMTQwODMzOTI1MSwxNzM0NjI3NzE3XX0=
 -->
