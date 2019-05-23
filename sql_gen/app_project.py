@@ -68,7 +68,17 @@ class AppProject(object):
     @property
     def ad_queryrunner(self):
         if not self._ad_query_runner:
-            self._ad_query_runner = QueryRunner.make_from_app_prj(self)
+            self._ad_query_runner = QueryRunner.make_from_file(
+                                            self.paths["ad_queries"].path,
+                                            self.addb)
+        return self._ad_query_runner
+
+    @property
+    def rs_queryrunner(self):
+        if not self._ad_query_runner:
+            self._ad_query_runner = QueryRunner.make_from_file(
+                                            self.paths["ad_queries"].path,
+                                            self.addb)
         return self._ad_query_runner
 
     def has_root(self):
@@ -95,7 +105,7 @@ class AppProject(object):
     @property
     def rsdb(self):
         return self._get_database(
-                host='database.reporting.url',
+                host='database.host',
                 user='database.reporting.user',
                 password='database.reporting.pass',
                 dbname='database.name',
