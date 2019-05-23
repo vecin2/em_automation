@@ -31,7 +31,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
   * [String Python Builtin Functions](#string-python-builtin-functions)
   * [Include](#include)
   *  [Hidden Templates](#hidden-templates)
-  * [Organizing Templates](#organzing-templates)
+  * [Organizing Templates](#organizing-templates)
   * [Naming Convention](#naming-convention)
   * [Fomatting](#fomatting)
       - [Inserts](#inserts)
@@ -474,6 +474,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTY3NTUyODQzLDQ1OTg3ODY4NiwxNzM0Nj
-I3NzE3XX0=
+eyJoaXN0b3J5IjpbLTU4MDc5NjgzNl19
 -->
