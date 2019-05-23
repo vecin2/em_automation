@@ -31,6 +31,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
   * [String Python Builtin Functions](#string-python-builtin-functions)
   * [Include](#include)
   *  [Hidden Templates](#hidden-templates)
+  * [Organizing Templates](#organzing-templates)
   * [Naming Convention](#naming-convention)
   * [Fomatting](#fomatting)
       - [Inserts](#inserts)
@@ -343,8 +344,8 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 ```
 
 ## Organizing Templates
-Templates can be grouped and put into folders. 
-For example we could match a similar grouping to the admin screens:
+Templates can all be drop in one folder or they can be grouped and put into folders. 
+For example we could match a similar grouping to the EM admin screens:
 ```
 /templates
 	|__ manage_context
@@ -473,5 +474,6 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDU5ODc4Njg2LDE3MzQ2Mjc3MTddfQ==
+eyJoaXN0b3J5IjpbNTY3NTUyODQzLDQ1OTg3ODY4NiwxNzM0Nj
+I3NzE3XX0=
 -->
