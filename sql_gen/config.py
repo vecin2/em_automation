@@ -1,7 +1,16 @@
 import re
 
 import os
-import sql_gen 
+import sql_gen
+from configparser import ConfigParser, ExtendedInterpolation
+
+import configparser
+def add_section_header(properties_file, header_name):
+  # configparser.ConfigParser requires at least one section header in a properties file.
+  # Our properties file doesn't have one, so add a header to it on the fly.
+  yield '[{}]\n'.format(header_name)
+  for line in properties_file:
+    yield line
 
 class ConfigFile(object):
     def __init__(self, filepath,logger=None):
@@ -11,26 +20,18 @@ class ConfigFile(object):
             self.logger = logger
         self.filepath=filepath
         self.dict_props=None
+        self._parser = None
 
     @property
     def properties(self):
-        if not self.dict_props:
-            self.dict_props= self._read_properties(self.filepath)
-        return self.dict_props
-
-    def _read_properties(self,full_path):
-        myprops = {}
-        if not os.path.exists(full_path):
-            raise FileNotFoundError("Try to load config file '"+full_path+"' but it does not exist")
-        with open(full_path, 'r') as f:
-                for line in f:
-                    line = line.rstrip() #removes trailing whitespace and '\n'
-
-                    if "=" not in line: continue #skips blanks and comments w/o =
-                    if line.startswith("#"): continue #skips comments which contain =
-                    k, v = line.split("=", 1)
-                    myprops[k] = v
-        return myprops
+        if not self._parser:
+            self._parser = ConfigParser(interpolation=ExtendedInterpolation())
+            if not os.path.exists(self.filepath):
+                raise FileNotFoundError("Try to load config file '"+self.filepath+"' but it does not exist")
+            file = open(self.filepath,encoding="utf_8")
+            file_content=add_section_header(file, 'DEFAULT')
+            self._parser.read_file(file_content)
+        return self._parser["DEFAULT"]
 
     def get(self,key,default_value):
         return self.properties.get(key,default_value)
@@ -39,12 +40,5 @@ class ConfigFile(object):
         return item in self.properties
 
     def __getitem__(self,name):
-        return self._resolve(self.properties[name])
+        return self.properties[name]
 
-    def _resolve(self,value):
-        if value.startswith('${') and value.endswith('}'):
-                    var_name= value[value.find("${")+2:value.find("}")]
-                    if var_name in self:
-                        return self[var_name]
-                    return ""
-        return value

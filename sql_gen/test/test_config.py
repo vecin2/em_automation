@@ -15,7 +15,6 @@ class FakeLogger(object):
         else:
             self.error_text +=exception
 
-
 def make_config(fs,config_content,config_home=None):
     if not config_home:
         config_home ="/em/project/gsc/config/emautomation.properties"
@@ -27,17 +26,18 @@ def test_get_config_value_returns_value(fs):
     config = make_config(fs,config_content)
     assert "ad" == config["container.name"]
 
-def test_it_returns_empty_when_value_cannot_be_resolved(fs):
+def test_it_throws_exception_when_value_cannot_be_resolved(fs):
     config_content="database.user=${logical.db.name}"
     config = make_config(fs,config_content)
-    assert "" == config["database.user"]
+    with pytest.raises(Exception) as excinfo:
+        config["database.user"]
+    assert "Bad value substitution" in  str(excinfo)
 
 def test_it_resolve_value_assigned_to_var_multiple_times(fs):
     config_content="ad.name=DEV\ndb.name=${ad.name}\ndb.user=${db.name}"
     config = make_config(fs,config_content)
     assert "DEV" == config["db.user"]
 
-@pytest.mark.skip
 def test_it_resolve_value_assigned_to_var_concatenated_with_string(fs):
     config_content="ad.name=DEV\ndb.name=${ad.name}_RS\n"
     config = make_config(fs,config_content)
