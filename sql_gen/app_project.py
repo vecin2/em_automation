@@ -78,7 +78,7 @@ class AppProject(object):
     @property
     def rs_queryrunner(self):
         if not self._rs_query_runner:
-            self._ad_query_runner = QueryRunner.make_from_file(
+            self._rs_query_runner = QueryRunner.make_from_file(
                                             self.paths["rs_queries"].path,
                                             self.rsdb)
         return self._rs_query_runner

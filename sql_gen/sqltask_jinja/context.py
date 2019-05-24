@@ -57,7 +57,7 @@ class ContextBuilder(object):
         if self.template_API is None:
             self.template_API= {'_keynames'   : Keynames(self.app),
                       '_db'          : self.app.ad_queryrunner,
-                      '_rsdb'        : self.app.rs_queryrunner,
+                      '_rs'        : self.app.rs_queryrunner,
                       '_database'    : self.app.addb,
                       '_rsdatabase'  : self.app.rsdb,
                       '_Query'       : QueryDict(ConfigFile(self.app.paths["ad_queries"].path)),

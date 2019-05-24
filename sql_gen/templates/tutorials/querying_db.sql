@@ -72,3 +72,11 @@ They can be printed in one the following ways:
 SQLRow
 SQLRow is retrieved by find. Its a ditionary that has pretty printing a default value for null 'NULL'
 
+****REPORTING SCHEMA****
+Reporting schema can be queried as well:
+
+{% set dim_agents = _rs.fetch.all_dim_agents() %}
+Admin first_name (obtained with query dictionary) is {{dim_agents.where(USERNAME="admin").column("FIRST_NAME")}}
+
+{% set dim_agents2 = _rsdatabase.fetch("SELECT * FROM DIM_AGENT") %}
+Admin first_name (obtained with free from queries) is {{dim_agents2.where(USERNAME="admin").column("FIRST_NAME")}}
