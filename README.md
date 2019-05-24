@@ -57,7 +57,7 @@ The following shortcuts:
 -	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
 -	TAB: pops up a list of suggestion if there is one or navigate to the next one if the list is already showing.
 -	Shift + TAB: Navigate to the previous option within a list of suggestions.
--	Ctrl + w: Removes the previous word type. 
+-	Ctrl + w: Removes the previous word that was typed. 
 
 # User installation
 ## Quick installation
@@ -482,5 +482,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYyNjQ5ODk4LC01ODA3OTY4MzZdfQ==
+eyJoaXN0b3J5IjpbMTI4MDE0MDAxMF19
 -->
