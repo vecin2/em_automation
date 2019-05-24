@@ -51,8 +51,9 @@ Run dtask print-sql and when prompt select the template `hello_world.sql`. You s
 ## Tutorials
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
-## Key
-The following shortcuts
+## Key shorcuts
+The following shortcuts:
+-	Ctrl + N: Navigate to the "next" option when a list of optio
 
 # User installation
 ## Quick installation
@@ -477,5 +478,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY3NDU1MDM1MiwtNTgwNzk2ODM2XX0=
+eyJoaXN0b3J5IjpbMTIxNjE1MTE4NiwtNTgwNzk2ODM2XX0=
 -->
