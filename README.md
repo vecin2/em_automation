@@ -53,8 +53,10 @@ Within the templates there is a set of tutorials templates They provide good gui
 
 ## Key shorcuts
 The following shortcuts:
--	Ctrl + N: Navigate to the "next" within a list of suggestions.
--	Ctrl + N: Navigate to the "previous" option wit
+-	Ctrl + n: Navigate to the "next" option within a list of suggestions.
+-	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
+-	TAB: pops up a list of suggestion if there is one or navigate to the next one if the list is already showing.
+-	Shift + TAB:Navigate to the "previous" option within a list of suggestions.
 
 # User installation
 ## Quick installation
@@ -479,5 +481,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0NTExNTU5OTQsLTU4MDc5NjgzNl19
+eyJoaXN0b3J5IjpbLTIxMjc1Njc2MywtNTgwNzk2ODM2XX0=
 -->
