@@ -53,7 +53,6 @@ Run dtask print-sql and when prompt select the template `hello_world.sql`. You s
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
 ## Key shortcuts
-The following shortcuts:
 -	Ctrl + n: Navigate to the "next" option within a list of suggestions.
 -	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
 -	TAB: pops up a list of suggestion if there is one or navigate to the next one if the list is already showing.
@@ -483,5 +482,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY2MDQ0OTkzXX0=
+eyJoaXN0b3J5IjpbMTI4Mjc0MDI2MF19
 -->
