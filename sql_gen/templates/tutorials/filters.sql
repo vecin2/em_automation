@@ -14,6 +14,11 @@ This prompts 'surname (default is Smith)'
 This prompts 'Please enter the address'
 {{address | description('Please enter the address') }}
 
+**Print Filter**
+Print filter is similar to description but is used to print longer text. For example tables or information for the user. Description filter shouldn't be used with long strings as it doesnt support well long lines.
+This prompts 'Please enter the address'
+{{current_address | print('The customer address where he has lived during the last year. Leave blank if he has not remain in the same address for that long') }}
+
 **Default Filter | Description Filter**
 Filters can be piped. Examples:
 This prompts 'Please enter the country' and default to "US"

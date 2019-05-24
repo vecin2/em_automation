@@ -11,6 +11,7 @@ class Prompt:
         self.variable_name =variable_name
         self.filter_list = filter_list
         self.display_text = variable_name
+        self.text_to_print = None
         self.completer = None
 
     def __str__(self):
@@ -37,6 +38,8 @@ class Prompt:
 
     def run(self,context):
         logger.debug("Running prompt :'"+self.get_display_text()+"'")
+        if self.text_to_print:
+            print(self.text_to_print)
         user_input = prompt(self.get_display_text(),
                                 completer=self.completer)
         logger.debug("User entered: "+ user_input)

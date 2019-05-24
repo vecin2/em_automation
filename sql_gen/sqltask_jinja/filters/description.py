@@ -18,4 +18,3 @@ class DescriptionFilter(PromptFilter):
             display_text +=str(table)+"\n"
         display_text+=resolved_args[0]
         prompt.display_text = display_text
-        #prompt.display_text =str(x)+"\n"

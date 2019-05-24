@@ -3,11 +3,10 @@
 {% set verb_names = _db.fetch.v_names_by_et(__entity_type).column('NAME') %}
 {% set __verb_name = verb_name | suggest(verb_names)%}
 {% set perspective_verbs = _db.fetch.v_by_pers_keyname(__perspective_id) %}
-{%set seq_no_desc ="All the activities sequence numbers are 1 by default, which will display them in alphabetical order.\n"+
-		           "Please notice that changing the Context within 'Manage Context' admin screen overrides sequence numbers"+
-				   "and set them matching the screen order.\n"
+{%set seq_no_desc ="All the activities sequence numbers are 1 by default which will display them in alphabetical order. Please notice that changing the Context within 'Manage Context' admin screen overrides sequence numbers"+
+				   " and set them matching the screen order.\n"
 				   "\nShould we display the activities in alphabetical order?(Y/N)?"%}
-{% set __is_alphabetical_order = is_alphabetical_order | description(seq_no_desc) | default('Y') %}
+{% set __is_alphabetical_order = is_alphabetical_order | print(seq_no_desc) | default('Y') %}
 {% if __is_alphabetical_order == "Y"%}
 	{% set __sequence_number = 1 %}
 --update all sequence_numbers to 1 so they display in alphabetical order
