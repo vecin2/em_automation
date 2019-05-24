@@ -10,6 +10,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 - [Table Of Contents](#table-of-contents)
   * [Basic Usage](#basic-usage)
   * [Tutorials](#tutorials)
+  *  [Key Shortcuts](#key-shortcuts)
 - [User installation](#user-installation)
   * [Quick installation](#quick-installation)
   * [Install as a python module](#install-as-a-python-module)
@@ -51,7 +52,7 @@ Run dtask print-sql and when prompt select the template `hello_world.sql`. You s
 ## Tutorials
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
-## Key shorcuts
+## Key shortcuts
 The following shortcuts:
 -	Ctrl + n: Navigate to the "next" option within a list of suggestions.
 -	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
@@ -482,5 +483,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI4MDE0MDAxMF19
+eyJoaXN0b3J5IjpbMTY2MDQ0OTkzXX0=
 -->
