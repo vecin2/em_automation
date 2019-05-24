@@ -51,6 +51,9 @@ Run dtask print-sql and when prompt select the template `hello_world.sql`. You s
 ## Tutorials
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
+## Key
+The following shortcuts
+
 # User installation
 ## Quick installation
  1. Unzip  "sqltask.zip" into your `project` folder.
@@ -474,5 +477,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU4MDc5NjgzNl19
+eyJoaXN0b3J5IjpbMTY3NDU1MDM1MiwtNTgwNzk2ODM2XX0=
 -->
