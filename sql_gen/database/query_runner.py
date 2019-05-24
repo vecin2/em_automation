@@ -64,11 +64,6 @@ class QueryDict(AttrDict):
     def __init__(self,query_dict):
         super().__init__(query_dict)
 
-    @staticmethod
-    def get_instance():
-        """"""
-
-
     def __getattr__(self, item):
         return CallableFormatString(item,super().__getattr__(item))
 
@@ -86,41 +81,19 @@ class DBOperation(AttrDict):
 
 
 class QueryRunner(object):
-    def __init__(self,query_dict=None, emdb=None,app_project=None,filepath=None):
-        self._filepath =filepath
-        self._query_dict = query_dict
-        self._addb = emdb
-        self._app_project =app_project
+    def __init__(self,query_dict=None, emdb=None,filepath=None):
+        self.filepath =filepath
+        if query_dict:
+            self.query_dict =query_dict
+        else:
+            self.query_dict = ConfigFile(self.filepath)
+        self.addb = emdb
         self.find = DBOperation("find",self.query_dict,self)
-        self.list = DBOperation("list",self.query_dict,self)
         self.fetch = DBOperation("fetch",self.query_dict,self)
-        self._query_dict=None
-        self._list=None
 
-    @property
-    def addb(self):
-        if not self._addb:
-            self._addb=self._app_project.addb
-        return self._addb
-    @property
-    def query_dict(self):
-        if not self._query_dict:
-            config_file=ConfigFile(self.filepath)
-            self._query_dict= config_file.properties
-        return self._query_dict
+
     def has_query(self,key):
         return key in self.query_dict
-
-    @property
-    def filepath(self):
-        if not self._filepath:
-            self._filepath = self._app_project.paths["ad_queries"].path
-        return self._filepath
-
-
-    @staticmethod
-    def make_from_app_prj(app_project):
-        return QueryRunner(app_project =app_project)
 
     @staticmethod
     def make_from_file(filepath,db=None):

@@ -1,6 +1,6 @@
 {% set __perspective_id = perspective_id | suggest(_keynames.CC) %}
 {% set __entity_type = entity_type | suggest(_keynames.ET) %}
-{% set verb_names = _db.list.v_names_by_et(__entity_type) %}
+{% set verb_names = _db.fetch.v_names_by_et(__entity_type).column('NAME') %}
 {% set __verb_name = verb_name | suggest(verb_names)%}
 {% set perspective_verbs = _db.fetch.v_by_pers_keyname(__perspective_id) %}
 {%set seq_no_desc ="All the activities sequence numbers are 1 by default, which will display them in alphabetical order.\n"+

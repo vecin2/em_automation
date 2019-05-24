@@ -1,6 +1,6 @@
 {# Compute variables for add_process_descriptor#}
  {# Compute current pd #}
-	{% set verb_names= _db.list.v_names_by_ed(entity_def_id | suggest(_keynames.ED)) %}
+	{% set verb_names= _db.fetch.v_names_by_ed(entity_def_id | suggest(_keynames.ED)).column("NAME") %}
 	{% set __verb_name = verb_name | suggest(verb_names) %}
 	{% set old_pd = _db.find.pd_by_ed_n_vname(entity_def_id,__verb_name) %}
 

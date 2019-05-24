@@ -14,6 +14,7 @@ PATHS= {
          "config"         : "config",
          "core_config"    : "config/core.properties",
          "ad_queries"     : "config/ad_queries.sql",
+         "rs_queries"     : "config/rs_queries.sql",
          "context_values"  : "config/context_values.yaml",
          "test_context_values"  : "config/test_context_values.yaml",
          "logging_config" : "config/logging.yaml",
@@ -32,6 +33,7 @@ class AppProject(object):
     def __init__(self,env_vars=None,emprj_path=None):
         self._config_file=None
         self._ad_query_runner=None
+        self._rs_query_runner=None
         self._emproject = None
         self._paths =None
         self._logger = None
@@ -75,11 +77,11 @@ class AppProject(object):
 
     @property
     def rs_queryrunner(self):
-        if not self._ad_query_runner:
+        if not self._rs_query_runner:
             self._ad_query_runner = QueryRunner.make_from_file(
-                                            self.paths["ad_queries"].path,
-                                            self.addb)
-        return self._ad_query_runner
+                                            self.paths["rs_queries"].path,
+                                            self.rsdb)
+        return self._rs_query_runner
 
     def has_root(self):
         return self.emproject.has_root()

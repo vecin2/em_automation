@@ -56,9 +56,12 @@ class ContextBuilder(object):
     def build_template_API(self):
         if self.template_API is None:
             self.template_API= {'_keynames'   : Keynames(self.app),
-                      '_db'          :  self.app.ad_queryrunner,
+                      '_db'          : self.app.ad_queryrunner,
+                      '_rsdb'        : self.app.rs_queryrunner,
                       '_database'    : self.app.addb,
-                      '_Query'       : QueryDict(ConfigFile(self.app.paths["ad_queries"].path).properties),
+                      '_rsdatabase'  : self.app.rsdb,
+                      '_Query'       : QueryDict(ConfigFile(self.app.paths["ad_queries"].path)),
+                      '_RSQuery'     : QueryDict(ConfigFile(self.app.paths["rs_queries"].path)),
                       '_emprj'       : self.app.emproject
                      }
         return self.template_API
