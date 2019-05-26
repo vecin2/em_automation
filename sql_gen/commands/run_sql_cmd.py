@@ -13,8 +13,7 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
     def __init__(self, env_vars=os.environ,context_builder=None):
         #We dont want to run the SQL on print as this command runs it as well
         super().__init__(env_vars= env_vars,
-                         context_builder = context_builder,
-                         run_on_db=True)
+                         context_builder = context_builder)
         self.displayer = RunSQLDisplayer()
         self.env_vars = env_vars
     def run(self):

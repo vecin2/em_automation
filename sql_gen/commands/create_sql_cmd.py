@@ -8,7 +8,7 @@ from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
-from sql_gen.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
+from sql_gen.commands.print_sql_cmd import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand
 
 class CreateSQLTaskDisplayer(object):
     def ask_to_override_task(self,path):
@@ -53,7 +53,7 @@ class CreateSQLTaskCommand(object):
             svn_client = EMSvn()
         self.path=path
         self.svn_client=svn_client
-        self.context_builder=context_builder.build()
+        self.context_builder=context_builder
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
     @property
@@ -99,6 +99,11 @@ class CreateSQLTaskCommand(object):
     def _create_sql(self):
         displayer = PrintSQLToConsoleDisplayer()
         templates_path=EMTemplatesEnv().extract_templates_path(self.env_vars)
+        print_sql_cmd = PrintSQLToConsoleCommand(
+                            context_builder=self.context_builder,
+                            env_vars=self.env_vars)
+        print_sql_cmd.run()
+        return print_sql_cmd.sql_printed()
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             templates_path,
                             displayer,

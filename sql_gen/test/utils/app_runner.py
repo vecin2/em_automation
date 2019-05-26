@@ -30,7 +30,7 @@ class AppRunner(FillTemplateAppRunner):
         super().__init__()
         self.fs=fs
         self.env_vars={}
-        self.template_API={}
+        self.template_API={"_database":FakeDB()}
         self.context_values={}
         self.command=None
         self._app_project =None
@@ -86,7 +86,7 @@ class AppRunner(FillTemplateAppRunner):
         return self
 
     def with_template_API(self, template_API):
-        self.template_API=template_API
+        self.template_API.update(template_API)
         return self
 
     @property
@@ -326,7 +326,10 @@ class FakeDB(object):
         self.executed_sql=""
     def execute(self,sql,commit=None,verbose='q'):
         self.executed_sql+=sql
-
+    def rollback(self):
+        self.executed_sql=""
+    def clearcache(self):
+        """"""
 class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
     """"""
     def __init__(self,fs):
