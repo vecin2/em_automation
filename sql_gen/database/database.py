@@ -62,6 +62,10 @@ class EMDatabase(object):
         self._connection=None
         self.queries_cache ={}
 
+    def clearcache(self):
+        self.queries_cache ={}
+        RelativeIdLoader.clearcache()
+
     def list(self,query):
         sql_gen.logger.debug("Running list of query")
         table = self.fetch(query)

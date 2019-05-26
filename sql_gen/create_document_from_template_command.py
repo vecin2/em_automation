@@ -73,6 +73,6 @@ class CreateDocumentFromTemplateCommand(object):
         template = self.selector.select_template()
         while template:
             filled_template =TemplateFiller().fill(template,dict(self.initial_context))
-            self.writer.write(filled_template)
+            self.writer.write(filled_template,template)
             template = self.selector.select_template()
 

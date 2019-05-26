@@ -1,5 +1,5 @@
 --creates an agent with the same password as 'admin' user
-INSERT INTO FU_USER (ID, USERNAME, LOCALE_ID, LOCALE_ENV_ID, IS_DELETED, VIRTUAL_ENVIRONMENT_ID, VIRTUAL_ENVIRONMENT_ENV_ID, TENANT_ID, CONTENT_LOCALE) VALUES (@USER.{{username}}, '{{username}}', @LOC.en_US, 666, 'N', 1, 666, 'default', '{{_locale}}');
+INSERT INTO FU_USER (ID, USERNAME, LOCALE_ID, LOCALE_ENV_ID, IS_DELETED, VIRTUAL_ENVIRONMENT_ID, VIRTUAL_ENVIRONMENT_ENV_ID, TENANT_ID, CONTENT_LOCALE) VALUES (@USER.{{username | print("Password will be copied from user 'admin'")}}, '{{username}}', @LOC.en_US, 666, 'N', 1, 666, 'default', '{{_locale}}');
 
 INSERT INTO FD_USER_PROFILE_TYPE (TENANT_ID, USER_ID, PROFILE_TYPE_ID, PROFILE_TYPE_ENV_ID, IS_DELETED) VALUES ('default', @USER.{{username}}, @PROFILE.{{profile_id | suggest(_keynames.PROFILE)}}, 666, 'N');
 

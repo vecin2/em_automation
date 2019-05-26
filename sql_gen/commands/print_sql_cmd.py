@@ -10,7 +10,7 @@ class PrintSQLToConsoleDisplayer(object):
     def __init__(self):
         self.rendered_sql=""
 
-    def write(self,content):
+    def write(self,content,template=None):
         self.render_sql(content)
 
     def render_sql(self,sql_to_render):
@@ -32,7 +32,8 @@ class PrintSQLToConsoleCommand(object):
     def __init__(self, env_vars=os.environ,
             context_builder=None,
             emprj_path =None,
-            templates_path=None):
+            templates_path=None,
+            run_on_db=True):
         if context_builder is None:
             if emprj_path:
                 context_builder = ContextBuilder(emprj_path=emprj_path)
@@ -43,15 +44,33 @@ class PrintSQLToConsoleCommand(object):
         else:
             self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.context_builder =context_builder
+        self.context=None
+        #If we are printing two templates, running the sql
+        #allow the second template to see the modification made 
+        #by the first template  (kenyames, entities inserted, etc)
+        self.run_on_db=run_on_db
 
     def run(self):
+        if not self.context:
+            self.context =self.context_builder.build()
+
         self.doc_writer = PrintSQLToConsoleDisplayer()
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.templates_path,
-                            self.doc_writer,
-                            self.context_builder.build()
+                            self,
+                            self.context
                         )
         self.doc_creator.run()
+
+    def write(self,content,template=None):
+        self.doc_writer.write(content)
+        if self.run_on_db and self._is_runnable_sql(template):
+            self.context['_database'].execute(content)
+            self.context['_database'].clearcache()
+
+    def _is_runnable_sql(self,template):
+        extension=os.path.splitext(template.filename)[1]
+        return extension =='sql'
 
     def sql_printed(self):
         return self.doc_writer.rendered_sql

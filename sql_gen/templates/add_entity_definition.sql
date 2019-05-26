@@ -19,7 +19,7 @@ INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, T
 @ENV.Dflt, -- TYPE_ENV_ID
 '{{logical_object_path  | codepath() | replace(".xml","")}}', -- LOGICAL_OBJECT_PATH
 '{{interface_path | codepath() | replace(".xml","")}}', -- INTERFACE_PATH
-{{super_entity_definition | suggest(_keynames.FULL_ED) | default ("PersistableEntity")}}, -- SUPER_ENTITY_DEFINITION
+{{super_entity_definition | suggest(_keynames.FULL_ED) | default ("@ED.PersistableEntity")}}, -- SUPER_ENTITY_DEFINITION
 @ENV.Dflt, -- SUPER_ENTITY_DEFINITION_ENV_ID
 'N', -- IS_DELETED
 '{{is_basic | description("is_basic(Y/N)") | default("Y")}}', -- IS_BASIC

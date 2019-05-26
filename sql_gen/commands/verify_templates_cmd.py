@@ -418,10 +418,14 @@ class FillTemplateAppRunner():
 class FileAppRunner(FillTemplateAppRunner):
     def __init__(self,templates_path,emprj_path, context_builder=None):
         super().__init__()
+        #Not run on db because we are only testing one template a time
+        #If we would be testing multiple templates combined we will changed
+        #'ru_on_db' to True
         self.print_sql_cmd = PrintSQLToConsoleCommand(
                             context_builder=context_builder,
                             emprj_path=emprj_path,
-                            templates_path =templates_path)
+                            templates_path =templates_path,
+                            run_on_db=False)
 
     def run_test(self,testfile):
         self.clear_inputs()

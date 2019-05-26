@@ -39,8 +39,10 @@ class FileSystemLoader(JinjaFileSystemLoader):
                                           .replace(os.path.sep, '/')
                     if template[:2] == './':
                         template = template[2:]
+                    extension=os.path.splitext(template)[1]
                     if template not in found\
-                            and ".sql" == os.path.splitext(template)[1]:
+                            and (".sql" == extension
+                            or ".txt" == extension):
                         found.add(template)
         return sorted(found)
 

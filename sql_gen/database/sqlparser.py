@@ -51,6 +51,10 @@ class RelativeIdLoader(object):
             result = self._fetch_keyset(keyset)
             _cache_keyset(keyset,result)
             return result
+    @staticmethod
+    def clearcache():
+        RelativeIdLoader.keyset_cache.clear()
+        RelativeIdLoader.keynames_cache.clear()
 
     def full_id(self,keyset,id):
         if id == "NULL":

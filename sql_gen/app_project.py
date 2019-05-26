@@ -39,6 +39,8 @@ class AppProject(object):
         self._logger = None
         self.env_vars = env_vars
         self.emprj_path =emprj_path
+        self._addb =None
+        self._rsdb =None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -97,22 +99,26 @@ class AppProject(object):
 
     @property
     def addb(self):
-        return self._get_database(
-                host='database.host',
-                user='database.user',
-                password='database.pass',
-                dbname='database.name',
-                port='database.port',
-                dbtype='database.type')
+        if not self._addb:
+            self._addb = self._get_database(
+                    host='database.host',
+                    user='database.user',
+                    password='database.pass',
+                    dbname='database.name',
+                    port='database.port',
+                    dbtype='database.type')
+        return self._addb
     @property
     def rsdb(self):
-        return self._get_database(
-                host='database.host',
-                user='database.reporting.user',
-                password='database.reporting.pass',
-                dbname='database.name',
-                port='database.port',
-                dbtype='database.type')
+        if not self._rsdb:
+            self._rsdb =self._get_database(
+                    host='database.host',
+                    user='database.reporting.user',
+                    password='database.reporting.pass',
+                    dbname='database.name',
+                    port='database.port',
+                    dbtype='database.type')
+        return self._rsdb
 
     @property
     def config(self):

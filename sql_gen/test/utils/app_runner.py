@@ -161,9 +161,12 @@ class PrintSQLToConsoleAppRunner(AppRunner):
         return self
 
     def _make_command_factory(self):
+        #we are not passing a real context with database
+        #so we dont want to 'run_on_db'
         self.command = PrintSQLToConsoleCommand(
                                 env_vars=self.env_vars,
-                                context_builder=self.context_builder)
+                                context_builder=self.context_builder,
+                                run_on_db=False)
         return CommandTestFactory(
                 print_to_console_command=self.command)
 
