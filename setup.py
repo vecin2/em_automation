@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
         name="sqltask",
-        version="0.0.1a31",
+        version="0.0.1a34",
         author="David Alvarez Garcia",
         author_email="david.avgarcia@gmail.com",
         description="A helper to populate jinja templates",

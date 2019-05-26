@@ -61,6 +61,7 @@ class PrintSQLToConsoleCommand(object):
                             self.context
                         )
         self.doc_creator.run()
+        self.context['_database'].rollback()
 
     def write(self,content,template=None):
         self.doc_writer.write(content)
@@ -70,7 +71,7 @@ class PrintSQLToConsoleCommand(object):
 
     def _is_runnable_sql(self,template):
         extension=os.path.splitext(template.filename)[1]
-        return extension =='sql'
+        return extension =='.sql'
 
     def sql_printed(self):
         return self.doc_writer.rendered_sql

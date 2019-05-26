@@ -14,7 +14,7 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         #We dont want to run the SQL on print as this command runs it as well
         super().__init__(env_vars= env_vars,
                          context_builder = context_builder,
-                         run_on_db=False)
+                         run_on_db=True)
         self.displayer = RunSQLDisplayer()
         self.env_vars = env_vars
     def run(self):

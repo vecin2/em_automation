@@ -62,6 +62,9 @@ class EMDatabase(object):
         self._connection=None
         self.queries_cache ={}
 
+    def rollback(self):
+        self._conn().rollback()
+
     def clearcache(self):
         self.queries_cache ={}
         RelativeIdLoader.clearcache()
