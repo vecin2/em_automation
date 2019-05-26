@@ -9,25 +9,6 @@ storage_table = {
                  "ET":{"Agent":602}
                 }
 
-class NonConflictRelativeIdLoader(object):
-    def __init__(self,db=None):
-        self.db =db
-    def load(self,keyset,keyname):
-        query ="SELECT ID FROM CCADMIN_IDMAP where keyset = '{}' AND KEYNAME ='{}'"
-        try:
-            result =self.db.find(query.format(keyset,keyname))
-            return result["ID"]
-        except LookupError as excinfo:
-            return self.generate_id(keyset,keyname)
-    def generate_id(self,keyset,keyname):
-        query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id"
-        result =self.db.list(query.format(keyset))[0]
-        if result >0:
-            return -1
-        else:
-            result -=1
-            return result
-
 class RelativeIdLoader(object):
     keynames_cache={}
     #cache to avoid generating id multiple times
@@ -95,10 +76,18 @@ class RelativeIdLoader(object):
             elif len(result) == 0:
                 return self.generate_id(keyset,keyname)
             else:
-                error_msg="Found multiple records for keyset '"+keyset+"'"+\
-                            " and keyname'"+keyname+"' combination. There should"+\
-                            " be only one record or none if this is a new entity."
-                raise LookupError(error_msg)
+                return self._handle_duplicate_keys(keyset,keyname,result[0]["ID"])
+
+    def _handle_duplicate_keys(self,keyset,keyname,id):
+            query ="delete from CCADMIN_IDMAP where keyset ='{}' and keyname='{}'"
+            result =self.db.execute(query.format(keyset,keyname))
+            query ="INSERT INTO CCADMIN_IDMAP (KEYSET,KEYNAME,ID) VALUES ('{}','{}',{});"
+            result =self.db.execute(query.format(keyset,keyname,id))
+            error_msg="Found multiple records for keyset '"+keyset+"'"+\
+                        " and keyname '"+keyname+"' combination. There should"+\
+                        " be only one record or none if this is a new entity.\n  {} extra ids where removed"
+            print(error_msg.format(result.rowcount))
+            return id
 
     def generate_id(self,keyset,keyname):
         query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"
