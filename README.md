@@ -49,7 +49,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 
 
 ## Basic Usage    
-Create a `hello_world.sql` file under within the`templates` folder.
+Create a `hello_world.sql` file under within the`$EM_PROJECT/project/sqltask/templates` folder.
 Add the following text:   `Hello {{ name }}!`
 Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
 
@@ -486,5 +486,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjg2ODUxNDc5LC0zMDE2MDEyOThdfQ==
+eyJoaXN0b3J5IjpbLTk2MjI4OTc0Ml19
 -->
