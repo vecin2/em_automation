@@ -5,7 +5,6 @@
 User creates a template for each SQL script,  then `sqltask` parses the template variables variables and it prompts them to the user. 
 
 After user enters the values `sqltask` renders the template and it generates the final SQL script, which can be either printed, saved as an SQL task or run in the database.
- are used to render the template generating a final SQL script, which is then send to the corresponding output.
 
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling the values, and they minimize user interactions and avoid asking for values that could be computed.
 
@@ -487,5 +486,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjYzNTIzMjM1XX0=
+eyJoaXN0b3J5IjpbLTMwMTYwMTI5OF19
 -->
