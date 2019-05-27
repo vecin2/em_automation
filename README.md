@@ -65,7 +65,7 @@ Within the templates there is a set of tutorials templates They provide good gui
 
 # User installation
 ## Quick installation
- 1. Unzip  "sqltask.zip" into your `project` folder.
+ 1. Unzip  "sqltask.zip" into your `$EM_PROJECT/project` folder.
  2. Within the `config/core.properties` file:
 	 -  Change the environment, container and machines names to point to your local environment. 
 	 - Change the `db.release.version`  property to point to your current AD release version. 
@@ -486,5 +486,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMwMTYwMTI5OF19
+eyJoaXN0b3J5IjpbNjg2ODUxNDc5LC0zMDE2MDEyOThdfQ==
 -->
