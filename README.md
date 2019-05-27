@@ -2,7 +2,7 @@
 # sqltask - an sql generator for EM projects
 sqltask is command line application that helps users generating SQL scripts. 
 Users create a template for each SQL script,  then sqltask parses the template variables variables and it prompts them to the user. 
-After he enters the values the template is rendered and it generates the final SQL script, which can then be printed, saved as an SQL task or run against the database.
+After he enters the values the template is rendered and it generates the final SQL script, which can be either printed, saved as an SQL task or run in the database.
  are used to render the template generating a final SQL script, which is then send to the corresponding output.
 
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling the values, and they minimize user interactions and avoid asking for values that could be computed.
@@ -485,5 +485,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDA2MDQ0NzUyLC0xODg0MTEyNDI0XX0=
+eyJoaXN0b3J5IjpbMTg2NjgwNzYyOF19
 -->
