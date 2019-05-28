@@ -1,6 +1,10 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/example.gif)
 # sqltask - an sql generator for EM projects
-sqltask is command line application that helps users generating SQL scripts. Each script is created as a template, sqltask then parse the template to identify the diferent variables and it prompts them to the user. The values entered are used to render the template generating a final SQL script, which is then send to the corresponding output.
+`sqltask` is command line application that helps users generating SQL scripts. 
+
+User creates a template for each SQL script,  then `sqltask` parses the template variables variables and it prompts them to the user. 
+
+After user enters the values `sqltask` renders the template and it generates the final SQL script, which can be either printed, saved as an SQL task or run in the database.
 
 Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  and they should be designed in a way that they provide enough information to users when filling the values, and they minimize user interactions and avoid asking for values that could be computed.
 
@@ -45,7 +49,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 
 
 ## Basic Usage    
-Create a `hello_world.sql` file under within the`templates` folder.
+Create a `hello_world.sql` file under within the`$EM_PROJECT/project/sqltask/templates` folder.
 Add the following text:   `Hello {{ name }}!`
 Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
 
@@ -61,7 +65,7 @@ Within the templates there is a set of tutorials templates They provide good gui
 
 # User installation
 ## Quick installation
- 1. Unzip  "sqltask.zip" into your `project` folder.
+ 1. Unzip  "sqltask.zip" into your `$EM_PROJECT/project` folder.
  2. Within the `config/core.properties` file:
 	 -  Change the environment, container and machines names to point to your local environment. 
 	 - Change the `db.release.version`  property to point to your current AD release version. 
@@ -482,5 +486,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI4Mjc0MDI2MF19
+eyJoaXN0b3J5IjpbLTk2MjI4OTc0Ml19
 -->
