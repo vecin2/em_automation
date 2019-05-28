@@ -5,16 +5,19 @@
 	{% set old_pd = _db.find.pd_by_ed_n_vname(entity_def_id,__verb_name) %}
 
  {# Request add_process_desc_variables using old pd #}
+ {% set default_config_id = _keynames.full_keyname("PD",old_pd['CONFIG_ID']) %}
  {% set config_id = 	  __config_id        	   | description("config_id, default fetched from current value",old_pd)
-			  	  	           | default(old_pd['CONFIG_ID']) %}
+			  	  	           | default(default_config_id)
+						   | suggest(_keynames.FULL_PD) %}
 
- {% set process_descriptor_type = __process_descriptor_type      | description('type_id (0=regular process, 2=action, 3=sla)')
-					           | default(old_pd['TYPE']) %}
+ {% set default_type = _keynames.keyname("PDT",old_pd['TYPE']) %}
+ {% set process_descriptor_type = __process_descriptor_type | default(default_type)
+							    | suggest(_keynames.PDT) %}
 
  {% set suggested_ext_path =      _emprj.prefix()+old_pd['REPOSITORY_PATH'] %}
  {% set repository_path=          __repository_path | description("repository_path")
-					        | codepath()
-					        | default (suggested_ext_path) %}
+					            | codepath()
+					            | default (suggested_ext_path) %}
 
  {% set process_descriptor_id = _prjprefix+ entity_def_id.capitalize() + __verb_name.capitalize() -%}
 

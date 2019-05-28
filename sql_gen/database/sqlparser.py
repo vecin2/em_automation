@@ -37,10 +37,13 @@ class RelativeIdLoader(object):
         RelativeIdLoader.keyset_cache.clear()
         RelativeIdLoader.keynames_cache.clear()
 
-    def full_id(self,keyset,id):
+    def full_keyname_by_id(self,keyset,id):
         if id == "NULL":
             return id
-        return "@"+keyset+"."+self.db.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
+        return "@"+keyset+"."+self.keyname_by_id(keyset,id)
+
+    def keyname_by_id(self,keyset,id):
+        return self.db.find("SELECT KEYNAME FROM CCADMIN_IDMAP WHERE KEYSET ='"+keyset+"' AND ID ="+str(id))["KEYNAME"]
 
 
     def _fetch_keyset(self,keyset):

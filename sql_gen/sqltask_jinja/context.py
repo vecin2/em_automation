@@ -14,8 +14,11 @@ class Keynames(object):
     def __getitem__(self,name):
         return self.list(name)
 
-    def get_full(self,keyset,id):
-        return self.id_loader().full_id(keyset,id)
+    def full_keyname(self,keyset,id):
+        return self.id_loader().full_keyname_by_id(keyset,id)
+
+    def keyname(self,keyset,id):
+        return self.id_loader().keyname_by_id(keyset,id)
 
     def __getattr__(self,name):
         if name.startswith("FULL_"):
