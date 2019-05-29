@@ -142,7 +142,6 @@ Enter any value (default  is  'my variable is not defined'):
 In this section we only detail how the filters affect value prompts, we do not explain how it modifies the variable when rendering the template. For details on that check the [list of builtin jinja filters](http://jinja.pocoo.org/docs/2.10/templates/#list-of-builtin-filters).
 
 **default**(_value_,  _default_value=u''_,  _boolean=False_)
-
 It appends  `default_value` to the variable name when prompting:
 ```sql
 #template
@@ -484,5 +483,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5OTQ4NTQ2NjksLTUyOTc1NDEwN119
+eyJoaXN0b3J5IjpbLTUyOTc1NDEwNywtNTI5NzU0MTA3XX0=
 -->
