@@ -119,8 +119,7 @@ You can check as well the existing templates for a good understanding on how the
 
 ## Filters
 Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
-`sqltask` uses filters to modify and enrich the template values that are prompted to the user. 
-The issue is that in some cases the application should notify users that a filter or a set of filters is apply to that value,  otherwise the user will not understand why his value is changed.  For example  `{{ name|default('NULL') }}` should show a display message  like `name (default is NULL):`, rather than simply `name:`
+`sqltask` uses filters to modify and enrich the template values that are prompted to the user.  For example  `{{ name|default('NULL') }}` should show a display message  like `name (default is NULL):`, rather than simply `name:`
  
  So sqltask filters mainly affect the text that is shown to the user when prompting for a value.
 
@@ -486,5 +485,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIzMzYxMjQ0MSwtOTYyMjg5NzQyXX0=
+eyJoaXN0b3J5IjpbLTU4OTE3NjUwNiwtOTYyMjg5NzQyXX0=
 -->
