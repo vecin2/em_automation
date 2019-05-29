@@ -142,6 +142,7 @@ Enter any value (default  is  'my variable is not defined'):
 In this section we only detail how the filters affect value prompts, we do not explain how it modifies the variable when rendering the template. For details on that check the [list of builtin jinja filters](http://jinja.pocoo.org/docs/2.10/templates/#list-of-builtin-filters).
 
 **default**(_value_,  _default_value=u''_,  _boolean=False_)
+
 It appends  `default_value` to the variable name when prompting:
 ```sql
 #template
@@ -152,6 +153,7 @@ my_variable (default is 'my variable is not defined'):
 
 ```
 **description**(_value_,  _description_)
+
 It shows the `description` when prompting the user. 
 This is not a builtin jinja filter and it does not modify the variable entered by the user. 
 
@@ -162,6 +164,7 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 Please enter 'my_variable_value`:
 ```
 **codepath**(_value_)
+
 It autocompletes the repository paths from both product and project.
 This is not a builtin jinja filter and it does not modify the variable entered by the user. 
 
@@ -172,11 +175,13 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 'object`: Customer.Objects.
 ```
 **suggest**(_value_, suggestions)
+
 It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
 {{ object_name| suggest(["Customer","Chat"]) }}
 ```
 **split_uppercase**(_value_, )
+
 This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
 It takes a list of suggestions which are prompted to the user when asking for the value.
 ```sql
@@ -185,12 +190,14 @@ It takes a list of suggestions which are prompted to the user when asking for th
 
 ```
 **objectname**(_path_)
+
 It extract the object name from a logical object path
 ```sql
 {% set logical_object_path = 'Customer.Implementation.Customer' %}
 Object name is  {{ logical_object_path | objectname() }} == 'Customer'
 ```
 **objectdir**(_path_)
+
 It extract the object dir from a logical object path
 ```sql
 {% set logical_object_path_2 = 'Customer.Implementation.Customer' %}
@@ -483,5 +490,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTUyOTc1NDEwNywtNTI5NzU0MTA3XX0=
+eyJoaXN0b3J5IjpbLTE3Mjk4MzQzODldfQ==
 -->
