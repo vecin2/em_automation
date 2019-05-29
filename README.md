@@ -118,7 +118,7 @@ To design good templates is important to know what elements are available when w
 You can check as well the existing templates for a good understanding on how these elements are applied.
 
 ## Filters
-Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which can modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
+Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters),  which  modify variables when rendering the template. For example `{{ name|default('NULL') }}`  will use `NULL` if the user doesn't enter any value.
 
 The issue is that in some cases the application should notify users that a filter or a set of filters is apply to that value,  otherwise the user will not understand why his value is changed.  For example  `{{ name|default('NULL') }}` should show a display message  like `name (default is NULL):`, rather than simply `name:`
  
@@ -486,5 +486,5 @@ It returns the function which implements the jinja filter.
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk2MjI4OTc0Ml19
+eyJoaXN0b3J5IjpbMjA5NTY3NDM1NCwtOTYyMjg5NzQyXX0=
 -->
