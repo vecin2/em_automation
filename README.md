@@ -16,8 +16,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
   * [Tutorials](#tutorials)
   *  [Key Shortcuts](#key-shortcuts)
 - [User installation](#user-installation)
-  * [Quick installation](#quick-installation)
-  * [Install as a python module](#install-as-a-python-module)
+  * [Quick installation](#quick-installation)  
 - [Template Design](#template-design)
   * [General guidelines](#general-guidelines)
   * [Filters](#filters)
@@ -73,32 +72,6 @@ Within the templates there is a set of tutorials templates They provide good gui
  4. Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you want to use them.*
-
-## Install as a python module
-If you are familiar with python another alternative is to install it as a python module:
-- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed. 
- - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
-- Check the python installation folder was added to the the system path. If is not added you can added manually:
-	 - In windows can add it by adding the following to your path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
- - Copy the template folder to some location in your filesystem. For example under the current EM project. 
-- Add the following environment variables:
-	- `PYTHON_HOME` is the python installation folder. 
-- Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
-```
-python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
-```
--  Unzip  "sqltask.zip" into your `project` folder.
--  Within the `config/core.properties` file:
-	 -  Change the environment, container and machines names to point to your local environment. 
-	 - Change the `db.release.version`  property to point to your current AD release version. A
- 
-**Multiple versions of python **
- If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
-```
-python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
-```
-
-This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 
 # Template Design
 
