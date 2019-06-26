@@ -12,7 +12,7 @@ from sql_gen.sqltask_jinja.filters.other import split_uppercase,objectname,objec
 from jinja2 import StrictUndefined,Undefined,UndefinedError
 from jinja2.runtime import missing
 
-class TraceUndefined(StrictUndefined):
+class TraceUndefined(Undefined):
     executed_vars={}
     def __init__(self, hint=None, obj=missing, name=None, exc=UndefinedError):
         TraceUndefined.executed_vars[name]=True

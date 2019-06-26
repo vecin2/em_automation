@@ -93,14 +93,15 @@ class RelativeIdLoader(object):
             return id
 
     def generate_id(self,keyset,keyname):
-        query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc"
-        result =self.db.list(query.format(keyset))
+        query ="SELECT ID FROM CCADMIN_IDMAP where keyset ='{}' order by id desc".format(keyset)
+        result =self.db.list(query)
         if result:
             max_id = result[0]
             generated_id = max_id +1
             insert_id_query="INSERT INTO CCADMIN_IDMAP (KEYSET,KEYNAME,ID) "+\
                             "VALUES ('"+keyset+"','"+keyname+"','"+str(generated_id)+"');"
             self.db.execute(insert_id_query)
+            self.db.clear_cache_item(query)
             return generated_id
 
 
