@@ -43,7 +43,7 @@ class SQLTable(object):
     def column(self, column_name):
         try:
             if not self.rows:
-                self._handle_invalid_column(column_name)
+                return []
             return [row[column_name] for row in self.rows]
         except KeyError:
             self._handle_invalid_column(column_name)
@@ -58,7 +58,10 @@ class SQLTable(object):
             raise KeyError(error_msg)
 
     def find(self,expression=None,**kwargs):
-        return self.where(expression,**kwargs)[0]
+        result = self.where(expression,**kwargs)
+        if result:
+            return result[0]
+        return None
 
     def where(self,expression=None,**kwargs):
         result =self.clone()
