@@ -33,7 +33,8 @@ class PrintSQLToConsoleCommand(object):
             context_builder=None,
             emprj_path =None,
             templates_path=None,
-            run_on_db=True):
+            run_on_db=True,
+            listener=None):
         if context_builder is None:
             if emprj_path:
                 context_builder = ContextBuilder(emprj_path=emprj_path)
@@ -45,6 +46,7 @@ class PrintSQLToConsoleCommand(object):
             self.templates_path=EMTemplatesEnv().extract_templates_path(env_vars)
         self.context_builder =context_builder
         self.context=None
+        self.listener = listener
         #If we are printing two templates, running the sql
         #allow the second template to see the modification made 
         #by the first template  (kenyames, entities inserted, etc)
@@ -66,8 +68,15 @@ class PrintSQLToConsoleCommand(object):
     def write(self,content,template=None):
         self.doc_writer.write(content)
         if self.run_on_db and self._is_runnable_sql(template):
-            self.context['_database'].execute(content)
-            self.context['_database'].clearcache()
+            try:
+                self.context['_database'].execute(content)
+                self.context['_database'].clearcache()
+            except Exception as e:
+                if input("Do you want to continue (Y/N)?") !="Y":
+                    raise e
+
+        if self.listener:
+            self.listener.on_written(content,template)
 
     def _is_runnable_sql(self,template):
         extension=os.path.splitext(template.filename)[1]

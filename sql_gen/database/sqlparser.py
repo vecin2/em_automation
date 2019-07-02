@@ -30,7 +30,6 @@ class RelativeIdLoader(object):
             return result
         else:
             result = self._fetch_keyset(keyset)
-            _cache_keyset(keyset,result)
             return result
     @staticmethod
     def clearcache():

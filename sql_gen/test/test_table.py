@@ -38,11 +38,11 @@ def test_table_where_string_with_spaces(table):
 def test_table_column(table):
     assert [1,2] == table.column("ID")
 
-def test_table_column_invalid_name(table):
+def test_table_column_invalid_name_raised_exc_if_table_populated(table):
     with pytest.raises (KeyError) as excinfo:
         table.column("IDs")
-    with pytest.raises (KeyError) as excinfo:
-        SQLTable().column("IDs")
+def test_table_column_invalid_name_returns_empty_if_table_empty(table):
+    assert [] == SQLTable().column("IDs")
 
 def run_reg_expression(var1, expected_operator, var2, expression):
     expr_filter = ExpressionFilter(expression)

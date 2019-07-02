@@ -56,6 +56,7 @@ class CreateSQLTaskCommand(object):
         self.context_builder=context_builder
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
+        self.sqltask = None
     @property
     def app_project(self):
         if not self._app_project:
@@ -69,10 +70,10 @@ class CreateSQLTaskCommand(object):
                 self._user_wants_to_override():
             return
 
-        sqltask = SQLTask(self.path)
+        self.sqltask = SQLTask(self.path)
         document=self._create_sql()
-        sqltask.update_sequence_no= self._compute_update_seq_no()
-        sqltask.write(document)
+        self.sqltask.update_sequence_no= self._compute_update_seq_no()
+        self.sqltask.write("") # creates update.sequence
         self.clipboard.copy(self.path)
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
 
@@ -101,15 +102,13 @@ class CreateSQLTaskCommand(object):
         templates_path=EMTemplatesEnv().extract_templates_path(self.env_vars)
         print_sql_cmd = PrintSQLToConsoleCommand(
                             context_builder=self.context_builder,
-                            env_vars=self.env_vars)
+                            env_vars=self.env_vars,
+                            listener=self)
         print_sql_cmd.run()
         return print_sql_cmd.sql_printed()
-        self.doc_creator = CreateDocumentFromTemplateCommand(
-                            templates_path,
-                            displayer,
-                            self.context_builder)
-        self.doc_creator.run()
-        return displayer.rendered_sql
+
+    def on_written(self,content,template):
+        self.sqltask.write(content)
 
     def _compute_update_seq_no(self):
         self.displayer.computing_rev_no()
@@ -130,14 +129,20 @@ class SQLTask(object):
         self.path=path
         self.update_sequence_no = update_sequence_no
 
-    def write(self,text):
+    def write(self,sql):
+        self._write_sql(sql)
+        if self.update_sequence_no:
+            self._write_update_sequence()
+
+    def _write_sql(self,text):
         self.table_data=text
-        self.update_sequence="PROJECT $Revision: "+\
-                            str(self.update_sequence_no) +" $"
         if not os.path.exists(self.path):
                 os.makedirs(self.path)
-        with open(os.path.join(self.path,"tableData.sql"),"w") as f:
+        with open(os.path.join(self.path,"tableData.sql"),"a+") as f:
             f.write(self.table_data)
+
+    def _write_update_sequence(self):
+        self.update_sequence="PROJECT $Revision: "+\
+                            str(self.update_sequence_no) +" $"
         with open(os.path.join(self.path,"update.sequence"),"w") as f:
             f.write(self.update_sequence)
-

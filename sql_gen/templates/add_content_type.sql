@@ -27,10 +27,10 @@ VALUES (@AKCBCC.{{content_type_keyname}}, --ID
 	@ENV.Dflt, --ENV_ID
 	@RELEASE.ID, --RELEASE_ID
 	'{{default_category_name}}', --SYSTEM_NAME
-	{% set __cat_css_class = cat_css_class | default(content_type_keyname) %}
-	'knowledgeCategoryIcon iconSmall icon{{__cat_css_class}}', --SMALL_ICON_CLASS
-	'knowledgeCategoryIcon iconLarge icon{{__cat_css_class}}', --LARGE_ICON_CLASS
-	'tabIcon{{__cat_css_class}}',--ICON_CLASS
+	{% set __category_css_class = category_css_class | default(content_type_keyname) %}
+	'knowledgeCategoryIcon iconSmall icon{{__category_css_class}}', --SMALL_ICON_CLASS
+	'knowledgeCategoryIcon iconLarge icon{{__category_css_class}}', --LARGE_ICON_CLASS
+	'tabIcon{{__category_css_class}}',--ICON_CLASS
 	'default');
 
 INSERT INTO AKI_INDEX_CONTENT_TYPE (ID,ENV_ID,TYPE_NAME,ENTITY_DEF_TYPE_ID,ENTITY_DEF_TYPE_ENV_ID,RELEASE_ID,TENANT_ID) 
@@ -41,4 +41,5 @@ VALUES (@AKIT.{{system_name}},
 	@ENV.Dflt, --ENTITY_DEF_TYPE_ENV_ID
 	@RELEASE.ID, --RELEASE_ID
 	'default');
+
 

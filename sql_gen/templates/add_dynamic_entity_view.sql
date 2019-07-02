@@ -2,7 +2,7 @@
 {% set __view_name = view_name | description("view_name (e.g. View,Create,Edit)")%}
 {% set __view_keyname = __entity_keyname + __view_name %}
 {% set view_types = _db.fetch.all_dynamic_view_types() %}
-{%set view_type_keynames =view_types.column("KEYNAME") %}
+{% set view_type_keynames =view_types.column("KEYNAME") %}
 INSERT INTO EVA_DYNAMIC_ENTITY_VIEW (ID,ENTITY_DEF_ID,ENTITY_DEF_ENV_ID,NAME,RELEASE_ID,VIEW_TYPE_ID,VIEW_TYPE_ENV_ID,USE_TABS,TENANT_ID) 
 VALUES (
 	@DEV.{{__view_keyname}}, --ID

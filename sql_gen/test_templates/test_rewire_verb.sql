@@ -1,4 +1,4 @@
--- {"entity_def_id":"Customer","verb_name":"identifyCustomer","config_id":"NULL","type_id":"Verb","repository_path":"PRJCoreEntities.Implementation.Customer.Verbs.IdentifyCustomerWrapper","_locale":"en-US"}
+-- {"entity_def_id":"Customer","verb_name":"identifyCustomer","config_id":"NULL","type_id":"Verb","repository_path":"PRJCoreEntities.Implementation.Customer.Verbs.IdentifyCustomerWrapper","_locale":"en-US","pro_desc_config_id":"NULL"}
 INSERT INTO EVA_PROCESS_DESCRIPTOR (ID, ENV_ID, NAME, REPOSITORY_PATH, CONFIG_PROCESS_ID, IS_DELETED, TYPE)
 VALUES (
 	 @PD.PRJCustomerIdentifycustomer, --id
