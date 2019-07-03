@@ -9,6 +9,7 @@
 			   | default(default_display_name)%}
 {% set __entity_description = entity_description | description("description")
 			   | default(default_display_name)%}
+--ADD DYNAMIC ENTITY
 INSERT INTO EVA_ENTITY_DEFINITION (ID, ENV_ID, NAME, UUID, TYPE_UUID, TYPE_ID, TYPE_ENV_ID, LOGICAL_OBJ_PATH, INTERFACE_PATH, SUPER_ENTITY_DEFINITION, SUPER_ENTITY_DEFINITION_ENV_ID, IS_DELETED, IS_BASIC, SUPPORTS_READONLY,IS_EXPANDABLE,ICON_PATH, INSTANCE_ICON_PATH) VALUES (
 @ED.{{entity_id}}, -- ID
 @ENV.Dflt, -- ENV_ID
