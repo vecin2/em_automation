@@ -4,5 +4,6 @@ update agent
 set PASSWORD = (select PASSWORD from AGENT where username ='{{username_to_copy_from | description("Enter the username where the password will be copy from") | suggest(usernames)}}'),
  SALT = (select SALT from agent where username = '{{username_to_copy_from}}'),
  EXPIRES = (select EXPIRES from AGENT where USERNAME = '{{username_to_copy_from}}'),
- DISABLED ='no'
+ DISABLED ='no',
+ LASTLOGGEDIN = SYSDATE
 where USERNAME in ('{{username | suggest(usernames)}}');

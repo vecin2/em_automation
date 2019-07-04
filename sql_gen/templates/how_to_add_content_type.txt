@@ -13,4 +13,5 @@ To perform the following steps open one of the OTB content types (Article,Alert,
   - Add create verb to 'DynamicContentCase': Run 'add_dynamic_content_verb.sql'
 
 3. Config KM
-	- config_new_content_type.sql
+	- Run config_new_content_type.sql
+	- This template should be executed against the km_config schema. Make sure is created within a module that is configured to run withik the km_config schema
