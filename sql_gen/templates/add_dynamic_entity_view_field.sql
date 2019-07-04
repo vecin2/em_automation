@@ -69,15 +69,14 @@ INSERT INTO LOCALISED_FIELD (OBJECT_TYPE,OBJECT_INSTANCE,OBJECT_VERSION,FIELD_NA
 	INSERT INTO EVA_PROCESS_DESC_REFERENCE (ID, PROCESS_DESCRIPTOR_ID, PROCESS_DESCRIPTOR_ENV_ID, CONFIG_ID, IS_SHARED) 
 	VALUES ({{process_desc_ref_keyname}}, @PD.{{__show_as_pd}}, @ENV.Dflt, NULL, 'N');
 {%endif %}
-
-INSERT INTO EVA_DYNAMIC_ENTITY_VIEW_FIELD (ID, DYN_ENTITY_VIEW_ID, DYN_ENTITY_FIELD_ID, COMPONENT_TYPE_ID, PROCESS_DESC_REF_ID, SHOW_LABEL, VIEW_FIELD_SEQUENCE, GROUP_ID) 
-VALUES (
+INSERT INTO EVA_DYNAMIC_ENTITY_VIEW_FIELD (ID, DYN_ENTITY_VIEW_ID, DYN_ENTITY_FIELD_ID, COMPONENT_TYPE_ID, PROCESS_DESC_REF_ID, SHOW_LABEL, IS_MANDATORY, VIEW_FIELD_SEQUENCE, GROUP_ID) VALUES (
 	@EDEVF.{{__entity_view_field_keyname}}, --ID
 	@DEV.{{__entity_view_keyname}}, --DYN_ENTITY_VIEW_ID
        	@EDEF.{{__entity_field_keyname}}, --DYN_ENTITY_FIELD_ID
        	{{__component_type_keyname}}, --COMPONENT_TYPE_ID
        	{{process_desc_ref_keyname}}, --PROCESS_DESC_REF_ID
        	'{{__show_label}}', --SHOW_LABEL
+	'{{is_mandatory | description("is mandatory(Y/N)")}}', --IS_MANDATORY
        	{{__view_field_sequence}}, --VIEW_FIELD_SEQUENCE
        	@EDEVG.{{__group_keyname}} --GROUP_ID
 );

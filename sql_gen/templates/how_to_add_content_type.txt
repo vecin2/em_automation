@@ -3,8 +3,10 @@ To perform the following steps open one of the OTB content types (Article,Alert,
 1. Create a Dynamic entity
 	- Add entity definition: Run 'add_dynamic_entity.sql'
 	- Add entity fields: Run 'add_dynamic_entity_field.sql' for each  field you'd like to add
-  - Add entity view: Run 'add_dynamic_entity_view.sql' one per per each view (View, Edit, Create)
-  - Add view fields: Run 'add_dynamic_entity_view_field.sql'one per each view field (e.g publicInformation, privateInformation, ...)
+
+   For each View (Create,Edit,View) do:
+	  - Add entity view: Run 'add_dynamic_entity_view.sql' one per per each view (View, Edit, Create)
+	  - Add view fields: Run 'add_dynamic_entity_view_field.sql'one per each view field (e.g publicInformation, privateInformation, ...)
 
 2. Add content_type pointing to the Dynamic entity
 	- Add content type and category: Run 'add_content_type.sql'
