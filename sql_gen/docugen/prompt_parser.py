@@ -9,32 +9,43 @@ from jinja2.nodes import Call,Name
 from sql_gen.docugen.prompt import Prompt
 from sql_gen import logger
 from sql_gen.docugen.template_context import TemplateContext
+from sql_gen.docugen.template_inliner import TemplateInliner
 from sql_gen.docugen.env_builder import TraceUndefined
 
 class PromptParser(object):
     def __init__(self,template):
         logger.debug("Instantiating PromptParser for template '"+ template.name+"'")
-        self.template =template
-        ast = self._join_included_templates(template)
+        source = TemplateInliner(template).inline()
+        self.template = template.environment.from_string(source)
+        ast = self.template.environment.parse(source)
+
+        #self.template = template
+        #ast = self._join_included_templates(template)
+
         self.prompt_visitor = PromptVisitor(ast)
+
+    def _inline_included_templates(self,template):
+        """consolidates all the included templates in one template"""
+        source = TemplateInliner(template).inline()
+        return template.environment.from_string(source)
 
     def _join_included_templates(self,template):
         logger.debug("Joining included templates under one single AST")
-        ast =self._extract_template_ast(template)
-        exploded_ast =TemplateJoiner(self.env).visit(ast)
+        source = self._get_source(template)
+        ast = self.template.environment.parse(source)
+        exploded_ast =TemplateJoiner(template.environment).visit(ast)
         logger.debug("Finishing joining templates")
         return exploded_ast
-
-    def _extract_template_ast(self,template):
-        self.template_name = template.name
-        self.env =template.environment
-        template_source_text = self.env.loader.get_source(self.env,self.template_name)[0]
-        return self.env.parse(template_source_text)
 
     def next_prompt(self,template_values={}):
         context =TemplateContext(self.template,template_values)
         return self.prompt_visitor.next_prompt(context)
 
+    def _get_source(self,template):
+            return template.environment.loader.get_source(template.environment,template.name)[0]
+
+
+#No longer used as TemplateInliner removes all the includes
 class TemplateJoiner(NodeTransformer):
     def __init__(self,env):
         self.env = env

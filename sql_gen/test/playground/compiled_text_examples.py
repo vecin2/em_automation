@@ -15,16 +15,17 @@ text ='''
 text=""""
 Hi {{ surname | description("Please enter surname") }} and welcome back Mrs {{ surname }}
 """
-env = EMTemplatesEnv().make_env("/home/dgarcia/dev/python/em_automation/sql_gen/test/playground/examples")
+env = EMTemplatesEnv().make_env("/home/dgarcia/dev/python/em_automation/sql_gen/templates")
 #t =env.from_string(text)
-t = env.get_template("dynamic.sql")
-t = env.get_template("entity_def.sql")
+#t = env.get_template("dynamic.sql")
+t = env.get_template("add_dynamic_content_verb.sql")
 #t = Template(text)
 print("***printing template rendered****")
 print(t.render({"entity_name":"ContactED"}))
 
-text = env.loader.get_source(env,"dynamic.sql")[0]
-text = env.loader.get_source(env,"entity_def.sql")[0]
+#text = env.loader.get_source(env,"dynamic.sql")[0]
+#text = env.loader.get_source(env,"entity_def.sql")[0]
+text = env.loader.get_source(env,"add_dynamic_content_verb.sql")[0]
 #self.env.parse(template_source_text)
 tree = t.environment.parse(text)
 print("***printing tree****")

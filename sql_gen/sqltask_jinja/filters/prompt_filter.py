@@ -15,6 +15,7 @@ class PromptFilter:
         if isinstance(arg,List):
             result = self._render_list(arg,context)
         elif isinstance(arg, Name):
+    #        import pdb;pdb.set_trace()
             result = context.resolve(arg.name)
         elif isinstance(arg,Const):
             result = arg.value

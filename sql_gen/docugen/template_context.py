@@ -6,6 +6,7 @@ class TemplateContext():
     def __init__(self,template,vars={}):
         self._vars=vars
         self.template = template
+        self._last_eval_context=None
 
     def resolve(self,var_name):
         context =self._eval_context()
@@ -21,7 +22,8 @@ class TemplateContext():
 
     def _eval_context(self):
         vars_copy =dict(self._vars)
-        return self.template.new_context(vars_copy)
+        self._last_eval_context = self.template.new_context(vars_copy)
+        return self._last_eval_context
 
     def _render_template(self,context):
         logger.debug("Start rendering template to resolve arguments")
