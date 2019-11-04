@@ -102,7 +102,7 @@ def test_rendering_{{template_name}}_matches_expected_sql():
     {% else %}
     raise LookupError("Unable to find matching template. Make sure the test file matches the template's name and location")
     {% endif %}
-    assert actual == expected
+    assert expected == actual
 """
         kwargs["expected"]=self.convert_to_src(kwargs["expected"])
         if  kwargs["actual"]:

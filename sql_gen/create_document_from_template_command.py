@@ -4,7 +4,6 @@ from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.sqltask_jinja.context import init
 from sql_gen.ui import prompt,MenuOption,select_option
-from sql_gen.docugen.template_renderer import TemplateRenderer
 from sql_gen.docugen.template_filler import TemplateFiller
 
 class TemplateSelectorDisplayer(object):
@@ -72,7 +71,7 @@ class CreateDocumentFromTemplateCommand(object):
         FillTemplateCommandDisplayer().display_loading_templates_from(self.templates_path)
         template = self.selector.select_template()
         while template:
-            filled_template =TemplateFiller().fill(template,dict(self.initial_context))
+            filled_template =TemplateFiller(template).fill(dict(self.initial_context))
             self.writer.write(filled_template,template)
             template = self.selector.select_template()
 

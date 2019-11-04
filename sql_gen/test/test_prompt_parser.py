@@ -74,7 +74,9 @@ def test_should_not_prompt_var_which_has_value_assigned():
 
 def test_prompts_var_passed_to_global_function():
     template("{% set name = camelcase(a_var)%}").with_values({})\
-                                       .should_prompt_next("a_var")
+                                       .should_prompt_next("a_var")\
+                                       .with_values({"a_var":"one"})\
+                                       .renders("")
 
 def test_include_should_prompt_vars_recursively_from_included_template_in_order():
     template("{% include 'hello_world' %}.  I am Juan {{last_name}}")\
@@ -84,13 +86,17 @@ def test_include_should_prompt_vars_recursively_from_included_template_in_order(
             .should_prompt_next("greeting")\
             .with_values({"greeting":"Hi"})\
             .should_prompt_next("name")\
-            #.renders("hhh",{"greeting":"hello", "name":"pedro"})
+            #.renders("hhh")
 
 def test_should_not_prompt_var_which_is_set_within_included_template():
-    template("{% include 'set_name' %}. I am {{name}} {{last_name}}")\
-            .and_template("set_name","{% set name = 'Juan' %}")\
+    template("{% include 'set_name.sql' %}I am {{name}} {{last_name}}")\
+            .and_template("set_name.sql","{% set name = 'Juan' %}")\
             .with_values({})\
-            .should_prompt_next("last_name")
+            .should_prompt_next("last_name")\
+            .does_not_prompt()\
+            .with_values({"last_name":"Frankenstain"})\
+            .renders("I am Juan Frankenstain")
+
 
 def test_values_set_within_included_template_are_used_when_rendering():
     source="""{% set verb_names = ['inlineEdit','inlineView'] %}

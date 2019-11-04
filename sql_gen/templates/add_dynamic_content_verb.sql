@@ -14,7 +14,7 @@ they put the  res of the letter to lower case, but we want to leave them as they
 {% set __verb_id = verb_id | description("verb_id") | default(default_verb_id) %}
 {% set process_descriptor_id = __verb_id %}
 {% set repository_path ="AddKnowContentCase.Implementation.DynamicContentCase.Verbs.Create"%}
-{% set process_descriptor_type = 'Verb' %} 
+{% set process_descriptor_type = 'Verb' %}
 {% set config_process_id = 'NULL' %}
 {% include 'add_process_descriptor.sql' %}
 

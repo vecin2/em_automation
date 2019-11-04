@@ -1,5 +1,5 @@
 from jinja2 import Template,Environment,DictLoader
-from sql_gen.docugen.prompt_parser import PromptParser
+from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.docugen.env_builder import EnvBuilder
 from sql_gen.sqltask_jinja import globals as globals_module
 from sql_gen.sqltask_jinja import filters as filters_package
@@ -14,7 +14,7 @@ class _TestPromptBuilder(object):
     def _parser(self):
         if not self.parser:
             template = self._template()
-            self.parser= PromptParser(template)
+            self.parser= TemplateFiller(template)
         return self.parser
 
     def _template(self):
@@ -48,13 +48,15 @@ class _TestPromptBuilder(object):
         next_prompt =self._parser().next_prompt(self.template_values)
         if not next_prompt:
             assert True
-            return
+            return self
         assert None == next_prompt.get_display_text()
+        return self
 
     def assert_display_msg(self,msg, prompt):
         assert msg +": " == prompt.get_display_text()
 
-    def renders(self,expected_text,context):
-        assert self._template().render(context) == expected_text
+    def renders(self,expected_text):
+        rendered = TemplateFiller(self._template()).fill(self.template_values)
+        assert rendered== expected_text
 
 
