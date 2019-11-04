@@ -1,3 +1,19 @@
+Consolidate all included templates in one
+ Hello, World --> Hello World
+ Hello, {% include 'name.txt'%} with 'name.txt' value 'Mark' --> Hello Mark
+ {% include 'greeting.txt'%} {% include 'name.txt' %}, with values 'Hola' and 'John' return --> Hello John
+raise exception if not exist template
+ Hello, {% include 'full_name.txt %} with '{% include 'name.txt %} {% include 'surname.txt' %} values and 'David' 'Alvarez values --> Hello David Alvarez
+ exception handling leave for later
+{% include 'name.txt %} --> invalid template missing quote
+
+
+
+
+
+
+
+
 default is all
 change to pass --render-sql
 rename test type

@@ -92,6 +92,14 @@ def test_should_not_prompt_var_which_is_set_within_included_template():
             .with_values({})\
             .should_prompt_next("last_name")
 
+def test_values_set_within_included_template_are_used_when_rendering():
+    source="""{% set verb_names = ['inlineEdit','inlineView'] %}
+{% set __verb_name = verb_name | suggest(verb_names)%}"""
+    template("{% include 'verbs.txt' %}")\
+            .and_template("verbs.txt",source)\
+            .with_values({})\
+            .should_prompt_next("verb_name")
+
 def test_suggest_should_populate_prompt_suggestions():
     template("{{ name | suggest([1,2])}}")\
             .with_values({})\
