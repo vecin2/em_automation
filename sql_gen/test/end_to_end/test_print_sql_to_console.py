@@ -94,6 +94,19 @@ def test_select_and_render_one_value_template(app_runner,fs):
                .assert_rendered_sql("hello David!")\
                .assert_all_input_was_read()
 
+def test_user_goes_back_and_render_template(app_runner,fs):
+    contents="hello {{name}} {{surname}}!"
+    fs.create_file("/templates/greeting.sql", contents=contents)
+
+    # '<' goes back and prompts name again
+    values=['David','<','Juan','Rodriguez']
+    app_runner.using_templates_under("/templates")\
+               .select_template('1. greeting.sql',values)\
+               .saveAndExit()\
+               .run()\
+               .assert_rendered_sql("hello Juan Rodriguez!")\
+               .assert_all_input_was_read()
+
 
 def test_fills_two_templates_and_combines_output(app_runner,fs):
     fs.create_file("/templates/hello.sql", contents="hello {{name}}!")

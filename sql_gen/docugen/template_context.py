@@ -33,5 +33,7 @@ class TemplateContext():
     def __iter__(self):
             return self._vars.__iter__()
 
+    def keys(self):
+        return self._vars.keys()
     def next(self): # Python 3: def __next__(self)
             return self._vars.next()

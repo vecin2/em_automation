@@ -93,8 +93,8 @@ def test_should_not_prompt_var_which_is_set_within_included_template():
             .and_template("set_name.sql","{% set name = 'Juan' %}")\
             .with_values({})\
             .should_prompt_next("last_name")\
-            .does_not_prompt()\
             .with_values({"last_name":"Frankenstain"})\
+            .does_not_prompt()\
             .renders("I am Juan Frankenstain")
 
 

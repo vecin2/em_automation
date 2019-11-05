@@ -64,7 +64,7 @@ class CreateDocumentFromTemplateCommand(object):
                  initial_context={}):
         self.templates_path=templates_path
         self.writer =writer
-        self.initial_context=initial_context 
+        self.initial_context=initial_context
 
     def run(self):
         self.selector = TemplateSelector(self.templates_path)

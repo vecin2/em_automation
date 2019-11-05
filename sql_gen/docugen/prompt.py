@@ -33,8 +33,15 @@ class Prompt:
 
     def populate_value(self,context):
         var =self.run(context)
-        if var:
+        #it removes last value enter so it goes back and prompts it again
+        if var == "<":
+            self._remove_last(context)
+        else:
             context[self.variable_name] = var
+
+    def _remove_last(self,context):
+        keys = [ k for k in context ]
+        return context.pop(keys[-1])
 
     def run(self,context):
         logger.debug("Running prompt :'"+self.get_display_text()+"'")

@@ -29,7 +29,6 @@ class PromptVisitor(NodeVisitor):
         logger.debug("Instantiating Prompt visitor")
         self.ast = ast
         self._set_parent(self.ast,None)
-        self.names_visited = []
         logger.debug("Finish Prompt visitor instantion")
 
     def _set_parent(self,node, parent):
@@ -79,9 +78,8 @@ class PromptVisitor(NodeVisitor):
                 and node.name in meta.find_undeclared_variables(self.ast)\
                 and node.ctx == 'load'\
                 and (not isinstance(node.parent,Call) or node.parent.node != node)\
-                and not self._has_been_visit(node.name)\
+                and node.name not in template_values.keys()\
                 and self._is_executed(node.name,template_values):
-                self.names_visited.append(node.name)
                 return Prompt(node.name, [])
         return None
 
@@ -92,7 +90,4 @@ class PromptVisitor(NodeVisitor):
             if var_name in  TraceUndefined.executed_vars:
                 return True
         return False
-
-    def _has_been_visit(self,node_name):
-        return node_name in self.names_visited
 
