@@ -28,7 +28,8 @@ setuptools.setup(
             ],
         entry_points = {
             'console_scripts': [
-                'sqltask =sql_gen.__main__:main'
+                'sqltask =sql_gen.__main__:main',
+                'devtask =sql_gen.__main__:main'
                 ],
             }
         )
