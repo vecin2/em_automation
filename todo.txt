@@ -9,11 +9,6 @@ raise exception if not exist template
 
 
 
-
-
-
-
-
 default is all
 change to pass --render-sql
 rename test type
