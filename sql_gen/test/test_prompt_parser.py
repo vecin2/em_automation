@@ -31,6 +31,9 @@ def test_default_zero_should_default_to_zero():
 def test_default_displays_default_value():
     template("{{name | default ('World')}}").with_values({})\
                                        .should_prompt_next("name (default is World)")
+def test_default_should_return_default_when_no_value_entered():
+    template("{{name | default ('World')}}").with_values({"name":""})\
+                                       .renders("World")
 
 def test_default_should_resolve_var():
     template("{% set my_name = 'David'%}{{ name | default(my_name)}}")\

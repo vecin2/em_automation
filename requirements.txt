@@ -4,8 +4,6 @@ atomicwrites==1.1.5
 attrs==18.1.0
 cx-Oracle==7.0.0
 docopt==0.6.2
-em-sql==0.0.2a3
-emsql==0.0.2a7
 future==0.17.1
 fuzzyfinder==2.1.0
 gnureadline==6.3.8

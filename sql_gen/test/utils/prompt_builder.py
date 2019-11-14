@@ -57,6 +57,6 @@ class _TestPromptBuilder(object):
 
     def renders(self,expected_text):
         rendered = TemplateFiller(self._template()).fill(self.template_values)
-        assert rendered== expected_text
+        assert expected_text == rendered
 
 
