@@ -17,7 +17,17 @@ class TemplateFiller(object):
         #that are executed
         TraceUndefined.clear_vars()
         context = self.build_context(self.template,initial_context)
+        self._remove_empties(context)
         return self.template.render(context)
+
+    def _remove_empties(self,context):
+        #we need to remove empties so default filters get applied
+        #otherwise it will use empty value instead of the default
+        #this allows as well go back to the previous question
+        keys = [ k for k in context if context[k] =="" ]
+        for key in keys:
+            context.pop(key,None)
+        return context
 
     def build_context(self,template,template_values):
         prompt =self.next_prompt(template_values)

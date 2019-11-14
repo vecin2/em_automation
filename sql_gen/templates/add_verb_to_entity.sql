@@ -1,4 +1,5 @@
-{% set default_display_name =  verb_name | split_uppercase() %}
+{% set default_display_name =  verb_name | split_uppercase() 
+				| description ("verb_name (e.g inlineEdit)")%}
 {% set __verb_display_name = verb_display_name | description("verb_display_name")
 			       | default(default_display_name)%}
 {% set __verb_description = verb_description | description("verb_description")
@@ -7,15 +8,20 @@
 {% set __entity_def_id = entity_def_id | suggest(_keynames.ED) %}
 
 {# next line capitalize only the first letter. We cant user capitalize or title because 
-they put the  res of the letter to lower case, but we want to leave them as they are #}
+they put the  rest of the letter to lower case, but we want to leave them as they are #}
 {% set titled_verb_name = verb_name[0].upper() + verb_name[1:] %}
 {% set default_verb_id = __entity_def_id+titled_verb_name %}
 {% set __verb_id = verb_id | description("verb_id") | default(default_verb_id) %}
-{% set process_descriptor_id = __verb_id %}
-{% include 'add_process_descriptor.sql' %}
+{% set process_descriptor_ref_id = process_desc_ref_id | default(__verb_id) | suggest(_keynames.PDR) %}
+{% set process_descriptor_id = process_desc_id | default(__verb_id)  | suggest(_keynames.PD)%}
 
-{% set process_descriptor_ref_id = __verb_id %}
-{% include 'hidden_templates/add_process_descriptor_ref.sql' %}
+{% if process_descriptor_id not in _keynames.PD %}
+  {% include 'add_process_descriptor.sql' %}
+{% endif %}
+
+{% if process_descriptor_ref_id not in _keynames.PDR %}
+  {% include 'hidden_templates/add_process_descriptor_ref.sql' %}
+{% endif %}
 
 
 {% set entity_ids = _keynames.ED %}
