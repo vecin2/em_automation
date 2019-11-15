@@ -8,7 +8,6 @@ raise exception if not exist template
 {% include 'name.txt %} --> invalid template missing quote
 
 
-
 default is all
 change to pass --render-sql
 rename test type
