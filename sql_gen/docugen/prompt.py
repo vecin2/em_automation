@@ -35,6 +35,7 @@ class Prompt:
         var =self.run(context)
         #it removes last value enter so it goes back and prompts it again
         if var == "<":
+            #context.remove_last_item()
             self._remove_last(context)
         else:
             context[self.variable_name] = var

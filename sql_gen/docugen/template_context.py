@@ -21,9 +21,21 @@ class TemplateContext():
         return context[var_name]
 
     def _eval_context(self):
-        vars_copy =dict(self._vars)
+        vars_copy =self._eval_vars()
         self._last_eval_context = self.template.new_context(vars_copy)
         return self._last_eval_context
+
+    def _eval_vars(self):
+        #return dict(self._vars)
+        #we need to remove empties so default filters get applied
+        #otherwise it will use empty value instead of the default
+        #this allows as well go back to the previous question
+        result ={}
+        keys = self._vars.keys()
+        for key,value in self._vars.items():
+            if value:
+                result[key] = value
+        return result
 
     def _render_template(self,context):
         logger.debug("Start rendering template to resolve arguments")
@@ -35,5 +47,6 @@ class TemplateContext():
 
     def keys(self):
         return self._vars.keys()
-    def next(self): # Python 3: def __next__(self)
+
+    def next(self): 
             return self._vars.next()

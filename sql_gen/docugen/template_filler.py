@@ -4,6 +4,14 @@ from sql_gen.docugen.env_builder import TraceUndefined
 from sql_gen.docugen.template_inliner import TemplateInliner
 from sql_gen.docugen.template_context import TemplateContext
 
+class TemplateVars(dict):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+
+    def remove_last_item(self):
+        keys = [ k for k in self ]
+        return self.pop(keys[-1])
+
 class TemplateFiller(object):
     def __init__(self,template):
         logger.debug("Instantiating TemplateFiller for template '"+ template.name+"'")
@@ -17,8 +25,7 @@ class TemplateFiller(object):
         #that are executed
         TraceUndefined.clear_vars()
         context = self.build_context(self.template,initial_context)
-        self._remove_empties(context)
-        return self.template.render(context)
+        return self.template.render(self._remove_empties(context))
 
     def _remove_empties(self,context):
         #we need to remove empties so default filters get applied
