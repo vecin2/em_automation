@@ -72,7 +72,7 @@ Within the templates there is a set of tutorials templates They provide good gui
  3. Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
  4. Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
-***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to those templates if you want to use them.*
+***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to fix those templates if you want to use them.*
 
 # Template Design
 
