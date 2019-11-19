@@ -50,12 +50,13 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
 ## Basic Usage    
 Create a `hello_world.sql` file under within the`$EM_PROJECT/project/sqltask/templates` folder.
 Add the following text:   `Hello {{ name }}!`
-Run dtask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
+Run sqltask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
 
 ## Tutorials
 Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
 
-## Key shortcuts
+## Controls
+-	"<": If user enters "<" when is prompted a value, the application will go back and prompt the previous value.
 -	Ctrl + n: Navigate to the "next" option within a list of suggestions.
 -	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
 -	TAB: pops up a list of suggestion if there is one or navigate to the next one if the list is already showing.
