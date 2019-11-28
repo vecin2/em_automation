@@ -1,4 +1,5 @@
 import pathlib
+
 from shutil import copyfile
 import os
 import sys
@@ -6,19 +7,15 @@ import io
 
 import lxml.etree as ET
 
-#parser = ET.XMLParser(strip_cdata=False)
-#tree =ET.parse(filepath,parser)
+def parse_doctype(xml):
+    lines =xml.split("\n")
+    if len(lines)< 2:
+        return False
+    doctypeline =lines[1]
+    return doctypeline.split(" ")[1]
+
 def is_process(process_path):
-    parser = ET.XMLParser(encoding="utf-8")
-    text = process_path.read_text()
-    str_text = text.encode("utf-8")
-    import pdb;pdb.set_trace() 
-    tree = ET.fromstring(str_text).getroottree()
-    assert "dd" == type(tree)
-    doctype ==tree.docinfo.doctype
-    print("doctype is: "+doctype)
-    return "ProcessDefinition" == doctype
-    #return "PackageEntry" in str(process_path.read_text())
+    return "ProcessDefinition" == parse_doctype(process_path.read_text())
 
 def extend_process(process_path,target=None):
     if not process_path.exists():
