@@ -288,7 +288,8 @@ class TestTemplatesCommand(object):
                  verbose_mode="-v",
                  test_group="all",
                  test_name=None,
-                 reuse_tests=False):
+                 reuse_tests=False,
+                 args=None):
         self.reuse_tests=reuse_tests
         self.emprj_path = emprj_path
         self.app_project = AppProject(emprj_path=emprj_path)

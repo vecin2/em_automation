@@ -1,6 +1,7 @@
 import os
 import pytest
 
+from devtask.commands import ExtendProcessCommand
 from sql_gen.commands import PrintSQLToConsoleCommand,CreateSQLTaskCommand,TestTemplatesCommand,RunSQLCommand
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.emproject.em_project import emproject_home
@@ -37,3 +38,6 @@ class CommandFactory(object):
                                     reuse_tests=args['--reuse-tests'])
     def make_pytest(self):
         return pytest
+
+    def make_extend_process_command(self,args):
+        return ExtendProcessCommand()

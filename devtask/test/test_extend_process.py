@@ -2,6 +2,8 @@ import os
 import sys
 import pytest
 import pathlib
+import shutil
+from io import StringIO
 
 import lxml.etree as ET
 from lxml import objectify
@@ -9,62 +11,136 @@ from lxml import objectify
 from devtask.extend_process import extend_process,main
 from devtask.object_factory import new_process_def
 
-@pytest.mark.skip
-def test_parse_doctype():
-    filepath =Path(__file__).parent
-    process_path =filepath/Path("templates/EmptyProcess.xml")
-    et = ET.parse(str(process_path))
-    assert "bla" ==et.docinfo.doctype
 
 
 
 def Path(path):
     return pathlib.Path(path)
 
+testfilesystem =Path(os.path.dirname(__file__))/ ".testpath"
 class AppRunner(object):
     def __init__(self,capsys):
         self.capsys = capsys
+        self.original_stdin = sys.stdin
+        self.inputs =[]
+        shutil.rmtree(testfilesystem)
+        
 
-    def extend_process(self,process_path,target=None):
+    def extend_process(self,srch,dst=None):
         sys.argv=[]
         sys.argv.append("")
-        sys.argv.append(str(process_path))
-        sys.argv.append(str(target))
-        return main()
+        sys.argv.append("extend_process")
+        sys.argv.append(str(srch))
+        if dst:
+            sys.argv.append(str(dst))
+
+        str_inputs ="\n".join([input for input in self.inputs])
+        sys.stdin = StringIO(str_inputs)
+        try:
+            result =  main()
+            self.inputs =[]
+        except Exception as exception:
+            self.inputs = []
+            raise exception
+
+
+    def user_inputs(self, user_input):
+        self.inputs.append(user_input)
+        return self
+
+    def teardown(self):
+        sys.stdin = self.original_stdin
 
     def displays_message(self,message):
         assert self.capsys.readouterr().out == message
 
     def assert_file_exists(self,filepath,contents):
-        if not filepath.exists():
-            assert False, "'"+str(filepath)+"' does not exists"
-        assert contents == str(filepath.read_text())
+        abspath =fullpath(str(filepath.replace(".",os.sep))+".xml")
+        abspath = testfilesystem / abspath
+        if not abspath.exists():
+            assert False, "'"+str(abspath)+"' does not exists"
+        assert contents == str(abspath.read_text())
 
 @pytest.fixture
-def app_runner(fs,capsys):
+def app_runner(capsys):
     app_runner = AppRunner(capsys)
     yield app_runner
+    app_runner.teardown()
 
 def test_returnserror_when_invalid_path(app_runner):
-    process_path =Path("/repository/default/Account/NonExitingProcess.xml")
-    app_runner.extend_process(process_path)
-    app_runner.displays_message("No process found under '"+str(process_path)+"'\n")
+    srch =Path("/repository/default/Account/NonExitingProcess.xml")
+    app_runner.extend_process(srch)
+    app_runner.displays_message("No process found under '"+str(srch)+"'\n")
 
 def test_returnserror_when_file_not_a_process(app_runner,fs):
-    process_path =Path("/repository/default/Account/NonExitingProcess.xml")
+    srch =Path("/repository/default/Account/NonExitingProcess.xml")
 
-    fs.create_file(str(process_path), contents="Invalid xml")
-    app_runner.extend_process(process_path)
-    app_runner.displays_message("Not a valid xml process found under '"+str(process_path)+"'\n")
+    fs.create_file(str(srch), contents="Invalid xml")
+    app_runner.extend_process(srch)
+    app_runner.displays_message("Not a valid xml process found under '"+str(srch)+"'\n")
 
 
-def test_extend_process_by_copy_copies_process_to_project_path(app_runner,fs):
-    """"""
-    process_path =Path("/repository/default/CoreEntities/EmptyProcess.xml")
+def create_file(path,contents=None):
+    finalpath = fullpath(path)
+    os.makedirs(os.path.dirname(finalpath), exist_ok=True)
+    with open(finalpath,"w+") as f:
+        f.write(contents)
+    return finalpath
+
+def fullpath(relativepath):
+    return testfilesystem / relativepath
+
+
+def test_extend_process_by_copy_copies_process_to_project_path(app_runner):
     source_content=new_process_def()
-    fs.create_file(str(process_path), contents=source_content)
-    target =Path("/repository/default/PRJEntities/Account")
-    app_runner.extend_process(process_path,target)
-    app_runner.assert_file_exists(target/"EmptyProcess.xml",
+    src =create_file("CoreEntities/EmptyProcess.xml", contents=source_content)
+    dst =fullpath("PRJEntities/Account")
+    app_runner.extend_process(src,dst)
+    app_runner.assert_file_exists("PRJEntities.Account.EmptyProcess",
+                           contents=source_content)
+
+def test_extend_process_override_dst_if_user_confirms(app_runner,fs):
+    source_content=new_process_def()
+    src =Path("/repository/default/CoreEntities/EmptyProcess.xml")
+    fs.create_file(str(src), contents=source_content)
+    dst =Path("/repository/default/PRJEntities/Account")
+    fs.create_file(str(dst/"EmptyProcess.xml"), contents="old content")
+
+    app_runner.user_inputs("n")\
+              .extend_process(src,dst)
+
+    app_runner.assert_file_exists(dst/"EmptyProcess.xml",
+                           contents="old content")
+
+    app_runner.user_inputs("y")\
+              .extend_process(src,dst)
+
+    app_runner.assert_file_exists(dst/"EmptyProcess.xml",
+                           contents=source_content)
+
+def test_when_no_dst_provided_prompts_for_dst(app_runner,fs):
+    source_content=new_process_def()
+    src =Path("/repository/default/CoreEntities/EmptyProcess.xml")
+    fs.create_file(str(src), contents=source_content)
+
+    dst =Path("/repository/default/PRJEntities/Account2")
+    app_runner.user_inputs(str(dst))\
+              .extend_process(src)
+
+    app_runner.assert_file_exists(dst/"EmptyProcess.xml",
+                           contents=source_content)
+
+@pytest.mark.skip
+def test_when_enter_blank_on_dst_prompt_it_uses_default(app_runner,fs):
+    create_config({"project.prefix":"MP"})
+    source_content=new_process_def()
+    src =Path("/repository/default/CoreEntities/EmptyProcess.xml")
+    fs.create_file(str(src), contents=source_content)
+
+    dst =Path("/repository/default/PRJEntities/Account2")
+    app_runner.user_inputs("\n")\
+              .extend_process(src)
+
+    app_runner.assert_file_exists(dst/"EmptyProcess.xml",
                            contents=source_content)
 

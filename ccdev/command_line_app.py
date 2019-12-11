@@ -2,9 +2,9 @@ import sys
 import os
 
 import sql_gen
-import sql_gen.docopt_parser as arg_parser
+import ccdev.docopt_parser as arg_parser
 from sql_gen.app_project import AppProject
-from sql_gen.command_factory import CommandFactory
+from ccdev.command_factory import CommandFactory
 
 class SysArgParser (object):
     def __init__(self, command_factory=CommandFactory()):
@@ -20,6 +20,8 @@ class SysArgParser (object):
             return self.command_factory.make_test_sql_templates_command(args)
         elif args['run-sql']:
             return self.command_factory.make_run_sql_command(args)
+        elif args['extend-process']:
+            return self.command_factory.make_extend_process_command(args)
 
     def parse_args(self):
         arguments = docopt(__doc__, version='dtask 0.1')

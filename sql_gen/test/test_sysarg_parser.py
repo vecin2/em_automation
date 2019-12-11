@@ -1,6 +1,6 @@
 import sys
 import pytest
-from sql_gen.command_line_app import SysArgParser,CommandFactory
+from ccdev.command_line_app import SysArgParser,CommandFactory
 from unittest.mock import Mock
 
 

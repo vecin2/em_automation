@@ -26,14 +26,14 @@ def new_process_def():
     ET.SubElement(transition,"StartNodeReference",name="")
     ET.SubElement(transition,"EndNodeReference",name="")
     graph_node_list = ET.SubElement(transition,"GraphNodeList",name="")
-    graph_node = ET.SubElement(graph_node_list,
-                               "GraphNode",
-                               icon="",
-                               isLabelHolder="true",
-                               label="",
-                               name="",
-                               x="128",
-                               y="32")
+    ET.SubElement(graph_node_list,
+                   "GraphNode",
+                   icon="",
+                   isLabelHolder="true",
+                   label="",
+                   name="",
+                   x="128",
+                   y="32")
     ET.SubElement(process_def,"BuilderInfo",name="")
     ET.SubElement(process_def,"TopicScope",defineTopicScope="false",name="")
     return ET.tostring(root,

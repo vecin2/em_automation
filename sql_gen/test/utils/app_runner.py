@@ -6,8 +6,8 @@ import pytest
 import pyperclip
 import yaml
 
-from sql_gen.command_line_app import CommandLineSQLTaskApp
-from sql_gen.command_factory import CommandFactory
+from ccdev.command_line_app import CommandLineSQLTaskApp
+from ccdev.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,RunSQLCommand
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.app_project import AppProject

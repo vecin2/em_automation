@@ -5,6 +5,7 @@ Usage:
     {appname} create-sql [<directory>]
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
     {appname} run-sql
+    {appname} extend-process <src_path> <dst_path>
     {appname} -h | --help
 
 Examples:
