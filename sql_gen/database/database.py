@@ -42,7 +42,7 @@ class Connector(object):
                                     self.database,
                                     port=self.port)
         elif self.dbtype =="oracle":
-            dsn_tns = cx_Oracle.makedsn(self.server,self.port,self.database)
+            dsn_tns=self.server+":"+self.port+"/"+self.database
             return cx_Oracle.connect(self.user,self.password,dsn_tns)
         else:
             return None

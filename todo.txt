@@ -1,50 +1,6 @@
-Consolidate all included templates in one
- Hello, World --> Hello World
- Hello, {% include 'name.txt'%} with 'name.txt' value 'Mark' --> Hello Mark
- {% include 'greeting.txt'%} {% include 'name.txt' %}, with values 'Hola' and 'John' return --> Hello John
-raise exception if not exist template
- Hello, {% include 'full_name.txt %} with '{% include 'name.txt %} {% include 'surname.txt' %} values and 'David' 'Alvarez values --> Hello David Alvarez
- exception handling leave for later
-{% include 'name.txt %} --> invalid template missing quote
-
-
-default is all
-change to pass --render-sql
-rename test type
-
-
-
-1. sqltask bootstrap will create the base configuration settings
-2. Approaches to python configuration (Resolve properties within properties)
-
-3. sqltask uses current project (it should be comeing from the project)
-	project_home should be instantiate only once at a top level
-
-4. Documentation
-	Manually delete config to recreate
-	Queries
-
-5. Basic logger
-	logging.basicConfig(level=logging.INFO)
-	logger = logging.getLogger(__name__)
-	if app:
-	  app.logger
-	else
-	   basic_logger
-6.  Run test templates to make sure they still run - important for refactoring templates
-7. PReguntas RAul, *.yaml and *.sql (package_data in setup.py)
-
-commit!!
-
-Print to console
-It should ask for template, fill the template and send the document to console 
-It should send to console the ouput of Running a template filling
-
-
-cleanup sys.stdin
-
-layout managers - use test
-Status - Layout Managers, EM integrated
-
-
+EXTEND_PROCESS
+test_returnserror_when_file_not_a_process
+should be run within em project
+src should be within a product project
+You can extend and OTB process. If the process is not OTB
 

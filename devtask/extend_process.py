@@ -7,13 +7,16 @@ import io
 
 import lxml.etree as ET
 
+from sql_gen.app_project import AppProject
+from sql_gen.emproject import EMProject
+
 from sql_gen.ui.utils import select_string_noprompt
 
 PurePosixPath = pathlib.PurePosixPath
 def parse_doctype(xml):
     lines =xml.split("\n")
     if len(lines)< 2:
-        return False
+        return ""
     doctypeline =lines[1]
     return doctypeline.split(" ")[1]
 
@@ -49,10 +52,22 @@ class RepoPath(object):
     #  self._init()
     #  return self
 
+app_project= None
+def get_app_project():
+    if not app_project:
+        app_project =AppProject()
+    return app_project
 def extend_process(src,dst=None):
-    src = RepoPath(src)
-    dst = RepoPath(dst)
+    #src = Path(src)
+    
+    path=get_app_project().product_layout()['repo_modules'].path+"/"+src
+    #path=product_path+"/repository/default/"+src
+    src = Path(path)
+    if not dst:
+        dst ="/some/default/value/to/compute"
+    dst = Path(dst)
     if not src.exists():
+    #if not os.path.exists(src):
         print("No process found under '"+str(src)+"'")
     elif not is_process(src):
         print("Not a valid xml process found under '"+str(src)+"'")

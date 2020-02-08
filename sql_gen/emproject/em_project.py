@@ -78,6 +78,7 @@ class EMProject(object):
                  ccadmin_client=None,
                  env_vars=None,
                  emprj_path=None):
+        self._config =None
         self.env_vars =env_vars
         self._root = emprj_path
         self._paths= None
@@ -113,9 +114,11 @@ class EMProject(object):
         self.default_config_id =config_id
 
     def config(self,config_id=None):
-        if not self.config_path(config_id).exists():
-            self._create_config()
-        return ConfigFile(self.config_path(config_id).path)
+        if not self._config:
+            if not self.config_path(config_id).exists():
+                self._create_config()
+            self._config = ConfigFile(self.config_path(config_id).path)
+        return self._config
 
     def config_path(self,config_id=None):
         file_name =self._build_config_file_name(config_id)

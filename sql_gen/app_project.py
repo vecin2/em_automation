@@ -32,6 +32,7 @@ MANDATORY_KEYS=["config",
 class AppProject(object):
     def __init__(self,env_vars=None,emprj_path=None):
         self._config_file=None
+        self._em_config=None
         self._ad_query_runner=None
         self._rs_query_runner=None
         self._emproject = None
@@ -93,9 +94,11 @@ class AppProject(object):
         return self.emproject.product_layout()
 
     def em_config(self):
-        if not self.emproject.default_config_id:
-            self.emproject.set_default_config_id(self._emconfig_id())
-        return self.emproject.config()
+        if not self._em_config:
+            if not self.emproject.default_config_id:
+                self.emproject.set_default_config_id(self._emconfig_id())
+            self._em_config = self.emproject.config()
+        return self._em_config
 
     @property
     def addb(self):

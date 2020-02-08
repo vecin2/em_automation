@@ -22,5 +22,3 @@ class SuggestFilter(PromptFilter):
         for suggestion in suggestions:
             result.append(suggestion)
         return result
-
-        #this is to handle escenarios like range(1,4)

@@ -12,3 +12,4 @@ build/
 *.log
 *.log.*[0-9]*
 sql_gen/test_templates/.tmp/
+**/.tempfolder/
