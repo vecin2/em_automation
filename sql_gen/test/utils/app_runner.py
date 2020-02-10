@@ -9,6 +9,7 @@ import yaml
 from ccdev.command_line_app import CommandLineSQLTaskApp
 from ccdev.command_factory import CommandFactory
 from sql_gen.commands import PrintSQLToConsoleDisplayer,PrintSQLToConsoleCommand,CreateSQLTaskCommand, TestTemplatesCommand,RunSQLCommand
+from sql_gen.commands.run_sql_cmd import RunSQLDisplayer
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.app_project import AppProject
 from sql_gen.emproject.em_project import emproject_home
@@ -320,27 +321,54 @@ class TemplatesAppRunner(AppRunner):
         testfile.close()
         assert expected_source.to_string() ==test_content
 
-
 class FakeDB(object):
     def __init__(self):
         self.executed_sql=""
+        self.fetch_returns=None
+
     def execute(self,sql,commit=None,verbose='q'):
         self.executed_sql+=sql
+
+    def fetch(self,query):
+        return self.fetch_returns
+
     def rollback(self):
         self.executed_sql=""
+
     def clearcache(self):
         """"""
+
+class FakeRunSQLDisplayer(RunSQLDisplayer):
+    def __init__(self):
+        self.printed_text =""
+
+    def display_sqltable(self,sqltable):
+        self.printed_text += str(sqltable)
+
+    def printed_text(self):
+        return self.printed_text
+
 class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
     """"""
     def __init__(self,fs):
         super().__init__(fs=fs)
         self.fakedb = FakeDB()
+        self.displayer = FakeRunSQLDisplayer() 
 
     def assert_sql_executed(self,sql):
         assert sql == self.fakedb.executed_sql
         return self
+
+    def assert_prints(self,expected_text):
+        assert self.displayer.printed_text == expected_text
+        return self
+
     def confirmRun(self):
         self.user_inputs("y")
+        return self
+
+    def fetch_returns(self,sqltable):
+        self.fakedb.fetch_returns = sqltable
         return self
 
     def run(self,app =None):
@@ -351,6 +379,7 @@ class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
     def _make_command_factory(self):
         self.command = RunSQLCommand(
                                 env_vars=self.env_vars,
-                                context_builder=self.context_builder)
+                                context_builder=self.context_builder,
+                                displayer=self.displayer)
         return CommandTestFactory(
                 run_sql_command=self.command)

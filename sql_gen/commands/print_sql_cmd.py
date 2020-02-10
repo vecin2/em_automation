@@ -4,6 +4,7 @@ from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.create_document_from_template_command import CreateDocumentFromTemplateCommand
 from sql_gen.sqltask_jinja.context import ContextBuilder
+from sql_gen.exceptions import DatabaseError
 
 class PrintSQLToConsoleDisplayer(object):
     """Prints to console the command output"""
@@ -71,6 +72,8 @@ class PrintSQLToConsoleCommand(object):
             try:
                 self.context['_database'].execute(content)
                 self.context['_database'].clearcache()
+            except DatabaseError as e:
+                raise e
             except Exception as e:
                 if input("Do you want to continue (Y/N)?") !="Y":
                     raise e

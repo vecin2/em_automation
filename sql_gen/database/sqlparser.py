@@ -209,9 +209,12 @@ class SQLParser(object):
     def parse_relative_ids(self,sqltext):
         return self.relativeId_replacer.replace(sqltext)
 
-    def parse_runnable_statements(self,sqltext):
+    def parse_statements(self,sqltext):
         sqltext = self.strip_comments(sqltext)
-        statements = self.split(sqltext)
+        return self.split(sqltext)
+
+    def parse_runnable_statements(self,sqltext):
+        statements = self.parse_statements(sqltext)
         result =[]
         for stmt in statements:
             result.append(self.parse_runnable_stament(stmt))

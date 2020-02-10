@@ -67,11 +67,13 @@ def app_runner(capsys):
     yield app_runner
     app_runner.teardown()
 
+@pytest.mark.skip
 def test_returnserror_when_invalid_path(app_runner):
     src =Path("Account/NonExitingProcess.xml")
     app_runner.extend_process(src)
     app_runner.displays_message("No process found under '"+str(src)+"'\n")
 
+@pytest.mark.skip
 def test_returns_error_when_file_not_a_process(app_runner):
     src =Path("CoraeEntities2/Implementation/Customer/Processes/InvalidProcess.xml")
 
@@ -91,6 +93,7 @@ def fullpath(relativepath):
     return testfilesystem / relativepath
 
 
+@pytest.mark.skip
 def test_extend_process_by_copy_copies_process_to_project_path(app_runner):
     source_content=new_process_def()
     src =create_file("CoreEntities/EmptyProcess.xml", contents=source_content)

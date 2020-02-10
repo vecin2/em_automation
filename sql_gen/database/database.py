@@ -57,7 +57,7 @@ class Connector(object):
 
 
 class EMDatabase(object):
-    def __init__(self,connector):
+    def __init__(self,connector=None):
         self.connector = connector
         self._connection=None
         self.queries_cache ={}

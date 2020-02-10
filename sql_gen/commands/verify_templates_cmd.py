@@ -143,7 +143,6 @@ class TestGenerator(object):
                                                  self.apprunner))
         return result
 
-
 class ExpectedSQLTestBuilder(object):
     def __init__(self,emprj_path):
         self.emprj_path=emprj_path
@@ -158,7 +157,6 @@ class ExpectedSQLTestBuilder(object):
                                   expected=expected,
                                   actual=actual)
 
-
 class RunOnDBTestBuilder(object):
     def __init__(self,emprj_path,apprunner):
         self.emprj_path=emprj_path
@@ -169,7 +167,6 @@ class RunOnDBTestBuilder(object):
                               template_name=testfile.template_name(),
                               query=testfile.expected_sql(),
                               emprj_path=self.emprj_path)
-
 
 class TestTemplatesCommandDisplayer(object):
     def test_folder_does_no_exist(self,directory):
@@ -220,7 +217,6 @@ class TestLoader(object):
                 return True
         return False
 
-
 class TestSQLFile(object):
     def __init__(self,filepath):
         self.filepath = filepath
@@ -249,7 +245,6 @@ class TestSQLFile(object):
 
     def values(self):
         return self.parser.parse_values(self.content)
-
 
 class TestFileParser(object):
     def parse_values(self,string):
@@ -378,9 +373,6 @@ class TestTemplatesCommand(object):
                 return [testfile]
             return []
         return self.test_loader.load_tests()
-
-
-
 
 class FillTemplateAppRunner():
     def __init__(self):

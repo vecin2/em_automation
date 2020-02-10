@@ -7,9 +7,8 @@
 #Create source distribution
 rm -r dist build
 python3 setup.py sdist bdist_wheel
-twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-#glasgow team,mote,y classico simbolo
-
+python -m twine upload -r testpypi dist/*
+#setup .pypirc to avoid entering username and passworrd
 #distribute offline
 
 #https://stackoverflow.com/questions/11091623/python-packages-offline-installation
