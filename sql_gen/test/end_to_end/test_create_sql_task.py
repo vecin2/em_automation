@@ -126,3 +126,22 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(app_runner,fs
                .assert_all_input_was_read()
                #
 
+def test_when_pass_template_does_not_prompt_for_template(app_runner,fs):
+    fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
+    fs.create_dir("/em/prj")
+
+    __import__('pdb').set_trace()
+    app_runner.with_emproject_under("/em/prj")\
+               .with_sql_modules(["PRJCoreEmail","PRJCustomer"])\
+               .with_app_config({'db.release.version':'Pacificorp_R_0_0_1'})\
+               .using_templates_under("/templates")\
+               .user_inputs("PRJCoreEmail")\
+               .user_inputs("rewireEditEmail")\
+               .select_template('bye.sql',{'name':'Frank'})\
+               .saveAndExit()\
+               .run_create_sqltask(template='bye.sql')\
+               .exists("/em/prj/modules/PRJCoreEmail/sqlScripts/oracle/updates/Pacificorp_R_0_0_1//rewireEditEmail/tableData.sql",
+                       "bye Frank!")\
+               .assert_all_input_was_read()
+               #
+

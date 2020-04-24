@@ -35,7 +35,8 @@ class PrintSQLToConsoleCommand(object):
             emprj_path =None,
             templates_path=None,
             run_on_db=True,
-            listener=None):
+            listener=None,
+            template_name=None):
         if context_builder is None:
             if emprj_path:
                 context_builder = ContextBuilder(emprj_path=emprj_path)
@@ -52,6 +53,7 @@ class PrintSQLToConsoleCommand(object):
         #allow the second template to see the modification made 
         #by the first template  (kenyames, entities inserted, etc)
         self.run_on_db=run_on_db
+        self.template_name =template_name
 
     def run(self):
         if not self.context:
@@ -61,7 +63,8 @@ class PrintSQLToConsoleCommand(object):
         self.doc_creator = CreateDocumentFromTemplateCommand(
                             self.templates_path,
                             self,
-                            self.context
+                            self.context,
+                            template_name=self.template_name
                         )
         self.doc_creator.run()
         self.context['_database'].rollback()

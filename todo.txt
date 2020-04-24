@@ -4,3 +4,10 @@ should be run within em project
 src should be within a product project
 You can extend and OTB process. If the process is not OTB
 
+
+CONFIG
+def hotupdates_attachonstart_ced():
+	tooling/ced/ced.properties
+	config.add_block(("tooling/ced/ced/properties',
+			  'hotupdates.attachonstart=true')
+	config_prj.loadOrCreate("tooling/ced/ced/properties').add_block(

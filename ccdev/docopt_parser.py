@@ -1,10 +1,11 @@
 import sql_gen
 help_message= """
 Usage:
+    {appname}
     {appname} print-sql
-    {appname} create-sql [<directory>]
+    {appname} create-sql [<directory>] [--template=<template_name>]
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
-    {appname} run-sql
+    {appname} run-sql [--template=<template_name>]
     {appname} extend-process <src_path> <dst_path>
     {appname} -h | --help
 

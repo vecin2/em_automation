@@ -119,7 +119,7 @@ def test_suggest_should_resolve_vars():
             .with_values({})\
             .should_prompt_next_suggesting("name",[1,2,3])
 
-def test_if_tag_does_not_prompt_if_condition_not_met():
+def test_if_tag_does_not_prompt_when_condition_not_met():
     template_str="""
 {% if enter_user_name %}
     {{ username }}
@@ -129,6 +129,18 @@ def test_if_tag_does_not_prompt_if_condition_not_met():
             .should_prompt_next("enter_user_name")\
             .with_values({"enter_user_name":False})\
             .does_not_prompt()
+@pytest.mark.skip
+def test_if_tag_prompts_when_condition_is_met():
+    template_str="""
+{% if 4 < 3 %}
+    {%set username = 'dgarcia'%}
+{% endif %}
+{{username}}
+"""
+    template(template_str)\
+            .with_values({})\
+            .does_not_prompt()
+
 
 def test_variables_with_store_context_do_not_prompt():
     template_str= """{{is_instance }}

@@ -138,6 +138,7 @@ class CommandTestFactory(CommandFactory):
 
     def make_create_sqltask_command(self,args):
         self.create_sqltask_command.path = args['<directory>']
+        self.create_sqltask_command.template_name = args['--template']
         return self.create_sqltask_command
 
     def make_test_sql_templates_command(self,args):
@@ -212,9 +213,12 @@ class CreateSQLTaskAppRunner(AppRunner):
             os.makedirs(full_dir)
         return self
 
-    def run_create_sqltask(self,taskpath=None):
+    def run_create_sqltask(self,taskpath=None,template=None):
         self.taskpath =taskpath
-        self._run(['.','create-sql',taskpath])
+        params=['.','create-sql',taskpath]
+        if template:
+            params.append('--template, template')
+        self._run(params)
         return self
 
     def exists(self,filepath,expected_content):

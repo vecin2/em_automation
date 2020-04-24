@@ -17,12 +17,14 @@ class TemplateSelector(object):
         self.loader= SelectTemplateLoader(self.templates_path)
         self.displayer = TemplateSelectorDisplayer()
 
-    def select_template(self):
-        options = self.loader.list_options()
-        option = self.displayer.ask_for_template(options)
-        if option.code == 'x':
-            return None
-        return self.loader.load_template(option.name)
+    def select_template(self,template_name=None):
+        if not  template_name:
+            options = self.loader.list_options()
+            option = self.displayer.ask_for_template(options)
+            if option.code == 'x':
+                return None
+            template_name =option.name
+        return self.loader.load_template(template_name)
 
 class SelectTemplateLoader(object):
     def __init__(self, templates_path):
@@ -62,15 +64,17 @@ class CreateDocumentFromTemplateCommand(object):
     def __init__(self,
                  templates_path,
                  writer=None,
-                 initial_context={}):
+                 initial_context={},
+                 template_name=None):
         self.templates_path=templates_path
         self.writer =writer
         self.initial_context=initial_context
+        self.template_name=template_name
 
     def run(self):
         self.selector = TemplateSelector(self.templates_path)
         FillTemplateCommandDisplayer().display_loading_templates_from(self.templates_path)
-        template = self.selector.select_template()
+        template = self.selector.select_template(self.template_name)
         while template:
             filled_template =TemplateFiller(template).fill(dict(self.initial_context))
             self.writer.write(filled_template,template)

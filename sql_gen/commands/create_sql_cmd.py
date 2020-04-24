@@ -43,7 +43,8 @@ class CreateSQLTaskCommand(object):
                  context_builder=None,
                  svn_client= None,
                  clipboard= pyperclip,
-                 path=None):
+                 path=None,
+                 template_name=None):
         self._app_project=None
         self.env_vars=env_vars
         if context_builder is None:
@@ -57,6 +58,7 @@ class CreateSQLTaskCommand(object):
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
         self.sqltask = None
+        self.template_name= template_name
     @property
     def app_project(self):
         if not self._app_project:
@@ -103,7 +105,8 @@ class CreateSQLTaskCommand(object):
         print_sql_cmd = PrintSQLToConsoleCommand(
                             context_builder=self.context_builder,
                             env_vars=self.env_vars,
-                            listener=self)
+                            listener=self,
+                            template_name=self.template_name)
         print_sql_cmd.run()
         return print_sql_cmd.sql_printed()
 

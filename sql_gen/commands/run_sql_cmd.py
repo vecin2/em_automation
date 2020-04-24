@@ -16,12 +16,14 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
     def __init__(self,
                  env_vars=os.environ,
                  context_builder=None,
-                 displayer=RunSQLDisplayer()):
+                 displayer=RunSQLDisplayer(),
+                 template_name=None):
         #We dont want to run the SQL on print as this command runs it as well
         super().__init__(env_vars= env_vars,
                          context_builder = context_builder)
         self.displayer = displayer
         self.env_vars = env_vars
+        self.template_name = template_name
     def run(self):
         super().run()
         #check if the first stmt in the file is select

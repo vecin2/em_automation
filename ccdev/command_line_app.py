@@ -22,6 +22,8 @@ class SysArgParser (object):
             return self.command_factory.make_run_sql_command(args)
         elif args['extend-process']:
             return self.command_factory.make_extend_process_command(args)
+        #else:
+        #    return self.command_factory.make_interactive_shell_command(args)
 
     def parse_args(self):
         arguments = docopt(__doc__, version='dtask 0.1')

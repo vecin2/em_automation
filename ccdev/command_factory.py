@@ -13,12 +13,14 @@ class CommandFactory(object):
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(self.env_vars)
 
-    def make_run_sql_command(self,env_vars):
-        return RunSQLCommand(self.env_vars)
+    def make_run_sql_command(self,args):
+        template_name = args['--template']
+        return RunSQLCommand(self.env_vars,template_name=template_name)
 
     def make_create_sqltask_command(self,args):
         path = args['<directory>']
-        return CreateSQLTaskCommand(path=path)
+        template_name = args['--template']
+        return CreateSQLTaskCommand(path=path,template_name=template_name)
 
     def make_test_sql_templates_command(self,args):
         templates_path =EMTemplatesEnv().extract_templates_path(self.env_vars)
