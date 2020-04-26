@@ -130,7 +130,6 @@ def test_when_pass_template_does_not_prompt_for_template(app_runner,fs):
     fs.create_file("/templates/bye.sql", contents="bye {{name}}!")
     fs.create_dir("/em/prj")
 
-    __import__('pdb').set_trace()
     app_runner.with_emproject_under("/em/prj")\
                .with_sql_modules(["PRJCoreEmail","PRJCustomer"])\
                .with_app_config({'db.release.version':'Pacificorp_R_0_0_1'})\

@@ -48,12 +48,14 @@ class ContextBuilder(object):
         self.template_API =None
         self.context_values=None
         self.context_values_filepath= None
+        self.addon_values={}
         if not self.app:
             self.app = AppProject.make(emprj_path)
 
     def build(self):
          result =self.build_template_API()
          result.update(self.build_context_values())
+         result.update(self.addon_values)
          return result
 
     def build_template_API(self):

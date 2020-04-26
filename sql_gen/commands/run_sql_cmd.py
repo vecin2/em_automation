@@ -3,7 +3,6 @@ import os
 from sql_gen.app_project import AppProject
 from sql_gen.commands import PrintSQLToConsoleCommand
 from sql_gen.ui.utils import select_string_noprompt
-from sql_gen.database.sqlparser import SQLParser
 
 class RunSQLDisplayer(object):
     def confirm_run_sql(self,sql):
@@ -24,15 +23,12 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         self.displayer = displayer
         self.env_vars = env_vars
         self.template_name = template_name
+        self.is_select_stmt = False
+
     def run(self):
         super().run()
         #check if the first stmt in the file is select
-        stmt = SQLParser().parse_statements(self.sql_printed())[0]
-        if stmt.startswith("SELECT"):
-            result = self._db().fetch(stmt)
-            self.displayer.display_sqltable(result)
-            return result
-        elif self.user_confirms_run():
+        if not self.is_select_stmt and self.user_confirms_run():
             self.run_sql()
 
     def user_confirms_run(self):
@@ -41,6 +37,9 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
     def run_sql(self):
         self._db().execute(self.sql_printed(),commit=True,verbose='v')
 
-    def _db(self):
-        return self.context_builder.build()["_database"]
+    def write(self,content,template=None):
+        result =super().write(content,template)
+        if result:
+            self.is_select_stmt=True
+            self.displayer.display_sqltable(result)
 
