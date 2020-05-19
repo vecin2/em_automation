@@ -81,13 +81,12 @@ class PrintSQLToConsoleCommand(object):
         if self.run_on_db and self._is_runnable_sql(template):
             try:
                 result = self._run_content_on_db(content)
-                #result =self.context['_database'].fetch(content)
                 self.context['_database'].clearcache()
             except DatabaseError as e:
                 raise e
-            #except Exception as e:
-            #    if input("Do you want to continue (Y/N)?") !="Y":
-            #        raise e
+            except Exception as e:
+                if input("Do you want to continue (Y/N)?") !="Y":
+                    raise e
 
         if self.listener:
             self.listener.on_written(content,template)
@@ -98,7 +97,8 @@ class PrintSQLToConsoleCommand(object):
         if stmt.startswith("SELECT"):
             return self._db().fetch(stmt)
         else:
-            return self._db().fetch(content)
+            self._db().execute(content)
+            return None
 
     def _db(self):
         return self.context_builder.build()["_database"]
