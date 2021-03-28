@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="sqltask",
-    version="0.0.1a47",
+    version="0.0.1a48",
     author="David Alvarez Garcia",
     author_email="david.avgarcia@gmail.com",
     description="A helper to populate jinja templates",
@@ -37,5 +37,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    entry_points={"console_scripts": ["sqltask =ccdev.__main__:main"],},
+    entry_points={
+        "console_scripts": ["sqltask =ccdev.__main__:main"],
+    },
 )
