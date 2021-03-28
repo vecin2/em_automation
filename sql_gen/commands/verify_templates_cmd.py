@@ -79,7 +79,7 @@ class RunOnDBTestTemplate(PythonModuleTemplate):
         test_content = """
 def test_{{template_name}}_runs_succesfully():
     query={{query}}
-    emprj_path={{emprj_path}}
+    emprj_path=repr({{emprj_path}})
     app_project = AppProject(emprj_path=emprj_path)
     sqlparser =SQLParser(RelativeIdLoader())
     app_project.addb.execute(query,sqlparser=sqlparser)
