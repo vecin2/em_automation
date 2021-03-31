@@ -9,7 +9,7 @@ future==0.17.1
 fuzzyfinder==2.1.0
 gnureadline==6.3.8
 Jinja2==2.10
-lxml==4.4.2
+lxml==4.6.3
 macholib==1.11
 MarkupSafe==1.1.1
 more-itertools==4.3.0
