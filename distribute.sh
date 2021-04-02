@@ -7,7 +7,13 @@
 #Create source distribution
 rm -r dist build
 python setup.py sdist bdist_wheel
-python -m twine upload -r testpypi dist/*
+
+if [ ! -z $1 ] && [ $1 == "pypi" ]; then
+	python -m twine upload -r pypi dist/*
+else
+	python -m twine upload -r testpypi dist/*
+fi
+
 #setup .pypirc to avoid entering username and passworrd
 #distribute offline
 
