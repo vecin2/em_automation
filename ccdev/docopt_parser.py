@@ -1,13 +1,13 @@
 import sql_gen
-help_message= """
+
+help_message = """
 Usage:
-    {appname}
     {appname} print-sql
     {appname} create-sql [<directory>] [--template=<template_name>]
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
     {appname} run-sql [--template=<template_name>]
     {appname} extend-process <src_path> <dst_path>
-    {appname} -h | --help
+    {appname} | -h | --help
 
 Examples:
     {appname} create-sql
@@ -23,6 +23,8 @@ from docopt import docopt
 
 
 def parse():
-    arguments = docopt(help_message.format(appname=sql_gen.appname), version='{appname} 0.1')
-    #print(arguments)
+    arguments = docopt(
+        help_message.format(appname=sql_gen.appname), version="{appname} 0.1"
+    )
+    # print(arguments)
     return arguments
