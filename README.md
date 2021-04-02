@@ -1,8 +1,8 @@
 ![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/example.gif)
 # sqltask - an sql generator for EM projects
-`sqltask` is command line application that helps users generating SQL scripts. 
+`sqltask` is command line application that helps users generating SQL scripts.
 
-User creates a template for each SQL script,  then `sqltask` parses the template variables variables and it prompts them to the user. 
+User creates a template for each SQL script,  then `sqltask` parses the template variables variables and it prompts them to the user.
 
 After user enters the values `sqltask` renders the template and it generates the final SQL script, which can be either printed, saved as an SQL task or run in the database.
 
@@ -16,7 +16,7 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
   * [Tutorials](#tutorials)
   *  [Key Shortcuts](#key-shortcuts)
 - [User installation](#user-installation)
-  * [Quick installation](#quick-installation)  
+  * [Quick installation](#quick-installation)
 - [Template Design](#template-design)
   * [General guidelines](#general-guidelines)
   * [Filters](#filters)
@@ -47,13 +47,13 @@ Templates are written using [jinja templates syntax](http://jinja.pocoo.org/)  a
     + [Implementing new  Filters](#implementing-new--filters)
 
 
-## Basic Usage    
+## Basic Usage
 Create a `hello_world.sql` file under within the`$EM_PROJECT/project/sqltask/templates` folder.
 Add the following text:   `Hello {{ name }}!`
 Run sqltask print-sql and when prompt select the template `hello_world.sql`. You should see you  `name` being prompted.
 
 ## Tutorials
-Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting. 
+Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Feel free to change them to see how it impacts the prompting.
 
 ## Controls
 -	"<": If user enters "<" when is prompted a value, the application will go back and prompt the previous value.
@@ -61,22 +61,47 @@ Within the templates there is a set of tutorials templates They provide good gui
 -	Ctrl + p: Navigate to the "previous" option within a list of suggestions.
 -	TAB: pops up a list of suggestion if there is one or navigate to the next one if the list is already showing.
 -	Shift + TAB: Navigate to the previous option within a list of suggestions.
--	Ctrl + w: Removes the previous word that was typed. 
+-	Ctrl + w: Removes the previous word that was typed.
 
 # User installation
 ## Quick installation
  1. Unzip  "sqltask.zip" into your `$EM_PROJECT/project` folder.
  2. Within the `config/core.properties` file:
-	 -  Change the environment, container and machines names to point to your local environment. 
-	 - Change the `db.release.version`  property to point to your current AD release version. 
+	 -  Change the environment, container and machines names to point to your local environment.
+	 - Change the `db.release.version`  property to point to your current AD release version.
  3. Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
  4. Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to fix those templates if you want to use them.*
 
+## Install as a python module
+If you are familiar with python another alternative is to install it as a python module:
+- Install [python3](https://www.python.org/downloads/) and make sure you remember the path where is installed.
+ - When running the installation make sure to select the checkbox to add python3 to your system path. For example, In windows the default python home installation path is: `%UserProfile%\AppData\Local\Programs\Python\Python37-32`
+- Check the python installation folder was added to the the system path. If is not added you can added manually:
+	 - In windows can add it by adding the following to your path variable: %PYTHON_HOME%;%PYTHON_HOME%/Scrips;
+ - Copy the template folder to some location in your filesystem. For example under the current EM project.
+- Add the following environment variables:
+	- `PYTHON_HOME` is the python installation folder.
+- Install [sqltask](https://test.pypi.org/project/sqltask/) by typing the following  command line:
+```
+python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
+```
+-  Unzip  "sqltask.zip" into your `project` folder.
+-  Within the `config/core.properties` file:
+	 -  Change the environment, container and machines names to point to your local environment.
+	 - Change the `db.release.version`  property to point to your current AD release version. A
+
+**Multiple versions of python **
+ If you have multiple versions of python installed make sure you are installing it under version 3 by running instead:
+```
+python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
+```
+
+This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 # Template Design
 
-How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. 
+How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly.
 
 The syntax is defined by python jinja templates. Check the [template Designer Documentation](http://jinja.pocoo.org/docs/2.10/templates/).
 
@@ -88,7 +113,7 @@ When design templates consider the following:
 - Avoid duplicating SQL code, reuse template by including them within others. So when a product DB table changes it avoids having to change multiple templates.
 - Review existing templates or consult this documentation to understand what filters and templates are available.
 
-To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates. 
+To design good templates is important to know what elements are available when writting templates. As follows it is documented the current filters and functions that can be used within templates.
 You can check as well the existing templates for a good understanding on how these elements are applied.
 
 ## Filters
@@ -96,15 +121,15 @@ Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filter
 
 `sqltask` uses filters to modify and enrich the template values that are prompted to the user.  For example  `{{ name|default('NULL') }}` displays message  like `name (default is NULL):`, rather than simply `name.`
 
- Jinja have many [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters) that can be used when rendering the template. 
- In this documentation we describe only the filters implemented in `sqltask` which are the ones that change the way the value is prompted to the user. These filters are explained within the [list of builtin filters](#list-of-builtin-filters) 
+ Jinja have many [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters) that can be used when rendering the template.
+ In this documentation we describe only the filters implemented in `sqltask` which are the ones that change the way the value is prompted to the user. These filters are explained within the [list of builtin filters](#list-of-builtin-filters)
 
 ### Concatenate multiple filters
 Filters can be concatenated:
 ```sql
 #template
 {{ my_variable| description('Enter any value')
-              | default('my_variable is not defined')}} 
+              | default('my_variable is not defined')}}
 
 #prompts
 Enter any value (default  is  'my variable is not defined'):
@@ -130,8 +155,8 @@ my_variable (default is 'my variable is not defined'):
 ```
 **description**(_value_,  _description_)
 
-It shows the `description` when prompting the user. 
-This is not a builtin jinja filter and it does not modify the variable entered by the user. 
+It shows the `description` when prompting the user.
+This is not a builtin jinja filter and it does not modify the variable entered by the user.
 
 ```sql
 {{ my_variable| description("Please enter 'my_variable_value`') }}
@@ -142,7 +167,7 @@ Please enter 'my_variable_value`:
 **codepath**(_value_)
 
 It autocompletes the repository paths from both product and project.
-This is not a builtin jinja filter and it does not modify the variable entered by the user. 
+This is not a builtin jinja filter and it does not modify the variable entered by the user.
 
 ```sql
 {{ object_path| codepath() }}
@@ -196,7 +221,7 @@ It allows to run a predefined set of queries defined within `config/ad_queries.s
 It returns a [SQLTable](#sqltable)  object (list of dictionaries). For example:
  - `_db.fetch.v_names_by_ed(entity_id)`
 
- 
+
 **find.<<query_name>>**(_\*query\_params_)
 It returns a  [SQLRow](#sqlrow) object. It is similar to `fetch` but this is used when searching by a unique constraint field and it throws and exception if none or more than one record are found. For example
  - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
@@ -204,17 +229,17 @@ It returns a  [SQLRow](#sqlrow) object. It is similar to `fetch` but this is use
 
 ### _database
  Same as `_db` but allows running free form queries instead of dictionary queries:
- 
+
 **fetch**(_query_string_)
 Similar to `_db.fetch` but it takes an SQL string instead. For example:
  `_database.fetch("SELECT NAME FROM VERB where name like '%create%'")`
- 
+
  **find**(_query_string_)
  Similar to `_db.find` but it takes an SQL string instead. For example:
  `_database.find("SELECT * FROM VERB where name='my_verb'")`
 
 **prj_prefix**()
-It  returns the project prefix of the current `EM_CORE_HOME` project. 
+It  returns the project prefix of the current `EM_CORE_HOME` project.
 It looks for modules under `$EM_CORE_HOME/repository/default` starting with uppercase letters which are repited. It returns empty if it can't find any.
 For example with a set modules like
 ```sql
@@ -231,7 +256,7 @@ Process id is ABC
 ```
 ### _emprj
  It extract different information from the current EM project:
- 
+
 
 ## More Available Objects
 ### SQLTable
@@ -248,7 +273,7 @@ Returns the column as a list:
    table =_db.fetch.v_names_by_ed(entity_id)`
    assert [1,2] == table.column("ID")
    ```
-    
+
    **str()**
 The string method has been override to use prettyTables:
    ```
@@ -277,8 +302,8 @@ The string method has been override to use prettyTables:
 It has two methods overriden:
 
  **[_<<var_name>>_]**
- It retrieves `NULL` as a string if no value is found within the dictionary. 
- 
+ It retrieves `NULL` as a string if no value is found within the dictionary.
+
 **str()**
 As a list it is overriden to use prettytable which prints the keys and the values as the following:
 ```
@@ -314,7 +339,7 @@ Name is 'changeTheAddress'
 Python string functions can be used within templates, for example:
 
 **capitalize**()
-It returns the current string capitalize. 
+It returns the current string capitalize.
 ```sql
 #Template
 {% entity_def_id = 'customer' %}
@@ -336,7 +361,7 @@ Include allows wrapping other templates so they can be reused and avoid SQL code
 ```
 
 ## Organizing Templates
-Templates can all be drop in one folder or they can be grouped and put into folders. 
+Templates can all be drop in one folder or they can be grouped and put into folders.
 For example we could match a similar grouping to the EM admin screens:
 ```
 /templates
@@ -350,26 +375,26 @@ For example we could match a similar grouping to the EM admin screens:
 	|__ ...
 ```
 ## Hidden Templates
-A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own. 
+A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own.
 Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
 
 
-## Naming Convention 
+## Naming Convention
 The following name and convention is used when writing tempaltes:
 - Template variables names follow snake case e.g "customer_name"
  - Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables
  - Internal variables are named as the variabled but prefixing two underscores. Internal variables are used when we capturing a value that will be used later on within the same template.
 ```
-{% set __entity_display_name = entity_display_name 
+{% set __entity_display_name = entity_display_name
 								   | default(default_display_name)%}
 ```
 
-##  Fomatting 
-All SQL scripts are written in uppercase with the variables in lower case and snake case. 
+##  Fomatting
+All SQL scripts are written in uppercase with the variables in lower case and snake case.
 #### Inserts
 For easy reading the values inserted are indented within the brackets and a comment with the field name added next to it.
 ```sql
-INSERT INTO PROCESS_REFERENCE (ID, PROCESS_ID,CONFIG_ID, IS_SHARED) 
+INSERT INTO PROCESS_REFERENCE (ID, PROCESS_ID,CONFIG_ID, IS_SHARED)
 VALUES (
         @PDR.{{process_reference_id}} --id,
         @PD.{{process_descriptor_id}}, --process_descriptor_id
@@ -379,7 +404,7 @@ VALUES (
 ```
 
 # Logging
-The application logging is configured by default to write to the logs dir within the main application folder. 
+The application logging is configured by default to write to the logs dir within the main application folder.
 Logging configuration can be modified by creating a file called `logging.yaml` under the app config folder.
 This is a example of a valid configuration file:
 ```yaml
@@ -416,9 +441,9 @@ root:
 # Build Extensions
 ### Developer Setup
 
-Branch this project and submit merge request. 
+Branch this project and submit merge request.
 
-Consider create a virtual pyhon  envioronment for this project.   As well, it is recomended to user [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) to  manage your virtual environment. 
+Consider create a virtual pyhon  envioronment for this project.   As well, it is recomended to user [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) to  manage your virtual environment.
 
 Make user the sql_gen folder is added to you `PYTHONPATH`:
 `export PYTHONPATH=${PYTHONPATH}:/home/dgarcia/dev/python/em_automation/sql_gen`
