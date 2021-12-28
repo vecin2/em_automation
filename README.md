@@ -421,11 +421,13 @@ Branch this project and submit merge request.
 Consider create a virtual pyhon  envioronment for this project.   As well, it is recomended to user [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) to  manage your virtual environment. 
 
 Make user the sql_gen folder is added to you `PYTHONPATH`:
-`export PYTHONPATH=${PYTHONPATH}:/home/dgarcia/dev/python/em_automation/sql_gen`
+`export PYTHONPATH=${PYTHONPATH}:/home/dgarcia/dev/python/em_automation`
 
 If you are using virtual environment you can set the `PYTHONPATH` within the `$vitualevn/bin/postactivate` so it only runs when you activate this environment.
 
-The application can be executing by running: `python sql_gen` from project top folder.
+Install all modules `pip install -r requirements.txt`
+
+The application can be executing by running: `python ccdev` from project top folder.
 
 #### Running tests
 Test can run with pytest: py.test from the project top folder
