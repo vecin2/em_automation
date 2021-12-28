@@ -27,7 +27,7 @@ class ConfigFile(object):
     @property
     def properties(self):
         if not self._parser:
-            self._parser = ConfigParser(interpolation=ExtendedInterpolation())
+            self._parser = ConfigParser(interpolation=ExtendedInterpolation(),strict=False)
 
             if not os.path.exists(self.filepath):
                 raise FileNotFoundError(
