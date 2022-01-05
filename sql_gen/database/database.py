@@ -1,7 +1,7 @@
 import time
 
 import cx_Oracle
-import pymssql
+import pyodbc 
 import sql_gen
 from sql_gen.database.sqlparser import RelativeIdLoader, SQLParser
 from sql_gen.database.sqltable import SQLRow, SQLTable
@@ -51,9 +51,10 @@ class Connector(object):
 
     def do_connect(self):
         if self.dbtype == "sqlServer":
-            return pymssql.connect(
-                self.server, self.user, self.password, self.database, port=self.port
-            )
+            #return pyodbc.connect(
+            #    self.server, self.user, self.password, self.database, port=self.port
+            #)
+            return pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+self.server+','+self.port+';DATABASE='+self.database+';UID='+self.user+';PWD='+ self.password)
         elif self.dbtype == "oracle":
             dsn_tns = self.server + ":" + self.port + "/" + self.database
 
