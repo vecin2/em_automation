@@ -82,14 +82,12 @@ def test_{{template_name}}_runs_succesfully():
     emprj_path={{emprj_path}}
     app_project = AppProject(emprj_path=emprj_path)
     sqlparser =SQLParser(RelativeIdLoader())
-    print("before "+query)
     try:
         app_project.addb.execute(query,sqlparser=sqlparser)
     except:
         #if we do not close the connection we get locks issue when test are failing
         app_project.addb._conn().close() 
         raise
-    print("after "+query)
 
 """
         kwargs["query"] = self.convert_to_src(kwargs["query"])
