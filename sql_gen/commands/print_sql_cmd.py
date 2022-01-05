@@ -1,5 +1,5 @@
 import os
-
+import pyperclip
 from sql_gen.app_project import AppProject
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.create_document_from_template_command import (
@@ -81,6 +81,7 @@ class PrintSQLToConsoleCommand(object):
             run_once=self.run_once,
         )
         self.doc_creator.run()
+        pyperclip.copy(self.sql_printed())
         self.context["_database"].rollback()
 
     def write(self, content, template=None):
