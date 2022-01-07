@@ -82,7 +82,6 @@ class SQLTable(object):
     def _get_keyvalue_filters(self, **kwargs):
         filters = []
         for key in kwargs:
-            upper_key = key.upper()
             value = kwargs[key]
             filters.append(KeyValueFilter(key.upper(), value))
         return filters
@@ -90,12 +89,22 @@ class SQLTable(object):
 
 class SQLRow(dict):
     def __init__(self, dict_row):
-        dict.__init__(self, dict_row)
+        case_insensitive_dict = {}
+        if type(dict_row) is dict:
+            for k, v in dict_row.items():
+                case_insensitive_dict[k.upper()] = v
+        else:
+            for key_value in dict_row:
+                case_insensitive_dict[key_value[0].upper()] = key_value[1]
+        dict.__init__(self, case_insensitive_dict)
+
+    def __setitem__(self, key, value):
+        dict.__setitem__(key.upper(), value)
 
     def __getitem__(self, key):
-        if dict.__getitem__(self, key) is None:
+        if dict.__getitem__(self, key.upper()) is None:
             return "NULL"
-        return dict.__getitem__(self, key)
+        return dict.__getitem__(self, key.upper())
 
     def __repr__(self):
         return str(super().__repr__())
