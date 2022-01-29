@@ -36,6 +36,10 @@ def test_table_where(table):
     assert 0 == len(table.where(name="search", id=2))
     assert 1 == len(table.where("ID >1"))
 
+def test_table_where_with_special_chars(table):
+    table.append(SQLRow({"ID": 3, "NAME": "inlinelist (A verb for listing entities)"}))
+    assert 3 == table.where(name='inlinelist (A verb for listing entities)')[0]["ID"]
+
 
 def test_table_where_string_with_spaces(table):
     displayName = "Contact search"

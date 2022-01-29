@@ -153,12 +153,12 @@ class ExpressionFilter(TableFilter):
             )
 
     def _parse_operator(self, expression):
-        operator = re.findall("^[\w\s]*(.*?)[\w\s]*$", expression)[0].strip()
-        valid_operators = ["=", "<", ">", "<=", ">=", "==", "!="]
-        if operator in valid_operators:
-            return operator
-        else:
-            self._raise_invalid_operator(expression, operator, valid_operators)
+        #put first long operators then simple ones
+        valid_operators = ["<=", ">=", "==", "!=","=", "<", ">" ]
+        for operator in valid_operators:
+            if operator in expression:
+                return operator
+        self._raise_invalid_operator(expression, operator, valid_operators)
 
     def _raise_invalid_operator(self, expression, operator, valid_operators):
         raise ValueError(
