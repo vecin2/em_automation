@@ -114,6 +114,22 @@ def test_include_should_prompt_vars_recursively_from_included_template_in_order(
         "name"
     )  # .renders("hhh")
 
+def test_should_skip_included_templates_when_wrapped_with_if_and_condition_is_false():
+    template_str = """
+{% set __add_queue = add_queue |   default("New")%}
+
+{% if __add_queue == 'New' %}
+{% include 'pepito' %}
+{% endif %}
+
+{{program_name}}
+"""
+
+    template(template_str).and_template(
+        "pepito", "{%set __greeting = greeting%}"
+    ).with_values({}).should_prompt_next(
+        "add_queue (default is New)"
+    ).with_values({"add_queue": "Y"}).should_prompt_next("program_name")
 
 def test_should_not_prompt_var_which_is_set_within_included_template():
     template("{% include 'set_name.sql' %}I am {{name}} {{last_name}}").and_template(

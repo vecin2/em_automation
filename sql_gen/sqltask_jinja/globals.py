@@ -1,8 +1,3 @@
-import pymssql
-import sys
-from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit import prompt
-
 
 def camelcase(st):
     if not st:

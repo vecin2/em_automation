@@ -1,7 +1,6 @@
 from sql_gen.database import EMDatabase, Connector
 from sql_gen.exceptions import DatabaseError
 import cx_Oracle
-import pymssql
 import pytest
 
 pytestmark = pytest.mark.skip(

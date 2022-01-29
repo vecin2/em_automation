@@ -1,5 +1,5 @@
 import cx_Oracle
-import pymssql
+import pyodbc
 import pytest
 
 sqlserver_host = "windows"
@@ -19,8 +19,8 @@ pytestmark = pytest.mark.skip(
 )
 
 
-def test_pymssql_fetchone_asdict():
-    conn = pymssql.connect(
+def test_pyodbc_fetchone_asdict():
+    conn = pyodbc.connect(
         sqlserver_host,
         sqlserver_username,
         sqlserver_password,
@@ -61,7 +61,7 @@ def test_convert_sqlserver_cursor_to_dict_list():
     username = "sa"
     password = "admin"
     database = "ootb_15_1_fp2"
-    conn = pymssql.connect(host, username, password, database=database)
+    conn = pyodbc.connect(host, username, password, database=database)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM EVA_VERB where NAME='create'")
     result = rows_to_dict_list(cursor)
