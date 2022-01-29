@@ -18,7 +18,6 @@ setuptools.setup(
     package_data={"sql_gen": ["log/*.yaml"]},
     install_requires=[
         "Jinja2",
-        "pymssql",
         "fuzzyfinder",
         "prompt_toolkit",
         "svn",

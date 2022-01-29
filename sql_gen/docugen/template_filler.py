@@ -53,4 +53,5 @@ class TemplateFiller(object):
 
     def next_prompt(self, template_values={}):
         context = TemplateContext(self.template, template_values)
+        TraceUndefined.clear_vars()
         return self.prompt_visitor.next_prompt(context)
