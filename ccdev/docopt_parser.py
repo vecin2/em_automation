@@ -6,7 +6,6 @@ Usage:
     {appname} create-sql [<directory>] [--template=<template_name>]
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
     {appname} run-sql [--template=<template_name>]
-    {appname} extend-process <src_path> <dst_path>
     {appname} | -h | --help
 
 Examples:
