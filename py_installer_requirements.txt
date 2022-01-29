@@ -15,7 +15,7 @@ pathlib2==2.3.2
 pefile==2019.4.18
 pluggy==0.7.1
 prompt-toolkit==2.0.6
-py==1.5.4
+py==1.10.0
 pyfakefs==3.4.3
 PyInstaller==3.4
 pyperclip==1.7.0
