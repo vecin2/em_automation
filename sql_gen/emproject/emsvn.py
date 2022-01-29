@@ -51,4 +51,4 @@ class EMSvn(object):
                 "Unable to access svn repository to compute revision number: "
                 + str(excinfo)
             )
-            return -1
+            return 0
