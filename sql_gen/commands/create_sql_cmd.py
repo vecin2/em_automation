@@ -149,8 +149,8 @@ class CreateSQLTaskCommand(object):
         try:
             revision_no = int(self.svn_client.revision_number())
         except Exception:
+            revision_no = 0
             self.displayer.unable_to_rev_no_svn_not_installed("-1")
-            return -1
         app_config = AppProject(env_vars=self.env_vars).config
         rev_no_offset = app_config.get("svn.rev.no.offset", "0")
         result = revision_no + 1 + int(rev_no_offset)
