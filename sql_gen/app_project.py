@@ -136,7 +136,15 @@ class AppProject(object):
         return self._config_file
 
     def _get_database(
-        self, host=None, user=None, password=None, dbname=None, port=None, dbtype=None,sqlserver_driver_name=None,sqlserver_conn_str_name=None
+        self,
+        host=None,
+        user=None,
+        password=None,
+        dbname=None,
+        port=None,
+        dbtype=None,
+        sqlserver_driver_name=None,
+        sqlserver_conn_str_name=None,
     ):
         emconfig = self.em_config()
         host = emconfig[host]
@@ -145,14 +153,23 @@ class AppProject(object):
         database = emconfig[dbname]
         port = emconfig[port]
         dbtype = emconfig[dbtype]
-        if dbtype == 'sqlServer':
+        sqlserver_driver = ""
+        sqlserver_conn_str = ""
+        if dbtype == "sqlServer":
             if sqlserver_conn_str_name in emconfig:
                 sqlserver_conn_str = emconfig[sqlserver_conn_str_name]
-                sqlserver_driver =""
             else:
                 sqlserver_driver = emconfig[sqlserver_driver_name]
-                sqlserver_conn_str =""
-        connector = Connector(host, username, password, database, port, dbtype,sqlserver_driver,sqlserver_conn_str)
+        connector = Connector(
+            host,
+            username,
+            password,
+            database,
+            port,
+            dbtype,
+            sqlserver_driver,
+            sqlserver_conn_str,
+        )
         return EMDatabase(connector)
 
     def _emconfig_id(self):
