@@ -439,6 +439,23 @@ root:
 ```
 
 # Build Extensions
+
+### Create Windows Executables
+On Windows machine:
+- Create a virtualenv em_automation
+- pip install -r py_installer_requirements.text
+
+If a package fails to compile .e.g cx_oracle you can downloaded the .whl file directly from:
+     https://www.lfd.uci.edu/~gohlke/pythonlibs/
+Copy the file to project location and run: pip install <<filename>>
+
+#### Troubleshooting
+
+Py_installer compatibility issues with 3.8 or above at October 24th 2022: https://github.com/pyinstaller/pyinstaller/issues/4265#issuecomment-554624172
+Python 3.10 has a comptability issue with py_installer ends up with following error: ImportError: No module named _bootlocale
+
+To fix this, run `pyinstaller.exe app.py --exclude-module _bootlocale`
+
 ### Developer Setup
 
 Branch this project and submit merge request.
