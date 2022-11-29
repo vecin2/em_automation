@@ -1,15 +1,14 @@
 import os
-import sys
-import pytest
 import pathlib
 import shutil
+import sys
 from io import StringIO
 
-import lxml.etree as ET
-from lxml import objectify
+import pytest
 
-from devtask.extend_process import extend_process, main
 from devtask.object_factory import new_process_def
+
+# from devtask.extend_process import extend_process, main
 
 
 def Path(path):

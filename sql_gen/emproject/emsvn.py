@@ -1,5 +1,7 @@
 import os
-import svn.local, svn.remote
+
+import svn.local
+import svn.remote
 
 import sql_gen
 from sql_gen.emproject import current_prj_path
@@ -51,4 +53,4 @@ class EMSvn(object):
                 "Unable to access svn repository to compute revision number: "
                 + str(excinfo)
             )
-            return 0
+            return -1

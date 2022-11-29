@@ -1,8 +1,8 @@
-import pytest
-from sql_gen.app_project import AppProject
-from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 import os
+
+from sql_gen.app_project import AppProject
+from sql_gen.emproject import EMConfigID
+from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 
 class FakeAppPrjBuilder(object):
@@ -35,7 +35,7 @@ database.pass=admin
 database.host=localhost
 database.port=1433
 database.name=ootb_15_1_fp2
-database.type=sqlServer
+database.type=oracle
 """
     em_project_home = "/home/em/my_project"
     config_id = EMConfigID("localdev", "localhost", "ad")

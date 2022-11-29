@@ -153,18 +153,18 @@ class ExpressionFilter(TableFilter):
             )
 
     def _parse_operator(self, expression):
-        #put first long operators then simple ones
-        valid_operators = ["<=", ">=", "==", "!=","=", "<", ">" ]
+        # put first long operators then simple ones
+        valid_operators = ["<=", ">=", "==", "!=", "=", "<", ">"]
         for operator in valid_operators:
+            if "<>" in expression:
+                break
             if operator in expression:
                 return operator
-        self._raise_invalid_operator(expression, operator, valid_operators)
+        self._raise_invalid_operator(expression, valid_operators)
 
-    def _raise_invalid_operator(self, expression, operator, valid_operators):
+    def _raise_invalid_operator(self, expression, valid_operators):
         raise ValueError(
-            "Invalid operator '"
-            + operator
-            + "' within expression '"
+            "Invalid operator within expression '"
             + expression
             + "'. Valid operators are: "
             + str(valid_operators)
