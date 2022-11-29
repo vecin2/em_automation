@@ -1,7 +1,8 @@
-from sql_gen.config import ConfigFile
-import re
 import string
+
 from fuzzyfinder import fuzzyfinder
+
+from sql_gen.config import ConfigFile
 
 
 class AttrDict(object):
@@ -52,6 +53,7 @@ class CallableFormatString(object):
     def count_placeholders(self, fmt):
         count = 0
         L = string.Formatter().parse(fmt)
+        __import__("pdb").set_trace()
         for x in L:
             if x[1] is not None:
                 count += 1

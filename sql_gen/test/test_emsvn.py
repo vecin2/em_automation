@@ -1,5 +1,4 @@
-from sql_gen.emproject import EMSvn, current_prj_path
-import pytest
+from sql_gen.emproject import EMSvn
 
 
 class FakeSvnClientFactory(object):
@@ -60,5 +59,4 @@ def test_revision_number_returns_zero_when_svn_not_available():
     fake_svnclient_factory.add_remote(remote_url, remote_svnclient)
 
     emsvn = EMSvn(env_vars, fake_svnclient_factory)
-
     assert -1 == emsvn.revision_number()

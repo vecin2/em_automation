@@ -1,28 +1,27 @@
 import os
-import sys
-from io import StringIO
-
-import pytest
 import pyperclip
+import sys
+
+
+from io import StringIO
+import pytest
+
 import yaml
 
-from ccdev.command_line_app import CommandLineSQLTaskApp
+
 from ccdev.command_factory import CommandFactory
-from sql_gen.commands import (
-    PrintSQLToConsoleDisplayer,
-    PrintSQLToConsoleCommand,
-    CreateSQLTaskCommand,
-    TestTemplatesCommand,
-    RunSQLCommand,
-)
+from ccdev.command_line_app import CommandLineSQLTaskApp
+from sql_gen.app_project import AppProject
+from sql_gen.commands import (CreateSQLTaskCommand, PrintSQLToConsoleCommand,
+                              PrintSQLToConsoleDisplayer, RunSQLCommand,
+                              TestTemplatesCommand)
 from sql_gen.commands.run_sql_cmd import RunSQLDisplayer
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
-from sql_gen.app_project import AppProject
-from sql_gen.emproject.em_project import emproject_home
-from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
-from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.database.sqlparser import SQLParser
+from sql_gen.emproject.em_project import emproject_home
+from sql_gen.sqltask_jinja.context import ContextBuilder
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 
 class FakeLogger(object):
@@ -67,7 +66,8 @@ class AppRunner(FillTemplateAppRunner):
         return self
 
     def with_app_config(self, config):
-        self._create_file(self._app_path("core_config"), self._dict_to_str(config))
+        self._create_file(self._app_path("core_config"),
+                          self._dict_to_str(config))
         return self
 
     def _em_path(self, key):
@@ -135,13 +135,8 @@ class DummyEnvironment(object):
 
 
 class CommandTestFactory(CommandFactory):
-    def __init__(
-        self,
-        print_to_console_command=None,
-        create_sqltask_command=None,
-        test_sql_templates_commmand=None,
-        run_sql_command=None,
-    ):
+    def __init__(self, print_to_console_command=None,                   create_sqltask_command=None, test_sql_templates_commmand=None, run_sql_command=None,
+                 ):
         self.print_to_console_command = print_to_console_command
         self.create_sqltask_command = create_sqltask_command
         self.test_sql_templates_commmand = test_sql_templates_commmand
@@ -174,7 +169,8 @@ class PrintSQLToConsoleAppRunner(AppRunner):
 
     def run_prod(self):
         self.run(
-            CommandLineSQLTaskApp(CommandFactory(self.env_vars), logger=FakeLogger())
+            CommandLineSQLTaskApp(CommandFactory(
+                self.env_vars), logger=FakeLogger())
         )
         return self
 
@@ -292,7 +288,8 @@ class TemplatesAppRunner(AppRunner):
         dirname = os.path.dirname(template_path)
         name = os.path.basename(template_path)
         path = os.path.join(self._app_path("test_templates"), dirname)
-        test_data_object = self._get_template_vars(template_vars, template_vars_list)
+        test_data_object = self._get_template_vars(
+            template_vars, template_vars_list)
         test_content = "-- " + str(test_data_object) + "\n" + content
         # self.fs.create_file(os.path.join(path,name), contents=test_content)
         self._create_file(os.path.join(path, name), test_content)

@@ -1,7 +1,7 @@
 import pytest
 
-from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
 from sql_gen.exceptions import EnvVarNotFoundException
+from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
 
 
 @pytest.fixture
@@ -9,6 +9,10 @@ def app_runner(fs):
     app_runner = PrintSQLToConsoleAppRunner(fs=fs)
     yield app_runner
     app_runner.teardown()
+
+
+def test_something2(app_runner, fs):
+    fs.create_dir("/my_templates")
 
 
 def test_it_throws_exception_when_no_templates_path_define(app_runner):

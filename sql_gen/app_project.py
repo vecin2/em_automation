@@ -1,14 +1,12 @@
-import sql_gen
-from sql_gen.database import EMDatabase
-from sql_gen.emproject import EMProject, EMConfigID, emproject_home
-from sql_gen.database import QueryRunner, Connector
-from sql_gen.config import ConfigFile
-from sql_gen.utils.filesystem import ProjectLayout, Path
-import sys
-import os
 import logging
+import os
+
 import sql_gen
+from sql_gen.config import ConfigFile
+from sql_gen.database import Connector, EMDatabase, QueryRunner
+from sql_gen.emproject import EMConfigID, EMProject
 from sql_gen.log import log
+from sql_gen.utils.filesystem import ProjectLayout
 
 PATHS = {
     "config": "config",

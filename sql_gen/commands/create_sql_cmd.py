@@ -2,18 +2,13 @@ import os
 
 import pyperclip
 
-from sql_gen.ui.utils import select_string_noprompt, prompt_suggestions
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
-from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.app_project import AppProject
+from sql_gen.commands.print_sql_cmd import (PrintSQLToConsoleCommand,
+                                            PrintSQLToConsoleDisplayer)
 from sql_gen.emproject.emsvn import EMSvn
-from sql_gen.create_document_from_template_command import (
-    CreateDocumentFromTemplateCommand,
-)
-from sql_gen.commands.print_sql_cmd import (
-    PrintSQLToConsoleDisplayer,
-    PrintSQLToConsoleCommand,
-)
+from sql_gen.sqltask_jinja.context import ContextBuilder
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.ui.utils import prompt_suggestions, select_string_noprompt
 
 
 class CreateSQLTaskDisplayer(object):
@@ -148,14 +143,14 @@ class CreateSQLTaskCommand(object):
         self.displayer.computing_rev_no()
         try:
             revision_no = int(self.svn_client.revision_number())
+            app_config = AppProject(env_vars=self.env_vars).config
+            rev_no_offset = app_config.get("svn.rev.no.offset", "0")
+            revision_no = revision_no + 1 + int(rev_no_offset)
         except Exception:
-            revision_no = 0
+            revision_no = -1
             self.displayer.unable_to_rev_no_svn_not_installed("-1")
-        app_config = AppProject(env_vars=self.env_vars).config
-        rev_no_offset = app_config.get("svn.rev.no.offset", "0")
-        result = revision_no + 1 + int(rev_no_offset)
-        self.displayer.update_seq_no_computed(result)
-        return result
+        self.displayer.update_seq_no_computed(revision_no)
+        return revision_no
 
 
 class SQLTask(object):

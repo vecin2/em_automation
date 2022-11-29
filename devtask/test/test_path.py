@@ -1,12 +1,12 @@
-from devtask.extend_process import extend_process
 import os
 import pathlib
 import shutil
+
 import pytest
 
-from sql_gen.app_project import AppProject
 from sql_gen.emproject import EMProject
-import devtask.extend_process
+
+# from devtask.extend_process import extend_process
 
 
 def Path(path):
@@ -48,7 +48,7 @@ def test_something(capsys):
     app_project._config = {"product.home": product_path}
     # assert "guaje" == app_project.product_layout()['repo_modules'].path
     em_prj_path = "/home/dgarcia/dev/python/em_automation/devtask/test/.testfilesystem/opt/em/projects/pacificorp"
-    devtask.extend_process.app_project = AppProject(emprj_path=em_prj_path)
+    # devtask.extend_process.app_project = AppProject(emprj_path=em_prj_path)
     product_path = "/home/dgarcia/dev/python/em_automation/devtask/test/.testfilesystem/opt/em/products/agent_desktop"
     app_project.emproject._config = {"product.home": product_path}
     app_project._em_config = {"product.home": product_path}
