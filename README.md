@@ -72,6 +72,9 @@ Within the templates there is a set of tutorials templates They provide good gui
  3. Drop the executable file within your `bin` folder of your current EM project (next to your ccadmin)
  4. Run `sqltask test-sql` from the command line. You should see a bunch of test running and you are ready to go!
 
+
+Make sure you have oracle client install otherwise you'll get an error. For windows a client can be downloaded from [here](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html)
+
 ***Note:** you might get some failures when running the tests depending on the current version of the EM product you are running. This is fine, it shows the tool is running as it should and that you might have to make adjustments to fix those templates if you want to use them.*
 
 ## Install as a python module
@@ -97,6 +100,8 @@ python -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
 python3 -m pip install --extra-index-url https://test.pypi.org/simple/ sqltask
 ```
+
+### Installation Troubleshooting
 
 This applies as well when running upgrades and any python command it - e.g `python3 -m pip  install update sqltask`
 # Template Design
