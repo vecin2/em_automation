@@ -1,15 +1,9 @@
-import pathlib
-
-from shutil import copyfile
 import os
+import pathlib
 import sys
-import io
-
-import lxml.etree as ET
+from shutil import copyfile
 
 from sql_gen.app_project import AppProject
-from sql_gen.emproject import EMProject
-
 from sql_gen.ui.utils import select_string_noprompt
 
 PurePosixPath = pathlib.PurePosixPath
