@@ -516,6 +516,8 @@ root:
 
 On Windows machine:
 
+- Install python 3.8.1: choco install python --version=3.8.1
+- Install virtualenvwrapper on that python installation: C:\Python38\python.exe -m pip install virtualenvwrapper-win
 - Create a virtualenv em_automation
 - pip install -r py_installer_requirements.text
 
@@ -548,7 +550,12 @@ Finally, execute application `python ccdev`
 
 If you are using virtual environment you can set the `PYTHONPATH` within the `$vitualevn/bin/postactivate` so it only runs when you activate this environment.
 
-The application can be executing by running: `python sql_gen` from project top folder.
+#### Windows
+
+Install virtualenvwrapper-win: C:\Python38\python.exe -m pip install virtualenvwrapper-win
+virtualenvwrapper-win does not have `postactivate` modify `Scripts\activate.bat` and add the following:
+
+@set "PYTHONPATH=%PYTHONPATH%;C:\\Users\\dgarcia\\dev\\python\\em_automation"
 
 #### Running tests
 
