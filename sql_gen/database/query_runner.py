@@ -51,13 +51,16 @@ class CallableFormatString(object):
         return self.string.format(*args, **kwargs)
 
     def count_placeholders(self, fmt):
-        count = 0
         L = string.Formatter().parse(fmt)
-        __import__("pdb").set_trace()
+        vars_set = set()
+        empty_placeholders = 0
         for x in L:
             if x[1] is not None:
-                count += 1
-        return count
+                if x[1] == "":
+                    empty_placeholders += 1
+                else:
+                    vars_set.add(x[1])
+        return len(vars_set) + empty_placeholders
 
 
 class CallableDBQuery(CallableFormatString):
