@@ -2,7 +2,7 @@ altgraph==0.16.1
 anytree==2.4.3
 atomicwrites==1.1.5
 attrs==18.1.0
-cx-Oracle==7.0.0
+cx_oracle==8.3.0
 #do not delete cython as builds that reuse this package might fail
 docopt==0.6.2
 future==0.17.1
@@ -20,7 +20,7 @@ prettytable==0.7.2
 prompt-toolkit==2.0.6
 py==1.5.4
 pyfakefs==3.4.3
-PyInstaller==3.4
+PyInstaller==3.6
 pyperclip==1.7.0
 pyodbc==4.0.32
 pytest==3.7.2
