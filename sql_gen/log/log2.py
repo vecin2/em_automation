@@ -1,12 +1,13 @@
+import logging
+import logging.config
 import os
+
 import yaml
 
 script_dir = os.path.dirname(__file__)
 default_path = os.path.join(script_dir, "logging.yaml")
-import logging.config
-import logging
 
-# import pdb; pdb.set_trace()
+
 def config(prj_root=None):
     path = default_path
     config = {}

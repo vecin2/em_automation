@@ -1,4 +1,5 @@
-from jinja2.nodes import List, Name, Const, Getitem, Getattr
+from jinja2.nodes import Const, Getattr, Getitem, List, Name
+
 from sql_gen import logger
 
 
@@ -20,7 +21,6 @@ class PromptFilter:
         if isinstance(arg, List):
             result = self._render_list(arg, context)
         elif isinstance(arg, Name):
-            #        import pdb;pdb.set_trace()
             result = context.resolve(arg.name)
         elif isinstance(arg, Const):
             result = arg.value

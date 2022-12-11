@@ -29,14 +29,15 @@ class CreateSQLTaskDisplayer(object):
             "\nSQL task created under '" + filepath + "' and path copied to clipboard\n"
         )
 
-    def unable_to_rev_no_svn_not_installed(self, rev_no):
+    def unable_to_rev_no_svn_not_installed(self, rev_no, excinfo):
         message = (
-            "Looks like SVN command line tool is not installed,\
- without it 'update.sequence' can not be computed and it is default to\
+            "Defaulting to\
  'PROJECT $Revision: "
             + rev_no
-            + " $'. Make sure you update it manually!!"
+            + " $'. \nMake sure you update it manually!!"
         )
+        print("Unable to compute sequece no:")
+        print(str(excinfo))
         print(message)
 
     def computing_rev_no(self):
@@ -142,14 +143,15 @@ class CreateSQLTaskCommand(object):
     def _compute_update_seq_no(self):
         self.displayer.computing_rev_no()
         try:
-            revision_no = int(self.svn_client.revision_number())
+            rev_no = self.svn_client.revision_number()
+            revision_no = int(rev_no)
             app_config = AppProject(env_vars=self.env_vars).config
             rev_no_offset = app_config.get("svn.rev.no.offset", "0")
             revision_no = revision_no + 1 + int(rev_no_offset)
-        except Exception:
+            self.displayer.update_seq_no_computed(revision_no)
+        except Exception as excinfo:
             revision_no = -1
-            self.displayer.unable_to_rev_no_svn_not_installed("-1")
-        self.displayer.update_seq_no_computed(revision_no)
+            self.displayer.unable_to_rev_no_svn_not_installed("-1", excinfo)
         return revision_no
 
 

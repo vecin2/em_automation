@@ -43,14 +43,7 @@ class EMSvn(object):
         return self.remote_client_var
 
     def revision_number(self):
-        try:
-            info = self.remote_client().info()
-            sql_gen.logger.debug("Remote client info is: " + str(info))
-            return info["entry_revision"]
-        except Exception as excinfo:
-            sql_gen.logger.exception(excinfo)
-            print(
-                "Unable to access svn repository to compute revision number: "
-                + str(excinfo)
-            )
-            return -1
+        # should through exception if not svn repo or svn is not installed
+        info = self.remote_client().info()
+        sql_gen.logger.debug("Remote client info is: " + str(info))
+        return info["entry_revision"]
