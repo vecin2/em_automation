@@ -1,17 +1,15 @@
-from jinja2 import Environment, FileSystemLoader
+from pathlib import Path
 
-from sql_gen.app_project import AppProject
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
-from sql_gen.sqltask_jinja.context import init
-from sql_gen.ui import prompt, MenuOption, select_option
+from sql_gen.commands.test_sql_file import TestSQLFile
 from sql_gen.docugen.template_filler import TemplateFiller
-from sql_gen.database.sqlparser import SQLParser
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.ui import MenuOption, select_option
 
 
 class TemplateSelectorDisplayer(object):
-    def ask_for_template(self, options):
+    def ask_for_template(self, options, default=""):
         text = "\nStart typing the template name('x' - Save && Exit): "
-        return select_option(text, options, 10)
+        return select_option(text, options, 10, default)
 
 
 class TemplateSelector(object):
@@ -20,14 +18,28 @@ class TemplateSelector(object):
         self.loader = SelectTemplateLoader(self.templates_path)
         self.displayer = TemplateSelectorDisplayer()
 
-    def select_template(self, template_name=None):
+    def select_template(self, template_name=None, default=None):
         if not template_name:
             options = self.loader.list_options()
-            option = self.displayer.ask_for_template(options)
+            option = self.displayer.ask_for_template(options, default=default)
             if option.code == "x":
                 return None
+            elif option.is_help:
+                self.show_help(option.name)
+                return self.select_template(default=str(option))
+
             template_name = option.name
         return self.loader.load_template(template_name)
+
+    def show_help(self, template_name):
+        test_file = self.loader.load_test(template_name)
+        if test_file:
+            print(test_file.content)
+        else:
+            print(
+                "No help defined for this template. You can define help by creating a test file under 'test_templates' folder"
+            )
+        # testfile = self.test_loader.load_test(self.test_name)
 
 
 class SelectTemplateLoader(object):
@@ -36,6 +48,18 @@ class SelectTemplateLoader(object):
 
     def load_template(self, name):
         return self.environment.get_template(name)
+
+    def load_test(self, name):
+        root_templates = Path(self.environment.loader.searchpath[0])
+        relative_template_path = Path(name)
+        test_name = "test_" + relative_template_path.name
+        relative_test_path = relative_template_path.parent / test_name
+        absolute_test_path = (
+            root_templates.parent / "test_templates" / relative_test_path
+        )
+        if absolute_test_path.exists():
+            return TestSQLFile(absolute_test_path)
+        return None
 
     def list_options(self):
         saveAndExit = MenuOption("x", "Save && Exit")

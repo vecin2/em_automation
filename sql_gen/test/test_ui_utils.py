@@ -21,3 +21,11 @@ def test_match_option_by_code_and_name():
     second_option = MenuOption("2", "second option")
     option_list = [first_option, second_option]
     assert second_option == match_options("2. second option", option_list)
+
+
+def test_match_option_with_question_mark():
+    first_option = MenuOption("1", "first option")
+    second_option = MenuOption("2", "second option")
+    option_list = [first_option, second_option]
+    second_option.is_help = True
+    assert second_option == match_options("2. second option?", option_list)
