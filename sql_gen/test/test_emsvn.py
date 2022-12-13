@@ -47,16 +47,3 @@ def test_revision_number_returns_remote_client_entry_revision():
     emsvn = EMSvn(env_vars, fake_svnclient_factory)
 
     assert 3 == emsvn.revision_number()
-
-
-def test_revision_number_returns_zero_when_svn_not_available():
-    local_url = "/home/em"
-    remote_url = "http://fake.url.com/repo"
-    local_svnclient = FakeSvnClient({"url": remote_url})
-    remote_svnclient = FakeSvnClient({})
-    fake_svnclient_factory = FakeSvnClientFactory()
-    fake_svnclient_factory.add_local(local_url, local_svnclient)
-    fake_svnclient_factory.add_remote(remote_url, remote_svnclient)
-
-    emsvn = EMSvn(env_vars, fake_svnclient_factory)
-    assert -1 == emsvn.revision_number()

@@ -2,10 +2,15 @@ import ast
 import os
 import re
 
+import sqlparse
+
 import sql_gen
 
 
 class TestSQLFile(object):
+    # because the name starts with 'Test' pytest tries to run it
+    __test__ = False  # stop pytest from running this as a test
+
     def __init__(self, filepath):
         self.filepath = filepath
         self.parser = TestFileParser()

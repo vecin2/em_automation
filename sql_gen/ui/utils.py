@@ -21,7 +21,7 @@ def prompt(text, completer=None, default=""):
         exit()
 
 
-def prompt_suggestions(text, suggestions, default):
+def prompt_suggestions(text, suggestions, default=""):
     str_suggestions = [str(item) for item in suggestions]
     completer = SuggestionCompleter(str_suggestions)
     return prompt(text, completer=completer, default=default)
