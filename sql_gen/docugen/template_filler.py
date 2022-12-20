@@ -1,8 +1,8 @@
-from sql_gen.docugen.prompt_visitor import PromptVisitor
 from sql_gen import logger
 from sql_gen.docugen.env_builder import TraceUndefined
-from sql_gen.docugen.template_inliner import TemplateInliner
+from sql_gen.docugen.prompt_visitor import PromptVisitor
 from sql_gen.docugen.template_context import TemplateContext
+from sql_gen.docugen.template_inliner import TemplateInliner
 
 
 class TemplateVars(dict):
