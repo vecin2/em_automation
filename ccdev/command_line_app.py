@@ -1,11 +1,10 @@
 import os
 import sys
 
-import sql_gen
-from sql_gen.app_project import AppProject
-
 import ccdev.docopt_parser as arg_parser
+import sql_gen
 from ccdev.command_factory import CommandFactory
+from sql_gen.app_project import AppProject
 
 
 class SysArgParser(object):
@@ -23,8 +22,10 @@ class SysArgParser(object):
             return self.command_factory.make_test_sql_templates_command(args)
         elif args["run-sql"]:
             return self.command_factory.make_run_sql_command(args)
-        elif args["extend-process"]:
-            return self.command_factory.make_extend_process_command(args)
+        elif args["import-templates"]:
+            return self.command_factory.make_import_templates_command(args)
+        # elif args["extend-process"]:
+        #     return self.command_factory.make_extend_process_command(args)
         # else:
         #    return self.command_factory.make_interactive_shell_command(args)
 

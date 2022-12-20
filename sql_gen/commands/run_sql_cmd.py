@@ -1,6 +1,5 @@
 import os
 
-from sql_gen.app_project import AppProject
 from sql_gen.commands import PrintSQLToConsoleCommand
 from sql_gen.ui.utils import select_string_noprompt
 
@@ -17,13 +16,16 @@ class RunSQLDisplayer(object):
 class RunSQLCommand(PrintSQLToConsoleCommand):
     def __init__(
         self,
+        emprj_path=None,
         env_vars=os.environ,
         context_builder=None,
         displayer=RunSQLDisplayer(),
         template_name=None,
     ):
         # We dont want to run the SQL on print as this command runs it as well
-        super().__init__(env_vars=env_vars, context_builder=context_builder)
+        super().__init__(
+            emprj_path=emprj_path, env_vars=env_vars, context_builder=context_builder
+        )
         self.displayer = displayer
         self.env_vars = env_vars
         self.template_name = template_name
