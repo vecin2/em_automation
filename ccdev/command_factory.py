@@ -1,27 +1,29 @@
 import os
+
 import pytest
 
 from devtask.commands import ExtendProcessCommand
-from sql_gen.commands import (
-    PrintSQLToConsoleCommand,
-    CreateSQLTaskCommand,
-    TestTemplatesCommand,
-    RunSQLCommand,
-)
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.commands import (CreateSQLTaskCommand, PrintSQLToConsoleCommand,
+                              RunSQLCommand, TestTemplatesCommand)
 from sql_gen.emproject.em_project import emproject_home
+from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
 class CommandFactory(object):
     def __init__(self, env_vars=os.environ):
         self.env_vars = env_vars
+        self.emprj_path = emproject_home(self.env_vars)
 
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(self.env_vars)
 
     def make_run_sql_command(self, args):
         template_name = args["--template"]
-        return RunSQLCommand(self.env_vars, template_name=template_name)
+        return RunSQLCommand(
+            emprj_path=self.emprj_path,
+            env_vars=self.env_vars,
+            template_name=template_name,
+        )
 
     def make_create_sqltask_command(self, args):
         path = args["<directory>"]
@@ -46,6 +48,10 @@ class CommandFactory(object):
             test_name=args["--test-name"],
             reuse_tests=args["--reuse-tests"],
         )
+
+    def make_import_templates_command(self, args):
+        file_location = args["--src-directory"]
+        return ImportTemplatesCommand(file_location)
 
     def make_pytest(self):
         return pytest
