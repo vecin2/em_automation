@@ -1,5 +1,6 @@
 import re
 from collections import defaultdict
+
 import sqlparse
 
 storage_table = {
@@ -114,22 +115,25 @@ class RelativeIdLoader(object):
             )
         )
         result = self.db.list(query)
-        if result:
+        generated_id = None
+        if not result:
+            generated_id = 1
+        else:
             max_id = result[0]
             generated_id = max_id + 1
-            insert_id_query = (
-                "INSERT INTO CCADMIN_IDMAP (KEYSET,KEYNAME,ID) "
-                + "VALUES ('"
-                + keyset
-                + "','"
-                + keyname
-                + "','"
-                + str(generated_id)
-                + "');"
-            )
-            self.db.execute(insert_id_query)
-            self.db.clear_cache_item(query)
-            return generated_id
+        insert_id_query = (
+            "INSERT INTO CCADMIN_IDMAP (KEYSET,KEYNAME,ID) "
+            + "VALUES ('"
+            + keyset
+            + "','"
+            + keyname
+            + "','"
+            + str(generated_id)
+            + "');"
+        )
+        self.db.execute(insert_id_query)
+        self.db.clear_cache_item(query)
+        return generated_id
 
 
 class RelativeId(object):
