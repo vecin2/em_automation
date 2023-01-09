@@ -1,16 +1,18 @@
-import os, sys
+import os
 
 from jinja2 import Environment
 from jinja2 import FileSystemLoader as JinjaFileSystemLoader
-from . import source_inspector
+from jinja2 import StrictUndefined, UndefinedError
+from jinja2.runtime import missing
 
 from sql_gen.sqltask_jinja.filters.codepath import codepath
 from sql_gen.sqltask_jinja.filters.description import description
+from sql_gen.sqltask_jinja.filters.other import (objectdir, objectname,
+                                                 split_uppercase)
 from sql_gen.sqltask_jinja.filters.print import print as print_filter
 from sql_gen.sqltask_jinja.filters.suggest import suggest
-from sql_gen.sqltask_jinja.filters.other import split_uppercase, objectname, objectdir
-from jinja2 import StrictUndefined, Undefined, UndefinedError
-from jinja2.runtime import missing
+
+from . import source_inspector
 
 
 class TraceUndefined(StrictUndefined):
@@ -44,7 +46,9 @@ class FileSystemLoader(JinjaFileSystemLoader):
                         template = template[2:]
                     extension = os.path.splitext(template)[1]
                     if template not in found and (
-                        ".sql" == extension or ".txt" == extension
+                        ".sql" == extension
+                        or ".txt" == extension
+                        or ".groovy" == extension
                     ):
                         found.add(template)
         return sorted(found)

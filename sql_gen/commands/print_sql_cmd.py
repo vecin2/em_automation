@@ -24,7 +24,7 @@ class PrintSQLToConsoleDisplayer(object):
         self._append_rendered_text(sql_to_render)
 
     def _append_rendered_text(self, text):
-        if self.rendered_sql is not "" and text is not "":
+        if self.rendered_sql != "" and text != "":
             self.rendered_sql += "\n"
         self.rendered_sql += text
 

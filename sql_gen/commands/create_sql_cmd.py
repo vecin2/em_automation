@@ -89,7 +89,7 @@ class CreateSQLTaskCommand(object):
             return
 
         self.sqltask = SQLTask(self.path)
-        document = self._create_sql()
+        self._create_sql()
         self.sqltask.update_sequence_no = self._compute_update_seq_no()
         self.sqltask.write("")  # creates update.sequence
         self.clipboard.copy(self.path)
@@ -138,7 +138,7 @@ class CreateSQLTaskCommand(object):
         return print_sql_cmd.sql_printed()
 
     def on_written(self, content, template):
-        self.sqltask.write(content)
+        self.sqltask.write(content, template)
 
     def _compute_update_seq_no(self):
         self.displayer.computing_rev_no()
@@ -160,17 +160,29 @@ class SQLTask(object):
         self.path = path
         self.update_sequence_no = update_sequence_no
 
-    def write(self, sql):
-        self._write_sql(sql)
+    def write(self, sql, template=None):
+        self._write_sql(sql, template)
         if self.update_sequence_no:
             self._write_update_sequence()
 
-    def _write_sql(self, text):
+    def _write_sql(self, text, template):
         self.table_data = text
         if not os.path.exists(self.path):
             os.makedirs(self.path)
-        with open(os.path.join(self.path, "tableData.sql"), "a+") as f:
-            f.write(self.table_data)
+        filename = self._compute_filename(template)
+        if filename:
+            with open(os.path.join(self.path, filename), "a+") as f:
+                f.write(self.table_data)
+
+    def _compute_filename(self, template):
+        if not template:
+            return ""
+
+        filename = template.filename
+        if filename.endswith("sql"):
+            return "tableData.sql"
+        elif filename.endswith("groovy"):
+            return "update.groovy"
 
     def _write_update_sequence(self):
         self.update_sequence = (
