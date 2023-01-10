@@ -148,7 +148,10 @@ class TestGenerator(object):
 
     def get_builders(self, testfile):
         result = []
-        if self.test_type == "all":
+        if not testfile.filepath.endswith("sql"):
+            print("Generating expected-sql test for " + testfile.template_name())
+            result.append(ExpectedSQLTestBuilder(self.emprj_path))
+        elif self.test_type == "all":
             print("Generating expected-sql test for " + testfile.template_name())
             result.append(ExpectedSQLTestBuilder(self.emprj_path))
             print("Generating run-on-db test for " + testfile.template_name())
@@ -228,11 +231,7 @@ class TestLoader(object):
     def _is_valid_test_file(self, filepath):
         filename = os.path.basename(filepath)
         extension = os.path.splitext(filename)[1]
-        return (
-            os.path.isfile(filepath)
-            and extension == ".sql"
-            and filename.startswith("test_")
-        )
+        return os.path.isfile(filepath) and filename.startswith("test_")
         # and self._matches_template(filename)
 
     def _matches_template(self, test_file):
