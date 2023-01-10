@@ -1,6 +1,8 @@
 import os
+from pathlib import Path
 
 import pyperclip
+from jinja2 import Environment
 
 from sql_gen.app_project import AppProject
 from sql_gen.commands.print_sql_cmd import (PrintSQLToConsoleCommand,
@@ -9,6 +11,30 @@ from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.ui.utils import prompt_suggestions, select_string_noprompt
+
+groovy_update_xml = """
+<project name="update" default="update">
+  <property name="upgrade.file.base" value="{{upgrade_file_base}}"/>
+  <target name="update">
+    <echo message="  userid : [${database.user}]"/>
+    <echo message="  driver : [${database.driver}]"/>
+    <echo message="     url : [${database.url}]"/>
+    <echo message="  schema : [${database.schema}]"/>
+    <echo>Writing scripts to ${sql.output.dir}/${upgrade.file.base}_upgrade.sql</echo>
+
+    <property name="output" location="${sql.output.dir}/${upgrade.file.base}_upgrade.sql"/>
+    <groovydb src="update.groovy" contextClassLoader="true">
+      <classpath refid="tasks.classpath"/>
+    </groovydb>
+    <sqlconv-fileset file="${upgrade.file.base}.sql">
+      <fileset dir="${sql.output.dir}" includes="${upgrade.file.base}_upgrade.sql"/>
+    </sqlconv-fileset>
+    <execute-sql file="${sql.output.dir}/${upgrade.file.base}.sql" onerror="${onerror.default.action}"/>
+  </target>
+  <target name="drop"/>
+</project>
+"""
+update_xml_template = Environment().from_string(groovy_update_xml)
 
 
 class CreateSQLTaskDisplayer(object):
@@ -171,8 +197,33 @@ class SQLTask(object):
             os.makedirs(self.path)
         filename = self._compute_filename(template)
         if filename:
-            with open(os.path.join(self.path, filename), "a+") as f:
-                f.write(self.table_data)
+            with open(os.path.join(self.path, filename), "w+") as f:
+                f.write(self.table_data.strip())
+        if template and template.filename.endswith(".groovy"):
+            upgrade_file_base = (
+                f"{self.module_name()}_{self.release_name()}_{self.task_name()}"
+            )
+            rendered_update_xml = update_xml_template.render(
+                upgrade_file_base=upgrade_file_base
+            )
+            with open(os.path.join(self.path, "update.xml"), "w+") as f:
+                f.write(rendered_update_xml)
+
+    def release_name(self):
+        # self.path something like:
+        # <project.home>/modules/DuWebIntegration/sqlScripts/oracle/updates/DU_01/task_name
+        return Path(self.path).parent.name
+
+    def task_name(self):
+        # self.path something like:
+        # <project.home>/modules/DuWebIntegration/sqlScripts/oracle/updates/DU_01/task_name
+        return Path(self.path).name
+
+    def module_name(self):
+        # self.path something like:
+        # <project.home>/modules/DuWebIntegration/sqlScripts/oracle/updates/DU_01/task_name
+        parts = Path(self.path).parts
+        return parts[parts.index("modules") + 1]
 
     def _compute_filename(self, template):
         if not template:
