@@ -1,6 +1,3 @@
-from jinja2 import Template
-
-
 class TreeDrawer(object):
     def __init__(self):
         self.draw = ""
@@ -18,6 +15,9 @@ class TreeDrawer(object):
 
     def draw_Filter(self, node):
         return "Filter(" + node.name + ")"
+
+    def draw_comment(self, node):
+        return "Comment(" + node.name + ")"
 
     def draw_node(self, node):
         draw_func = self.get_drawer(node)
