@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from pathlib import Path
 
 import pyperclip
@@ -55,7 +56,7 @@ class CreateSQLTaskDisplayer(object):
             "\nSQL task created under '" + filepath + "' and path copied to clipboard\n"
         )
 
-    def unable_to_rev_no_svn_not_installed(self, rev_no, excinfo):
+    def unable_to_compute_seq_no(self, rev_no, excinfo):
         message = (
             "Defaulting to\
  'PROJECT $Revision: "
@@ -66,8 +67,8 @@ class CreateSQLTaskDisplayer(object):
         print(str(excinfo))
         print(message)
 
-    def computing_rev_no(self):
-        print("Computing 'update.sequence' from current SVN number...")
+    def computing_rev_no(self, sequence_generator_name):
+        print(f"Computing 'update.sequence' from {sequence_generator_name}")
 
     def update_seq_no_computed(self, number):
         print("update.sequence is '" + str(number) + "'")
@@ -78,7 +79,7 @@ class CreateSQLTaskCommand(object):
         self,
         env_vars=os.environ,
         context_builder=None,
-        svn_client=None,
+        seq_generator=None,
         clipboard=pyperclip,
         path=None,
         template_name=None,
@@ -88,12 +89,11 @@ class CreateSQLTaskCommand(object):
         self._app_project = None
         self.env_vars = env_vars
         if context_builder is None:
-            app_project = AppProject(env_vars=env_vars)
-            context_builder = ContextBuilder(app_project)
-        if svn_client is None:
-            svn_client = EMSvn()
+            context_builder = ContextBuilder(self.app_project)
+        if seq_generator is None:
+            seq_generator = self._get_seq_generator(self.app_project.config)
         self.path = path
-        self.svn_client = svn_client
+        self.seq_generator = seq_generator
         self.context_builder = context_builder
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = clipboard
@@ -101,6 +101,12 @@ class CreateSQLTaskCommand(object):
         self.template_name = template_name
         self.template_values = template_values
         self.run_once = run_once
+
+    def _get_seq_generator(self, config):
+        if config["sequence.generator"] == "svn":
+            return EMSvn()
+        else:  # if "sequence.generator==timestamp"
+            return TimeStampGenerator()
 
     @property
     def app_project(self):
@@ -167,18 +173,20 @@ class CreateSQLTaskCommand(object):
         self.sqltask.write(content, template)
 
     def _compute_update_seq_no(self):
-        self.displayer.computing_rev_no()
-        try:
-            rev_no = self.svn_client.revision_number()
-            revision_no = int(rev_no)
-            app_config = AppProject(env_vars=self.env_vars).config
-            rev_no_offset = app_config.get("svn.rev.no.offset", "0")
-            revision_no = revision_no + 1 + int(rev_no_offset)
-            self.displayer.update_seq_no_computed(revision_no)
-        except Exception as excinfo:
-            revision_no = -1
-            self.displayer.unable_to_rev_no_svn_not_installed("-1", excinfo)
-        return revision_no
+        self.displayer.computing_rev_no(self.seq_generator.name())
+
+        app_config = AppProject(env_vars=self.env_vars).config
+        return self.seq_generator.generate_seq_no(app_config, self.displayer)
+
+
+class TimeStampGenerator(object):
+    def generate_seq_no(self, app_config, displayer):
+        seq_no = int(datetime.timestamp(datetime.now()))
+        displayer.update_seq_no_computed(seq_no)
+        return seq_no
+
+    def name(self):
+        return "Timestamp"
 
 
 class SQLTask(object):
