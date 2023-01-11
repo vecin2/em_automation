@@ -21,6 +21,9 @@ class EMSvn(object):
         self.env_vars = env_vars
         self._svnclient_factory = svnclient_factory
 
+    def name(self):
+        return "SVN revision number"
+
     def local_client(self):
         return self.svnclient_factory.LocalClient(self.local_url)
 
@@ -41,6 +44,18 @@ class EMSvn(object):
                 self.local_client().info()["url"]
             )
         return self.remote_client_var
+
+    def generate_seq_no(self, app_config, displayer):
+        try:
+            rev_no = self.revision_number()
+            revision_no = int(rev_no)
+            rev_no_offset = app_config.get("svn.rev.no.offset", "0")
+            revision_no = revision_no + 1 + int(rev_no_offset)
+            displayer.update_seq_no_computed(revision_no)
+        except Exception as excinfo:
+            revision_no = -1
+            displayer.unable_to_compute_seq_no("-1", excinfo)
+        return revision_no
 
     def revision_number(self):
         # should through exception if not svn repo or svn is not installed
