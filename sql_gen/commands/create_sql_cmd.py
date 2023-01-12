@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 from pathlib import Path
 
@@ -117,8 +118,11 @@ class CreateSQLTaskCommand(object):
     def run(self):
         if not self.path:
             self.path = self._compute_path()
-        if os.path.exists(self.path) and not self._user_wants_to_override():
-            return
+        if os.path.exists(self.path):
+            if not self._user_wants_to_override():
+                return
+            else:
+                shutil.rmtree(self.path)  # remove task folder
 
         self.sqltask = SQLTask(self.path)
         self._create_sql()
@@ -205,7 +209,7 @@ class SQLTask(object):
             os.makedirs(self.path)
         filename = self._compute_filename(template)
         if filename:
-            with open(os.path.join(self.path, filename), "w+") as f:
+            with open(os.path.join(self.path, filename), "a+") as f:
                 f.write(self.table_data.strip())
         if template and template.filename.endswith(".groovy"):
             upgrade_file_base = (
