@@ -209,8 +209,14 @@ class SQLTask(object):
             os.makedirs(self.path)
         filename = self._compute_filename(template)
         if filename:
-            with open(os.path.join(self.path, filename), "a+") as f:
-                f.write(self.table_data.strip())
+            filepath = os.path.join(self.path, filename)
+            with open(filepath, "a+") as f:
+                content = self.table_data.strip()
+                if Path(filepath).exists():
+                    # separate when multiple tasks are run
+                    content = "\n\n" + content
+
+                f.write(content)
         if template and template.filename.endswith(".groovy"):
             upgrade_file_base = (
                 f"{self.module_name()}_{self.release_name()}_{self.task_name()}"
