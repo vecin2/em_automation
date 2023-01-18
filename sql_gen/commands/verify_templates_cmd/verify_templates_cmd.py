@@ -3,6 +3,7 @@ import shutil
 import sys
 import time
 from io import StringIO
+from pathlib import Path
 
 import pytest
 from jinja2 import Template
@@ -264,6 +265,7 @@ class TestTemplatesCommand(object):
         self._test_generator = None
         self.pytest = pytest
         self.displayer = TestTemplatesCommandDisplayer()
+        self.templates_path = templates_path
         self.test_loader = TestLoader(self.all_tests_path, templates_path)
         self.verbose_mode = verbose_mode
         self.test_group = test_group
@@ -306,7 +308,7 @@ class TestTemplatesCommand(object):
 
     @property
     def all_tests_path(self):
-        return self.app_project.paths["test_templates"].path
+        return str(Path(self.templates_path).parent / "test_templates")
 
     def run(self):
         start_time = time.time()
