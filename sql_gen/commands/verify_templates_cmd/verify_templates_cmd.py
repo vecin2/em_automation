@@ -315,6 +315,7 @@ class TestTemplatesCommand(object):
         if not os.path.exists(self.all_tests_path):
             self.displayer.test_folder_does_no_exist(self.all_tests_path)
             return
+        print(f"Test Templates loaded from '{self.all_tests_path}'")
         if self.verbose_mode == "-q":
             original_stdout = sys.stdout
             stdout_file = open(os.devnull, "w")
