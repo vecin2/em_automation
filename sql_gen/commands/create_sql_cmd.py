@@ -209,12 +209,12 @@ class SQLTask(object):
             os.makedirs(self.path)
         filename = self._compute_filename(template)
         if filename:
-            filepath = os.path.join(self.path, filename)
+            filepath = Path(os.path.join(self.path, filename))
             with open(filepath, "a+") as f:
                 content = self.table_data.strip()
-                if Path(filepath).exists():
-                    # separate when multiple tasks are run
-                    content = "\n\n" + content
+                if filepath.exists() and filepath.read_text():
+                    # separate with two lines when multiple tasks are run
+                    content = "\n\n\n" + content
 
                 f.write(content)
         if template and template.filename.endswith(".groovy"):
