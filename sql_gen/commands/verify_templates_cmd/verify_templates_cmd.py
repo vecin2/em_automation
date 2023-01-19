@@ -149,7 +149,10 @@ class TestGenerator(object):
 
     def get_builders(self, testfile):
         result = []
-        if not testfile.filepath.endswith("sql"):
+        testfile_lines = testfile.content.splitlines()
+        if not testfile.filepath.endswith("sql") or (
+            len(testfile_lines) > 1 and testfile_lines[1] == "--skip.run-on-db"
+        ):
             print("Generating expected-sql test for " + testfile.template_name())
             result.append(ExpectedSQLTestBuilder(self.emprj_path))
         elif self.test_type == "all":
