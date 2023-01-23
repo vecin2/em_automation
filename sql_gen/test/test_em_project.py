@@ -1,17 +1,11 @@
-import pytest
 import os
-from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.exceptions import (
-    ConfigFileNotFoundException,
-    EnvVarNotFoundException,
-    ConfigException,
-    InvalidEnvVarException,
-)
-from sql_gen.test.utils.emproject_test_util import (
-    FakeCCAdminClient,
-    FakeEMProjectBuilder,
-)
-from unittest.mock import patch
+
+import pytest
+
+from sql_gen.emproject import EMConfigID, EMProject
+from sql_gen.exceptions import ConfigException
+from sql_gen.test.utils.emproject_test_util import (FakeCCAdminClient,
+                                                    FakeEMProjectBuilder)
 
 
 def prj_builder(fs, root="/home/em"):

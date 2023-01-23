@@ -2,9 +2,9 @@ import os
 from collections import defaultdict
 
 import sql_gen
+from ccdev import ProjectHome
 from sql_gen.config import ConfigFile
-from sql_gen.exceptions import (CCAdminException, ConfigException,
-                                EnvVarNotFoundException)
+from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
 
 from .ccadmin import CCAdmin
@@ -19,74 +19,13 @@ class EMConfigID(object):
 
 PATHS = {
     "ccadmin": "bin",
+    "db_releases_file": "config/releases.xml",
     "sql_modules": "modules",
     "repo_modules": "repository/default",
     "config": "work/config",
     "show_config_txt": "work/config/show-config-txt",
 }
 MANDATORY_KEYS = ["ccadmin", "repo_modules"]
-
-
-ENV_VAR_NAME = "EM_CORE_HOME"
-
-
-def current_prj_path(env_vars):
-    em_root = get_em_root_from_cwd()
-
-    if em_root:
-        return em_root
-    elif ENV_VAR_NAME not in env_vars:
-        help_text = "It should contain the path of your current EM project."
-        raise EnvVarNotFoundException(ENV_VAR_NAME, help_text)
-
-    return env_vars[ENV_VAR_NAME]
-
-
-def get_em_root_from_cwd():
-    return get_em_root_from_path(repr(os.getcwd()))
-
-
-def get_em_root_from_path(path):
-    if is_em_root(path):
-        return path
-    parent = os.path.abspath(os.path.join(path, os.pardir))
-
-    if parent == path:
-        return ""
-
-    return get_em_root_from_path(parent)
-
-
-def is_em_root(path):
-    return (
-        os.path.exists(os.path.join(path, "bin"))
-        and os.path.exists(os.path.join(path, "config"))
-        and os.path.exists(os.path.join(path, "components"))
-        and os.path.exists(os.path.join(path, "repository"))
-    )
-
-
-def get_prj_home(env_vars):
-    result = current_prj_path(env_vars)
-
-    if not os.path.exists(result):
-        error_msg = (
-            "Environment variable '"
-            + ENV_VAR_NAME
-            + "' exists "
-            + "but it points to an invalid path"
-        )
-        raise ValueError(error_msg)
-
-    return result
-
-
-def emproject_home(env_vars=os.environ):
-    try:
-        return get_prj_home(env_vars)
-    except Exception as excinfo:
-        sql_gen.logger.error(str(excinfo))
-        raise excinfo
 
 
 class EMProject(object):
@@ -101,13 +40,13 @@ class EMProject(object):
     @property
     def root(self):
         if not self._root:
-            self._root = emproject_home(self.env_vars)
+            self._root = ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
 
         return self._root
 
     def has_root(self):
         try:
-            emproject_home(self.env_vars)
+            ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
 
             return True
         except:

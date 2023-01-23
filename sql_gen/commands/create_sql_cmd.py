@@ -89,11 +89,11 @@ class CreateSQLTaskCommand(object):
     ):
         self._app_project = None
         self.env_vars = env_vars
+        self.path = path
         if context_builder is None:
             context_builder = ContextBuilder(self.app_project)
         if seq_generator is None:
             seq_generator = self._get_seq_generator(self.app_project.config)
-        self.path = path
         self.seq_generator = seq_generator
         self.context_builder = context_builder
         self.displayer = CreateSQLTaskDisplayer()
@@ -105,7 +105,7 @@ class CreateSQLTaskCommand(object):
 
     def _get_seq_generator(self, config):
         if config["sequence.generator"] == "svn":
-            return EMSvn()
+            return EMSvn(self.path)
         else:  # if "sequence.generator==timestamp"
             return TimeStampGenerator()
 
@@ -141,8 +141,8 @@ class CreateSQLTaskCommand(object):
 
         module_name = self.displayer.ask_for_sqlmodulename(options)
         sqltask_name = self.displayer.ask_for_sqltaskname(options)
-
-        release_name = self.app_project.config["db.release.version"]
+        release_name = self.app_project.get_db_release_version()
+        # release_name = self.app_project.get_latest_cre_db_release_version()
         return os.path.join(
             self.app_project.emproject.root,
             "modules/"

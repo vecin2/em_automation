@@ -1,7 +1,6 @@
-import pytest
 import os
-from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.emproject import emproject_home
+
+from sql_gen.emproject import EMProject
 from sql_gen.exceptions import CCAdminException
 
 
@@ -22,7 +21,6 @@ class FakeCCAdminClient(object):
         raise CCAdminException(error_msg)
 
 
-# from sql_gen.emproject import emproject_home,EMProject
 class FakeEMProjectBuilder:
     REPO_PATH = "repository/default"
 
@@ -53,19 +51,6 @@ class FakeEMProjectBuilder:
         self.fs.create_dir(os.path.join(self.root, "components"))
         self.fs.create_dir(os.path.join(self.root, "repository"))
 
-    def _config_env_machine_container(self, env_name, machine_name, container_name):
-        config_content = (
-            "emautomation.environment.name="
-            + env_name
-            + "\nemautomation.container.name="
-            + container_name
-            + "\nemautomation.machine.name="
-            + machine_name
-        )
-
-        self._create_file(EMProject.EMAUTOMATION_CONFIG_PATH, config_content)
-        return self
-
     def add_emautomation_config(self, config_content):
         self._create_file(
             self.emproject.emautomation_config_path(), contents=config_content
@@ -89,6 +74,9 @@ class FakeEMProjectBuilder:
         if module_name:
             self._create_dir(self.REPO_PATH + "/" + module_name + "/")
         return self
+
+    def add_config_environment(self, environment_name):
+        self._create_dir(f"config/environment.{environment_name}")
 
     def _exists(self, prj_relative_path):
         return os.path.exists(self._abs_path(prj_relative_path))

@@ -5,6 +5,7 @@ from io import StringIO
 import pytest
 import yaml
 
+from ccdev import ProjectHome
 from ccdev.command_factory import CommandFactory
 from ccdev.command_line_app import CommandLineSQLTaskApp
 from sql_gen.app_project import AppProject
@@ -13,7 +14,6 @@ from sql_gen.commands import (CreateSQLTaskCommand, PrintSQLToConsoleCommand,
 from sql_gen.commands.run_sql_cmd import RunSQLDisplayer
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.emproject import EMSvn
-from sql_gen.emproject.em_project import emproject_home
 from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
@@ -64,6 +64,9 @@ class AppRunner(FillTemplateAppRunner):
         self._create_file(self._app_path("core_config"), self._dict_to_str(config))
         return self
 
+    def appconfig(self):
+        return self.app_project().config
+
     def _em_path(self, key):
         return self.app_project().emproject.paths[key].path
 
@@ -105,7 +108,7 @@ class AppRunner(FillTemplateAppRunner):
         sys.stdin = StringIO(self._user_input_to_str())
         if not app:
             app = CommandLineSQLTaskApp(
-                self._make_command_factory(), logger=FakeLogger()
+                args_factory=self._make_command_factory(), logger=FakeLogger()
             )
         app.run()
 
@@ -158,6 +161,24 @@ class CommandTestFactory(CommandFactory):
         return self.run_sql_command
 
 
+class InitAppRunner(AppRunner):
+    def __init__(self, fs=None):
+        super().__init__(fs=fs)
+
+    def run(self, app=None):
+        self._run([".", "init"], app=app)
+        return self
+
+    def _make_command_factory(self):
+        return CommandFactory(self.env_vars)
+        # self.command = PrintSQLToConsoleCommand(
+        #     env_vars=self.env_vars,
+        #     context_builder=self.context_builder,
+        #     run_on_db=False,
+        # )
+        # return CommandTestFactory(print_to_console_command=self.command)
+
+
 class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self, fs=None):
         super().__init__(fs=fs)
@@ -168,7 +189,10 @@ class PrintSQLToConsoleAppRunner(AppRunner):
 
     def run_prod(self):
         self.run(
-            CommandLineSQLTaskApp(CommandFactory(self.env_vars), logger=FakeLogger())
+            CommandLineSQLTaskApp(
+                CommandFactory(ProjectHome(os.getcwd(), self.env_vars)),
+                logger=FakeLogger(),
+            )
         )
         return self
 
@@ -262,7 +286,7 @@ class TemplatesAppRunner(AppRunner):
 
     def _make_command_factory(self):
         templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
-        emprj_path = emproject_home(self.env_vars)
+        emprj_path = ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
         self.command = TestTemplatesCommand(
             FakePytest(),
             templates_path=templates_path,

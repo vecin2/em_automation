@@ -3,6 +3,7 @@ import sys
 
 import ccdev.docopt_parser as arg_parser
 import sql_gen
+from ccdev import ProjectHome
 from ccdev.command_factory import CommandFactory
 from sql_gen.app_project import AppProject
 
@@ -14,7 +15,9 @@ class SysArgParser(object):
     def parse(self):
         args = arg_parser.parse()
 
-        if args["create-sql"]:
+        if "init" in args and args["init"]:
+            return self.command_factory.make_create_sqltask_command(args)
+        elif args["create-sql"]:
             return self.command_factory.make_create_sqltask_command(args)
         elif args["print-sql"]:
             return self.command_factory.make_print_sql_to_console_command()
@@ -29,17 +32,16 @@ class SysArgParser(object):
         # else:
         #    return self.command_factory.make_interactive_shell_command(args)
 
-    def parse_args(self):
-        arguments = docopt(__doc__, version="dtask 0.1")
-        print(arguments)
-
-        return arguments
-
 
 class CommandLineSQLTaskApp(object):
     """"""
 
-    def __init__(self, args_factory=CommandFactory(os.environ), logger=None):
+    def __init__(
+        self,
+        project_home=ProjectHome(os.getcwd(), os.environ),
+        args_factory=CommandFactory(),
+        logger=None,
+    ):
         self.args_factory = args_factory
 
         if logger:

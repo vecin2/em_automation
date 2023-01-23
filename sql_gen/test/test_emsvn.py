@@ -31,7 +31,7 @@ env_vars = {"EM_CORE_HOME": "/home/em"}
 
 
 def test_emsvn_sets_local_url_from_env_vars():
-    emsvn = EMSvn(env_vars)
+    emsvn = EMSvn("/home/em")
     assert "/home/em" == emsvn.local_url
 
 
@@ -44,6 +44,7 @@ def test_revision_number_returns_remote_client_entry_revision():
     fake_svnclient_factory.add_local(local_url, local_svnclient)
     fake_svnclient_factory.add_remote(remote_url, remote_svnclient)
 
-    emsvn = EMSvn(env_vars, fake_svnclient_factory)
+    emsvn = EMSvn("/home/em", fake_svnclient_factory)
 
-    assert 3 == emsvn.revision_number()
+    result = emsvn.revision_number()
+    assert 3 == result

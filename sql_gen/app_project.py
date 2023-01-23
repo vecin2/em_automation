@@ -192,3 +192,26 @@ class AppProject(object):
             self._logger = logging.getLogger("app_logger")
             print("Default logs dir is: " + self.paths["logs"].path)
         return self._logger
+
+    def get_db_release_version(self):
+        db_release_version = self._get_db_release_version_from_properties()
+        if db_release_version:
+            return db_release_version
+        return self._get_db_release_version_from_file()
+
+    def _get_db_release_version_from_properties(self):
+        if "db.release.version" in self.config:
+            return self.config["db.release.version"]
+        return ""
+
+    def _get_db_release_version_from_file(self):
+        # read releases.xml starting from last row find the first row's value where after is contained within cre.module.list property
+        latest_release = ""
+        with open(self.emproject.paths["db_releases_file"].path) as f:
+            # Example release.xml line:
+            # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
+            for line in f:
+                splitted_value = line.split('value="')
+                if len(splitted_value) > 1:
+                    latest_release = splitted_value[1].split('"')[0]
+        return latest_release

@@ -1,3 +1,5 @@
+from docopt import docopt
+
 import sql_gen
 
 help_message = """
@@ -18,7 +20,6 @@ Options:
     --reuse-tests           It runs tests under .tmp folder without recreate them.
     -h --help               Show usage examples
 """
-from docopt import docopt
 
 
 def parse():
