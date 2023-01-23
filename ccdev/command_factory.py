@@ -17,13 +17,19 @@ class CommandFactory(object):
         return InitCommand()
 
     def make_print_sql_to_console_command(self):
-        return PrintSQLToConsoleCommand(self.env_vars)
+        return PrintSQLToConsoleCommand(
+            emprj_path=self.emprj_path, templates_path=self.templates_path()
+        )
+        # self.templates_path = EMTemplatesEnv().extract_templates_path(env_vars)
+
+    def templates_path(self):
+        return EMTemplatesEnv().extract_templates_path(self.env_vars)
 
     def make_run_sql_command(self, args):
         template_name = args["--template"]
         return RunSQLCommand(
             emprj_path=self.emprj_path,
-            env_vars=self.env_vars,
+            templates_path=self.templates_path(),
             template_name=template_name,
         )
 

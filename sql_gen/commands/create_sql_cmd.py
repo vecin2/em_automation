@@ -168,6 +168,7 @@ class CreateSQLTaskCommand(object):
             listener=self,
             template_name=self.template_name,
             template_values=self.template_values,
+            templates_path=templates_path,
             run_once=self.run_once,
         )
         print_sql_cmd.run()

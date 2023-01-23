@@ -35,6 +35,7 @@ class AppRunner(FillTemplateAppRunner):
         super().__init__()
         self.fs = fs
         self.env_vars = {}
+        self.templates_path = None
         self.template_API = {"_database": FakeDB()}
         self.context_values = {}
         self.command = None
@@ -90,6 +91,7 @@ class AppRunner(FillTemplateAppRunner):
 
     def using_templates_under(self, templates_path):
         self.env_vars["SQL_TEMPLATES_PATH"] = templates_path
+        self.templates_path = templates_path
         return self
 
     def with_template_API(self, template_API):
@@ -199,8 +201,12 @@ class PrintSQLToConsoleAppRunner(AppRunner):
     def _make_command_factory(self):
         # we are not passing a real context with database
         # so we dont want to 'run_on_db'
+        if not self.templates_path:
+            self.templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
+
         self.command = PrintSQLToConsoleCommand(
             env_vars=self.env_vars,
+            templates_path=self.templates_path,
             context_builder=self.context_builder,
             run_on_db=False,
         )
@@ -432,7 +438,7 @@ class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
 
     def _make_command_factory(self):
         self.command = RunSQLCommand(
-            env_vars=self.env_vars,
+            templates_path=self.templates_path,
             context_builder=self.context_builder,
             displayer=self.displayer,
         )

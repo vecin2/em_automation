@@ -18,13 +18,17 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         self,
         emprj_path=None,
         env_vars=os.environ,
+        templates_path=None,
         context_builder=None,
         displayer=RunSQLDisplayer(),
         template_name=None,
     ):
         # We dont want to run the SQL on print as this command runs it as well
         super().__init__(
-            emprj_path=emprj_path, env_vars=env_vars, context_builder=context_builder
+            emprj_path=emprj_path,
+            templates_path=templates_path,
+            env_vars=env_vars,
+            context_builder=context_builder,
         )
         self.displayer = displayer
         self.env_vars = env_vars

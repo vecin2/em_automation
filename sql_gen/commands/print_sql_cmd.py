@@ -1,12 +1,10 @@
 import os
 
-from sql_gen.app_project import AppProject
 from sql_gen.create_document_from_template_command import \
     CreateDocumentFromTemplateCommand
 from sql_gen.database.sqlparser import SQLParser
 from sql_gen.exceptions import DatabaseError
 from sql_gen.sqltask_jinja.context import ContextBuilder
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
 class PrintSQLToConsoleDisplayer(object):
@@ -50,12 +48,8 @@ class PrintSQLToConsoleCommand(object):
         if context_builder is None:
             if emprj_path:
                 context_builder = ContextBuilder(emprj_path=emprj_path)
-            else:
-                context_builder = ContextBuilder(AppProject(env_vars=env_vars))
         if templates_path:
             self.templates_path = templates_path
-        else:
-            self.templates_path = EMTemplatesEnv().extract_templates_path(env_vars)
         self.context_builder = context_builder
         self.context_builder.addon_values.update(template_values)
         self.context = None
