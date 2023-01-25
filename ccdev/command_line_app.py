@@ -1,4 +1,3 @@
-import os
 import sys
 
 import ccdev.docopt_parser as arg_parser
@@ -38,17 +37,28 @@ class CommandLineSQLTaskApp(object):
 
     def __init__(
         self,
-        project_home=ProjectHome(os.getcwd(), os.environ),
-        args_factory=CommandFactory(),
+        project_home=None,
+        args_factory=None,
         logger=None,
     ):
         self.args_factory = args_factory
 
+        self.emprj_path = project_home.path()
         if logger:
             AppProject.set_logger(logger)
         else:
-            AppProject(os.environ).setup_logger()
+            AppProject(emprj_path=project_home.path()).setup_logger()
         self._logger = logger
+        self.last_command_run = None
+
+    @staticmethod
+    def build_app(cwd, env_vars):
+
+        app = CommandLineSQLTaskApp(
+            project_home=ProjectHome(cwd, env_vars),
+            args_factory=CommandFactory(ProjectHome(cwd, env_vars)),
+        )
+        return app
 
     def run(self):
         try:
@@ -62,3 +72,4 @@ class CommandLineSQLTaskApp(object):
         sql_gen.logger.info("Starting application with params: " + str(sys.argv))
         command = SysArgParser(self.args_factory).parse()
         command.run()
+        self.last_command_run = command

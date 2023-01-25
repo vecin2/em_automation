@@ -29,7 +29,9 @@ class ProjectHome:
                 "Environment variable '"
                 + ENV_VAR_NAME
                 + "' exists "
-                + "but it points to an invalid path"
+                + "but it points to '"
+                + result
+                + "' which is an invalid path"
             )
             raise ValueError(error_msg)
 
@@ -41,7 +43,8 @@ class ProjectHome:
         if em_root:
             return em_root
         elif ENV_VAR_NAME not in self.env_vars:
-            help_text = "It should contain the path of your current EM project."
+            help_text = "fatal: This command should be run within an EM project folder or any of sub children. Alternatively an env var  “EM_CORE_HOME” pointing to your current EM project."
+            raise ValueError(help_text)
             raise EnvVarNotFoundException(ENV_VAR_NAME, help_text)
 
         return self.env_vars[ENV_VAR_NAME]

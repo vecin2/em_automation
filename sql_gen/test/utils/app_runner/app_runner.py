@@ -1,6 +1,8 @@
 import os
+import re
 import sys
 from io import StringIO
+from pathlib import Path
 
 import pytest
 import yaml
@@ -9,13 +11,10 @@ from ccdev import ProjectHome
 from ccdev.command_factory import CommandFactory
 from ccdev.command_line_app import CommandLineSQLTaskApp
 from sql_gen.app_project import AppProject
-from sql_gen.commands import (CreateSQLTaskCommand, PrintSQLToConsoleCommand,
-                              RunSQLCommand, TestTemplatesCommand)
 from sql_gen.commands.run_sql_cmd import RunSQLDisplayer
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.emproject import EMSvn
 from sql_gen.sqltask_jinja.context import ContextBuilder
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 
@@ -36,15 +35,18 @@ class AppRunner(FillTemplateAppRunner):
         self.fs = fs
         self.env_vars = {}
         self.templates_path = None
-        self.template_API = {"_database": FakeDB()}
+        self.template_API = {}
         self.context_values = {}
         self.command = None
         self._app_project = None
+        self.emproject_path = None
+        self.emproject = None
+        self.app = None
 
     def add_template(self, filepath, content):
         dirname = os.path.dirname(filepath)
         name = os.path.basename(filepath)
-        path = EMTemplatesEnv().get_templates_path(self.env_vars)
+        path = self.templates_path
         full_dir = os.path.join(path, dirname)
         self._create_file(os.path.join(full_dir, name), content)
         return self
@@ -57,8 +59,24 @@ class AppRunner(FillTemplateAppRunner):
         FakeEMProjectBuilder(self.fs, root=path).make_valid_em_folder_layout()
         return self
 
+    def with_emproject(self, emproject):
+        self.emproject_path = emproject.root
+        self.emprj_path = emproject.root
+        self.emproject = emproject
+        os.chdir(emproject.root)
+        return self
+
+    def build_app(self):
+        self.app = CommandLineSQLTaskApp(
+            project_home=ProjectHome(os.getcwd(), self.env_vars),
+            args_factory=CommandFactory(ProjectHome(os.getcwd(), self.env_vars)),
+            logger=FakeLogger(),
+        )
+        return self.app
+
     def with_emproject_under(self, emproject_path):
         self.env_vars["EM_CORE_HOME"] = emproject_path
+        self.emproject_path = emproject_path
         return self
 
     def with_app_config(self, config):
@@ -76,7 +94,7 @@ class AppRunner(FillTemplateAppRunner):
 
     def app_project(self):
         if not self._app_project:
-            self._app_project = AppProject(env_vars=self.env_vars)
+            self._app_project = AppProject(emprj_path=self.emproject_path)
         return self._app_project
 
     def _dict_to_str(self, config):
@@ -92,6 +110,7 @@ class AppRunner(FillTemplateAppRunner):
     def using_templates_under(self, templates_path):
         self.env_vars["SQL_TEMPLATES_PATH"] = templates_path
         self.templates_path = templates_path
+        self.fs.create_dir(templates_path)
         return self
 
     def with_template_API(self, template_API):
@@ -108,6 +127,7 @@ class AppRunner(FillTemplateAppRunner):
     def _run(self, args, app=None):
         sys.argv = args
         sys.stdin = StringIO(self._user_input_to_str())
+
         if not app:
             app = CommandLineSQLTaskApp(
                 args_factory=self._make_command_factory(), logger=FakeLogger()
@@ -115,22 +135,24 @@ class AppRunner(FillTemplateAppRunner):
         app.run()
 
     def _user_input_to_str(self):
-        return "\n".join([input for input in self.inputs])
+        result = "\n".join([input for input in self.inputs])
+        self.inputs.clear()  # so if runs again it doe not repit inputs
+        return result
 
     def assert_rendered_sql(self, expected_sql):
         assert expected_sql == self.command.sql_printed()
         return self
 
-    def assert_all_input_was_read(self):
-        with pytest.raises(EOFError) as excinfo:
-            input("check")
-        assert "EOF" in str(excinfo.value)
+    def assert_printed_sql(self, expected_sql):
+        assert expected_sql == self.app.last_command_run.sql_printed()
         return self
 
-
-class DummyEnvironment(object):
-    def list_templates(self):
-        return []
+    def assert_all_input_was_read(self):
+        with pytest.raises(EOFError) as excinfo:
+            test = input()
+            print("Unexpected input: " + test)
+        assert "EOF" in str(excinfo.value)
+        return self
 
 
 class CommandTestFactory(CommandFactory):
@@ -185,32 +207,9 @@ class PrintSQLToConsoleAppRunner(AppRunner):
     def __init__(self, fs=None):
         super().__init__(fs=fs)
 
-    def run(self, app=None):
-        self._run([".", "print-sql"], app=app)
+    def print_sql(self, app=None):
+        self._run([".", "print-sql"], self.build_app())
         return self
-
-    def run_prod(self):
-        self.run(
-            CommandLineSQLTaskApp(
-                CommandFactory(ProjectHome(os.getcwd(), self.env_vars)),
-                logger=FakeLogger(),
-            )
-        )
-        return self
-
-    def _make_command_factory(self):
-        # we are not passing a real context with database
-        # so we dont want to 'run_on_db'
-        if not self.templates_path:
-            self.templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
-
-        self.command = PrintSQLToConsoleCommand(
-            env_vars=self.env_vars,
-            templates_path=self.templates_path,
-            context_builder=self.context_builder,
-            run_on_db=False,
-        )
-        return CommandTestFactory(print_to_console_command=self.command)
 
 
 class FakeSvnClient(EMSvn):
@@ -232,37 +231,21 @@ class FakeClipboard:
 
 
 class CreateSQLTaskAppRunner(AppRunner):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, fs=None):
+        super().__init__(fs=fs)
         self.rev_no = "0"
         self.taskpath = ""
         self.clipboard = FakeClipboard()
 
-    def _make_command_factory(self):
-        self.command = CreateSQLTaskCommand(
-            self.env_vars,
-            self.context_builder,
-            FakeSvnClient(self.rev_no),
-            self.clipboard,
-        )
-        return CommandTestFactory(create_sqltask_command=self.command)
+    def create_sql(self, sqltask_path=None, template=None):
+        self.taskpath = sqltask_path
+        params = [".", "create-sql"]
 
-    def with_svn_rev_no(self, rev_no):
-        self.rev_no = rev_no
-        return self
-
-    def with_sql_modules(self, repo_modules):
-        for repo_module in repo_modules:
-            full_dir = os.path.join(self._em_path("sql_modules"), repo_module)
-            os.makedirs(full_dir)
-        return self
-
-    def run_create_sqltask(self, taskpath=None, template=None):
-        self.taskpath = taskpath
-        params = [".", "create-sql", taskpath]
+        if sqltask_path:
+            params.append(sqltask_path)
         if template:
-            params.append("--template, template")
-        self._run(params)
+            params.extend(["--template", template])
+        self._run(params, self.build_app())
         return self
 
     def exists(self, filepath, expected_content):
@@ -271,8 +254,11 @@ class CreateSQLTaskAppRunner(AppRunner):
         assert expected_content == s
         return self
 
-    def not_exists(self, filepath):
-        assert not os.path.exists(filepath)
+    def exists_regex(self, filepath, expected_content):
+        with open(filepath) as f:
+            text = f.read()
+        match = re.search(expected_content, text)
+        assert match.group()
         return self
 
     def assert_path_copied_to_sys_clipboard(self):
@@ -280,30 +266,17 @@ class CreateSQLTaskAppRunner(AppRunner):
         return self
 
 
-class FakePytest(object):
-    def main(params, directory):
-        """do nothing"""
-
-
 class TemplatesAppRunner(AppRunner):
     def __init__(self, fs, capsys=None):
         super().__init__(fs=fs)
         self.capsys = capsys
 
-    def _make_command_factory(self):
-        templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
-        emprj_path = ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
-        self.command = TestTemplatesCommand(
-            FakePytest(),
-            templates_path=templates_path,
-            emprj_path=emprj_path,
-            context_builder=self.context_builder,
-        )
-        return CommandTestFactory(test_sql_templates_commmand=self.command)
+    @property
+    def test_template_path(self):
+        return str(Path(self.templates_path).parent / "test_templates")
 
     def make_test_dir(self):
-        path = self._app_path("test_templates")
-        self.fs.create_dir(path)
+        self.fs.create_dir(self.test_template_path)
         return self
 
     def with_test_context_values(self, data):
@@ -315,10 +288,9 @@ class TemplatesAppRunner(AppRunner):
     def add_test(self, template_path, template_vars, content, template_vars_list=None):
         dirname = os.path.dirname(template_path)
         name = os.path.basename(template_path)
-        path = os.path.join(self._app_path("test_templates"), dirname)
+        path = os.path.join(self.test_template_path, dirname)
         test_data_object = self._get_template_vars(template_vars, template_vars_list)
         test_content = "-- " + str(test_data_object) + "\n" + content
-        # self.fs.create_file(os.path.join(path,name), contents=test_content)
         self._create_file(os.path.join(path, name), test_content)
         return self
 
@@ -329,39 +301,32 @@ class TemplatesAppRunner(AppRunner):
             return template_vars_list
 
     def run_test_render_sql(self):
-        self._run([".", "test-sql", "--tests=expected-sql"])
+        self._run([".", "test-sql", "--tests=expected-sql"], self.build_app())
         return self
 
     def run_test_with_db(self):
-        self._run([".", "test-sql", "--tests=run-on-db"])
+        self._run([".", "test-sql", "--tests=run-on-db"], self.build_app())
         return self
 
     def run_test_all(self):
-        self._run([".", "test-sql", "--tests=all"])
+        self._run([".", "test-sql", "--tests=all"], self.build_app())
         return self
 
     def run_one_test(self, test_name):
-        self._run([".", "test-sql", "--test-name=" + test_name])
+        self._run([".", "test-sql", "--test-name=" + test_name], self.build_app())
         return self
 
     def run_assertion_test(self, assertion_type):
         self._run([".", "test-sql", "--assertion=" + assertion_type])
         return self
 
-    def run(self):
-        self._run([".", "test-sql"])
+    def run(self, app=None):
+        self._run([".", "test-sql"], self.build_app())
         return self
 
-    def assert_no_of_gen_tests(self, expected_no_of_tests):
-        path = self._app_path("test_templates_tmp")
-        number_of_tests = len(
-            [
-                name
-                for name in os.listdir(path)
-                if os.path.isfile(os.path.join(path, name))
-            ]
-        )
-        assert expected_no_of_tests == number_of_tests
+    def test_sql(self):
+        self._run([".", "test-sql"], self.build_app())
+        return self
 
     def assert_message_printed(self, expected):
         captured = self.capsys.readouterr()
@@ -369,31 +334,13 @@ class TemplatesAppRunner(AppRunner):
         return self
 
     def generates_no_test(self):
-        assert not os.path.exists(self.command.generated_test_filepath())
+        assert not os.path.exists(self.app.last_command_run.generated_test_filepath())
 
     def assert_generated_tests(self, expected_source):
-        testfile = open(self.command.generated_test_filepath())
+        testfile = open(self.app.last_command_run.generated_test_filepath())
         test_content = testfile.read()
         testfile.close()
         assert expected_source.to_string() == test_content
-
-
-class FakeDB(object):
-    def __init__(self):
-        self.executed_sql = ""
-        self.fetch_returns = None
-
-    def execute(self, sql, commit=None, verbose="q"):
-        self.executed_sql += sql
-
-    def fetch(self, query):
-        return self.fetch_returns
-
-    def rollback(self):
-        self.executed_sql = ""
-
-    def clearcache(self):
-        """"""
 
 
 class FakeRunSQLDisplayer(RunSQLDisplayer):
@@ -412,12 +359,7 @@ class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
 
     def __init__(self, fs):
         super().__init__(fs=fs)
-        self.fakedb = FakeDB()
         self.displayer = FakeRunSQLDisplayer()
-
-    def assert_sql_executed(self, sql):
-        assert sql == self.fakedb.executed_sql
-        return self
 
     def assert_prints(self, expected_text):
         assert self.displayer.printed_text == expected_text
@@ -427,19 +369,16 @@ class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
         self.user_inputs("y")
         return self
 
-    def fetch_returns(self, sqltable):
-        self.fakedb.fetch_returns = sqltable
-        return self
-
     def run(self, app=None):
-        self.template_API["_database"] = self.fakedb
         self._run([".", "run-sql"], app=app)
         return self
 
-    def _make_command_factory(self):
-        self.command = RunSQLCommand(
-            templates_path=self.templates_path,
-            context_builder=self.context_builder,
-            displayer=self.displayer,
+    def run_sql(self):
+
+        self.app = CommandLineSQLTaskApp(
+            project_home=ProjectHome(os.getcwd(), self.env_vars),
+            args_factory=CommandFactory(ProjectHome(os.getcwd(), self.env_vars)),
+            logger=FakeLogger(),
         )
-        return CommandTestFactory(run_sql_command=self.command)
+        self.run(self.app)
+        return self

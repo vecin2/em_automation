@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from sql_gen.emproject import EMProject
 from sql_gen.exceptions import CCAdminException
@@ -37,19 +38,62 @@ class FakeEMProjectBuilder:
         self.ccadmin_client = FakeCCAdminClient(None)
         self.ccadmin_client.fake_emproject_builder = self
         self.fs.create_dir(root)
-        self.emproject = EMProject(
-            ccadmin_client=self.ccadmin_client, env_vars={"EM_CORE_HOME": root}
-        )
+        self.emproject = EMProject(emprj_path=root, ccadmin_client=self.ccadmin_client)
         self.config_map = {}
 
     def add_config_settings(self, config_id, settings_map):
         self.config_map[config_id] = settings_map
 
     def make_valid_em_folder_layout(self):
-        self.fs.create_dir(os.path.join(self.root, "bin"))
-        self.fs.create_dir(os.path.join(self.root, "config"))
-        self.fs.create_dir(os.path.join(self.root, "components"))
-        self.fs.create_dir(os.path.join(self.root, "repository"))
+        self._create_dir("bin")
+        self._create_dir("config")
+        self._create_dir("components")
+        self._create_dir("modules")
+        self._create_dir("repository")
+        return self
+
+    def base_setup(self):
+        self.make_valid_em_folder_layout()
+        self.make_app_config()
+        self.make_em_config()
+        return self
+
+    def make_app_config(self):
+        self._create_dir("project/sqltask/config")
+        config_text = """
+database.host=localhost
+database.user=user
+database.pass=password
+database.name=oracleCL
+database.port=1521
+database.type=oracle
+database.reporting.user=reporting_user
+database.reporting.pass=reporting_password
+"""
+        self._create_file(
+            "work/config/show-config-txt/localdev-localhost-ad.txt",
+            contents=config_text,
+        )
+
+    def make_em_config(self):
+
+        config_text = """
+#core properties
+environment.name=localdev
+container.name=ad
+machine.name=localhost
+db.release.version=PRJ01
+
+#it would be uses if the update.sequence number does not follow the pattern svn rev no + 1
+#svn.rev.no.offset=100
+
+# db.release.version=Du_01
+
+sequence.generator=timestamp
+"""
+        self._create_file(
+            "project/sqltask/config/core.properties", contents=config_text
+        )
 
     def add_emautomation_config(self, config_content):
         self._create_file(
@@ -88,7 +132,8 @@ class FakeEMProjectBuilder:
         return self.fs.create_file(self._abs_path(prj_relative_path), contents=contents)
 
     def _abs_path(self, prj_relative_path):
-        return os.path.join(self.root, prj_relative_path)
+        rootpath = Path(self.root)
+        return str((rootpath / prj_relative_path))
 
     def build(self):
         return self.emproject

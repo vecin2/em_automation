@@ -35,7 +35,6 @@ class PrintSQLToConsoleCommand(object):
 
     def __init__(
         self,
-        env_vars=os.environ,
         context_builder=None,
         emprj_path=None,
         templates_path=None,

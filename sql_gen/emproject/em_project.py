@@ -1,8 +1,6 @@
-import os
 from collections import defaultdict
 
 import sql_gen
-from ccdev import ProjectHome
 from sql_gen.config import ConfigFile
 from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
@@ -29,28 +27,12 @@ MANDATORY_KEYS = ["ccadmin", "repo_modules"]
 
 
 class EMProject(object):
-    def __init__(self, ccadmin_client=None, env_vars=None, emprj_path=None):
+    def __init__(self, ccadmin_client=None, emprj_path=None):
         self._config = None
-        self.env_vars = env_vars
-        self._root = emprj_path
+        self.root = emprj_path
         self._paths = None
         self._ccadmin_client = ccadmin_client
         self.default_config_id = None
-
-    @property
-    def root(self):
-        if not self._root:
-            self._root = ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
-
-        return self._root
-
-    def has_root(self):
-        try:
-            ProjectHome(cwd=os.getcwd(), env_vars=self.env_vars).path()
-
-            return True
-        except:
-            return False
 
     @property
     def paths(self):

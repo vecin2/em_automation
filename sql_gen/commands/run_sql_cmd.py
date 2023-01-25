@@ -27,7 +27,6 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         super().__init__(
             emprj_path=emprj_path,
             templates_path=templates_path,
-            env_vars=env_vars,
             context_builder=context_builder,
         )
         self.displayer = displayer

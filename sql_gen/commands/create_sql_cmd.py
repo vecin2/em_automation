@@ -11,7 +11,6 @@ from sql_gen.commands.print_sql_cmd import (PrintSQLToConsoleCommand,
                                             PrintSQLToConsoleDisplayer)
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.sqltask_jinja.context import ContextBuilder
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sql_gen.ui.utils import prompt_suggestions, select_string_noprompt
 
 groovy_update_xml = """
@@ -78,7 +77,6 @@ class CreateSQLTaskDisplayer(object):
 class CreateSQLTaskCommand(object):
     def __init__(
         self,
-        env_vars=os.environ,
         context_builder=None,
         seq_generator=None,
         clipboard=pyperclip,
@@ -86,9 +84,11 @@ class CreateSQLTaskCommand(object):
         template_name=None,
         template_values={},
         run_once=False,
+        emprj_path=None,
+        templates_path=None,
     ):
         self._app_project = None
-        self.env_vars = env_vars
+        self.emprj_path = emprj_path
         self.path = path
         if context_builder is None:
             context_builder = ContextBuilder(self.app_project)
@@ -102,17 +102,18 @@ class CreateSQLTaskCommand(object):
         self.template_name = template_name
         self.template_values = template_values
         self.run_once = run_once
+        self.templates_path = templates_path
 
     def _get_seq_generator(self, config):
         if config["sequence.generator"] == "svn":
-            return EMSvn(self.path)
+            return EMSvn(self.emprj_path)
         else:  # if "sequence.generator==timestamp"
             return TimeStampGenerator()
 
     @property
     def app_project(self):
         if not self._app_project:
-            self._app_project = AppProject(env_vars=self.env_vars)
+            self._app_project = AppProject(emprj_path=self.emprj_path)
         return self._app_project
 
     def run(self):
@@ -128,7 +129,7 @@ class CreateSQLTaskCommand(object):
         self._create_sql()
         self.sqltask.update_sequence_no = self._compute_update_seq_no()
         self.sqltask.write("")  # creates update.sequence
-        self.clipboard.copy(self.path)
+        # self.clipboard.copy(self.path)
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
 
     @property
@@ -161,14 +162,12 @@ class CreateSQLTaskCommand(object):
 
     def _create_sql(self):
         displayer = PrintSQLToConsoleDisplayer()
-        templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
         print_sql_cmd = PrintSQLToConsoleCommand(
             context_builder=self.context_builder,
-            env_vars=self.env_vars,
             listener=self,
             template_name=self.template_name,
             template_values=self.template_values,
-            templates_path=templates_path,
+            templates_path=self.templates_path,
             run_once=self.run_once,
         )
         print_sql_cmd.run()
@@ -180,8 +179,12 @@ class CreateSQLTaskCommand(object):
     def _compute_update_seq_no(self):
         self.displayer.computing_rev_no(self.seq_generator.name())
 
-        app_config = AppProject(env_vars=self.env_vars).config
-        return self.seq_generator.generate_seq_no(app_config, self.displayer)
+        app_config = AppProject(emprj_path=self.emprj_path).config
+        try:
+            result = self.seq_generator.generate_seq_no(app_config, self.displayer)
+        except Exception:
+            result = -1
+        return result
 
 
 class TimeStampGenerator(object):
@@ -201,8 +204,7 @@ class SQLTask(object):
 
     def write(self, sql, template=None):
         self._write_sql(sql, template)
-        if self.update_sequence_no:
-            self._write_update_sequence()
+        self._write_update_sequence()
 
     def _write_sql(self, text, template):
         self.table_data = text

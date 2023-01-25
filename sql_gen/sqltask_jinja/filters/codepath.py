@@ -1,10 +1,10 @@
 import os
 
-from sql_gen.sqltask_jinja.filters import PromptFilter
-from sql_gen.docugen.completer import PathCompleter
-from sql_gen.emproject import EMProject
-from sql_gen.app_project import AppProject
+from ccdev import ProjectHome
 from sql_gen import logger
+from sql_gen.app_project import AppProject
+from sql_gen.docugen.completer import PathCompleter
+from sql_gen.sqltask_jinja.filters import PromptFilter
 
 
 def codepath(value):
@@ -20,7 +20,9 @@ class CodepathFilter(PromptFilter):
         self.filter = jinja_filter
 
     def apply(self, prompt, context):
-        app = AppProject(env_vars=os.environ)
+        project_home = ProjectHome(os.getcwd(), os.environ)
+
+        app = AppProject(emprj_path=project_home.path())
         logger.debug("Applying CodePath filter to project :" + app.emproject.root)
         project_modules = app.emproject.paths["repo_modules"].path
         product_modules = app.product_layout()["repo_modules"].path

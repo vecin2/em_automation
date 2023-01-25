@@ -9,6 +9,7 @@ from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 class CommandFactory(object):
     def __init__(self, project_home=None):
+        self.emprj_path = None
         if project_home:
             self.env_vars = project_home.env_vars
             self.emprj_path = project_home.path()
@@ -36,10 +37,14 @@ class CommandFactory(object):
     def make_create_sqltask_command(self, args):
         path = args["<directory>"]
         template_name = args["--template"]
-        return CreateSQLTaskCommand(path=path, template_name=template_name)
+        return CreateSQLTaskCommand(
+            path=path,
+            templates_path=self.templates_path(),
+            template_name=template_name,
+            emprj_path=self.emprj_path,
+        )
 
     def make_test_sql_templates_command(self, args):
-        templates_path = EMTemplatesEnv().extract_templates_path(self.env_vars)
         emprj_path = self.emprj_path
         if args["-q"]:
             verbose_mode = "-q"
@@ -49,7 +54,7 @@ class CommandFactory(object):
             verbose_mode = "-v"
         return TestTemplatesCommand(
             self.make_pytest(),
-            templates_path=templates_path,
+            templates_path=self.templates_path(),
             emprj_path=emprj_path,
             verbose_mode=verbose_mode,
             test_group=args["--tests"],

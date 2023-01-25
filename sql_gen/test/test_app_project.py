@@ -6,9 +6,9 @@ from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 
 class FakeAppPrjBuilder(object):
-    def __init__(self, emproject, fs, env_vars=None):
+    def __init__(self, emproject, fs):
         self.emproject = emproject
-        self.app_project = AppProject(env_vars=env_vars)
+        self.app_project = AppProject(emprj_path=emproject.root)
         self.fs = fs
 
     def add_config(self, content):
@@ -39,7 +39,6 @@ database.type=oracle
 """
     em_project_home = "/home/em/my_project"
     config_id = EMConfigID("localdev", "localhost", "ad")
-    env_vars = {"EM_CORE_HOME": "/home/em/my_project"}
     em_project = (
         FakeEMProjectBuilder(fs, em_project_home)
         .add_config(config_id, emconfig_content)
@@ -53,7 +52,7 @@ container.name=ad
     queries_content = """
 v_names__by_ed=SELECT * FROM verb_name WHERE NAME='{}'"""
     prj = (
-        FakeAppPrjBuilder(em_project, fs, env_vars)
+        FakeAppPrjBuilder(em_project, fs)
         .add_config(config_content)
         .set_ad_queries(queries_content)
         .build()

@@ -1,13 +1,11 @@
 import os
 
-from ccdev import ProjectHome
-from ccdev.command_line_app import CommandFactory, CommandLineSQLTaskApp
+from ccdev.command_line_app import CommandLineSQLTaskApp
 
 
 def main():
-    app = CommandLineSQLTaskApp(
-        args_factory=CommandFactory(ProjectHome(os.getcwd(), os.environ))
-    )
+
+    app = CommandLineSQLTaskApp.build_app(os.getcwd(), os.environ)
     app.run()
 
 

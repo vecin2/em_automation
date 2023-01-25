@@ -1,9 +1,10 @@
-from . import globals as template_globals
-from . import filters as template_filters
-from sql_gen.app_project import AppProject
-from sql_gen.exceptions import EnvVarNotFoundException
-from sql_gen.docugen.env_builder import EnvBuilder
 import os
+
+from sql_gen.app_project import AppProject
+from sql_gen.docugen.env_builder import EnvBuilder
+
+from . import filters as template_filters
+from . import globals as template_globals
 
 
 class EMTemplatesEnv:
@@ -15,14 +16,14 @@ class EMTemplatesEnv:
             templates_path = env_vars[templates_path_env_name]
         else:
             try:
-                app_prj = AppProject(env_vars)
+                app_prj = AppProject(emprj_path=env_vars["EM_CORE_HOME"])
                 templates_path = app_prj.paths["templates"].path
             except:
                 error_msg = (
                     "Templates path can not be determined from current directory or from environment variables. "
-                    + "Please make sure you running this command from within an EM project folder. Otherwise, if you want to run it from anywhere within your filesystem, add '"
+                    + "Please make sure you are running this command from within an EM project folder. Otherwise, if you want to run it from anywhere within your filesystem, add '"
                     + em_prj_env_name
-                    + "' to your environment variables (so templates path can be computes) or, add '"
+                    + "' to your environment variables (so templates path can be computed) or, add '"
                     + templates_path_env_name
                     + "'."
                 )

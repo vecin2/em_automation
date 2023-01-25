@@ -27,9 +27,6 @@ class FakeSvnClient(object):
         return self.dictinfo
 
 
-env_vars = {"EM_CORE_HOME": "/home/em"}
-
-
 def test_emsvn_sets_local_url_from_env_vars():
     emsvn = EMSvn("/home/em")
     assert "/home/em" == emsvn.local_url
