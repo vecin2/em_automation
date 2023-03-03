@@ -1,11 +1,10 @@
 import os
 
-from sql_gen.app_project import AppProject
-from sql_gen.create_document_from_template_command import \
-    CreateDocumentFromTemplateCommand
+from sql_gen.create_document_from_template_command import (
+    ActionParser, InteractiveTemplateSelector, SelectTemplateLoader)
 from sql_gen.database.sqlparser import SQLParser
+from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.exceptions import DatabaseError
-from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
@@ -37,63 +36,48 @@ class PrintSQLToConsoleCommand(object):
 
     def __init__(
         self,
-        env_vars=os.environ,
         context_builder=None,
         emprj_path=None,
         templates_path=None,
         run_on_db=True,
         listener=None,
-        template_name=None,
-        template_values={},
-        run_once=None,
     ):
-        if context_builder is None:
-            if emprj_path:
-                context_builder = ContextBuilder(emprj_path=emprj_path)
-            else:
-                context_builder = ContextBuilder(AppProject(env_vars=env_vars))
-        if templates_path:
-            self.templates_path = templates_path
-        else:
-            self.templates_path = EMTemplatesEnv().extract_templates_path(env_vars)
+        self.templates_path = templates_path
         self.context_builder = context_builder
-        self.context_builder.addon_values.update(template_values)
         self.context = None
         self.listener = listener
         # If we are printing two templates, running the sql
         # allow the second template to see the modification made
         # by the first template  (kenyames, entities inserted, etc)
         self.run_on_db = run_on_db
-        self.template_name = template_name
-        self.run_once = run_once
 
     def run(self):
         if not self.context:
             self.context = self.context_builder.build()
 
-        self.doc_writer = PrintSQLToConsoleDisplayer()
-        self.doc_creator = CreateDocumentFromTemplateCommand(
-            self.templates_path,
+        self.console_printer = PrintSQLToConsoleDisplayer()
+        loader = SelectTemplateLoader(EMTemplatesEnv(self.templates_path))
+        template_filler = TemplateFiller()
+        self.interactive_selector = InteractiveTemplateSelector(
             self,
             self.context,
-            template_name=self.template_name,
-            run_once=self.run_once,
+            loader=loader,
+            parser=ActionParser(loader),
+            template_filler=template_filler,
         )
-        self.doc_creator.run()
+        self.interactive_selector.run()
         # pyperclip.copy(self.sql_printed())
         self.context["_database"].rollback()
 
     def write(self, content, template=None):
-        self.doc_writer.write(content)
+        self.console_printer.write(content)
         result = None
         if self.run_on_db and self._is_runnable_sql(template):
             try:
                 result = self._run_content_on_db(content)
                 self.context["_database"].clearcache()
-            except DatabaseError as e:
-                raise e
-            except Exception as e:
-                if input("Do you want to continue (Y/N)?") != "Y":
+            except (Exception, DatabaseError) as e:
+                if input("Do you want to continue (Y/N)?") == "N":
                     raise e
 
         if self.listener:
@@ -116,4 +100,4 @@ class PrintSQLToConsoleCommand(object):
         return extension == ".sql"
 
     def sql_printed(self):
-        return self.doc_writer.rendered_sql
+        return self.console_printer.rendered_sql

@@ -1,7 +1,8 @@
 import time
 
 import cx_Oracle
-import pyodbc 
+import pyodbc
+
 import sql_gen
 from sql_gen.database.sqlparser import RelativeIdLoader, SQLParser
 from sql_gen.database.sqltable import SQLRow, SQLTable
@@ -28,7 +29,7 @@ class Connector(object):
         self.database = database
         self.port = port
         self.dbtype = dbtype
-        self.sqlserver_driver =sqlserver_driver
+        self.sqlserver_driver = sqlserver_driver
         self.sqlserver_conn_str = sqlserver_conn_str
 
     def connect(self):
@@ -37,8 +38,7 @@ class Connector(object):
         except Exception as excinfo:
             sql_gen.logger.exception(excinfo)
             raise DatabaseError(
-                    "Unable to connect to database:\n"
-                + self._get_conn_str_params()+"\n"
+                "Unable to connect to database:\n" + self._get_conn_str_params() + "\n"
                 "Reason was: "
                 + str(excinfo)
                 + ".\nIf you change EM config properties, for the changes to be picked you need to run 'ccadmin show-config -Dformat=txt'"
@@ -48,10 +48,20 @@ class Connector(object):
             raise ValueError(self._get_conn_error_msg(self.dbtype))
         else:
             return cursor
+
     def _get_conn_str_params(self):
-        if self.dbtype =='sqlServer':
+        if self.dbtype == "sqlServer":
             return self._get_sqlserver_conn_str()
-        return  "name=" + self.database + "\n" +"port=" + str(self.port) + "\n" +"user=" + self.user
+        return (
+            "name="
+            + self.database
+            + "\n"
+            + "port="
+            + str(self.port)
+            + "\n"
+            + "user="
+            + self.user
+        )
 
     def do_connect(self):
         if self.dbtype == "sqlServer":
@@ -62,12 +72,25 @@ class Connector(object):
             return cx_Oracle.connect(self.user, self.password, dsn_tns)
         else:
             return None
+
     def _get_sqlserver_conn_str(self):
         if self.sqlserver_conn_str:
             return self.sqlserver_conn_str
         else:
-            return 'DRIVER={'+self.sqlserver_driver+'};SERVER='+self.server+','+self.port+';DATABASE='+self.user+';UID='+self.user+';PWD='+ self.password
-        
+            return (
+                "DRIVER={"
+                + self.sqlserver_driver
+                + "};SERVER="
+                + self.server
+                + ","
+                + self.port
+                + ";DATABASE="
+                + self.user
+                + ";UID="
+                + self.user
+                + ";PWD="
+                + self.password
+            )
 
     def _get_conn_error_msg(self, dbtype):
         help_msg = (
@@ -89,7 +112,10 @@ class EMDatabase(object):
         self.queries_cache = {}
 
     def rollback(self):
-        self._conn().rollback()
+        if (
+            self._connection
+        ):  # only true if query was run and there is something rollback
+            self._connection.rollback()
 
     def clearcache(self):
         self.queries_cache = {}

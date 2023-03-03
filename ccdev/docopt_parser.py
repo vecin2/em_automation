@@ -1,11 +1,13 @@
+from docopt import docopt
+
 import sql_gen
 
 help_message = """
 Usage:
     {appname} print-sql
-    {appname} create-sql [<directory>] [--template=<template_name>]
+    {appname} create-sql [<directory>] 
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]
-    {appname} run-sql [--template=<template_name>]
+    {appname} run-sql 
     {appname} | -h | --help
 
 Examples:
@@ -18,7 +20,6 @@ Options:
     --reuse-tests           It runs tests under .tmp folder without recreate them.
     -h --help               Show usage examples
 """
-from docopt import docopt
 
 
 def parse():

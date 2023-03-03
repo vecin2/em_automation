@@ -1,17 +1,9 @@
 import pytest
-import os
-from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.exceptions import (
-    ConfigFileNotFoundException,
-    EnvVarNotFoundException,
-    ConfigException,
-    InvalidEnvVarException,
-)
-from sql_gen.test.utils.emproject_test_util import (
-    FakeCCAdminClient,
-    FakeEMProjectBuilder,
-)
-from unittest.mock import patch
+
+from sql_gen.emproject import EMConfigID, EMProject
+from sql_gen.exceptions import ConfigException
+from sql_gen.test.utils.emproject_test_util import (FakeCCAdminClient,
+                                                    FakeEMProjectBuilder)
 
 
 def prj_builder(fs, root="/home/em"):
@@ -20,27 +12,6 @@ def prj_builder(fs, root="/home/em"):
 
 def make_valid_em_folder_layout(fs, root):
     return FakeEMProjectBuilder(fs, root).make_valid_em_folder_layout()
-
-
-def test_computes_root_cwd_is_em_root(fs):
-    make_valid_em_folder_layout(fs, "opt/em/project")
-    os.chdir("/opt/em/project")
-    assert "/opt/em/project" == EMProject({}).root
-
-
-def test_computes_root_when_cwd_is_em_subfolder(fs):
-    make_valid_em_folder_layout(fs, "opt/em/project")
-    os.chdir("/opt/em/project/config")
-    assert "/opt/em/project" == EMProject({}).root
-
-
-def test_it_uses_env_var_when_cwd_not_within_emproject(fs):
-    make_valid_em_folder_layout(fs, "opt/em/project")
-    os.chdir("/opt/em/")
-    assert (
-        "/opt/em/project"
-        == EMProject(env_vars={"EM_CORE_HOME": "/opt/em/project"}).root
-    )
 
 
 local_config_id = EMConfigID("localdev", "localhost", "ad")
@@ -108,7 +79,7 @@ def test_project_prefix_in_config_overrides_computation(fs):
 
 
 def make_emproject(root):
-    return EMProject(env_vars={"EM_CORE_HOME": root})
+    return EMProject(emprj_path=root)
 
 
 def test_config_path_depends_on_config_id(fs):
@@ -193,18 +164,3 @@ def test_product_layout(fs):
 
     em_project.set_default_config_id(config_id)
     assert "my_product/is/here" == em_project.product_layout().root
-
-
-@pytest.mark.skip
-def test_emautomation_config_throws_exception_if_file_not_there(fs):
-    em_project = EMProject("/home/em/my_project")
-    with pytest.raises(ConfigFileNotFound) as excinfo:
-        em_project._emautomation_config()
-    assert "Config file" in str(excinfo.value)
-
-
-@pytest.mark.skip
-def test_emautomation_config_throws_exception_if_prop_not_set(fs):
-    em_project = FakeEMProjectBuilder(fs).build()
-    em_project._emautomation_config()["some.strange.prop"]
-    assert "Property 'emautomation.server.name' has not been set" in "heello"

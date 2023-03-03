@@ -137,8 +137,6 @@ class RelativeIdLoader(object):
 
 
 class RelativeId(object):
-    relativeid_exp = "(?<=[^\w])@\w*\.\w*"
-
     def __init__(self, string, loader=None):
         self.string = string
         self.loader = loader

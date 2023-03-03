@@ -297,6 +297,7 @@ class TestTemplatesCommand(object):
 
     @property
     def tmp_testdir(self):
+        return str(Path(self.all_tests_path) / ".tmp")
         return self.app_project.paths["test_templates_tmp"].path
 
     def _tmp_folder(self):
@@ -323,6 +324,7 @@ class TestTemplatesCommand(object):
             original_stdout = sys.stdout
             stdout_file = open(os.devnull, "w")
             sys.stdout = stdout_file
+
         if not self.reuse_tests:
             self._recreate_tmp_folder()
             self._create_test_file(self._generate_all_tests())

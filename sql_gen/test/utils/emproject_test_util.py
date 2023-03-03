@@ -1,7 +1,7 @@
-import pytest
 import os
-from sql_gen.emproject import EMProject, EMConfigID
-from sql_gen.emproject import emproject_home
+from pathlib import Path
+
+from sql_gen.emproject import EMProject
 from sql_gen.exceptions import CCAdminException
 
 
@@ -22,7 +22,6 @@ class FakeCCAdminClient(object):
         raise CCAdminException(error_msg)
 
 
-# from sql_gen.emproject import emproject_home,EMProject
 class FakeEMProjectBuilder:
     REPO_PATH = "repository/default"
 
@@ -30,41 +29,86 @@ class FakeEMProjectBuilder:
         self,
         fs,
         root="/home/em",
-        env_name="localdev",
-        machine_name="localhost",
-        container_name="ad",
     ):
         self.fs = fs
         self.root = root
         self.ccadmin_client = FakeCCAdminClient(None)
         self.ccadmin_client.fake_emproject_builder = self
-        self.fs.create_dir(root)
-        self.emproject = EMProject(
-            ccadmin_client=self.ccadmin_client, env_vars={"EM_CORE_HOME": root}
-        )
+        self.emproject = EMProject(emprj_path=root, ccadmin_client=self.ccadmin_client)
         self.config_map = {}
+        self.environment_name = "localdev"
+        self.container_name = "ad"
+        self.machine_name = "localhost"
 
     def add_config_settings(self, config_id, settings_map):
         self.config_map[config_id] = settings_map
 
     def make_valid_em_folder_layout(self):
-        self.fs.create_dir(os.path.join(self.root, "bin"))
-        self.fs.create_dir(os.path.join(self.root, "config"))
-        self.fs.create_dir(os.path.join(self.root, "components"))
-        self.fs.create_dir(os.path.join(self.root, "repository"))
+        self._create_dir("bin")
+        self._create_dir("config")
+        self._create_dir("components")
+        self._create_dir("modules")
+        self._create_dir("repository")
+        return self
 
-    def _config_env_machine_container(self, env_name, machine_name, container_name):
-        config_content = (
-            "emautomation.environment.name="
-            + env_name
-            + "\nemautomation.container.name="
-            + container_name
-            + "\nemautomation.machine.name="
-            + machine_name
+    def base_setup(self):
+        self.make_valid_em_folder_layout()
+        self.make_app_config()
+        self.make_em_config()
+        return self
+
+    def make_app_config(self):
+        self._create_dir("project/sqltask/config")
+        config_text = """
+database.host=localhost
+database.user=user
+database.pass=password
+database.name=oracleCL
+database.port=1521
+database.type=oracle
+database.reporting.user=reporting_user
+database.reporting.pass=reporting_password
+"""
+        self._create_file(
+            self.ccadmin_config_path(),
+            contents=config_text,
         )
 
-        self._create_file(EMProject.EMAUTOMATION_CONFIG_PATH, config_content)
-        return self
+    def append_to_app_config(self, content):
+        self._append_to_file(self.core_config_path(), content)
+
+    def read_app_config(self):
+        with open(self._abs_path(self.ccadmin_config_path()), "r") as f:
+            content = f.read()
+        return content
+
+    def ccadmin_config_path(self):
+        return f"work/config/show-config-txt/{self.environment_name}-{self.machine_name}-{self.container_name}.txt"
+
+    def make_em_config(self):
+
+        config_text = """
+#core properties
+environment.name={environment_name}
+container.name={container_name}
+machine.name={machine_name}
+db.release.version=PRJ01
+
+#it would be uses if the update.sequence number does not follow the pattern svn rev no + 1
+#svn.rev.no.offset=100
+
+# db.release.version=Du_01
+
+sequence.generator=timestamp
+""".format(
+            environment_name=self.environment_name,
+            container_name=self.container_name,
+            machine_name=self.machine_name,
+        )
+        self._create_file(self.core_config_path(), contents=config_text)
+
+    def core_config_path(self):
+        return "project/sqltask/config/core.properties"
 
     def add_emautomation_config(self, config_content):
         self._create_file(
@@ -90,6 +134,9 @@ class FakeEMProjectBuilder:
             self._create_dir(self.REPO_PATH + "/" + module_name + "/")
         return self
 
+    def add_config_environment(self, environment_name):
+        self._create_dir(f"config/environment.{environment_name}")
+
     def _exists(self, prj_relative_path):
         return os.path.exists(self._abs_path(prj_relative_path))
 
@@ -99,8 +146,16 @@ class FakeEMProjectBuilder:
     def _create_file(self, prj_relative_path, contents):
         return self.fs.create_file(self._abs_path(prj_relative_path), contents=contents)
 
+    def _append_to_file(self, prj_relative_path, contents):
+        with open(self._abs_path(prj_relative_path), "a") as f:
+            f.write(contents)
+        # return self.fs.create_file(, contents=contents)
+
     def _abs_path(self, prj_relative_path):
-        return os.path.join(self.root, prj_relative_path)
+        rootpath = Path(self.root)
+        return str((rootpath / prj_relative_path))
 
     def build(self):
+        if not os.path.exists(self.root):
+            self.fs.create_dir(self.root)
         return self.emproject

@@ -29,6 +29,7 @@ class TraceUndefined(StrictUndefined):
 
 class FileSystemLoader(JinjaFileSystemLoader):
     def __init__(self, searchpath, encoding="utf-8", followlinks=False):
+        print(f"Templates will be loaded from '{searchpath}'")
         super().__init__(searchpath, encoding, followlinks)
 
     def list_templates(self):
@@ -51,6 +52,7 @@ class FileSystemLoader(JinjaFileSystemLoader):
                         or ".groovy" == extension
                     ):
                         found.add(template)
+
         return sorted(found)
 
 

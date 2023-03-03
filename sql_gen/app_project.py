@@ -26,7 +26,7 @@ MANDATORY_KEYS = ["config", "core_config", "ad_queries"]
 
 
 class AppProject(object):
-    def __init__(self, env_vars=None, emprj_path=None):
+    def __init__(self, emprj_path=None):
         self._config_file = None
         self._em_config = None
         self._ad_query_runner = None
@@ -34,7 +34,6 @@ class AppProject(object):
         self._emproject = None
         self._paths = None
         self._logger = None
-        self.env_vars = env_vars
         self.emprj_path = emprj_path
         self._addb = None
         self._rsdb = None
@@ -45,9 +44,7 @@ class AppProject(object):
     @property
     def emproject(self):
         if not self._emproject:
-            self._emproject = EMProject(
-                env_vars=self.env_vars, emprj_path=self.emprj_path
-            )
+            self._emproject = EMProject(emprj_path=self.emprj_path)
         return self._emproject
 
     @property
@@ -82,9 +79,6 @@ class AppProject(object):
                 self.paths["rs_queries"].path, self.rsdb
             )
         return self._rs_query_runner
-
-    def has_root(self):
-        return self.emproject.has_root()
 
     def product_layout(self):
         self.em_config()
@@ -171,8 +165,6 @@ class AppProject(object):
         return EMDatabase(connector)
 
     def _emconfig_id(self):
-        # initialises project using path on
-        # EM_CORE_HOME env variable
         return EMConfigID(
             self.config["environment.name"],
             self.config["machine.name"],
@@ -184,7 +176,7 @@ class AppProject(object):
         sql_gen.log.log.set_logger(logger)
 
     def setup_logger(self):
-        if not self._logger and self.has_root():
+        if not self._logger:
             if self.paths.exists("logging_config"):
                 log.setup_from_file(self.paths["logging_config"].path)
             else:
@@ -192,3 +184,26 @@ class AppProject(object):
             self._logger = logging.getLogger("app_logger")
             print("Default logs dir is: " + self.paths["logs"].path)
         return self._logger
+
+    def get_db_release_version(self):
+        db_release_version = self._get_db_release_version_from_properties()
+        if db_release_version:
+            return db_release_version
+        return self._get_db_release_version_from_file()
+
+    def _get_db_release_version_from_properties(self):
+        if "db.release.version" in self.config:
+            return self.config["db.release.version"]
+        return ""
+
+    def _get_db_release_version_from_file(self):
+        # read releases.xml starting from last row find the first row's value where after is contained within cre.module.list property
+        latest_release = ""
+        with open(self.emproject.paths["db_releases_file"].path) as f:
+            # Example release.xml line:
+            # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
+            for line in f:
+                splitted_value = line.split('value="')
+                if len(splitted_value) > 1:
+                    latest_release = splitted_value[1].split('"')[0]
+        return latest_release

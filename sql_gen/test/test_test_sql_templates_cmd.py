@@ -1,5 +1,5 @@
-import pytest
-from sql_gen.commands.verify_templates_cmd import TestFileParser, PythonModuleTemplate
+from sql_gen.commands.verify_templates_cmd import (PythonModuleTemplate,
+                                                   TestFileParser)
 
 
 def test_parse_template_values():
