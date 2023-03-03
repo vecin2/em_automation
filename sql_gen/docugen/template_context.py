@@ -1,5 +1,5 @@
-from jinja2 import Template
 from jinja2.utils import concat
+
 from sql_gen import logger
 
 
@@ -32,7 +32,6 @@ class TemplateContext:
         # otherwise it will use empty value instead of the default
         # this allows as well go back to the previous question
         result = {}
-        keys = self._vars.keys()
         for key, value in self._vars.items():
             if value:
                 result[key] = value

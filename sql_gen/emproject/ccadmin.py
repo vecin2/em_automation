@@ -1,5 +1,8 @@
-import sql_gen
 import os
+from pathlib import Path
+from platform import uname
+
+import sql_gen
 from sql_gen import logger
 from sql_gen.exceptions import CCAdminException
 
@@ -17,7 +20,11 @@ class CCAdmin(object):
         return result
 
     def _run_ccadmin(self, command_and_args):
-        result = os.system(self._ccadmin_file() + " " + command_and_args)
+        ccadmin_path = Path(self._ccadmin_file())
+        os.chdir(self.root)
+        command = ("./" if self.in_wsl() else "") + ccadmin_path.name
+
+        result = os.system(command + " " + command_and_args)
         if result == 0:
             return result
         raise CCAdminException(
@@ -36,7 +43,10 @@ class CCAdmin(object):
 
     def _ccadmin_file_ext(self):
         logger.debug("Checking OS name: " + os.name)
-        if os.name == "nt":
+        if os.name == "nt" or self.in_wsl():
             return "bat"
         else:
             return "sh"
+
+    def in_wsl(self) -> bool:
+        return "microsoft-standard" in uname().release

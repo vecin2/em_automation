@@ -1,6 +1,16 @@
 from sql_gen.emproject import EMSvn
 
 
+class FakeSvnClient(EMSvn):
+    def __init__(self, rev_no):
+        self.rev_no = rev_no
+
+    def revision_number(self):
+        if type(self.rev_no).__name__ == "str":
+            return self.rev_no
+        raise self.rev_no
+
+
 class FakeSvnClientFactory(object):
     def __init__(self):
         self.localsvnclients = {}

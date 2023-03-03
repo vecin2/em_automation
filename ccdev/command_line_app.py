@@ -8,7 +8,7 @@ from sql_gen.app_project import AppProject
 
 
 class SysArgParser(object):
-    def __init__(self, command_factory=CommandFactory()):
+    def __init__(self, command_factory=None):
         self.command_factory = command_factory
 
     def parse(self):
@@ -52,11 +52,14 @@ class CommandLineSQLTaskApp(object):
         self.last_command_run = None
 
     @staticmethod
-    def build_app(cwd, env_vars):
-
+    def build_app(cwd, env_vars, logger=None):
+        project_home = ProjectHome(cwd, env_vars)
         app = CommandLineSQLTaskApp(
-            project_home=ProjectHome(cwd, env_vars),
-            args_factory=CommandFactory(ProjectHome(cwd, env_vars)),
+            project_home=project_home,
+            args_factory=CommandFactory(
+                project_home.path(),
+            ),
+            logger=logger,
         )
         return app
 

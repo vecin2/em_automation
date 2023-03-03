@@ -143,6 +143,8 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(
     )
 
 
+# disable this feature until required
+@pytest.mark.skip
 def test_when_pass_template_does_not_prompt_for_template(app_runner, em_project, fs):
     sql = "INSERT INTO PERSON VALUES('{{name}}','{{lastname}}')"
     final_sql = "INSERT INTO PERSON VALUES('John','Smith')"
@@ -153,7 +155,7 @@ def test_when_pass_template_does_not_prompt_for_template(app_runner, em_project,
 
     app_runner.user_inputs("PRJCoreEmail").user_inputs("rewireEditEmail").user_inputs(
         "John"
-    ).user_inputs("Smith").saveAndExit().create_sql(
+    ).user_inputs("Smith").create_sql(
         template="create_customer.sql"
     ).assert_all_input_was_read().exists(
         "/fake/em/projects/my_project/modules/PRJCoreEmail/sqlScripts/oracle/updates/PRJ01/rewireEditEmail/tableData.sql",

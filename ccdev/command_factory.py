@@ -1,46 +1,56 @@
+import os
+
 import pytest
 
 from devtask.commands import ExtendProcessCommand
+from sql_gen.app_project import AppProject
 from sql_gen.commands import (CreateSQLTaskCommand, InitCommand,
                               PrintSQLToConsoleCommand, RunSQLCommand,
                               TestTemplatesCommand)
-from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sql_gen.sqltask_jinja.context import ContextBuilder
 
 
 class CommandFactory(object):
-    def __init__(self, project_home=None):
-        self.emprj_path = None
-        if project_home:
-            self.env_vars = project_home.env_vars
-            self.emprj_path = project_home.path()
+    def __init__(self, emprj_path=None):
+        self.emprj_path = emprj_path
+        self.context_builder = ContextBuilder(emprj_path=self.emprj_path)
 
     def make_init_command(self, args):
         return InitCommand()
 
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(
-            emprj_path=self.emprj_path, templates_path=self.templates_path()
+            emprj_path=self.emprj_path,
+            templates_path=self.templates_path,
+            context_builder=self.context_builder,
         )
-        # self.templates_path = EMTemplatesEnv().extract_templates_path(env_vars)
 
+    @property
     def templates_path(self):
-        return EMTemplatesEnv().extract_templates_path(self.env_vars)
+        try:
+            result = AppProject(self.emprj_path).em_config()["sqltask.library.path"]
+            if os.path.exists(result):
+                return result
+            else:
+                error_msg = f"'sqltask.library.path' points to an invalid path '{result}'.\nPlease add it to core.properties and make sure it point to a valid path."
+                raise ValueError(error_msg)
+
+        except KeyError:
+            error_msg = """'sqltask.library.path' not set. Please add it to core.properties and make sure it point to a valid path."""
+            raise ValueError(error_msg)
 
     def make_run_sql_command(self, args):
-        template_name = args["--template"]
         return RunSQLCommand(
             emprj_path=self.emprj_path,
-            templates_path=self.templates_path(),
-            template_name=template_name,
+            templates_path=self.templates_path,
+            context_builder=self.context_builder,
         )
 
     def make_create_sqltask_command(self, args):
         path = args["<directory>"]
-        template_name = args["--template"]
         return CreateSQLTaskCommand(
             path=path,
-            templates_path=self.templates_path(),
-            template_name=template_name,
+            templates_path=self.templates_path,
             emprj_path=self.emprj_path,
         )
 
@@ -54,7 +64,7 @@ class CommandFactory(object):
             verbose_mode = "-v"
         return TestTemplatesCommand(
             self.make_pytest(),
-            templates_path=self.templates_path(),
+            templates_path=self.templates_path,
             emprj_path=emprj_path,
             verbose_mode=verbose_mode,
             test_group=args["--tests"],

@@ -15,21 +15,42 @@ class TemplateVars(dict):
 
 
 class TemplateFiller(object):
-    def __init__(self, template):
-        logger.debug(
-            "Instantiating TemplateFiller for template '" + template.name + "'"
-        )
-        source = TemplateInliner(template).inline()
-        self.template = template.environment.from_string(source)
-        ast = self.template.environment.parse(source)
-        self.prompt_visitor = PromptVisitor(ast)
+    def __init__(self, template=None):
+        if template:
+            logger.debug(
+                "Instantiating TemplateFiller for template '" + template.name + "'"
+            )
+        self.set_template(template)
+
+    def _get_prompt_visitor(self):
+        if not self.prompt_visitor:
+            self.prompt_visitor = PromptVisitor(self._get_ast())
+        return self.prompt_visitor
+
+    def _get_ast(self):
+        return self.inline_template().environment.parse(self._get_template_source())
+
+    def set_template(self, template):
+        self._template = template
+        self._inline_template = None
+        self.prompt_visitor = None
+
+    def inline_template(self):
+        if not self._inline_template:
+            self._inline_template = self._template.environment.from_string(
+                self._get_template_source()
+            )
+        return self._inline_template
+
+    def _get_template_source(self):
+        return TemplateInliner(self._template).inline()
 
     def fill(self, initial_context):
         # every time we fill we clear global state with var names
         # that are executed
         TraceUndefined.clear_vars()
-        context = self.build_context(self.template, initial_context)
-        return self.template.render(self._remove_empties(context))
+        context = self.build_context(initial_context)
+        return self.inline_template().render(self._remove_empties(context))
 
     def _remove_empties(self, context):
         # we need to remove empties so default filters get applied
@@ -40,7 +61,7 @@ class TemplateFiller(object):
             context.pop(key, None)
         return context
 
-    def build_context(self, template, template_values):
+    def build_context(self, template_values):
         prompt = self.next_prompt(template_values)
         logger.debug(
             "About to build context starting with initial context:\n"
@@ -52,6 +73,7 @@ class TemplateFiller(object):
         return template_values
 
     def next_prompt(self, template_values={}):
-        context = TemplateContext(self.template, template_values)
+        self._get_prompt_visitor()
+        context = TemplateContext(self.inline_template(), template_values)
         TraceUndefined.clear_vars()
-        return self.prompt_visitor.next_prompt(context)
+        return self._get_prompt_visitor().next_prompt(context)

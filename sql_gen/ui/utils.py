@@ -72,7 +72,7 @@ def select_option(text, option_list, no_of_retries, default):
         option = match_options(user_input, option_list)
         counter += 1
     if not option:
-        raise ValueError("Too many wrong attempts")
+        raise ValueError("Attempts to select a valid option exceeded.")
     return option
 
 

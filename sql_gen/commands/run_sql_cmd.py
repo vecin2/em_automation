@@ -21,7 +21,6 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         templates_path=None,
         context_builder=None,
         displayer=RunSQLDisplayer(),
-        template_name=None,
     ):
         # We dont want to run the SQL on print as this command runs it as well
         super().__init__(
@@ -31,7 +30,6 @@ class RunSQLCommand(PrintSQLToConsoleCommand):
         )
         self.displayer = displayer
         self.env_vars = env_vars
-        self.template_name = template_name
         self.is_select_stmt = False
 
     def run(self):

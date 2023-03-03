@@ -12,22 +12,30 @@ def app_runner(fs):
 
 
 @pytest.fixture
-def em_project(fs):
+def project_builder(fs):
     em_root = "/fake/em/projects/my_project"
-    em_project = FakeEMProjectBuilder(fs, root=em_root).base_setup().build()
+    yield FakeEMProjectBuilder(fs, root=em_root)
+
+
+@pytest.fixture
+def em_project(fs, project_builder):
+    em_project = project_builder.base_setup().build()
     yield em_project
 
 
-def test_it_throws_exception_when_no_templates_path_define(app_runner):
-    with pytest.raises(ValueError) as excinfo:
-        app_runner.print_sql()
-    assert "should be run within an EM project folder" in str(excinfo.value)
-
-
-def test_it_throws_exception_when_templates_path_does_not_exist(app_runner, em_project):
+def test_it_throws_exception_when_no_templates_path_define(app_runner, em_project):
     with pytest.raises(ValueError) as excinfo:
         app_runner.with_emproject(em_project).print_sql()
-    assert "Templates path can not be determined" in str(excinfo.value)
+    assert "'sqltask.library.path' not set" in str(excinfo.value)
+
+
+def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
+    app_runner, em_project, project_builder
+):
+    project_builder.append_to_app_config("sqltask.library.path=/non/existing/path")
+    with pytest.raises(ValueError) as excinfo:
+        app_runner.with_emproject(em_project).print_sql()
+    assert "sqltask.library.path' points to an invalid path" in str(excinfo.value)
 
 
 def test_returns_empty_when_no_template_selected(app_runner, em_project, fs):

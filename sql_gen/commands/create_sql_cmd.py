@@ -83,7 +83,6 @@ class CreateSQLTaskCommand(object):
         path=None,
         template_name=None,
         template_values={},
-        run_once=False,
         emprj_path=None,
         templates_path=None,
     ):
@@ -101,7 +100,6 @@ class CreateSQLTaskCommand(object):
         self.sqltask = None
         self.template_name = template_name
         self.template_values = template_values
-        self.run_once = run_once
         self.templates_path = templates_path
 
     def _get_seq_generator(self, config):
@@ -165,10 +163,7 @@ class CreateSQLTaskCommand(object):
         print_sql_cmd = PrintSQLToConsoleCommand(
             context_builder=self.context_builder,
             listener=self,
-            template_name=self.template_name,
-            template_values=self.template_values,
             templates_path=self.templates_path,
-            run_once=self.run_once,
         )
         print_sql_cmd.run()
         return print_sql_cmd.sql_printed()
