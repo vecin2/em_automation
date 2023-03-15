@@ -29,10 +29,11 @@ class CCAdmin(object):
             return result
         raise CCAdminException(
             "Failed when running '"
-            + self._ccadmin_file()
+            + command
             + " "
             + command_and_args
-            + "'"
+            + "' from "
+            + os.getcwd()
         )
 
     def _ccadmin_file(self):
