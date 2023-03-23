@@ -73,7 +73,6 @@ class AppProject(object):
         if not self._ad_query_runner:
             self._ad_query_runner = QueryRunner.make_from_file(
                 self.library().db_queries("ad"),
-                # self.paths["ad_queries"].path,
                 self.addb,
             )
         return self._ad_query_runner
@@ -82,7 +81,8 @@ class AppProject(object):
     def rs_queryrunner(self):
         if not self._rs_query_runner:
             self._rs_query_runner = QueryRunner.make_from_file(
-                self.paths["rs_queries"].path, self.rsdb
+                self.library().db_queries("rs"),
+                self.rsdb,
             )
         return self._rs_query_runner
 
