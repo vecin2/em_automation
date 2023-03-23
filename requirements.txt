@@ -6,7 +6,7 @@ attrs==18.1.0
 cx_oracle==8.3.0
 #do not delete cython as builds that reuse this package might fail
 docopt==0.6.2
-future==0.17.1
+future==0.18.3
 fuzzyfinder==2.1.0
 Jinja2==2.10
 lxml==4.4.2
