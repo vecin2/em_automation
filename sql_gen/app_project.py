@@ -197,9 +197,9 @@ class AppProject(object):
         return ""
 
     def _get_db_release_version_from_file(self):
-        # read releases.xml starting from last row find the first row's value where after is contained within cre.module.list property
         latest_release = ""
         with open(self.emproject.paths["db_releases_file"].path) as f:
+            # Get value from last line of releases.xml
             # Example release.xml line:
             # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
             for line in f:
@@ -207,3 +207,6 @@ class AppProject(object):
                 if len(splitted_value) > 1:
                     latest_release = splitted_value[1].split('"')[0]
         return latest_release
+
+    def tasks_library_path(self):
+        return self.config["sqltask.library.path"]
