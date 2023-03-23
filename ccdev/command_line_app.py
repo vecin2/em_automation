@@ -14,8 +14,8 @@ class SysArgParser(object):
     def parse(self):
         args = arg_parser.parse()
 
-        if "init" in args and args["init"]:
-            return self.command_factory.make_create_sqltask_command(args)
+        if args["init"]:
+            return self.command_factory.make_init_command(args)
         elif args["create-sql"]:
             return self.command_factory.make_create_sqltask_command(args)
         elif args["print-sql"]:
