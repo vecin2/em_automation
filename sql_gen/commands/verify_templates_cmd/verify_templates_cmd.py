@@ -277,9 +277,7 @@ class TestTemplatesCommand(object):
     def _init_context_builder(self, app_project, context_builder):
         if not context_builder:
             context_builder = ContextBuilder(app_project)
-        test_context_values_filepath = self.app_project.paths[
-            "test_context_values"
-        ].path
+        test_context_values_filepath = self.app_project.library().test_context_values()
         if os.path.exists(test_context_values_filepath):
             context_builder.context_values_filepath = test_context_values_filepath
         return context_builder

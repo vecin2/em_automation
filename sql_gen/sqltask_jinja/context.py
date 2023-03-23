@@ -1,10 +1,10 @@
 import yaml
 
 import sql_gen
+from sql_gen.app_project import AppProject
+from sql_gen.config import ConfigFile
 from sql_gen.database.query_runner import QueryDict
 from sql_gen.database.sqlparser import RelativeIdLoader
-from sql_gen.config import ConfigFile
-from sql_gen.app_project import AppProject
 
 
 class Keynames(object):
@@ -68,15 +68,15 @@ class ContextBuilder(object):
                 "_rs": self.app.rs_queryrunner,
                 "_database": self.app.addb,
                 "_rsdatabase": self.app.rsdb,
-                "_Query": QueryDict(ConfigFile(self.app.paths["ad_queries"].path)),
-                "_RSQuery": QueryDict(ConfigFile(self.app.paths["rs_queries"].path)),
+                "_Query": QueryDict(ConfigFile(self.app.library().db_queries("ad"))),
+                "_RSQuery": QueryDict(ConfigFile(self.app.library().db_queries("rs"))),
                 "_emprj": self.app.emproject,
             }
         return self.template_API
 
     def get_context_values_filepath(self):
         if not self.context_values_filepath:
-            self.context_values_filepath = self.app.paths["context_values"].path
+            self.context_values_filepath = self.app.library().context_values()
         return self.context_values_filepath
 
     def build_context_values(self):

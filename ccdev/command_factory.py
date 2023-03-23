@@ -17,7 +17,7 @@ class CommandFactory(object):
         self.context_builder = ContextBuilder(emprj_path=self.emprj_path)
 
     def make_init_command(self, args):
-        return InitCommand()
+        return InitCommand(AppProject(self.emprj_path))
 
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(
