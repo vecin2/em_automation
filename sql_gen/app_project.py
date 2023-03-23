@@ -1,5 +1,8 @@
 import logging
 import os
+from pathlib import Path
+
+from st_librarian.sqltasklib import SQLTaskLib
 
 import sql_gen
 from sql_gen.config import ConfigFile
@@ -37,6 +40,7 @@ class AppProject(object):
         self.emprj_path = emprj_path
         self._addb = None
         self._rsdb = None
+        self._library = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -68,7 +72,9 @@ class AppProject(object):
     def ad_queryrunner(self):
         if not self._ad_query_runner:
             self._ad_query_runner = QueryRunner.make_from_file(
-                self.paths["ad_queries"].path, self.addb
+                self.library().db_queries("ad"),
+                # self.paths["ad_queries"].path,
+                self.addb,
             )
         return self._ad_query_runner
 
@@ -208,5 +214,10 @@ class AppProject(object):
                     latest_release = splitted_value[1].split('"')[0]
         return latest_release
 
-    def tasks_library_path(self):
+    def task_library_path(self):
         return self.config["sqltask.library.path"]
+
+    def library(self):
+        if not self._library:
+            self._library = SQLTaskLib(Path(self.task_library_path()))
+        return self._library

@@ -29,7 +29,7 @@ class CommandFactory(object):
     @property
     def templates_path(self):
         try:
-            library_path = AppProject(self.emprj_path).tasks_library_path()
+            library_path = AppProject(self.emprj_path).task_library_path()
             if library_path:
                 result = str(Path(library_path) / "templates")
             # test use fakefs which does work with Path().exists()
