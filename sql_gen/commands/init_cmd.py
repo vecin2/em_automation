@@ -84,7 +84,7 @@ class InitCommand(object):
         self.app_project = app_project
 
     def run(self):
-        print("Im running init")
+        print("Please enter the following values to configure sqltask")
         core_properties_path = self.app_project.paths["core_config"].path
         templates = {"template": core_properties_template}
         env = (
@@ -119,3 +119,4 @@ class InitCommand(object):
             )
             with open(core_properties_path, "+w") as f:
                 f.write(filled_template.lstrip())
+            print(f"Properties written to '{core_properties_path}'")
