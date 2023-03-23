@@ -194,9 +194,7 @@ def test_run_only_template_wrong_name_does_not_run_anything(app_runner, fs, em_p
     ).generates_no_test()
 
 
-# skip until we move test_context_values.yml inside library
-@pytest.mark.skip
-def test_runs_using_context_values_from_test_folder(app_runner, fs):
+def test_runs_using_context_values_from_library(app_runner, fs, em_project):
     data = {"_locale": "en-GB"}
 
     check_sql = ExpectedSQLTestTemplate().render(
@@ -205,13 +203,9 @@ def test_runs_using_context_values_from_test_folder(app_runner, fs):
         actual="select name from verb where locale ='en-GB'",
     )
 
-    app_runner.with_emproject_under("/em/prj").and_prj_built_under(
-        "/em/prj"
-    ).add_template(
+    app_runner.with_emproject(em_project).with_task_library("library").add_template(
         "verb.sql", "select name from verb where locale ='{{_locale}}'"
-    ).make_test_dir().with_test_context_values(
-        data
-    ).add_test(
+    ).make_test_dir().with_test_context_values(data).add_test(
         "test_verb.sql", {}, "select name from verb where locale ='en-GB'"
     ).run_test_render_sql().assert_generated_tests(
         check_sql

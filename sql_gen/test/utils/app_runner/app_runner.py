@@ -7,6 +7,7 @@ import pytest
 import yaml
 
 from ccdev.command_line_app import CommandLineSQLTaskApp
+from sql_gen.app_project import AppProject
 from sql_gen.commands.verify_templates_cmd import FillTemplateAppRunner
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
@@ -48,6 +49,7 @@ class AppRunner(FillTemplateAppRunner):
         self.emproject_path = emproject.root
         self.emprj_path = emproject.root
         self.emproject = emproject
+        self._app_project = AppProject(self.emprj_path)
         os.chdir(emproject.root)
         return self
 
@@ -119,7 +121,7 @@ class TemplatesAppRunner(AppRunner):
 
     def with_test_context_values(self, data):
         self.context_values = None
-        filepath = self._app_path("test_context_values")
+        filepath = self._app_project.library().test_context_values()
         self._create_file(filepath, yaml.dump(data))
         return self
 
