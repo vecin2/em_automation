@@ -16,7 +16,9 @@ class FakeAppPrjBuilder(object):
         return self
 
     def set_ad_queries(self, content):
-        self._add_file(self.app_project.paths["ad_queries"].path, content)
+        self.fs.create_file(
+            self.app_project.library().db_queries("ad"), contents=content
+        )
         return self
 
     def _add_file(self, prj_path, content):
@@ -48,6 +50,7 @@ database.type=oracle
 environment.name=localdev
 machine.name=localhost
 container.name=ad
+sqltask.library.path='/library'
 """
     queries_content = """
 v_names__by_ed=SELECT * FROM verb_name WHERE NAME='{}'"""

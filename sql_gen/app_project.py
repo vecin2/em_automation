@@ -1,5 +1,8 @@
 import logging
 import os
+from pathlib import Path
+
+from st_librarian.sqltasklib import SQLTaskLib
 
 import sql_gen
 from sql_gen.config import ConfigFile
@@ -37,6 +40,7 @@ class AppProject(object):
         self.emprj_path = emprj_path
         self._addb = None
         self._rsdb = None
+        self._library = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -68,7 +72,9 @@ class AppProject(object):
     def ad_queryrunner(self):
         if not self._ad_query_runner:
             self._ad_query_runner = QueryRunner.make_from_file(
-                self.paths["ad_queries"].path, self.addb
+                self.library().db_queries("ad"),
+                # self.paths["ad_queries"].path,
+                self.addb,
             )
         return self._ad_query_runner
 
@@ -197,9 +203,9 @@ class AppProject(object):
         return ""
 
     def _get_db_release_version_from_file(self):
-        # read releases.xml starting from last row find the first row's value where after is contained within cre.module.list property
         latest_release = ""
         with open(self.emproject.paths["db_releases_file"].path) as f:
+            # Get value from last line of releases.xml
             # Example release.xml line:
             # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
             for line in f:
@@ -207,3 +213,11 @@ class AppProject(object):
                 if len(splitted_value) > 1:
                     latest_release = splitted_value[1].split('"')[0]
         return latest_release
+
+    def task_library_path(self):
+        return self.config["sqltask.library.path"]
+
+    def library(self):
+        if not self._library:
+            self._library = SQLTaskLib(Path(self.task_library_path()))
+        return self._library

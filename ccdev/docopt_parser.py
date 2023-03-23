@@ -4,6 +4,7 @@ import sql_gen
 
 help_message = """
 Usage:
+    {appname} init
     {appname} print-sql
     {appname} create-sql [<directory>] 
     {appname} test-sql [-q|-v|-vv] [--tests=<group>] [--test-name=<test-file>][--reuse-tests]

@@ -30,13 +30,11 @@ def fake_pytest(mocker):
 def test_expects_test_folder_to_be_next_to_templates_folder_and_fails_if_not_exists(
     app_runner, em_project, fs
 ):
-    expected = "Test folder '/test_templates' does not exist.\n"
+    expected = "Test folder '/library/test_templates' does not exist.\n"
     sql = "SELECT * FROM CE_CUSTOMER"
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("list_customers.sql", sql).test_sql().assert_message_printed(
-        expected
-    )
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "list_customers.sql", sql
+    ).test_sql().assert_message_printed(expected)
 
 
 def test_test_name_not_matching_template_generates_unable_to_find_template_test(
@@ -49,9 +47,9 @@ def test_test_name_not_matching_template_generates_unable_to_find_template_test(
         template_name="greeting", query="hello John!", emprj_path=em_project.root
     )
     check_sql = expected_sql.add(run_on_db)
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("other_name.sql", "some template").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "other_name.sql", "some template"
+    ).make_test_dir().add_test(
         "test_greeting.sql", {}, "hello John!"
     ).test_sql().assert_generated_tests(
         check_sql
@@ -62,9 +60,9 @@ def test_groovy_extension_does_generate_run_on_db(app_runner, em_project, fs):
     expected_sql = ExpectedSQLTestTemplate().render(
         template_name="greeting", expected="hello John!", actual="hello John!"
     )
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("greeting.groovy", "hello John!").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "greeting.groovy", "hello John!"
+    ).make_test_dir().add_test(
         "test_greeting.groovy", {}, "hello John!"
     ).test_sql().assert_generated_tests(
         expected_sql
@@ -72,9 +70,9 @@ def test_groovy_extension_does_generate_run_on_db(app_runner, em_project, fs):
 
 
 def test_testname_not_sql_ext_does_not_run(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("greting.sql", "hello John!").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "greting.sql", "hello John!"
+    ).make_test_dir().add_test(
         "test_greeting.sqls", {}, "hello John!"
     ).test_sql().generates_no_test()
 
@@ -83,9 +81,9 @@ def test_generates_test_expected_sql_from_list(app_runner, fs, em_project):
     expected_sql = ExpectedSQLTestTemplate().render(
         template_name="greeting", expected="hello John!", actual="hello John!"
     )
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("greeting.sql", "hello {{name}}!").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "greeting.sql", "hello {{name}}!"
+    ).make_test_dir().add_test(
         "test_greeting.sql", None, "hello John!", ["John"]
     ).run_test_render_sql().assert_generated_tests(
         expected_sql
@@ -101,11 +99,9 @@ def test_generates_multiple_test_expected_sql(app_runner, fs, em_project):
     )
     expected_source = bye_test.add(hello_test)
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("hello.sql", "hello {{name}}!").add_template(
-        "bye.sql", "bye {{name}}!"
-    ).make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "hello.sql", "hello {{name}}!"
+    ).add_template("bye.sql", "bye {{name}}!").make_test_dir().add_test(
         "test_hello.sql", {"name": "Fred"}, "hello Fred!"
     ).add_test(
         "test_bye.sql", {"name": "Mark"}, "bye Mark!"
@@ -119,9 +115,9 @@ def test_generates_single_test_expected_sql(app_runner, fs, em_project):
     expected_sql = ExpectedSQLTestTemplate().render(
         template_name="greeting", expected="hello John!", actual="hello John!"
     )
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("greeting.groovy", "hello John!").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "greeting.groovy", "hello John!"
+    ).make_test_dir().add_test(
         "test_greeting.groovy", {}, "hello John!"
     ).run_test_render_sql().assert_generated_tests(
         expected_sql
@@ -133,9 +129,9 @@ def test_generates_single_test_run_query(app_runner, fs, em_project):
         template_name="verb", query="select name from verb", emprj_path=em_project.root
     )
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("verb.sql", "select {{column}} from verb").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "verb.sql", "select {{column}} from verb"
+    ).make_test_dir().add_test(
         "test_verb.sql", {"column": "name"}, "select name from verb"
     ).run_test_with_db().assert_generated_tests(
         verb_test
@@ -153,9 +149,9 @@ def test_generates_all(app_runner, fs, em_project):
     )
     expected_sql = check_sql.add(run_on_db)
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "templates"
-    ).add_template("verb.sql", "select {{column}} from verb").make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "verb.sql", "select {{column}} from verb"
+    ).make_test_dir().add_test(
         "test_verb.sql", {"column": "name"}, "select name from verb"
     ).run_test_all().assert_generated_tests(
         expected_sql
@@ -173,11 +169,9 @@ def test_run_only_template(app_runner, fs, em_project):
     )
     expected_sql = check_sql.add(run_on_db)
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("verb.sql", "select {{column}} from verb").add_template(
-        "verb2.sql", "select {{column}} from verb"
-    ).make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "verb.sql", "select {{column}} from verb"
+    ).add_template("verb2.sql", "select {{column}} from verb").make_test_dir().add_test(
         "test_verb.sql", {"column": "name"}, "select name from verb"
     ).add_test(
         "test_verb2.sql", {"column": "id"}, "select name from verb"
@@ -189,11 +183,9 @@ def test_run_only_template(app_runner, fs, em_project):
 
 
 def test_run_only_template_wrong_name_does_not_run_anything(app_runner, fs, em_project):
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("verb.sql", "select {{column}} from verb").add_template(
-        "verb2.sql", "select {{column}} from verb"
-    ).make_test_dir().add_test(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "verb.sql", "select {{column}} from verb"
+    ).add_template("verb2.sql", "select {{column}} from verb").make_test_dir().add_test(
         "test_verb.sql", {"column": "name"}, "select name from verb"
     ).add_test(
         "test_verb2.sql", {"column": "id"}, "select name from verb"

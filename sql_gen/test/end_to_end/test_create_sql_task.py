@@ -38,9 +38,9 @@ def do_connect(mocker, fake_connection):
 def test_creates_sqltask_when_path_passed_as_arg(app_runner, em_project, fs):
     sql = "INSERT INTO CE_CUSTOMER VALUES('{{name}}','{{lastname}}')"
     final_sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("list_customers.sql", sql)
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "list_customers.sql", sql
+    )
 
     app_runner.select_template(
         "list_customers.sql", {"name": "David", "lastname": "Garcia"}
@@ -54,9 +54,9 @@ def test_creates_sqltask_when_path_passed_as_arg(app_runner, em_project, fs):
 
 
 def test_sqltask_exists_user_cancels_then_does_not_create(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("dummy1.sql", "dummy1").add_template("dummy2.sql", "dummy2")
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "dummy1.sql", "dummy1"
+    ).add_template("dummy2.sql", "dummy2")
 
     app_runner.select_template("dummy1.sql", {}).saveAndExit().create_sql(
         "/em/prj/modules/module_A"
@@ -76,9 +76,9 @@ def test_sqltask_exists_user_cancels_then_does_not_create(app_runner, em_project
 
 
 def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("dummy1.sql", "dummy1").add_template("dummy2.sql", "dummy2")
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "dummy1.sql", "dummy1"
+    ).add_template("dummy2.sql", "dummy2")
 
     app_runner.select_template("dummy1.sql", {}).saveAndExit().create_sql(
         "/em/prj/modules/module_B"
@@ -105,11 +105,9 @@ def test_when_seq_generator_throws_exception_writes_negative_one_to_update_seque
     )
     mocked.side_effect = ValueError("Some mocked error")
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("dummy1.sql", "dummy1").select_template(
-        "dummy1.sql", {}
-    ).saveAndExit().create_sql(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "dummy1.sql", "dummy1"
+    ).select_template("dummy1.sql", {}).saveAndExit().create_sql(
         "/em/prj/modules/moduleB"
     )
     app_runner.exists(
@@ -124,9 +122,9 @@ def test_run_without_path_it_prompts_for_task_name_to_compute_path(
     final_sql = "INSERT INTO PERSON VALUES('John','Smith')"
 
     sqltask_path = None
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("list_customers.sql", sql)
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "list_customers.sql", sql
+    )
 
     app_runner.user_inputs("PRJCoreEmail").user_inputs(
         "rewireEditEmail"
@@ -149,9 +147,9 @@ def test_when_pass_template_does_not_prompt_for_template(app_runner, em_project,
     sql = "INSERT INTO PERSON VALUES('{{name}}','{{lastname}}')"
     final_sql = "INSERT INTO PERSON VALUES('John','Smith')"
 
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("create_customer.sql", sql)
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "create_customer.sql", sql
+    )
 
     app_runner.user_inputs("PRJCoreEmail").user_inputs("rewireEditEmail").user_inputs(
         "John"

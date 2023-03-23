@@ -42,9 +42,9 @@ def test_select_stmt_does_not_need_confirmation_and_is_cached(
         ["firstname", "lastname"], [["David", "Garcia"]]
     )
     sql = "SELECT * FROM CE_CUSTOMER"
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("list_customers.sql", sql).select_template(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "list_customers.sql", sql
+    ).select_template(
         "list_customers.sql", {}
     ).saveAndExit().run_sql().assert_printed_sql(
         sql
@@ -61,9 +61,9 @@ def test_insert_statement_needs_confirmation_and_executes_twice(
     fake_connection, app_runner, em_project, fs
 ):
     sql = "INSERT INTO CE_CUSTOMER VALUES('{name}','{lastname}')"
-    app_runner.with_emproject(em_project).using_templates_under(
-        "/templates"
-    ).add_template("list_customers.sql", sql).select_template(
+    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+        "list_customers.sql", sql
+    ).select_template(
         "list_customers.sql", {"name": "David", "lastname": "Garcia"}
     ).saveAndExit().confirmRun().run_sql().assert_printed_sql(
         sql

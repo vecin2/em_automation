@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 
@@ -28,9 +29,13 @@ class CommandFactory(object):
     @property
     def templates_path(self):
         try:
-            result = AppProject(self.emprj_path).em_config()["sqltask.library.path"]
-            if os.path.exists(result):
-                return result
+            library_path = AppProject(self.emprj_path).task_library_path()
+            if library_path:
+                result = str(Path(library_path) / "templates")
+            # test use fakefs which does work with Path().exists()
+            if result and os.path.exists(result):
+                return str(result)
+
             else:
                 error_msg = f"'sqltask.library.path' points to an invalid path '{result}'.\nPlease add it to core.properties and make sure it point to a valid path."
                 raise ValueError(error_msg)

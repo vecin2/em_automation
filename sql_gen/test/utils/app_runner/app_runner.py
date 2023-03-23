@@ -67,12 +67,14 @@ class AppRunner(FillTemplateAppRunner):
         with open(path, "w") as f:
             f.write(content)
 
-    def using_templates_under(self, templates_path):
+    def with_task_library(self, library_path):
         builder = FakeEMProjectBuilder(self.fs, root=self.emprj_path)
-        builder.append_to_app_config(f"\nsqltask.library.path={templates_path}")
+        builder.append_to_app_config(f"\nsqltask.library.path={library_path}")
+        templates_path = str(Path(library_path) / "templates")
         self.env_vars["SQL_TEMPLATES_PATH"] = templates_path
         self.templates_path = templates_path
-        self.fs.create_dir(templates_path)
+
+        self.fs.create_dir(self.templates_path)
         return self
 
     def _run(self, args, app=None):
