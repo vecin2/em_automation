@@ -21,7 +21,6 @@ class CommandFactory(object):
 
     def make_print_sql_to_console_command(self):
         return PrintSQLToConsoleCommand(
-            emprj_path=self.emprj_path,
             templates_path=self.templates_path,
             context_builder=self.context_builder,
         )
@@ -46,7 +45,6 @@ class CommandFactory(object):
 
     def make_run_sql_command(self, args):
         return RunSQLCommand(
-            emprj_path=self.emprj_path,
             templates_path=self.templates_path,
             context_builder=self.context_builder,
         )

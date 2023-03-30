@@ -7,11 +7,13 @@ import pyperclip
 from jinja2 import Environment
 
 from sql_gen.app_project import AppProject
+from sql_gen.commands.create_sql_cmd.task_prefix_generator import \
+    TaskPrefixGenerator
 from sql_gen.commands.print_sql_cmd import (PrintSQLToConsoleCommand,
                                             PrintSQLToConsoleDisplayer)
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.sqltask_jinja.context import ContextBuilder
-from sql_gen.ui.utils import prompt_suggestions, select_string_noprompt
+from sql_gen.ui.utils import prompt, prompt_suggestions, select_string_noprompt
 
 groovy_update_xml = """
 <project name="update" default="update">
@@ -47,9 +49,9 @@ class CreateSQLTaskDisplayer(object):
         text = "\nPlease enter the sql module name: "
         return prompt_suggestions(text, options)
 
-    def ask_for_sqltaskname(self, options):
-        text = "\nPlease enter the task name (e.g. overrideCustomer): "
-        return input(text)
+    def ask_for_sqltaskname(self, default=None):
+        text = "\nPlease enter the task name (e.g. 01_extendCustomer): "
+        return prompt(text, default=default)
 
     def display_sqltask_created_and_path_in_clipboard(self, filepath):
         print(
@@ -139,18 +141,28 @@ class CreateSQLTaskCommand(object):
         options = self._get_modules(prj_repo_modules_path)
 
         module_name = self.displayer.ask_for_sqlmodulename(options)
-        sqltask_name = self.displayer.ask_for_sqltaskname(options)
         release_name = self.app_project.get_db_release_version()
-        # release_name = self.app_project.get_latest_cre_db_release_version()
-        return os.path.join(
+        task_folder = os.path.join(
             self.app_project.emproject.root,
             "modules/"
             + module_name
             + "/sqlScripts/oracle/updates/"
             + release_name
-            + "/"
-            + sqltask_name,
+            + "/",
         )
+        sqltask_name = self.displayer.ask_for_sqltaskname(
+            default=self._get_current_prefix_number(task_folder)
+        )
+        return task_folder + sqltask_name
+
+    def _get_current_prefix_number(self, folder):
+        path = Path(folder)
+        if path.exists():
+            existing_task_folders = sorted(path.iterdir())
+            if existing_task_folders:
+                last_folder = existing_task_folders[-1]
+                return TaskPrefixGenerator().next(last_folder.name)
+        return ""
 
     def _get_modules(self, key_path):
         return next(os.walk(key_path))[1]

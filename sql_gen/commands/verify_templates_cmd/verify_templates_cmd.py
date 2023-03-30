@@ -394,7 +394,6 @@ class FileAppRunner(FillTemplateAppRunner):
         #'ru_on_db' to True
         self.print_sql_cmd = PrintSQLToConsoleCommand(
             context_builder=context_builder,
-            emprj_path=emprj_path,
             templates_path=templates_path,
             run_on_db=False,
         )
