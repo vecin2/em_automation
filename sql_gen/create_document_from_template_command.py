@@ -1,13 +1,14 @@
 from pathlib import Path
 
 from sql_gen.commands.test_sql_file import TestSQLFile
-from sql_gen.ui import MenuOption, select_option
+from sql_gen.ui import MenuOption, prompt_suggestions
 
 
 class TemplateSelectorDisplayer(object):
     def ask_for_template(self, options, default=""):
         text = "\nStart typing the template name('x' - Save && Exit): "
-        return select_option(text, options, 10, default)
+        # return self.select_option(text, options, 10, default)
+        return prompt_suggestions(text, options, default)
 
 
 class SelectTemplateLoader(object):
@@ -18,7 +19,7 @@ class SelectTemplateLoader(object):
         return self.environment.get_template(name)
 
     def load_test(self, name):
-        root_templates = Path(self.environment.loader.searchpath[0])
+        root_templates = Path(self.environment.loader().searchpath[0])
         relative_template_path = Path(name)
         test_name = "test_" + relative_template_path.name
         relative_test_path = relative_template_path.parent / test_name
@@ -78,14 +79,49 @@ class InteractiveTemplateSelector(object):
             self.writer.write(filled_template, template)
             template = self.select()
 
-    def select(self):
-        return self.parse_option(self.prompt_template(self.loader.list_options()))
+    def select(self, default=None):
+        return self.select_option(default)
 
     def parse_option(self, option):
-        return self.parser.parse(option)
+        template = self.parser.parse(option)
+        if option.info:
+            return self.select(default=str(option))
+        return template
 
     def prompt_template(self, options=None, default=None):
         return self.displayer.ask_for_template(options, default=default)
+
+    def select_option(self, default):
+        option = None
+        counter = 0
+        no_of_retries = 10
+        option_list = self.loader.list_options()
+        while option is None and counter < no_of_retries:
+            user_input = self.prompt_template(option_list, default)
+            option = self.match_options(user_input, option_list)
+            counter += 1
+        if counter == no_of_retries:
+            raise ValueError("Attempts to select a valid option exceeded.")
+        else:
+            return self.parse_option(option)
+
+    def match_options(self, input_entered, option_list):
+        input_entered, suffix = self.parse_suffix(input_entered, "_test")
+        for option in option_list:
+            # elif len(input_entered) > 1 and input_entered[-1] == "?":
+            if option.matches(input_entered):
+                return MenuOption(option.code, option.name, info=bool(suffix))
+        return None
+
+    def parse_suffix(self, input_entered, suffix):
+        info = None
+        if len(input_entered) > len(suffix) and input_entered[-len(suffix) :] == suffix:
+            info = suffix
+            # remove '_test' to match template name
+            input_entered = input_entered[: -len(suffix)]
+        else:
+            info = False
+        return input_entered, info
 
 
 class ActionParser:
@@ -95,9 +131,8 @@ class ActionParser:
     def parse(self, option):
         if option.code == "x":
             return None
-        if option.is_help:
+        if option.info:
             self.show_help(option.name)
-            return self.select(default=str(option))
         return self.loader.load_template(option.name)
 
     def show_help(self, template_name):
@@ -108,4 +143,3 @@ class ActionParser:
             print(
                 "No help defined for this template. You can define help by creating a test file under 'test_templates' folder"
             )
-        # testfile = self.test_loader.load_test(self.test_name)

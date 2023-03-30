@@ -26,3 +26,6 @@ class EMTemplatesEnv:
 
     def list_templates(self, extensions=None, filter_func=None):
         return self._get_environment().list_templates(extensions, filter_func)
+
+    def loader(self):
+        return self._get_environment().loader

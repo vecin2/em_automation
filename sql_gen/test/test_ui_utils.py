@@ -1,5 +1,11 @@
+from sql_gen.create_document_from_template_command import \
+    InteractiveTemplateSelector
 from sql_gen.ui import MenuOption
-from sql_gen.ui.utils import match_options
+
+
+def match_options(input_entered, option_list):
+    selector_displayer = InteractiveTemplateSelector()
+    return selector_displayer.match_options(input_entered, option_list)
 
 
 def test_match_option_by_code():
@@ -23,9 +29,9 @@ def test_match_option_by_code_and_name():
     assert second_option == match_options("2. second option", option_list)
 
 
-def test_match_option_with_question_mark():
+def test_match_option_with_test_suffix():
     first_option = MenuOption("1", "first option")
     second_option = MenuOption("2", "second option")
     option_list = [first_option, second_option]
-    second_option.is_help = True
-    assert second_option == match_options("2. second option?", option_list)
+    second_option.info = True
+    assert second_option == match_options("2. second option_test", option_list)

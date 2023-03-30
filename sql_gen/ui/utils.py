@@ -28,23 +28,21 @@ def prompt_suggestions(text, suggestions, default=""):
 
 
 class MenuOption(object):
-    def __init__(self, code, name, is_help=False):
+    def __init__(self, code, name, info=False):
         self.code = code
         self.name = name
-        self.is_help = is_help
+        self.info = info
 
     @staticmethod
     def parse(text):
         if text[-1] == "?":
-            is_help = True
+            info = True
         else:
-            is_help = False
+            info = False
         # not important code, what we really care is the help flag
-        return MenuOption(None, text, is_help)
+        return MenuOption(None, text, info)
 
     def matches(self, input_entered):
-        if input_entered[-1] == "?":
-            input_entered = input_entered[:-1]  # remove '?' to match
         if (
             self.code == input_entered
             or self.name == input_entered
@@ -60,7 +58,7 @@ class MenuOption(object):
         return (
             self.code == other.code
             and self.name == other.name
-            and self.is_help == other.is_help
+            and self.info == other.info
         )
 
 
@@ -94,14 +92,3 @@ def select_string_noprompt(text, string_list):
             result = user_input
 
     return result
-
-
-def match_options(input_entered, option_list):
-    for option in option_list:
-        if option.matches(input_entered):
-            if input_entered[-1] == "?":
-                is_help = True
-            else:
-                is_help = False
-            return MenuOption(option.code, option.name, is_help=is_help)
-    return None
