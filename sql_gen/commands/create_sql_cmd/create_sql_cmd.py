@@ -49,8 +49,17 @@ class CreateSQLTaskDisplayer(object):
         text = "\nPlease enter the sql module name: "
         return prompt_suggestions(text, options)
 
-    def ask_for_sqltaskname(self, default=None):
-        text = "\nPlease enter the task name (e.g. 01_extendCustomer): "
+    def ask_for_sqltaskname(self, default=None, existing_task_names=None):
+        if existing_task_names:
+            print(
+                "\nExisting tasks on that folder are:\n"
+                + ", ".join(existing_task_names)
+            )
+        else:
+            print(
+                "\nNo tasks exist in this folder yet. Please follow project naming convention when entering the name, e.g. 01_ExtendCustomer"
+            )
+        text = "\nPlease enter the task name: "
         return prompt(text, default=default)
 
     def display_sqltask_created_and_path_in_clipboard(self, filepath):
@@ -151,18 +160,26 @@ class CreateSQLTaskCommand(object):
             + "/",
         )
         sqltask_name = self.displayer.ask_for_sqltaskname(
-            default=self._get_current_prefix_number(task_folder)
+            default=self._get_current_prefix_number(task_folder),
+            existing_task_names=self._list_existing_task_names(task_folder),
         )
         return task_folder + sqltask_name
 
     def _get_current_prefix_number(self, folder):
+        existing_task_names = self._list_existing_task_names(folder)
+        if existing_task_names:
+            last_folder = existing_task_names[-1]
+            return TaskPrefixGenerator().next(last_folder)
+        return ""
+
+    def _list_existing_task_names(self, folder):
         path = Path(folder)
+        result = []
         if path.exists():
             existing_task_folders = sorted(path.iterdir())
-            if existing_task_folders:
-                last_folder = existing_task_folders[-1]
-                return TaskPrefixGenerator().next(last_folder.name)
-        return ""
+            for folder in existing_task_folders:
+                result.append(folder.name)
+        return result
 
     def _get_modules(self, key_path):
         return next(os.walk(key_path))[1]
