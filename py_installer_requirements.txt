@@ -1,3 +1,5 @@
+-e  C:\\Users\\dgarcia\\dev\\python\\sqltask-librarian
+
 altgraph==0.16.1
 anytree==2.4.3
 atomicwrites==1.1.5
