@@ -1,4 +1,4 @@
-![img](https://raw.githubusercontent.com/vecin2/em_automation/master/docs/example.gif)
+![img](docs/example.gif)
 
 # sqltask - an sql generator for EM projects
 
