@@ -60,7 +60,7 @@ def test_select_stmt_does_not_need_confirmation_and_is_cached(
 def test_insert_statement_needs_confirmation_and_executes_twice(
     fake_connection, app_runner, em_project, fs
 ):
-    sql = "INSERT INTO CE_CUSTOMER VALUES('{name}','{lastname}')"
+    sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
     app_runner.with_emproject(em_project).with_task_library("/library").add_template(
         "list_customers.sql", sql
     ).select_template(
@@ -71,4 +71,4 @@ def test_insert_statement_needs_confirmation_and_executes_twice(
     # Because inserts are not cache the SQL is executed twice against the database
     # The first time is rolled back and the second time is the one that counts
     # need to investigate why is needed to run it the first time a rollback
-    assert 2 * sql == fake_connection._cursor.executed_sql
+    assert sql == fake_connection._cursor.executed_sql

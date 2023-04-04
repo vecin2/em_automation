@@ -61,5 +61,5 @@ class _TestPromptBuilder(object):
         assert msg + ": " == prompt.get_display_text()
 
     def renders(self, expected_text):
-        actual_text = TemplateFiller().fillAndRender(self._template(),self.template_values)
+        actual_text = TemplateFiller(initial_context=self.template_values).fill_and_render(self._template())
         assert expected_text == actual_text

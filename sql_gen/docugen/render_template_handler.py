@@ -3,11 +3,10 @@ from sql_gen.main_menu import AbstractEventHandler, HandlerType
 
 class RenderTemplateHandler(AbstractEventHandler):
     def __init__(
-        self, template_renderer, loader=None, initial_context=None, listener=None
+        self, template_renderer, loader=None, listener=None
     ):
         self.template_renderer = template_renderer
         self.loader = loader
-        self.initial_context = initial_context
         self.listener = listener
 
     def type(self):
@@ -20,8 +19,8 @@ class RenderTemplateHandler(AbstractEventHandler):
 
     def _do_handle(self, option, main_menu):
         template = self.loader.get_template(option.name)
-        rendered_text = self.template_renderer.fillAndRender(
-            template, self.initial_context
+        rendered_text = self.template_renderer.fill_and_render(
+            template
         )
         self.listener.write(rendered_text, template)
         return True

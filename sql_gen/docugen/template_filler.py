@@ -15,12 +15,13 @@ class TemplateVars(dict):
 
 
 class TemplateFiller(object):
-    def __init__(self, template=None):
+    def __init__(self, template=None, initial_context=None):
         if template:
             logger.debug(
                 "Instantiating TemplateFiller for template '" + template.name + "'"
             )
         self.set_template(template)
+        self.initial_context =initial_context
 
     def _get_prompt_visitor(self):
         if not self.prompt_visitor:
@@ -45,9 +46,9 @@ class TemplateFiller(object):
     def _get_template_source(self):
         return TemplateInliner(self._template).inline()
 
-    def fillAndRender(self, template, initial_context):
+    def fill_and_render(self, template):
         self.set_template(template)
-        context = self.fill(dict(initial_context))
+        context = self.fill(dict(self.initial_context))
         return self.inline_template().render(self._remove_empties(context))
 
     def fill(self, initial_context):

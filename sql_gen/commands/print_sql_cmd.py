@@ -1,9 +1,6 @@
-import os
-
-from sql_gen.database.sqlparser import SQLParser
+from sql_gen.database.sql_runner import SQLRunner
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
 from sql_gen.docugen.template_filler import TemplateFiller
-from sql_gen.exceptions import DatabaseError
 from sql_gen.main_menu import (ExitHandler, InputParser, MainMenu,
                                MainMenuDisplayer, MainMenuHandler, MenuOption)
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -46,10 +43,13 @@ class PrintSQLToConsoleCommand(object):
         self.context_builder = context_builder
         self.context = None
         self.listener = listener
+
         # If we are printing two templates, running the sql
         # allow the second template to see the modification made
         # by the first template  (kenyames, entities inserted, etc)
         self.run_on_db = run_on_db
+        self.sql_runner = None
+        self.commit_changes = False
 
     def run(self):
         if not self.context:
@@ -58,18 +58,17 @@ class PrintSQLToConsoleCommand(object):
         main_menu = self.build_main_menu()
         main_menu.run()
         # pyperclip.copy(self.sql_printed())
-        self.context["_database"].rollback()
+        self.get_sql_runner().on_finish()
 
     def build_main_menu(self):
         loader = EMTemplatesEnv(self.templates_path)
 
         self.console_printer = PrintSQLToConsoleDisplayer()
 
-        template_renderer = TemplateFiller()
+        template_renderer = TemplateFiller(initial_context=self.context)
         render_template_handler = RenderTemplateHandler(
             template_renderer,
             loader=loader,
-            initial_context=self.context,
             listener=self,
         )
         exit_handler = ExitHandler()
@@ -86,33 +85,19 @@ class PrintSQLToConsoleCommand(object):
 
     def write(self, content, template=None):
         self.console_printer.write(content)
-        result = None
-        if self.run_on_db and self._is_runnable_sql(template):
-            try:
-                result = self._run_content_on_db(content)
-                self.context["_database"].clearcache()
-            except (Exception, DatabaseError) as e:
-                if input("Do you want to continue (Y/N)?") == "N":
-                    raise e
-
+        self.sql_runner = self.get_sql_runner()
+        result = self.sql_runner.write(content, template)
         if self.listener:
             self.listener.on_written(content, template)
         return result
 
-    def _run_content_on_db(self, content):
-        stmt = SQLParser().parse_statements(content)[0]
-        if stmt.startswith("SELECT"):
-            return self._db().fetch(stmt)
-        else:
-            self._db().execute(content)
-            return None
+    def get_sql_runner(self):
+        if not self.sql_runner:
+            self.sql_runner = SQLRunner(self._db(), self.run_on_db,self.commit_changes)
+        return self.sql_runner
 
     def _db(self):
-        return self.context_builder.build()["_database"]
-
-    def _is_runnable_sql(self, template):
-        extension = os.path.splitext(template.filename)[1]
-        return extension == ".sql"
+        return self.context["_database"]
 
     def sql_printed(self):
         return self.console_printer.rendered_sql
