@@ -6,3 +6,4 @@ REM 2. The other issue we might encounter is that setuptools needs to be downgra
 echo off
 REM Please notice that all the dependecies must be installed. If using virtualenvwrapper use windows command line, not powershell
 pyinstaller ccdev/__main__.py --onefile --hidden-import sql_gen.log.handlers --hidden-import sql_gen.sqltask_jinja.filters.default --hidden-import sql_gen.sqltask_jinja.filters.codepath --hidden-import sql_gen.sqltask_jinja.filters.description --hidden-import sql_gen.sqltask_jinja.filters.suggest --hidden-import sql_gen.sqltask_jinja.filters.other --hidden-import sql_gen.sqltask_jinja.filters.print  --add-data sql_gen/log/logging.yaml;sql_gen/log --name sqltask
+copy dist\sqltask.exe %USERPROFILE%\AppData\Local\Microsoft\WindowsApps
