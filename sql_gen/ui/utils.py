@@ -27,53 +27,6 @@ def prompt_suggestions(text, suggestions, default=""):
     return prompt(text, completer=completer, default=default)
 
 
-class MenuOption(object):
-    def __init__(self, code, name, info=False):
-        self.code = code
-        self.name = name
-        self.info = info
-
-    @staticmethod
-    def parse(text):
-        if text[-1] == "?":
-            info = True
-        else:
-            info = False
-        # not important code, what we really care is the help flag
-        return MenuOption(None, text, info)
-
-    def matches(self, input_entered):
-        if (
-            self.code == input_entered
-            or self.name == input_entered
-            or input_entered == str(self)
-        ):
-            return True
-        return False
-
-    def __repr__(self):
-        return str(self.code) + ". " + self.name
-
-    def __eq__(self, other):
-        return (
-            self.code == other.code
-            and self.name == other.name
-            and self.info == other.info
-        )
-
-
-def select_option(text, option_list, no_of_retries, default):
-    option = None
-    counter = 0
-    while option is None and counter < no_of_retries:
-        user_input = prompt_suggestions(text, option_list, default)
-        option = match_options(user_input, option_list)
-        counter += 1
-    if not option:
-        raise ValueError("Attempts to select a valid option exceeded.")
-    return option
-
-
 def select_string(text, string_list):
     result = None
     while result is None:

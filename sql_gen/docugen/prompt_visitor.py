@@ -1,14 +1,12 @@
-import sys
 import importlib
 
-from jinja2.visitor import NodeTransformer, NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call
+from jinja2.visitor import NodeTransformer, NodeVisitor
 
-from sql_gen.docugen.prompt import Prompt
 from sql_gen import logger
-from sql_gen.docugen.template_context import TemplateContext
 from sql_gen.docugen.env_builder import TraceUndefined
+from sql_gen.docugen.prompt import Prompt
 
 
 # No longer used as TemplateInliner removes all the includes
