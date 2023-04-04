@@ -4,7 +4,7 @@ from sql_gen.database.sqlparser import SQLParser
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
 from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.exceptions import DatabaseError
-from sql_gen.main_menu import (ExitHandler, InputEventParser, MainMenu,
+from sql_gen.main_menu import (ExitHandler, InputParser, MainMenu,
                                MainMenuDisplayer, MainMenuHandler, MenuOption)
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
@@ -79,8 +79,8 @@ class PrintSQLToConsoleCommand(object):
         return MainMenu(
             displayer=displayer,
             options=MenuOption.to_options(loader.list_visible_templates()),
-            input_event_parser=InputEventParser(),
-            event_handler=menu_handler,
+            input_event_parser=InputParser(),
+            handler=menu_handler,
             max_no_trials=10,
         )
 

@@ -1,4 +1,4 @@
-from sql_gen.main_menu import AbstractEventHandler, EventType
+from sql_gen.main_menu import AbstractEventHandler, HandlerType
 
 
 class RenderTemplateHandler(AbstractEventHandler):
@@ -10,8 +10,13 @@ class RenderTemplateHandler(AbstractEventHandler):
         self.initial_context = initial_context
         self.listener = listener
 
-    def _handled_event_type(self):
-        return EventType.RENDER
+    def type(self):
+        return HandlerType.RENDER
+
+    def handles(self, input):
+        #only exit and template options this is good enough for now
+        #in future might need to check if loader can load template
+        return input.option.code != "x"
 
     def _do_handle(self, option, main_menu):
         template = self.loader.get_template(option.name)

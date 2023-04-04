@@ -3,29 +3,23 @@ from enum import Enum
 from sql_gen.ui import prompt_suggestions
 
 
-class EventType(Enum):
+class HandlerType(Enum):
     RENDER = 1
     EXIT = 2
     VIEW_TEST = 3
 
 
-class InputEventParser(object):
+class InputParser(object):
+
     def parse(self, input_str, option_list):
         str_option, params = self.split(input_str)
         option = self._matches_any(str_option, option_list)
 
-        if not option:
+        if not option or params:
             return None
-        if not params:
-            if option.code == "x":
-                event_type = EventType.EXIT
-            else:
-                event_type = EventType.RENDER
-        elif params and params == "-t":
-            event_type = EventType.VIEW_TEST
-        else:
-            return None
-        return InputEvent(option, event_type)
+        return MainMenuInput(option, params)
+        # elif params and params == "-t":
+        #     event_type = HandlerType.VIEW_TEST
 
     def _matches_any(self, option_entered, option_list):
         for option in option_list:
@@ -41,16 +35,10 @@ class InputEventParser(object):
         return input_arr[0].strip(), "-" + input_arr[1].strip()
 
 
-class InputEvent(object):
-    def __init__(self, option, type):
+class MainMenuInput(object):
+    def __init__(self, option, params):
         self.option = option
-        self.type = type
-
-    def __eq__(self, other):
-        return self.option == other.option and self.type == other.type
-
-    def __repr__(self):
-        return (self.option or "") + " " + str(self.type)
+        self.params = params
 
 
 class MainMenuDisplayer(object):
@@ -66,12 +54,12 @@ class MainMenu(object):
         displayer=None,
         options=[],
         input_event_parser=None,
-        event_handler=None,
+        handler=None,
         max_no_trials=10,
     ):
         self.displayer = displayer
         self.input_event_parser = input_event_parser
-        self.event_handler = event_handler
+        self.handler = handler
         self.options = options
         saveAndExit = MenuOption.saveAndExit()
         self.options.append(saveAndExit)
@@ -81,44 +69,49 @@ class MainMenu(object):
 
     def run(self):
         while True:
-            event = self.ask_for_input_until_valid()
-            self.event_handler.handle(event, self)
+            input = self.ask_for_input_until_valid()
+            self.handler.handle(input, self)
             if self.exit:
                 break
 
     def ask_for_input_until_valid(self):
         trial = 0
-        event = None
+        input = None
         while trial <= self.max_no_trials:
             trial += 1
             input_str = self.displayer.ask_for_input(
                 options=self.options, default=self.default_selection
             )
-            event = self.input_event_parser.parse(input_str, self.options)
-            if event:
-                return event
+            input = self.input_event_parser.parse(input_str, self.options)
+            if input:
+                return input
 
         raise ValueError("Attempts to select a valid option exceeded.")
 
 
 class MainMenuHandler(object):
-    def __init__(self, event_handlers):
-        self.event_handlers = event_handlers
+    def __init__(self, handlers):
+        self.handlers = handlers
 
     def handle(self, event, main_menu):
-        for handler in self.event_handlers:
+        for handler in self.handlers:
             if handler.handle(event, main_menu):
                 break
 
 
 class AbstractEventHandler(object):
-    def handle(self, event, main_menu):
-        if event.type == self._handled_event_type():
-            return self._do_handle(event.option, main_menu)
+    def handle(self, input, main_menu):
+        if self.handles(input):
+            self._do_handle(input.option, main_menu)
+            return True
         else:
             return False
 
-    def _handled_event_type(self):
+    def handles(self):
+        """method to be implemented in child classes"""
+        return None
+
+    def type(self):
         """method to be implemented in child classes"""
         return None
 
@@ -128,8 +121,11 @@ class AbstractEventHandler(object):
 
 
 class ExitHandler(AbstractEventHandler):
-    def _handled_event_type(self):
-        return EventType.EXIT
+    def type(self):
+        return HandlerType.EXIT
+
+    def handles(self, input):
+        return input.option.code == "x"
 
     def _do_handle(self, option, main_menu):
         main_menu.exit = True
