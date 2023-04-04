@@ -10,13 +10,9 @@ class HandlerType(Enum):
 
 
 class InputParser(object):
-
     def parse(self, input_str, option_list):
         str_option, params = self.split(input_str)
         option = self._matches_any(str_option, option_list)
-
-        if not option or params:
-            return None
         return MainMenuInput(option, params)
         # elif params and params == "-t":
         #     event_type = HandlerType.VIEW_TEST
@@ -30,7 +26,7 @@ class InputParser(object):
     def split(self, input_str):
         input_arr = input_str.split("-", maxsplit=1)
         if len(input_arr) == 1:
-            return input_arr[0].strip(), None
+            return input_arr[0].strip(), ""
 
         return input_arr[0].strip(), "-" + input_arr[1].strip()
 
@@ -83,7 +79,7 @@ class MainMenu(object):
                 options=self.options, default=self.default_selection
             )
             input = self.input_event_parser.parse(input_str, self.options)
-            if input:
+            if self.handler.handles(input):
                 return input
 
         raise ValueError("Attempts to select a valid option exceeded.")
@@ -93,10 +89,16 @@ class MainMenuHandler(object):
     def __init__(self, handlers):
         self.handlers = handlers
 
-    def handle(self, event, main_menu):
+    def handle(self, input, main_menu):
         for handler in self.handlers:
-            if handler.handle(event, main_menu):
+            if handler.handle(input, main_menu):
                 break
+
+    def handles(self, input):
+        for handler in self.handlers:
+            if handler.handles(input):
+                return True
+        return False
 
 
 class AbstractEventHandler(object):
@@ -125,7 +127,7 @@ class ExitHandler(AbstractEventHandler):
         return HandlerType.EXIT
 
     def handles(self, input):
-        return input.option.code == "x"
+        return input.option and input.option.code == "x"
 
     def _do_handle(self, option, main_menu):
         main_menu.exit = True

@@ -1,8 +1,8 @@
 import pytest
 
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
-from sql_gen.main_menu import (HandlerType, ExitHandler,
-                               InputParser, MenuOption)
+from sql_gen.help import ViewTestHandler
+from sql_gen.main_menu import ExitHandler, HandlerType, InputParser, MenuOption
 
 first_option = MenuOption("1", "first_option")
 second_option = MenuOption("2", "second_option")
@@ -10,17 +10,21 @@ option_list = [first_option, second_option, MenuOption.saveAndExit()]
 
 
 class HandlerFactory(object):
-    def make(self,event_type):
-        if event_type == HandlerType.RENDER:
+    def make(self, handler_type):
+        if handler_type == HandlerType.RENDER:
             return RenderTemplateHandler(None)
-        elif event_type == HandlerType.EXIT:
+        elif handler_type == HandlerType.EXIT:
             return ExitHandler()
+        elif handler_type == HandlerType.VIEW_TEST:
+            return ViewTestHandler(None)
 
 
 handler_factory = HandlerFactory()
 
 
 parser = InputParser()
+
+
 def parse(input_str):
     return parser.parse(input_str, option_list)
 
@@ -37,13 +41,9 @@ def test_parse_render_event():
     assert_handled_by(HandlerType.RENDER, input_str)
 
 
-@pytest.mark.skip
 def test_parse_view_test_event():
     input_str = "1. first_option -t"
-    handler = parse(input_str)
-
-    """ assert InputEvent(first_option, HandlerType.VIEW_TEST) == input_event """
-    assert HandlerType.VIEW_TEST == handler.type()
+    assert_handled_by(HandlerType.VIEW_TEST, input_str)
 
 
 @pytest.mark.skip

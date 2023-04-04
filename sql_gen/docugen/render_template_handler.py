@@ -13,9 +13,7 @@ class RenderTemplateHandler(AbstractEventHandler):
         return HandlerType.RENDER
 
     def handles(self, input):
-        #only exit and template options this is good enough for now
-        #in future might need to check if loader can load template
-        return input.option.code != "x"
+        return input.option and input.option.code != "x" and not input.params
 
     def _do_handle(self, option, main_menu):
         template = self.loader.get_template(option.name)
