@@ -38,9 +38,10 @@ class TemplateContext:
         return result
 
     def _render_template(self, context):
-        logger.debug("Start rendering template to resolve arguments")
+
+        print("Start rendering template to resolve arguments")
         rendered_text = concat(self.template.root_render_func(context))
-        logger.debug("End rendering")
+        print("End rendering")
 
     def __iter__(self):
         return self._vars.__iter__()

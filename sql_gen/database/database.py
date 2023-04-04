@@ -34,7 +34,9 @@ class Connector(object):
 
     def connect(self):
         try:
+            print("about to connect to db")
             cursor = self.do_connect()
+            print("after db connection")
         except Exception as excinfo:
             sql_gen.logger.exception(excinfo)
             raise DatabaseError(

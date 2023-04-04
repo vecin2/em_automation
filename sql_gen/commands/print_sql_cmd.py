@@ -1,10 +1,13 @@
 import os
 
 from sql_gen.create_document_from_template_command import (
-    ActionParser, InteractiveTemplateSelector, SelectTemplateLoader)
+    ActionParser, InteractiveSQLGenerator, SelectTemplateLoader)
 from sql_gen.database.sqlparser import SQLParser
+from sql_gen.docugen.render_template_handler import RenderTemplateHandler
 from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.exceptions import DatabaseError
+from sql_gen.main_menu import (ExitHandler, InputEventParser, MainMenu,
+                               MainMenuDisplayer, MainMenuHandler)
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
@@ -54,19 +57,30 @@ class PrintSQLToConsoleCommand(object):
         if not self.context:
             self.context = self.context_builder.build()
 
-        self.console_printer = PrintSQLToConsoleDisplayer()
-        loader = SelectTemplateLoader(EMTemplatesEnv(self.templates_path))
-        template_filler = TemplateFiller()
-        self.interactive_selector = InteractiveTemplateSelector(
-            self,
-            self.context,
-            loader=loader,
-            parser=ActionParser(loader),
-            template_filler=template_filler,
-        )
-        self.interactive_selector.run()
+        main_menu = self.build_main_menu()
+        main_menu.run()
         # pyperclip.copy(self.sql_printed())
         self.context["_database"].rollback()
+
+    def build_main_menu(self):
+        loader = SelectTemplateLoader(EMTemplatesEnv(self.templates_path))
+        self.console_printer = PrintSQLToConsoleDisplayer()
+
+        template_renderer = TemplateFiller()
+        render_template_handler = RenderTemplateHandler(
+            template_renderer, loader=loader, initial_context=self.context, listener=self
+        )
+        exit_handler = ExitHandler()
+        displayer = MainMenuDisplayer()
+        menu_handler = MainMenuHandler([render_template_handler, exit_handler])
+
+        return MainMenu(
+            displayer=displayer,
+            options=loader.list_options(),
+            input_event_parser=InputEventParser(),
+            event_handler=menu_handler,
+            max_no_trials=10,
+        )
 
     def write(self, content, template=None):
         self.console_printer.write(content)

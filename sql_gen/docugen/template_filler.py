@@ -45,12 +45,16 @@ class TemplateFiller(object):
     def _get_template_source(self):
         return TemplateInliner(self._template).inline()
 
+    def fillAndRender(self, template, initial_context):
+        self.set_template(template)
+        context = self.fill(dict(initial_context))
+        return self.inline_template().render(self._remove_empties(context))
+
     def fill(self, initial_context):
         # every time we fill we clear global state with var names
         # that are executed
         TraceUndefined.clear_vars()
-        context = self.build_context(initial_context)
-        return self.inline_template().render(self._remove_empties(context))
+        return self.build_context(initial_context)
 
     def _remove_empties(self, context):
         # we need to remove empties so default filters get applied

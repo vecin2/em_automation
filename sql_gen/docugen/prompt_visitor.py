@@ -1,14 +1,12 @@
-import sys
 import importlib
 
-from jinja2.visitor import NodeTransformer, NodeVisitor
 from jinja2 import meta
 from jinja2.nodes import Call
+from jinja2.visitor import NodeTransformer, NodeVisitor
 
-from sql_gen.docugen.prompt import Prompt
 from sql_gen import logger
-from sql_gen.docugen.template_context import TemplateContext
 from sql_gen.docugen.env_builder import TraceUndefined
+from sql_gen.docugen.prompt import Prompt
 
 
 # No longer used as TemplateInliner removes all the includes
@@ -42,6 +40,7 @@ class PromptVisitor(NodeVisitor):
             self._set_parent(child, node)
 
     def next_prompt(self, eval_context):
+        print("Starting next prompt")
         logger.debug("Starting next prompt")
         prompt = self.visit(self.ast, eval_context)
         logger.debug("Prompt returned: " + str(prompt))
@@ -84,6 +83,7 @@ class PromptVisitor(NodeVisitor):
     def visit_Name(self, node, template_values={}):
         # Create a prompt for Name nodes which are in part of the undeclare vars
         # and they are not the node value of CallNode
+        print("visiting " + str(node))
         if (
             node.name not in template_values
             and node.name in meta.find_undeclared_variables(self.ast)
@@ -93,12 +93,15 @@ class PromptVisitor(NodeVisitor):
             and self._is_executed(node.name, template_values)
         ):
             self.names_visited.append(node.name)
+            print("about to reutr new prompt "+node.name)
             return Prompt(node.name, [])
         return None
 
     def _is_executed(self, var_name, template_values):
         try:
+            print("about to resolve "+var_name)
             template_values.resolve(var_name)
+            print("finish to resolve "+var_name)
         except Exception as exc_info:
             if var_name in TraceUndefined.executed_vars:
                 return True

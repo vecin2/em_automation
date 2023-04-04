@@ -1,8 +1,9 @@
-from jinja2 import Template, Environment, DictLoader
-from sql_gen.docugen.template_filler import TemplateFiller
+from jinja2 import DictLoader
+
 from sql_gen.docugen.env_builder import EnvBuilder
-from sql_gen.sqltask_jinja import globals as globals_module
+from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.sqltask_jinja import filters as filters_package
+from sql_gen.sqltask_jinja import globals as globals_module
 
 
 class _TestPromptBuilder(object):
@@ -60,5 +61,5 @@ class _TestPromptBuilder(object):
         assert msg + ": " == prompt.get_display_text()
 
     def renders(self, expected_text):
-        rendered = TemplateFiller(self._template()).fill(self.template_values)
-        assert expected_text == rendered
+        actual_text = TemplateFiller().fillAndRender(self._template(),self.template_values)
+        assert expected_text == actual_text
