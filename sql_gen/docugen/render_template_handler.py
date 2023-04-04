@@ -14,7 +14,7 @@ class RenderTemplateHandler(AbstractEventHandler):
         return EventType.RENDER
 
     def _do_handle(self, option, main_menu):
-        template = self.loader.load_template(option.name)
+        template = self.loader.get_template(option.name)
         rendered_text = self.template_renderer.fillAndRender(
             template, self.initial_context
         )

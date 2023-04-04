@@ -1,12 +1,5 @@
-from sql_gen.create_document_from_template_command import (
-    InteractiveSQLGenerator, TemplateSelector)
 from sql_gen.main_menu import (EventType, InputEvent, InputEventParser,
                                MenuOption)
-
-
-def match_options(input_entered, option_list):
-    selector_displayer = TemplateSelector(generator=InteractiveSQLGenerator())
-    return selector_displayer.match_any(input_entered, option_list)
 
 
 first_option = MenuOption("1", "first_option")

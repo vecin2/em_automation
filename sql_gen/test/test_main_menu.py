@@ -1,6 +1,7 @@
 import pytest
 
-from sql_gen.test.utils.main_menu_runner import MainMenuRunner,MenuOption
+from sql_gen.test.utils.main_menu_runner import MainMenuRunner
+from sql_gen.main_menu import MenuOption
 
 first_option = MenuOption("1", "first option")
 second_option = MenuOption("2", "second option")

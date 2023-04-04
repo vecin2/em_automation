@@ -146,6 +146,14 @@ class MenuOption(object):
     def saveAndExit():
         return MenuOption("x", "Save && Exit")
 
+    @staticmethod
+    def to_options(names):
+        template_option_list = []
+        for counter, name in enumerate(names):
+            template_option = MenuOption(counter + 1, name)
+            template_option_list.append(template_option)
+        return template_option_list
+
     def matches(self, input_entered):
         if (
             self.code == input_entered

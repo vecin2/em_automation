@@ -1,13 +1,11 @@
 import os
 
-from sql_gen.create_document_from_template_command import (
-    ActionParser, InteractiveSQLGenerator, SelectTemplateLoader)
 from sql_gen.database.sqlparser import SQLParser
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
 from sql_gen.docugen.template_filler import TemplateFiller
 from sql_gen.exceptions import DatabaseError
 from sql_gen.main_menu import (ExitHandler, InputEventParser, MainMenu,
-                               MainMenuDisplayer, MainMenuHandler)
+                               MainMenuDisplayer, MainMenuHandler, MenuOption)
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
@@ -63,12 +61,16 @@ class PrintSQLToConsoleCommand(object):
         self.context["_database"].rollback()
 
     def build_main_menu(self):
-        loader = SelectTemplateLoader(EMTemplatesEnv(self.templates_path))
+        loader = EMTemplatesEnv(self.templates_path)
+
         self.console_printer = PrintSQLToConsoleDisplayer()
 
         template_renderer = TemplateFiller()
         render_template_handler = RenderTemplateHandler(
-            template_renderer, loader=loader, initial_context=self.context, listener=self
+            template_renderer,
+            loader=loader,
+            initial_context=self.context,
+            listener=self,
         )
         exit_handler = ExitHandler()
         displayer = MainMenuDisplayer()
@@ -76,7 +78,7 @@ class PrintSQLToConsoleCommand(object):
 
         return MainMenu(
             displayer=displayer,
-            options=loader.list_options(),
+            options=MenuOption.to_options(loader.list_visible_templates()),
             input_event_parser=InputEventParser(),
             event_handler=menu_handler,
             max_no_trials=10,
