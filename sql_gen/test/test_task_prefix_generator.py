@@ -16,7 +16,7 @@ test_values = [
 
 
 @pytest.mark.parametrize("test_input,expected", test_values)
-def test_some(test_input, expected):
+def test_prefix_generator(test_input, expected):
     path = "/mnt/c/em/projects/DU/du/modules/DuConfiguration/sqlScripts/oracle/updates/Du_01"
     prefix_generator = TaskPrefixGenerator()
     result = prefix_generator.next(test_input)

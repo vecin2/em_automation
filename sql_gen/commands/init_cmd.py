@@ -9,7 +9,7 @@ from sql_gen.sqltask_jinja import globals as globals_module
 
 sqltask_library_path_info = """
 # Filesystem path to a specific library folder.
-# Which is the folder contanining "templates" and "test_templates" folders.
+# This is the folder contanining "templates" and "test_templates" folders.
 # For example: c:\\em\\sqltask-templates\\library""".lstrip()
 
 sqltask_config_props = """
@@ -45,8 +45,8 @@ sqltask.library.path={{sqltask_library_path |
 environment.name={{environment_name | 
                    default(defaults["environment.name"]) |
                    print(infos["sqltask.config.props"])}}
-container.name={{container_name | default(defaults["container.name"])}}
-machine.name={{machine_name | default(defaults["machine.name"])}}
+container.name=ad
+machine.name=localhost
 
 ######################################################################################
 # sequence.generator
@@ -109,8 +109,6 @@ class InitCommand(object):
             defaults = {
                 "sqltask.library.path": "",
                 "environment.name": "localdev",
-                "container.name": "ad",
-                "machine.name": "localhost",
                 "sequence.generator": "timestamp",
             }
         if defaults:

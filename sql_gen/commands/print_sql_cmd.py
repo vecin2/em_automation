@@ -13,7 +13,7 @@ class PrintSQLToConsoleDisplayer(object):
         self.rendered_sql = ""
 
     def write(self, content, template=None):
-        self.render_sql(content)
+        # self.render_sql(content)
 
     def render_sql(self, sql_to_render):
         print("\n")
