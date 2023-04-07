@@ -1,16 +1,24 @@
+[library]: https://github.com/vecin2/sqltask-templates
+
 ![img](docs/example.gif)
 
+If you want to search for something on the web, [google] is a nice place.
+
+You can also use [google] to host some stuff and make a great app!
 ## sqltask
+
 
 `sqltask` is a command line SQL generator which aims to be used within EO projects.
 
-Overriding a verb, extending an entity, creating or assigning entitlements or even creating new types of KM content, are just some examples of tasks that are implemented using SQL scripts. 
+Overriding a verb, extending an entity, creating and assigning entitlements or creating new KM content types, are just some examples of tasks that are implemented using SQL scripts. 
 
-The current method developers follow when creating these scripts, involves finding similar examples from previous projects and use them as templates, keeping most of the SQL and just replacing some values. However, keeping track of all of this SQL is not that simple as the list of SQL tasks is very large and, it keeps growing as the product becomes more configurable. This is specially the case for tasks that required a lot of SQL or, tasks that are not as frequent, where is harder to find similar examples and, sometimes, they require developers having to reverse engineering in order to work out the SQL. After all this work, the script is buried into a project repository with limited visibility to other developers.
+The current method developers follow when creating these scripts, involves finding similar examples from previous projects and use them as templates, keeping most of the SQL and just replacing some values. 
+
+However, keeping track of all of this SQL is not that simple as the list of SQL tasks is very large and, it keeps growing as the product becomes more configurable. This is specially the case for tasks that required a lot of SQL or, tasks that are not as frequent, where is harder to find similar examples and, sometimes, they require developers having to reverse engineering in order to work out the SQL. After all this work, the script is buried into a project repository with limited visibility to other developers.
 
 `sqltask` is based on this idea of using previous scripts as templates. It uses a library of SQL tasks, where a task is implemented by a template, which is basically a SQL file with placeholders for those values that would typically changed. To find the templates it uses a fuzzy searching and, once the template is found, it parses its placeholders and it prompts them to the user, with helpers like, default values or auto-suggestions, which aim to facilitate this whole process.
 
-An existing SQL task library is hosted under [this](github) GitHub repository. It already has many different tasks and, and it encourages developers to add more tasks as they work on new SQL required by their projects. This makes it available for future uses and also to other developers.
+There is an existing [library] which already has many different SQL tasks and, and it encourages developers to add more tasks as they work on new SQL required by their projects. This makes it available for future uses and also to other developers.
 
 ## Table Of Contents
 
