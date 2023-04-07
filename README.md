@@ -2,9 +2,6 @@
 
 ![img](docs/example.gif)
 
-If you want to search for something on the web, [google] is a nice place.
-
-You can also use [google] to host some stuff and make a great app!
 ## sqltask
 
 
