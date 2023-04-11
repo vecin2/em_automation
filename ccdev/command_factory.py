@@ -36,11 +36,11 @@ class CommandFactory(object):
                 return str(result)
 
             else:
-                error_msg = f"'sqltask.library.path' points to an invalid path '{result}'.\nPlease add it to core.properties and make sure it point to a valid path."
+                error_msg = f"'sqltask.library.path' property points to an invalid path '{result}'.\nPlease edit 'core.properties' file and make sure it points to the parent folder of your 'templates' folder."
                 raise ValueError(error_msg)
 
         except KeyError:
-            error_msg = """'sqltask.library.path' not set. Please add it to core.properties and make sure it point to a valid path."""
+            error_msg = """'sqltask.library.path' property not set.\nPlease add it to core.properties and make sure it points to the parent folder of your 'templates' folder."""
             raise ValueError(error_msg)
 
     def make_run_sql_command(self, args):

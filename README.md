@@ -13,7 +13,7 @@ The current method developers follow when creating these scripts, involves findi
 
 However, keeping track of all of this SQL is not that simple as the list of SQL tasks is very large and, it keeps growing as the product becomes more configurable. This is specially the case for tasks that required a lot of SQL or, tasks that are not as frequent, where is harder to find similar examples and, sometimes, they require developers having to reverse engineering in order to work out the SQL. After all this work, the script is buried into a project repository with limited visibility to other developers.
 
-`sqltask` is based on this idea of using previous scripts as templates. It uses a library of SQL tasks, where a task is implemented by a template, which is basically a SQL file with placeholders for those values that would typically changed. To find the templates it uses a fuzzy searching and, once the template is found, it parses its placeholders and it prompts them to the user, with helpers like, default values or auto-suggestions, which aim to facilitate this whole process.
+`sqltask` is based on this idea of using previous scripts as templates. It uses a library of SQL tasks, where a task is implemented by a template, which is basically a SQL file with placeholders for those values that would typically changed. Then, it uses fuzzy searching to help finding a specific template. Once the template is selected, the the tool parses its placeholders and it prompts them to the user, with helpers like, default values or auto-suggestions, to facilitate this whole process.
 
 There is an existing [library] which already has many different SQL tasks and, and it encourages developers to add more tasks as they work on new SQL required by their projects. This makes it available for future uses and also to other developers.
 
@@ -35,7 +35,7 @@ There is an existing [library] which already has many different SQL tasks and, a
 ## User installation
 
 ### Library
-Clone the [sql task library repository](#todo) into any folder within your filesystem. 
+Clone the SQL task [library] into any folder within your filesystem. 
 
 The same library can serve multiple projects. Take this into account when choosing the folder as it would make sense to keep it out of any specific project, in a general location like  `c:\em\sqltask-library`.
 
@@ -46,14 +46,14 @@ Download [sqltask.exe](releases) and save it in any location within the `%PATH%`
 
 Add a new folder to `%PATH%` environment variable or use an existing one, for example `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps`
 
- Run `sqltask.exe` from the root folder of an EO project or any subfolder, help message should be printed.
+ Run `sqltask.exe` from the root folder of an EO project or any subfolder, a help message should be printed.
  
 ### Configuration
-Open the command line and navigate to a folder inside an EO project and run `sqltask init`
+Open the command line, navigate to a folder inside an EO project and run `sqltask init`
 
-Follow the instructions on the screen when entering the configuration settings.  The configuration is written to `<<project.home>>/project/sqltask/config/core.properties`
+Follow the instructions on the screen when entering the configuration settings.  They are written to `<<project.home>>/project/sqltask/config/core.properties`
 
-Settings can be adjusted by running the `init` command again or  by editing the `core.properties` file directly
+Settings can be adjusted by running the `init` command again or  by directly editing the `core.properties` file.
 
 
 ### Database Client
@@ -63,7 +63,7 @@ The type of client depends on whether the project uses oracle database or SQL se
 
 #### Oracle Client
 
-If the system already has an oracle database installed and available within `%PATH%` this step might be skip.
+If the system already has an oracle database installed and available within `%PATH%` this step could be skipped.
 
 On the [downloads](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html) section of the oracle web site, find the package matching the project's database version and download the appropriate "Basic Light Package". For example if your project has oracle 19, download the latest oracle 19 `Basic Light Package` which, at the time of this writing, is `instantclient-basiclite-windows.x64-19.18.0.0.0dbru.zip`.
 
@@ -79,12 +79,12 @@ Open the command line and navigate to a folder within an EO project:
 - Select a template and hit `<Enter>`. At this point the application looks for configuration under `work/config/show-config-txt` and, if it doesn't find it, runs   `ccadmin show-config -Dformat=txt`, which is required to get the project's configuration including database connections details.
 - Enter the values to fill the template's placeholders
 - After all the values are entered, select template menu is displayed again.
-- Select options `x. Save && Exit` to finish. 
+- Select option `x. Save && Exit` to finish. 
 - The rendered SQL should be printed.
 
 ### Run Tests
 
-Run [sqltask.exe test-sql](balbal) to check the templates are still valid for the current product version
+Run [sqltask.exe test-sql](docs/UserGuide.md#test-sql) to check the templates are still valid for the current product version
 
 ## Hello World
 
@@ -100,4 +100,4 @@ For details on the specific commands  please refer to the user guide [here](docs
 
 ## Designer Guide
 
-For details on how to write new templates please refer to the designer guide [here](docs/TemplateDesign.md)
+For details on how to write new templates please refer to the designer guide [here](docs/TemplateDesignerGuide.md)

@@ -73,7 +73,6 @@ class AppRunner(FillTemplateAppRunner):
         builder = FakeEMProjectBuilder(self.fs, root=self.emprj_path)
         builder.append_to_app_config(f"\nsqltask.library.path={library_path}")
         templates_path = str(Path(library_path) / "templates")
-        self.env_vars["SQL_TEMPLATES_PATH"] = templates_path
         self.templates_path = templates_path
 
         self.fs.create_dir(self.templates_path)

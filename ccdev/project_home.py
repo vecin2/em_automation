@@ -19,7 +19,7 @@ class ProjectHome:
             return self._get_prj_home()
         except Exception as excinfo:
             sql_gen.logger.error(str(excinfo))
-            raise excinfo
+            exit(1)
 
     def _get_prj_home(self):
         result = self._current_prj_path()
@@ -43,7 +43,7 @@ class ProjectHome:
         if em_root:
             return em_root
         elif ENV_VAR_NAME not in self.env_vars:
-            help_text = "fatal: This command should be run within an EM project folder or any of sub children. Alternatively define an env var  “EM_CORE_HOME” pointing to your current EM project."
+            help_text = "fatal: This command should be run from a root EM project folder or any of the subfolders"
             raise ValueError(help_text)
             raise EnvVarNotFoundException(ENV_VAR_NAME, help_text)
 
