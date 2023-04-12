@@ -79,12 +79,16 @@ def test_{{template_name}}_runs_succesfully():
     query={{query}}
     emprj_path={{emprj_path}}
     app_project = AppProject(emprj_path=emprj_path)
+    db = app_project.get_schema("{{db_schema}}")
     sqlparser =SQLParser(RelativeIdLoader())
     try:
-        app_project.addb.execute(query,sqlparser=sqlparser)
+       #app_project.addb.execute(query,sqlparser=sqlparser)
+       db.execute(query,sqlparser=sqlparser)
+ 
     except:
-        #if we do not close the connection we get locks issue when test are failing
-        app_project.addb._conn().close() 
+        #if we do not close the connection we get locks issues when test are failing
+        #app_project.addb._conn().close() 
+        db._conn().close() 
         raise
 
 """
@@ -189,7 +193,9 @@ class RunOnDBTestBuilder(object):
         self.apprunner = apprunner
 
     def build(self, testfile, emprj_path=None):
+    
         return RunOnDBTestTemplate().render(
+            db_schema= testfile.top_folder(),
             template_name=testfile.template_name(),
             query=testfile.expected_sql(),
             emprj_path=self.emprj_path,

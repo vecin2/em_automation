@@ -26,7 +26,7 @@ def em_project(fs, project_builder):
 def test_it_throws_exception_when_no_templates_path_define(app_runner, em_project):
     with pytest.raises(ValueError) as excinfo:
         app_runner.with_emproject(em_project).print_sql()
-    assert "'sqltask.library.path' not set" in str(excinfo.value)
+    assert "'sqltask.library.path' property not set" in str(excinfo.value)
 
 
 def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
@@ -35,7 +35,7 @@ def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
     project_builder.append_to_app_config("sqltask.library.path=/non/existing/path")
     with pytest.raises(ValueError) as excinfo:
         app_runner.with_emproject(em_project).print_sql()
-    assert "sqltask.library.path' points to an invalid path" in str(excinfo.value)
+    assert "sqltask.library.path' property points to an invalid path" in str(excinfo.value)
 
 
 def test_returns_empty_when_no_template_selected(app_runner, em_project, fs):

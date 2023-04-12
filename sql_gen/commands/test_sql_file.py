@@ -25,11 +25,20 @@ class TestSQLFile(object):
         return self.parser._extract_template_filename(self.filename())
 
     def template_path(self):
-        test_template_path = self.filepath.split("test_templates" + os.sep)[1]
+        test_template_path = self.test_template_path()
         template_path = test_template_path.replace(
             self.filename(), self.template_filename()
         )
         return template_path
+
+    def test_template_path(self):
+        return self.filepath.split("test_templates" + os.sep)[1]
+
+    def top_folder(self):
+        inner_path = self.test_template_path().split(os.sep)
+        if len(inner_path) >1:#if it has at least one folder inside 'test_templates'
+            return inner_path[0]
+        return ""
 
     def template_name(self):
         return os.path.splitext(self.template_filename())[0]

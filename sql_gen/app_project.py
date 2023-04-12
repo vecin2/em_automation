@@ -36,6 +36,7 @@ class AppProject(object):
         self.emprj_path = emprj_path
         self._addb = None
         self._rsdb = None
+        self._tpsdb = None
         self._library = None
 
     def make(emprj_path=None):
@@ -86,12 +87,20 @@ class AppProject(object):
         self.em_config()
         return self.emproject.product_layout()
 
-    def em_config(self):
+    def em_config(self,config_id):
         if not self._em_config:
             if not self.emproject.default_config_id:
-                self.emproject.set_default_config_id(self._emconfig_id())
+                self.emproject.set_default_config_id(self._adconfig_id())
             self._em_config = self.emproject.config()
         return self._em_config
+
+    def get_schema(self, schema_name):
+        if schema_name == "":
+            return self.addb
+        elif schema_name == "tps":
+            return self.tpsdb
+        else:
+            return None
 
     @property
     def addb(self):
@@ -107,6 +116,21 @@ class AppProject(object):
                 sqlserver_conn_str_name="sqlServer.conn.str",
             )
         return self._addb
+
+    @property
+    def tpsdb(self):
+        if not self._tpsdb:
+            self._tpsdb = self._get_database(
+                host="database.host",
+                user="database.tenant-properties-service.user",
+                password="database.pass",
+                dbname="database.name",
+                port="database.port",
+                dbtype="database.type",
+                sqlserver_driver_name="sqlServer.driver",
+                sqlserver_conn_str_name="sqlServer.conn.str",
+            )
+        return self._tpsdb
 
     @property
     def rsdb(self):
@@ -139,6 +163,7 @@ class AppProject(object):
         dbtype=None,
         sqlserver_driver_name=None,
         sqlserver_conn_str_name=None,
+        component_name=""
     ):
         emconfig = self.em_config()
         host = emconfig[host]
@@ -166,11 +191,11 @@ class AppProject(object):
         )
         return EMDatabase(connector)
 
-    def _emconfig_id(self):
+    def _adconfig_id(self):
         return EMConfigID(
             self.config["environment.name"],
             self.config["machine.name"],
-            self.config["container.name"],
+            "ad",
         )
 
     @staticmethod

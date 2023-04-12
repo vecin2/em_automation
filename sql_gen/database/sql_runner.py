@@ -12,7 +12,7 @@ class SQLRunner(object):
         self.modified_db = False
         self.commit_changes = commit_changes
 
-    def write(self, content, template=None):
+    def run(self, content, template):
         result = None
         if self.run_on_db and self._is_runnable_sql(template):
             try:
@@ -25,6 +25,9 @@ class SQLRunner(object):
         if result:
             self.display_sqltable(result)
         return result
+
+    def write(self, content, template=None):
+        return self.run(content,template)
 
     def on_finish(self):
         if (
