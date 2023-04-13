@@ -13,6 +13,11 @@ class EMConfigID(object):
         self.env_name = env_name
         self.machine_name = machine_name
         self.container_name = container_name
+    def __repr__(self):
+        return f"{self.env_name},{self.machine_name},{self.container_name}"
+
+    def __str__(self):
+        return f"{self.env_name},{self.machine_name},{self.container_name}"
 
 
 PATHS = {
@@ -52,10 +57,10 @@ class EMProject(object):
         self.default_config_id = config_id
 
     def config(self, config_id=None):
-        if not self._config:
-            if not self.config_path(config_id).exists():
-                self._create_config()
-            self._config = ConfigFile(self.config_path(config_id).path)
+        # if not self._config:
+        if not self.config_path(config_id).exists():
+            self._create_config()
+        self._config = ConfigFile(self.config_path(config_id).path)
 
         return self._config
 

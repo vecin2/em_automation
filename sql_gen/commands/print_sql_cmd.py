@@ -93,7 +93,9 @@ class PrintSQLToConsoleCommand(object):
 
     def get_sql_runner(self):
         if not self.sql_runner:
-            self.sql_runner = SQLRunner(self._db(), self.run_on_db,self.commit_changes)
+            self.sql_runner = SQLRunner(
+                self.context, self.run_on_db, self.commit_changes
+            )
         return self.sql_runner
 
     def _db(self):

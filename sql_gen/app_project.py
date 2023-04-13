@@ -30,6 +30,7 @@ class AppProject(object):
         self._em_config = None
         self._ad_query_runner = None
         self._rs_query_runner = None
+        self._tps_query_runner = None
         self._emproject = None
         self._paths = None
         self._logger = None
@@ -83,24 +84,30 @@ class AppProject(object):
             )
         return self._rs_query_runner
 
+    @property
+    def tps_queryrunner(self):
+        if not self._tps_query_runner:
+            self._tps_query_runner = QueryRunner.make_from_file(
+                self.library().db_queries("tps"),
+                self.tpsdb,
+            )
+        return self._tps_query_runner
+
     def product_layout(self):
         self.em_config()
         return self.emproject.product_layout()
 
-    def em_config(self,config_id):
-        if not self._em_config:
-            if not self.emproject.default_config_id:
-                self.emproject.set_default_config_id(self._adconfig_id())
-            self._em_config = self.emproject.config()
+    def em_config(self, config_id):
+        # if not self.emproject.default_config_id:
+        self.emproject.set_default_config_id(self._adconfig_id())
+        self._em_config = self.emproject.config(config_id)
         return self._em_config
 
     def get_schema(self, schema_name):
-        if schema_name == "":
-            return self.addb
-        elif schema_name == "tps":
+        if schema_name == "tenant_properties_service":
             return self.tpsdb
         else:
-            return None
+            return self.addb
 
     @property
     def addb(self):
@@ -123,12 +130,13 @@ class AppProject(object):
             self._tpsdb = self._get_database(
                 host="database.host",
                 user="database.tenant-properties-service.user",
-                password="database.pass",
+                password="database.tenant-properties-service.pass",
                 dbname="database.name",
                 port="database.port",
                 dbtype="database.type",
                 sqlserver_driver_name="sqlServer.driver",
                 sqlserver_conn_str_name="sqlServer.conn.str",
+                component_name="tenant-properties-service",
             )
         return self._tpsdb
 
@@ -163,9 +171,10 @@ class AppProject(object):
         dbtype=None,
         sqlserver_driver_name=None,
         sqlserver_conn_str_name=None,
-        component_name=""
+        component_name="ad",
     ):
-        emconfig = self.em_config()
+        print(self._config_id(component_name))
+        emconfig = self.em_config(self._config_id(component_name))
         host = emconfig[host]
         username = emconfig[user]
         password = emconfig[password]
@@ -192,10 +201,13 @@ class AppProject(object):
         return EMDatabase(connector)
 
     def _adconfig_id(self):
+        self._config_id("ad")
+
+    def _config_id(self, component_name):
         return EMConfigID(
             self.config["environment.name"],
             self.config["machine.name"],
-            "ad",
+            component_name,
         )
 
     @staticmethod

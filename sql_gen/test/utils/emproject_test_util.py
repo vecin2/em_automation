@@ -59,7 +59,7 @@ class FakeEMProjectBuilder:
 
     def make_app_config(self):
         self._create_dir("project/sqltask/config")
-        config_text = """
+        ad_config_text = """
 database.host=localhost
 database.user=user
 database.pass=password
@@ -70,8 +70,20 @@ database.reporting.user=reporting_user
 database.reporting.pass=reporting_password
 """
         self._create_file(
-            self.ccadmin_config_path(),
-            contents=config_text,
+            self.ccadmin_config_path("ad"),
+            contents=ad_config_text,
+        )
+        tps_config_text="""
+database.host=localhost
+database.name=oracleCL
+database.port=1521
+database.type=oracle
+database.tenant-properties-service.user=pepe
+database.tenant-properties-service.pass=pepepass
+        """
+        self._create_file(
+            self.ccadmin_config_path("tenant-properties-service"),
+            contents=tps_config_text,
         )
 
     def append_to_app_config(self, content):
@@ -82,8 +94,8 @@ database.reporting.pass=reporting_password
             content = f.read()
         return content
 
-    def ccadmin_config_path(self):
-        return f"work/config/show-config-txt/{self.environment_name}-{self.machine_name}-{self.container_name}.txt"
+    def ccadmin_config_path(self,container_name):
+        return f"work/config/show-config-txt/{self.environment_name}-{self.machine_name}-{container_name}.txt"
 
     def make_em_config(self):
 
