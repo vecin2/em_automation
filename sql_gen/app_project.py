@@ -5,7 +5,7 @@ from pathlib import Path
 from st_librarian.sqltasklib import SQLTaskLib
 
 import sql_gen
-from sql_gen.config import ConfigFile
+from sql_gen.config import ProjectProperties, PropertiesFile
 from sql_gen.database import Connector, EMDatabase, QueryRunner
 from sql_gen.emproject import EMConfigID, EMProject
 from sql_gen.log import log
@@ -39,6 +39,7 @@ class AppProject(object):
         self._rsdb = None
         self._tpsdb = None
         self._library = None
+        self._project_props = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -94,17 +95,20 @@ class AppProject(object):
         return self._tps_query_runner
 
     def product_layout(self):
-        self.em_config(self._adconfig_id())
+        self.em_config()
         return self.emproject.product_layout()
 
-    def em_config(self, config_id):
+    def em_config(self):
         # if not self.emproject.default_config_id:
-        self.emproject.set_default_config_id(self._adconfig_id())
-        self._em_config = self.emproject.config(config_id)
-        return self._em_config[config_id.container_name]
+        if not self._project_props:
+            self._project_props = ProjectProperties(self.emproject.root)
+        return self._project_props.em
+        # self.emproject.set_default_config_id(self._adconfig_id())
+        # self._em_config = self.emproject.config(config_id)
+        # return self._em_config[config_id.container_name]
 
     def config_by_component(self, component_name):
-        self.em_config(self._config_id(component_name))
+        self.em_config()
 
     def get_schema(self, schema_name):
         if schema_name == "tenant_properties_service":
@@ -161,7 +165,7 @@ class AppProject(object):
     @property
     def config(self):
         if not self._config_file:
-            self._config_file = ConfigFile(self.paths["core_config"].path)
+            self._config_file = PropertiesFile(self.paths["core_config"].path)
         return self._config_file
 
     def _get_database(
@@ -176,7 +180,8 @@ class AppProject(object):
         sqlserver_conn_str_name=None,
         component_name="ad",
     ):
-        emconfig = self.em_config(self._config_id(component_name))
+        emconfig = self.em_config()
+        # emconfig = self.em_config()[component_name]
         host = emconfig[host]
         username = emconfig[user]
         password = emconfig[password]

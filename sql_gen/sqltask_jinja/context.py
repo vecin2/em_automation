@@ -1,10 +1,8 @@
-from pathlib import Path
-
 import yaml
 
 import sql_gen
 from sql_gen.app_project import AppProject
-from sql_gen.config import ConfigFile
+from sql_gen.config import PropertiesFile
 from sql_gen.database.query_runner import QueryDict
 from sql_gen.database.sqlparser import RelativeIdLoader
 from sql_gen.docugen.inmemory_template_renderer import InMemoryTemplateRenderer
@@ -73,8 +71,12 @@ class ContextBuilder(object):
                 "_database": self.app.addb,
                 "_rsdatabase": self.app.rsdb,
                 "_tpsdatabase": self.app.tpsdb,
-                "_Query": QueryDict(ConfigFile(self.app.library().db_queries("ad"))),
-                "_RSQuery": QueryDict(ConfigFile(self.app.library().db_queries("rs"))),
+                "_Query": QueryDict(
+                    PropertiesFile(self.app.library().db_queries("ad"))
+                ),
+                "_RSQuery": QueryDict(
+                    PropertiesFile(self.app.library().db_queries("rs"))
+                ),
                 "_emprj": self.app.emproject,
                 "_adconfig": self.app.config_by_component("ad"),
             }
@@ -92,25 +94,31 @@ class ContextBuilder(object):
 
     def yaml_dict(self, filepath):
         try:
+            context_values = self.render_context_values(filepath)
+            if context_values:
+                return yaml.safe_load(context_values)
+            return {}
+        except yaml.YAMLError:
+            sql_gen.logger.warning(
+                "No context values are added, context config file '"
+                + filepath
+                + "' invalid yaml format"
+            )
+
+    def render_context_values(self, filepath):
+        try:
             with open(filepath, "r") as stream:
                 template_renderer = InMemoryTemplateRenderer()
-                context = {"_adconfig": self.app.config_by_component("ad")}
+                context = {"_props": self.app.em_config()}
                 rendered_text = template_renderer.render(stream.read(), context)
-                yaml_dict = yaml.safe_load(rendered_text)
-                return yaml_dict
+                return rendered_text
         except FileNotFoundError as exc:
             sql_gen.logger.warning(
                 "No context values are added, context config file '"
                 + filepath
                 + "' does not exist"
             )
-            return {}
-        except yaml.YAMLError as exc:
-            sql_gen.logger.warning(
-                "No context values are added, context config file '"
-                + filepath
-                + "' invalid yaml format"
-            )
+            return ""
 
 
 def init(app=None, emprj_path=None):

@@ -1,40 +1,12 @@
+import os
 import tempfile
 from pathlib import Path
 
 import pytest
 
-from sql_gen.emproject.config import EMConfigID, EMEnvironmentConfig
-from sql_gen.test.test_config import (PropertiesFolderGenerator,
-                                      assert_equal_properties)
-
-
-class EMEnvironmentConfigGenerator(PropertiesFolderGenerator):
-    def __init__(self, env_name=None, machine_name=None):
-        super().__init__()
-        self.env_name = env_name
-        self.machine_name = machine_name
-        self.config_path = None
-
-    def generate_config(self):
-        # same api as ccadmin client
-        return self.save(self.config_path)
-
-    def _get_file_name(self, key):
-        return EMConfigID(self.env_name, self.machine_name, key).filename()
-
-
-def test_properties_folder_generator():
-    with tempfile.TemporaryDirectory() as tmpdirpath:
-        properties1 = {"preferred.default.locale": "en-GB"}
-        properties2 = {"database.port": "1521"}
-        config_generator = PropertiesFolderGenerator()
-        config_generator.add_properties_file("test1.properties", properties1)
-        config_generator.add_properties_file("test2.properties", properties2)
-        config_generator.save(tmpdirpath)
-        path = Path(tmpdirpath)
-        assert 2 == len(list(path.iterdir()))
-        assert_equal_properties(properties1, path / "test1.properties")
-        assert_equal_properties(properties2, path / "test2.properties")
+from sql_gen.emproject.config import EMEnvironmentConfig
+from sql_gen.test.config.utils import assert_equal_properties
+from sql_gen.test.emproject.utils import EMEnvironmentConfigGenerator
 
 
 def test_environment_properties_generator():
@@ -65,36 +37,71 @@ tps_properties = {
     "database.user": "tps",
     "tps.modules.list": "tpsModuleA,tpsModuleB",
 }
+test_tps_properties = {
+    "database.user": "test_tps",
+    "tps.modules.list": "test_tpsModuleA,test_tpsModuleB",
+}
 
 
 @pytest.fixture
-def config_generator(capsys):
-    config_generator = EMEnvironmentConfigGenerator(
-        env_name=env_name, machine_name=machine_name
+def localdev_generator(capsys):
+    localdev_generator = EMEnvironmentConfigGenerator(
+        env_name="localdev", machine_name="localhost"
     )
-    config_generator.add_properties_file("ad", ad_properties)
-    config_generator.add_properties_file("tps", tps_properties)
-    yield config_generator
+    localdev_generator.add_properties_file("ad", ad_properties)
+    localdev_generator.add_properties_file("tps", tps_properties)
+    yield localdev_generator
 
 
-def test_get_properties_from_different_components(config_generator):
+@pytest.fixture
+def test_generator(capsys):
+    test_generator = EMEnvironmentConfigGenerator(
+        env_name="test", machine_name="localhost"
+    )
+    test_generator.add_properties_file("ad", ad_properties)
+    test_generator.add_properties_file("tps", test_tps_properties)
+    yield test_generator
+
+
+def test_get_properties_from_different_components(localdev_generator, test_generator):
     with tempfile.TemporaryDirectory() as tmpdirpath:
-        config_generator.save(tmpdirpath)
+        localdev_generator.save(tmpdirpath)
+        test_generator.save(tmpdirpath)
 
         emconfig = EMEnvironmentConfig(tmpdirpath, env_name)
 
-        assert "en-GB" == emconfig["ad"]["preferred.default.locale"]
-        assert "moduleA,moduleB" == emconfig["ad"]["modules.list"]
-        assert "tps" == emconfig["tps"]["database.user"]
-        assert "tpsModuleA,tpsModuleB" == emconfig["tps"]["tps.modules.list"]
+        assert "en-GB" == emconfig.preferred_default_locale
+        assert "moduleA,moduleB" == emconfig.modules_list
+
+        assert "tps" == emconfig.database_user
+        assert "tpsModuleA,tpsModuleB" == emconfig.tps_modules_list
 
 
-def test_get_properties_when_file_does_not_exist_generates_config(config_generator):
+def test_ignore_property_files_with_failed_interpolation(localdev_generator):
+    # sometimes property fails do not resolve all the vars, ignore those
     with tempfile.TemporaryDirectory() as tmpdirpath:
-        # try to get config without file existing
-        config_generator.config_path = tmpdirpath
-        emconfig = EMEnvironmentConfig(tmpdirpath, env_name, config_generator)
+        invalid_properties = {"database.pass": "${database.user}"}
 
-        assert "en-GB" == emconfig["ad"]["preferred.default.locale"]
-        assert "moduleA,moduleB" == emconfig["ad"]["modules.list"]
-        assert "tps" == emconfig["tps"]["database.user"]
+        localdev_generator.add_properties_file("km-bookmark-service", invalid_properties)
+        localdev_generator.save(tmpdirpath)
+
+        emconfig = EMEnvironmentConfig(tmpdirpath, env_name)
+
+        assert "en-GB" == emconfig.preferred_default_locale
+        assert "moduleA,moduleB" == emconfig.modules_list
+
+        assert "tps" == emconfig.database_user
+        assert "tpsModuleA,tpsModuleB" == emconfig.tps_modules_list
+
+
+def test_get_properties_when_file_does_not_exist_generates_config(localdev_generator):
+    with tempfile.TemporaryDirectory() as tmpdirpath:
+        # set config_path so fake ccadmin generator knows where to create files
+        config_path = tmpdirpath + os.sep + "test"
+        localdev_generator.config_path = config_path
+
+        emconfig = EMEnvironmentConfig(config_path, env_name, localdev_generator)
+
+        assert "en-GB" == emconfig["preferred.default.locale"]
+        assert "moduleA,moduleB" == emconfig["modules.list"]
+        assert "tps" == emconfig["database.user"]

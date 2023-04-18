@@ -2,7 +2,7 @@ import string
 
 from fuzzyfinder import fuzzyfinder
 
-from sql_gen.config import ConfigFile
+from sql_gen.config import PropertiesFile
 
 
 class AttrDict(object):
@@ -102,7 +102,7 @@ class QueryRunner(object):
         if query_dict:
             self.query_dict = query_dict
         else:
-            self.query_dict = ConfigFile(self.filepath)
+            self.query_dict = PropertiesFile(self.filepath)
         self.addb = emdb
         self.find = DBOperation("find", self.query_dict, self)
         self.fetch = DBOperation("fetch", self.query_dict, self)

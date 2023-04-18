@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 import sql_gen
-from sql_gen.config import ConfigFile
+from sql_gen.config import PropertiesFile
 from sql_gen.emproject.config import EMEnvironmentConfig
 from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
@@ -74,7 +74,7 @@ class EMProject(object):
 
         if not self.config_path(config_id).exists():
             self._create_config()
-        self._config = ConfigFile(self.config_path(config_id).path)
+        self._config = PropertiesFile(self.config_path(config_id).path)
 
         return self._config
 
@@ -160,4 +160,4 @@ class EMProject(object):
         return []
 
     def product_layout(self):
-        return ProjectLayout(self.config()["ad"]["product.home"], PATHS)
+        return ProjectLayout(self.config()["product.home"], PATHS)
