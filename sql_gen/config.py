@@ -13,7 +13,7 @@ def add_section_header(properties_file, header_name):
         yield line
 
 
-class ConfigFile(object):
+class PropertiesFile(object):
     def __init__(self, filepath, logger=None):
         if type(filepath) != str:
             filepath = str(filepath)
@@ -54,9 +54,3 @@ class ConfigFile(object):
 
     def __len__(self):
         return len(self.properties)
-
-class ProjectConfigDict(object):
-    def __init__(self,project_root):
-        self.project_root = project_root
-
-
