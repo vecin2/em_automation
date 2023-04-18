@@ -1,6 +1,4 @@
-import configparser
 import os
-import re
 from configparser import ConfigParser, ExtendedInterpolation
 
 import sql_gen
@@ -17,6 +15,8 @@ def add_section_header(properties_file, header_name):
 
 class ConfigFile(object):
     def __init__(self, filepath, logger=None):
+        if type(filepath) != str:
+            filepath = str(filepath)
         if logger is None:
             self.logger = sql_gen.logger
         else:
@@ -27,7 +27,9 @@ class ConfigFile(object):
     @property
     def properties(self):
         if not self._parser:
-            self._parser = ConfigParser(interpolation=ExtendedInterpolation(),strict=False)
+            self._parser = ConfigParser(
+                interpolation=ExtendedInterpolation(), strict=False
+            )
 
             if not os.path.exists(self.filepath):
                 raise FileNotFoundError(
@@ -49,3 +51,12 @@ class ConfigFile(object):
 
     def __getitem__(self, name):
         return self.properties[name]
+
+    def __len__(self):
+        return len(self.properties)
+
+class ProjectConfigDict(object):
+    def __init__(self,project_root):
+        self.project_root = project_root
+
+

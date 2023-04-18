@@ -53,7 +53,10 @@ class Connector(object):
         if self.dbtype == "sqlServer":
             return self._get_sqlserver_conn_str()
         return (
-            "name="
+            "server="
+            + self.server
+            + "\n"
+            + "name="
             + self.database
             + "\n"
             + "port="

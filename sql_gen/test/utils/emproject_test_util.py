@@ -40,9 +40,6 @@ class FakeEMProjectBuilder:
         self.container_name = "ad"
         self.machine_name = "localhost"
 
-    def add_config_settings(self, config_id, settings_map):
-        self.config_map[config_id] = settings_map
-
     def make_valid_em_folder_layout(self):
         self._create_dir("bin")
         self._create_dir("config")

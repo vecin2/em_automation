@@ -1,11 +1,6 @@
 import os
 
-from jinja2 import DictLoader
-
-from sql_gen.docugen.env_builder import EnvBuilder
-from sql_gen.docugen.template_filler import TemplateFiller
-from sql_gen.sqltask_jinja import filters as filters_package
-from sql_gen.sqltask_jinja import globals as globals_module
+from sql_gen.docugen.inmemory_template_renderer import InMemoryTemplateRenderer
 
 sqltask_library_path_info = """
 # Filesystem path to a specific library folder.
@@ -13,7 +8,7 @@ sqltask_library_path_info = """
 # For example: c:\\em\\sqltask-templates\\library""".lstrip()
 
 sqltask_config_props = """
-# The following properties determine which config file is used, e.g:
+# environment.name determines which config file is used, e.g:
 #  work/config/show-config-txt/localdev-localhost-ad.txt """.lstrip()
 
 sequence_generator = """
@@ -82,39 +77,35 @@ sequence.generator={{sequence_generator |
 class InitCommand(object):
     def __init__(self, app_project):
         self.app_project = app_project
+        self.core_properties_path = self.app_project.paths["core_config"].path
 
     def run(self):
         print("Please enter the following values to configure sqltask")
-        core_properties_path = self.app_project.paths["core_config"].path
-        templates = {"template": core_properties_template}
-        env = (
-            EnvBuilder()
-            .set_loader(DictLoader(templates))
-            .set_globals_module(globals_module)
-            .set_filters_package(filters_package)
-            .build()
-        )
-        template_filler = TemplateFiller()
-        template_filler.set_template(env.get_template("template"))
+        defaults = self._get_defaults()
+        if defaults:
+            context = {"defaults": defaults, "infos": infos}
+            template_renderer = InMemoryTemplateRenderer()
+            filled_template = template_renderer.render(
+                core_properties_template, context
+            )
+            with open(self.core_properties_path, "+w") as f:
+                f.write(filled_template.lstrip())
+            print(f"Properties written to '{self.core_properties_path}'")
+
+    def _get_defaults(self):
         defaults = None
-        if os.path.exists(core_properties_path):
+        if os.path.exists(self.core_properties_path):
             keep_going = input(
-                f"{core_properties_path} detected.\nThis will override the current file, do you want to continue (y/n): "
+                f"{self.core_properties_path} detected.\nThis will override the current file, do you want to continue (y/n): "
             )
             if keep_going == "y":
                 print("Loading defaults from existing file")
                 defaults = self.app_project.config
         else:
-            print(f"{core_properties_path}")
+            print(f"{self.core_properties_path}")
             defaults = {
                 "sqltask.library.path": "",
                 "environment.name": "localdev",
                 "sequence.generator": "timestamp",
             }
-        if defaults:
-            filled_template = template_filler.fill(
-                {"defaults": defaults, "infos": infos}
-            )
-            with open(core_properties_path, "+w") as f:
-                f.write(filled_template.lstrip())
-            print(f"Properties written to '{core_properties_path}'")
+        return defaults

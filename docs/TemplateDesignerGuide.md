@@ -1,35 +1,73 @@
+[templates]: https://github.com/vecin2/sqltask-templates/blob/master/docs/LibraryByFolder.md
+[tutorials]: https://github.com/vecin2/sqltask-templates/blob/master/docs/LibraryByFolder.md#tutorials
 # Template Design
 
-How template values are prompted to the user is determined entirely by how the template is written. So having a set of well designed templates is the key for generating scripts rapidly. They should be designed in a way that they provide enough information to users when filling the values, and they minimize user prompts and avoid asking for values that could be computed from previously entered values.
+How template values are prompted to the user is determined entirely by how the template is written.  
 
-The syntax is defined by python jinja templates. Check the [template Designer Documentation](http://jinja.pocoo.org/docs/2.10/templates/).
+Templates should be designed in a way that provide enough information to users when filling the values, minimizing user prompts and, avoiding asking for values that could be computed from values already entered.
+
+The syntax is defined by python jinja templates. Check the [jinja template Designer Documentation](http://jinja.pocoo.org/docs/2.10/templates/).
+
+## Table Of Content
+  * [General guidelines](#general-guidelines)
+  * [Tutorials](#tutorials)
+  * [Filters](#filters)
+    + [Concatenate multiple filters](#concatenate-multiple-filters)
+    + [List of Builtin filters](#list-of-builtin-filters)
+  * [Objects in context](#objects-in-context)
+    + [\_keynames](#--keynames)
+    + [\_db](#--db)
+    + [\_database](#--database)
+  * [More Available Objects](#more-available-objects)
+    + [SQLTable](#sqltable)
+    + [SQLRow](#sqlrow)
+  * [Global Functions](#global-functions)
+    + [List of Builtin Global Functions](#list-of-builtin-global-functions)
+  * [String Python Builtin Functions](#string-python-builtin-functions)
+  * [Include](#include)
+  * [Organizing Templates](#organizing-templates)
+  * [Hidden Templates](#hidden-templates)
+  * [Naming Convention](#naming-convention)
+  * [Formatting](#formatting)
+      - [Inserts](#inserts)
+
+- [Build Extensions](#build-extensions)
+    + [Create Windows Executables](#create-windows-executables)
+      - [Troubleshooting](#troubleshooting)
+    + [Developer Setup](#developer-setup)
+      - [Windows](#windows)
+      - [Running tests](#running-tests)
+    + [Imlementing new Global functions](#imlementing-new-global-functions)
+    + [Implementing new Filters](#implementing-new-filters)
+
+
 
 ## General guidelines
 
-When design templates consider the following:
+When designing templates consider the following:
 
-- A value should be prompted with enough information so the user knows how to fill it.
-- When possible provide a subset of values for the user to pick from.
-- Users should NOT be prompted any value that can be computed from some other values - finding the minimum number of prompted values is key for a good template.
-- Avoid duplicating SQL code, reuse template by including them within others. So when a product DB table changes it avoids having to change multiple templates.
-- Review existing templates or consult this documentation to understand what filters and templates are available.
+- A value should be prompted with enough information to avoid the user from making further DB queries.
+- When possible, prompts should have a list of suggestions.
+- Users should NOT be prompted with any value that could be computed from values already entered. Reducing the number of prompted values to the minimum is key for a well designed template.
+- Avoid duplicating SQL code. Instead, use [include](#include) template so when a product DB table changes, avoids having to change multiple templates.
+- Follow the existing [templates] design and check the [tutorials](#tutorials) to understand what filters and objects are available.
 
-The above can be achieve using filters and python functions. The following sections described those filters and functions and how they can be used within templates.
-
-You can also check as well the [existing templates library](#toadd) for a good understanding on how these elements are applied.
 
 ## Tutorials
 
-Within the templates there is a set of tutorials templates They provide good guide and practical examples on how templates are created. Play with them and change them to see how it impacts the prompting is a great way of understanding how templates are created.
+Within the templates there is a set of [tutorials] templates. They provide good guide and practical examples on how templates can be created. 
+
+Making changes to the existing tutorial templates and see how it impacts the prompting is a great way to learn the syntax.
+
 
 ## Filters
 
-Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters), which modify variables when rendering the template. For example `{{ name|default('NULL') }}` will use `NULL` if the user doesn't enter any value.
+Jinja Templates use [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters) to modify variables when rendering the template. For example `hello {{ name | default('Daniel') }}` renders to `hello Daniel` when no value is entered for `name`.
 
-`sqltask` uses filters to modify and enrich the template values that are prompted to the user. For example `{{ name|default('NULL') }}` displays message like `name (default is NULL):`, rather than simply `name.`
+In addition to this, `sqltask` uses filters to modify how template values are prompted to the user. For example `{{ name | default('Daniel') }}`,  displays  `name (default is Daniel):` when prompting to enter a value for `name` .
 
 Jinja have many [filters](http://jinja.pocoo.org/docs/2.10/templates/#filters) that can be used when rendering the template.
-In this documentation we describe only the filters implemented in `sqltask` which are the ones that change the way the value is prompted to the user. These filters are explained within the [list of builtin filters](#list-of-builtin-filters)
+In this documentation we describe only the filters implemented in `sqltask` which are the ones that modify the way the value is prompted to the user. These filters are explained within the [list of builtin filters](#list-of-builtin-filters)
 
 ### Concatenate multiple filters
 
@@ -50,12 +88,12 @@ Enter any value (default  is  'my variable is not defined'):
 
 ### List of Builtin filters
 
-In this section we only detail how the filters affect value prompts, we do not explain how it modifies the variable when rendering the template. For details on that check the [list of builtin jinja filters](http://jinja.pocoo.org/docs/2.10/templates/#list-of-builtin-filters).
+In this section we only detail how the filters affecting value prompts. Here is the full [list of builtin jinja filters](http://jinja.pocoo.org/docs/2.10/templates/#list-of-builtin-filters).
 
 **default**(_value_, _default_value=u''_, _boolean=False_)
 
 It appends `default_value` to the variable name when prompting:
-
+If the user does not enter a value the default value is used when rendering the template.
 ```sql
 #template
 {{ my_variable| default('my_variable is not defined') }}
@@ -76,6 +114,19 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 #prompts
 Please enter 'my_variable_value`:
 ```
+**print**(_value_, _text_)
+It shows the `text` in a line above the value prompt. 
+This is not a builtin jinja filter and it does not modify the variable entered by the user.
+
+```sql
+{{ entity_name| print("Entity names will normally finish with 'ED'") }}
+
+#prompts
+Entity names will normally finish with 'ED'
+'entity_name`:
+```
+If an object is passed it calls the `str` method on it, so it could take [SQLTable](#sqltable) or [SQLRow](#sqlrow) and it will display the data using pretty printing. An example of this can be found in 
+
 
 **codepath**(_value_)
 
@@ -91,7 +142,7 @@ This is not a builtin jinja filter and it does not modify the variable entered b
 
 **suggest**(_value_, suggestions)
 
-It takes a list of suggestions which are prompted to the user when asking for the value.
+It takes a list of suggestions which are displayed to the user when this value is prompted.
 
 ```sql
 {{ object_name| suggest(["Customer","Chat"]) }}
@@ -100,7 +151,7 @@ It takes a list of suggestions which are prompted to the user when asking for th
 **split_uppercase**(_value_, )
 
 This filter does not affect the prompted text. It modifies the variable splitting the words when it finds an upper case letter
-It takes a list of suggestions which are prompted to the user when asking for the value.
+
 
 ```sql
 {% verb_keyname = "customerInlineSearch" |split_uppercase() }}
@@ -141,7 +192,8 @@ It retrieves a list of relative ids for the key set passed. For example:
 
 ### \_db
 
-It allows to run a predefined set of queries defined within `config/ad_queries.sql`:
+It allows to run queries from the agent desktop queries file `<<sqltask.library.path>>/config/ad_queries.sql`:
+
 
 **fetch.<<query_name>>**(_\*query_params_)
 It returns a [SQLTable](#sqltable) object (list of dictionaries). For example:
@@ -153,9 +205,14 @@ It returns a [SQLRow](#sqlrow) object. It is similar to `fetch` but this is used
 
 - `_db.find.pd_by_ed_n_vname(entity_id, v_name)`
 
+### \_tps
+
+It allows to run queries from the `tps` queries file `<<sqltask.library.path>>/config/tps_queries.sql`
+
+
 ### \_database
 
-Same as `_db` but allows running free form queries instead of dictionary queries:
+Same as `_db` but allows running raw SQL instead of dictionary queries:
 
 **fetch**(_query_string_)
 Similar to `_db.fetch` but it takes an SQL string instead. For example:
@@ -164,6 +221,10 @@ Similar to `_db.fetch` but it takes an SQL string instead. For example:
 **find**(_query_string_)
 Similar to `_db.find` but it takes an SQL string instead. For example:
 `_database.find("SELECT * FROM VERB where name='my_verb'")`
+
+### \_tpsdatabase
+
+Same as `_tps` but allows running raw SQL instead of dictionary queries.
 
 ## More Available Objects
 
@@ -187,7 +248,7 @@ assert [1,2] == table.column("ID")
 ```
 
 **str()**
-The string method has been override to use prettyTables:
+It is implemented using python library `prettyTable` :
 
 ```
 table =_db.fetch.v_names_by_context(context_id)`
@@ -208,21 +269,20 @@ table =_db.fetch.v_names_by_context(context_id)`
 
 ### SQLRow
 
-`SQLTable` object is composed of a list of `SQLRow` objects. It is an extension of a dictionary so you can access it with regular python dictionary methods:
+[SQLTable](#sqltable) object is composed of a list of `SQLRow` objects. It is an extension of a dictionary so you can access it with regular python dictionary methods:
 
 ```
 row =_db.find.v_by_id(id)`
 assert 1 == row["ID"]
 ```
 
-It has two methods overriden:
+It has two methods overridden:
 
 **[_<<var_name>>_]**
 It retrieves `NULL` as a string if no value is found within the dictionary.
 
 **str()**
-As a list it is overriden to use prettytable which prints the keys and the values as the following:
-
+It is implemented using python library `prettyTable`. For example one row is printed as following:
 ```
 +------------------------+---------------------+
 |      NAME			     |         ID    	   |
@@ -273,15 +333,16 @@ Process descriptor id is Customer
 
 ## Include
 
-Include allows wrapping other templates so they can be reused and avoid SQL code duplication. We might want to set some variables contained within the included template before call that template so it doesn't prompt them.
+Include allows wrapping other templates so they can be reused and avoid SQL code duplication. 
+Typically, we would set some variables contained within the included template before call that template so it doesn't prompt them:
 
 ```sql
 #Compute descriptor id  which is used in 'add_process_descriptor.sql'
 {% set process_id = __prjprefix + entity_id.capitalize() + verb_name.capitalize() -%}
 
-{% include 'add_descriptor.sql' %}
+{% include 'add_process_descriptor.sql' %}
 {% set descriptor_ref_id = descriptor_id %}
-{% include 'add_descriptor_ref.sql' %}
+{% include 'add_process_descriptor_ref.sql' %}
 ```
 
 ## Organizing Templates
@@ -302,17 +363,22 @@ For example we could match a similar grouping to the EM admin screens:
 ```
 
 ## Hidden Templates
+Adding a template under a folder  `templates/hidden_templates` will not show the template when the application asks to select a template.
 
-A hidden template is not display among the templates to be filled. They are created so they can be reused and included in other templates but they don't make much sense on their own.
-Template can be hidden by adding the template under a folder called `hidden_templates` within the main template folder.
+These templates can be included within other templates but they don't make much sense on their own.
+
 
 ## Naming Convention
 
-The following name and convention is used when writing tempaltes:
+The following name and convention is used when writing templates:
 
 - Template variables names follow snake case e.g "customer_name"
-- Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables
-- Internal variables are named as the variabled but prefixing two underscores. Internal variables are used when we capturing a value that will be used later on within the same template.
+- Context config variables, which are defined under `config/context_values.yaml` start with an underscore to distinguish them from template variables, e.g `_keynames, _db`
+- Displayed Template variables  do not start with `_` :
+```sql
+{{ entity_display_name | default(default_display_name) }} --ENTITY_NAME
+```
+- Inner Template variables are named as the displayed variable but prefixed with two underscores. Inner variables are used when we capturing a value that will be used later on within the same template.
 
 ```
 {% set __entity_display_name = entity_display_name
@@ -337,122 +403,5 @@ VALUES (
        );
 ```
 
-# Logging
 
-The application logging is configured by default to write to the logs dir within the main application folder.
-Logging configuration can be modified by creating a file called `logging.yaml` under the app config folder.
-This is a example of a valid configuration file:
 
-```yaml
-version: 1
-disable_existing_loggers: False
-formatters:
-  simple:
-    format: '%(asctime)s - %(levelname)s - %(message)s'
-handlers:
-  console:
-    class: logging.StreamHandler
-    level: DEBUG
-    formatter: simple
-    stream: ext://sys.stdout
-
-  info_file_handler:
-    class: sql_gen.log.handlers.MakeRotatingFileHandler
-    level: INFO
-    formatter: simple
-    filename: information.log
-    maxBytes: 10485760 # 10MB
-    backupCount: 20
-    encoding: utf8
-loggers:
-  app_logger:
-    level: INFO
-    handlers: [console, info_file_handler]
-    propagate: no
-root:
-  level: INFO
-  handlers: [info_file_handler]
-```
-
-# Build Extensions
-
-### Create Windows Executables
-
-On Windows machine:
-
-- Install python 3.8.1: choco install python --version=3.8.1
-- Install virtualenvwrapper on that python installation: C:\Python38\python.exe -m pip install virtualenvwrapper-win
-- Create a virtualenv em_automation
-- pip install -r py_installer_requirements.text
-
-If a package fails to compile .e.g cx_oracle you can downloaded the .whl file directly from:
-https://www.lfd.uci.edu/~gohlke/pythonlibs/
-Copy the file to project location and run: pip install <<filename>>
-
-#### Troubleshooting
-
-Py_installer compatibility issues with 3.8 or above at October 24th 2022: https://github.com/pyinstaller/pyinstaller/issues/4265#issuecomment-554624172
-Python 3.10 has a comptability issue with py_installer ends up with following error: ImportError: No module named \_bootlocale
-
-To fix this, run `pyinstaller.exe app.py --exclude-module _bootlocale`
-
-### Developer Setup
-
-Branch this project and submit merge request.
-
-Consider create a virtual pyhon envioronment for this project. As well, it is recomended to user [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) to manage your virtual environment.
-
-In ubuntu,ensure the following packages are installed as they required to build pyodbc: `sudo apt-get install unixodbc unixodbc-dev`
-Within your virtualenv run: pip install -r requirements.txt
-
-Make sure the sql_gen folder is added to you `PYTHONPATH`:
-`export PYTHONPATH=${PYTHONPATH}:/home/dgarcia/dev/python/em_automation/sql_gen`
-
-Run: `pytest` and make sure test are passing
-
-Finally, execute application `python ccdev`
-
-If you are using virtual environment you can set the `PYTHONPATH` within the `$vitualevn/bin/postactivate` so it only runs when you activate this environment.
-
-#### Windows
-
-Install virtualenvwrapper-win: C:\Python38\python.exe -m pip install virtualenvwrapper-win
-virtualenvwrapper-win does not have `postactivate` modify `Scripts\activate.bat` and add the following:
-
-@set "PYTHONPATH=%PYTHONPATH%;C:\\Users\\dgarcia\\dev\\python\\em_automation"
-
-#### Running tests
-
-Test can run with pytest: py.test from the project top folder
-
-### Imlementing new Global functions
-
-Globals functions can easily implemented by adding the function to the `globals.py` module. The function is added automatically to the template enviroment and therefore available for templates to use it.
-
-### Implementing new Filters
-
-Filters are picked up by the environment by name convention. The system looks for classes under the `/filters` whith the class name matching the capitalize name of the filter +"Filter". For example:
-
-```sql
-#Template
-{{ var_name | default("Test default") }}
-
-#Searches for class named "DefaultFilter" under the folder /filters
-```
-
-Filter can be either:
-
-- Completely new filters, e.g. `DescriptionFilter`
-- Wrappers of builtin jinja filters, e.g. `DefaultFilter`
-
-In the first case filters do not need to be added to the environment so implementing `apply` should be enough:
-
-_class_ sql_gen.filters.**DefaultFilter**()
-string :: **apply**(prompt_text)
-It takes the prompt text and it changes it accordingly to what it should be display to the user. Multiple filters can be concatenated.
-
-When creating new filter we need to implement not only `apply` but `get_template_filter` which is invoked by the application to add the filter to the environment.
-
-_class_ sql_gen.filters.**DescriptionFilter**()
-func :: **get_template_filter**()
-It returns the function which implements the jinja filter.

@@ -19,6 +19,10 @@ class CCAdmin(object):
         sql_gen.logger.debug("End Running ccadmin show-config")
         return result
 
+    def generate_config(self):
+        self.show_config("-Dformat=txt")
+
+
     def _run_ccadmin(self, command_and_args):
         ccadmin_path = Path(self._ccadmin_file())
         os.chdir(self.root)

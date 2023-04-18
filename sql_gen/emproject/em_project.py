@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import sql_gen
 from sql_gen.config import ConfigFile
+from sql_gen.emproject.config import EMEnvironmentConfig
 from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
 
@@ -13,6 +14,7 @@ class EMConfigID(object):
         self.env_name = env_name
         self.machine_name = machine_name
         self.container_name = container_name
+
     def __repr__(self):
         return f"{self.env_name},{self.machine_name},{self.container_name}"
 
@@ -38,6 +40,7 @@ class EMProject(object):
         self._paths = None
         self._ccadmin_client = ccadmin_client
         self.default_config_id = None
+        self.emconfig = None
 
     @property
     def paths(self):
@@ -57,7 +60,18 @@ class EMProject(object):
         self.default_config_id = config_id
 
     def config(self, config_id=None):
-        # if not self._config:
+        if config_id:
+            env_name = config_id.env_name
+        else:
+            env_name = "localdev"
+        if not self.emconfig:
+            self.emconfig = EMEnvironmentConfig(
+                self.paths["show_config_txt"].path,
+                env_name,
+                self.ccadmin_client,
+            )
+        return self.emconfig
+
         if not self.config_path(config_id).exists():
             self._create_config()
         self._config = ConfigFile(self.config_path(config_id).path)
@@ -146,4 +160,4 @@ class EMProject(object):
         return []
 
     def product_layout(self):
-        return ProjectLayout(self.config()["product.home"], PATHS)
+        return ProjectLayout(self.config()["ad"]["product.home"], PATHS)

@@ -19,6 +19,8 @@ There is an existing [library] which already has many different SQL tasks and, a
 
 ## Table Of Contents
 
+- [sqltask](#sqltask)
+- [Table Of Contents](#table-of-contents)
 - [User installation](#user-installation)
   * [Library](#library)
   * [Windows Executable](#windows-executable)
@@ -30,6 +32,7 @@ There is an existing [library] which already has many different SQL tasks and, a
 - [Hello World](#hello-world)
 - [User Guide](#user-guide)
 - [Designer Guide](#designer-guide)
+- [Developer Guide](#developer-guide)
 
 
 ## User installation
@@ -101,3 +104,7 @@ For details on the specific commands  please refer to the user guide [here](docs
 ## Designer Guide
 
 For details on how to write new templates please refer to the designer guide [here](docs/TemplateDesignerGuide.md)
+
+## Developer Guide
+
+For details on how to write new templates please refer to the designer guide [here](docs/DeveloperGuide.md)

@@ -5,6 +5,7 @@ from jinja2 import FileSystemLoader as JinjaFileSystemLoader
 from jinja2 import StrictUndefined, UndefinedError
 from jinja2.runtime import missing
 
+from sql_gen.sqltask_jinja import globals as globals_module
 from sql_gen.sqltask_jinja.filters.codepath import codepath
 from sql_gen.sqltask_jinja.filters.description import description
 from sql_gen.sqltask_jinja.filters.other import (objectdir, objectname,
@@ -66,6 +67,12 @@ class EnvBuilder(object):
 
     def set_globals_module(self, module):
         self.globals_module = module
+        return self
+
+    def _get_globals_module(self):
+        # default to globals module if not passed
+        if not self.globals_module:
+            self.globals_module = globals_module
         return self
 
     def set_filters_package(self, package):

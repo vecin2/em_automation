@@ -94,14 +94,17 @@ class AppProject(object):
         return self._tps_query_runner
 
     def product_layout(self):
-        self.em_config()
+        self.em_config(self._adconfig_id())
         return self.emproject.product_layout()
 
     def em_config(self, config_id):
         # if not self.emproject.default_config_id:
         self.emproject.set_default_config_id(self._adconfig_id())
         self._em_config = self.emproject.config(config_id)
-        return self._em_config
+        return self._em_config[config_id.container_name]
+
+    def config_by_component(self, component_name):
+        self.em_config(self._config_id(component_name))
 
     def get_schema(self, schema_name):
         if schema_name == "tenant_properties_service":
@@ -173,7 +176,6 @@ class AppProject(object):
         sqlserver_conn_str_name=None,
         component_name="ad",
     ):
-        print(self._config_id(component_name))
         emconfig = self.em_config(self._config_id(component_name))
         host = emconfig[host]
         username = emconfig[user]
@@ -201,7 +203,7 @@ class AppProject(object):
         return EMDatabase(connector)
 
     def _adconfig_id(self):
-        self._config_id("ad")
+        return self._config_id("ad")
 
     def _config_id(self, component_name):
         return EMConfigID(
