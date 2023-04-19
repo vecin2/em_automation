@@ -86,16 +86,14 @@ class EMEnvironmentConfig(object):
         self.config_generator.generate_config()
 
 
-
-
-
 class ProjectProperties(object):
-    def __init__(self, project_root):
+    def __init__(self, project_root, config_generator=None):
         if type(project_root) == str:
             project_root = Path(project_root)
         self.project_root = project_root
         self._core_properties = None
         self._em_properties = None
+        self.config_generator = config_generator
 
     @property
     def core_properties_path(self):
@@ -115,7 +113,9 @@ class ProjectProperties(object):
     def em(self):
         if not self._em_properties:
             self._em_properties = EMEnvironmentConfig(
-                self.environment_properties_path, self.environment_name
+                self.environment_properties_path,
+                self.environment_name,
+                config_generator=self.config_generator,
             )
         return self._em_properties
 

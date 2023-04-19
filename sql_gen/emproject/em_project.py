@@ -46,16 +46,8 @@ class EMProject(object):
 
     def config(self):
         if not self._project_properties:
-            self._project_properties = ProjectProperties(self.root)
+            self._project_properties = ProjectProperties(self.root,config_generator=self.ccadmin_client)
         return self._project_properties
-
-        if not self.emconfig:
-            self.emconfig = EMEnvironmentConfig(
-                self.paths["show_config_txt"].path,
-                environment_name,
-                self.ccadmin_client,
-            )
-        return self.emconfig
 
         if not self.config_path(config_id).exists():
             self._create_config()
