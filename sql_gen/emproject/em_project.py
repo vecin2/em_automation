@@ -1,26 +1,13 @@
 from collections import defaultdict
 
 import sql_gen
-from sql_gen.config import PropertiesFile
+from sql_gen.emproject.config import ProjectProperties
+from sql_gen.config.properties_file import PropertiesFile
 from sql_gen.emproject.config import EMEnvironmentConfig
 from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
 
 from .ccadmin import CCAdmin
-
-
-class EMConfigID(object):
-    def __init__(self, env_name, machine_name, container_name):
-        self.env_name = env_name
-        self.machine_name = machine_name
-        self.container_name = container_name
-
-    def __repr__(self):
-        return f"{self.env_name},{self.machine_name},{self.container_name}"
-
-    def __str__(self):
-        return f"{self.env_name},{self.machine_name},{self.container_name}"
-
 
 PATHS = {
     "ccadmin": "bin",
@@ -41,6 +28,7 @@ class EMProject(object):
         self._ccadmin_client = ccadmin_client
         self.default_config_id = None
         self.emconfig = None
+        self._project_properties =None
 
     @property
     def paths(self):
@@ -56,18 +44,15 @@ class EMProject(object):
 
         return self._ccadmin_client
 
-    def set_default_config_id(self, config_id):
-        self.default_config_id = config_id
+    def config(self):
+        if not self._project_properties:
+            self._project_properties = ProjectProperties(self.root)
+        return self._project_properties
 
-    def config(self, config_id=None):
-        if config_id:
-            env_name = config_id.env_name
-        else:
-            env_name = "localdev"
         if not self.emconfig:
             self.emconfig = EMEnvironmentConfig(
                 self.paths["show_config_txt"].path,
-                env_name,
+                environment_name,
                 self.ccadmin_client,
             )
         return self.emconfig
@@ -79,8 +64,7 @@ class EMProject(object):
         return self._config
 
     def config_path(self, config_id=None):
-        file_name = self._build_config_file_name(config_id)
-        result = self.paths["show_config_txt"].join(file_name)
+        result = self.paths["show_config_txt"].join(config_id.filename())
 
         return result
 
@@ -160,4 +144,4 @@ class EMProject(object):
         return []
 
     def product_layout(self):
-        return ProjectLayout(self.config()["product.home"], PATHS)
+        return ProjectLayout(self.config().em["product.home"], PATHS)

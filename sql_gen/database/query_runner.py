@@ -2,7 +2,7 @@ import string
 
 from fuzzyfinder import fuzzyfinder
 
-from sql_gen.config import PropertiesFile
+from sql_gen.config.properties_file import PropertiesFile
 
 
 class AttrDict(object):

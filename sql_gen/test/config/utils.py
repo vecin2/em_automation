@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from sql_gen.config import PropertiesFile
 
 
@@ -9,6 +10,7 @@ def assert_equal_properties(properties, filepath):
     for k, v in properties.items():
         assert v == config_file[k]
 
+
 class PropertiesFileGenerator(object):
     def __init__(self, properties={}):
         if type(properties) == str:
@@ -18,7 +20,9 @@ class PropertiesFileGenerator(object):
     def _to_dict(self, config_content):
         dict = {}
         for line in config_content.splitlines():
-            k, v = line.split("=")
+            segments = line.split("=")
+            k = segments[0]
+            v = "=".join(segments[1:])  # e.g property=some property with = within value
             dict[k] = v
         return dict
 

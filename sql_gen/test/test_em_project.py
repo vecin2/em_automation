@@ -1,9 +1,8 @@
 import pytest
 
-from sql_gen.emproject import EMConfigID, EMProject
-from sql_gen.exceptions import ConfigException
-from sql_gen.test.utils.emproject_test_util import (FakeCCAdminClient,
-                                                    FakeEMProjectBuilder)
+from sql_gen.emproject import EMProject
+from sql_gen.emproject.config import EMConfigID
+from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 
 
 def prj_builder(fs, root="/home/em"):
@@ -15,6 +14,7 @@ def make_valid_em_folder_layout(fs, root):
 
 
 local_config_id = EMConfigID("localdev", "localhost", "ad")
+
 
 @pytest.mark.skip
 def test_project_prefix_computes_when_exist_a_minimum_of_modules(fs):
@@ -53,11 +53,11 @@ def test_project_prefix_empty_if_no_module_with_2_uppercase(fs):
     assert "" == em_project.prefix()
 
 
-
 @pytest.mark.skip
 def test_project_prefix_empty_if_not_custom_module_created(fs):
     em_project = prj_builder(fs).add_repo_module("").build()
     assert "" == em_project.prefix()
+
 
 @pytest.mark.skip
 def test_project_prefix_skip_modules_without_3_uppercase(fs):
@@ -69,6 +69,7 @@ def test_project_prefix_skip_modules_without_3_uppercase(fs):
         .build()
     )
     assert "SPEN" == em_project.prefix()
+
 
 @pytest.mark.skip
 def test_project_prefix_in_config_overrides_computation(fs):
@@ -86,13 +87,15 @@ def test_project_prefix_in_config_overrides_computation(fs):
 def make_emproject(root):
     return EMProject(emprj_path=root)
 
+
 def test_product_layout(fs):
     config_id = EMConfigID("localdev", "localhost", "ad")
     em_project = (
         FakeEMProjectBuilder(fs)
+        .base_setup()
         .add_config(local_config_id, "product.home=my_product/is/here")
         .build()
     )
 
-    em_project.set_default_config_id(config_id)
+    # em_project.set_default_config_id(config_id)
     assert "my_product/is/here" == em_project.product_layout().root

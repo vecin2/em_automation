@@ -5,9 +5,8 @@ from pathlib import Path
 from st_librarian.sqltasklib import SQLTaskLib
 
 import sql_gen
-from sql_gen.config import ProjectProperties, PropertiesFile
 from sql_gen.database import Connector, EMDatabase, QueryRunner
-from sql_gen.emproject import EMConfigID, EMProject
+from sql_gen.emproject import EMProject
 from sql_gen.log import log
 from sql_gen.utils.filesystem import ProjectLayout
 
@@ -39,7 +38,8 @@ class AppProject(object):
         self._rsdb = None
         self._tpsdb = None
         self._library = None
-        self._project_props = None
+        self._em_config = None
+        self._project_properties = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -99,16 +99,16 @@ class AppProject(object):
         return self.emproject.product_layout()
 
     def em_config(self):
-        # if not self.emproject.default_config_id:
-        if not self._project_props:
-            self._project_props = ProjectProperties(self.emproject.root)
-        return self._project_props.em
-        # self.emproject.set_default_config_id(self._adconfig_id())
-        # self._em_config = self.emproject.config(config_id)
-        # return self._em_config[config_id.container_name]
+        return self.project_properties.em
+        # if not self.:
+        #     self._em_config = self.emproject.config(self.config["environment.name"])
+        # return self._em_config
+    @property
+    def project_properties(self):
+        if not self._project_properties:
+            self._project_properties = self.emproject.config()
+        return self._project_properties
 
-    def config_by_component(self, component_name):
-        self.em_config()
 
     def get_schema(self, schema_name):
         if schema_name == "tenant_properties_service":
@@ -164,9 +164,7 @@ class AppProject(object):
 
     @property
     def config(self):
-        if not self._config_file:
-            self._config_file = PropertiesFile(self.paths["core_config"].path)
-        return self._config_file
+        return self.project_properties.core
 
     def _get_database(
         self,
@@ -206,16 +204,6 @@ class AppProject(object):
             sqlserver_conn_str,
         )
         return EMDatabase(connector)
-
-    def _adconfig_id(self):
-        return self._config_id("ad")
-
-    def _config_id(self, component_name):
-        return EMConfigID(
-            self.config["environment.name"],
-            self.config["machine.name"],
-            component_name,
-        )
 
     @staticmethod
     def set_logger(logger):

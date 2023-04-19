@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from sql_gen.emproject.config import ProjectProperties
 from sql_gen.emproject import EMProject
 from sql_gen.exceptions import CCAdminException
 
@@ -70,7 +71,7 @@ database.reporting.pass=reporting_password
             self.ccadmin_config_path("ad"),
             contents=ad_config_text,
         )
-        tps_config_text="""
+        tps_config_text = """
 database.host=localhost
 database.name=oracleCL
 database.port=1521
@@ -91,7 +92,7 @@ database.tenant-properties-service.pass=pepepass
             content = f.read()
         return content
 
-    def ccadmin_config_path(self,container_name):
+    def ccadmin_config_path(self, container_name):
         return f"work/config/show-config-txt/{self.environment_name}-{self.machine_name}-{container_name}.txt"
 
     def make_em_config(self):
@@ -125,9 +126,21 @@ sequence.generator=timestamp
         )
 
     def add_config(self, config_id, config_content):
-        self._create_file(
-            self.emproject.config_path(config_id).path, contents=config_content
+
+        # localdev_generator = EMEnvironmentConfigGenerator(
+        #     env_name=config_id.env_name, machine_name=config_id.machine_name
+        # )
+        # localdev_generator.add_properties_file(config_id.container_name, config_content)
+        # localdev_generator.save()
+        filepath = (
+            ProjectProperties(self.root).environment_properties_path
+            / config_id.filename()
         )
+        self._create_file(str(filepath), contents=config_content)
+        # filepath = ProjectProperties(self.root).core_properties_path
+        # self._create_file(
+        #     str(filepath), contents="environment.name=" + config_id.env_name
+        # )
         return self
 
     def with_ccadmin(self, ccadmin_client):

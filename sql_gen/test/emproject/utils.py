@@ -3,7 +3,7 @@ from sql_gen.test.config.utils import PropertiesFolderGenerator
 
 
 class EMEnvironmentConfigGenerator(PropertiesFolderGenerator):
-    def __init__(self, env_name=None, machine_name=None):
+    def __init__(self, env_name=None, machine_name="localhost"):
         super().__init__()
         self.env_name = env_name
         self.machine_name = machine_name

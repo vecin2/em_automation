@@ -1,5 +1,5 @@
 import pytest
-from sql_gen.emproject import QueryRunner
+from sql_gen.database.query_runner import QueryRunner
 from sql_gen.exceptions import ConfigFileNotFoundException
 
 

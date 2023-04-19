@@ -78,7 +78,7 @@ class ContextBuilder(object):
                     PropertiesFile(self.app.library().db_queries("rs"))
                 ),
                 "_emprj": self.app.emproject,
-                "_adconfig": self.app.config_by_component("ad"),
+                "_props": self.app.em_config(),
             }
         return self.template_API
 

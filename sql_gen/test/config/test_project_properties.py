@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from sql_gen.config import ProjectProperties
+from sql_gen.emproject.config import ProjectProperties
 from sql_gen.test.config.utils import (PropertiesFileGenerator,
                                        PropertiesFolderGenerator,
                                        assert_equal_properties)
@@ -60,4 +60,3 @@ def test_get_core_and_emenvironment_properties():
         assert "en-GB" == project_props.em["preferred.default.locale"]
         assert "en-GB" == project_props.em.preferred_default_locale
         assert "1521" == project_props.em.tps_database_port
-

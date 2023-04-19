@@ -1,7 +1,9 @@
 import glob
 import os
+from collections import ChainMap
+from pathlib import Path
 
-from sql_gen.config import PropertiesFile
+from sql_gen.config.properties_file import PropertiesFile
 
 
 class EMConfigID(object):
@@ -57,10 +59,10 @@ class EMEnvironmentConfig(object):
 
     def _merge_env_property_files(self):
         items = []
-        from collections import ChainMap
+
         for file in self._env_property_files():
             items.append(PropertiesFile(file).properties)
-        #do not resolve items otherwise we might get interpolation errors
+        # do not resolve items otherwise we might get interpolation errors
         result = ChainMap(*items)
         return result
 
@@ -82,3 +84,41 @@ class EMEnvironmentConfig(object):
 
     def _generate_config_files(self):
         self.config_generator.generate_config()
+
+
+
+
+
+class ProjectProperties(object):
+    def __init__(self, project_root):
+        if type(project_root) == str:
+            project_root = Path(project_root)
+        self.project_root = project_root
+        self._core_properties = None
+        self._em_properties = None
+
+    @property
+    def core_properties_path(self):
+        return self.project_root / "project/sqltask/config/core.properties"
+
+    @property
+    def environment_properties_path(self):
+        return self.project_root / "work/config/show-config-txt"
+
+    @property
+    def core(self):
+        if not self._core_properties:
+            self._core_properties = PropertiesFile(self.core_properties_path)
+        return self._core_properties
+
+    @property
+    def em(self):
+        if not self._em_properties:
+            self._em_properties = EMEnvironmentConfig(
+                self.environment_properties_path, self.environment_name
+            )
+        return self._em_properties
+
+    @property
+    def environment_name(self):
+        return self.core["environment.name"]
