@@ -1,7 +1,7 @@
 import pytest
 
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
-from sql_gen.help import ViewTestHandler
+from sql_gen.help import DisplayTemplateTestHandler
 from sql_gen.main_menu import ExitHandler, HandlerType, InputParser, MenuOption
 
 first_option = MenuOption("1", "first_option")
@@ -15,8 +15,8 @@ class HandlerFactory(object):
             return RenderTemplateHandler(None)
         elif handler_type == HandlerType.EXIT:
             return ExitHandler()
-        elif handler_type == HandlerType.VIEW_TEST:
-            return ViewTestHandler(None)
+        elif handler_type == HandlerType.DISPLAY_TEST:
+            return DisplayTemplateTestHandler(None)
 
 
 handler_factory = HandlerFactory()
@@ -43,15 +43,14 @@ def test_parse_render_event():
 
 def test_parse_view_test_event():
     input_str = "1. first_option -t"
-    assert_handled_by(HandlerType.VIEW_TEST, input_str)
+    assert_handled_by(HandlerType.DISPLAY_TEST, input_str)
 
 
-@pytest.mark.skip
 def test_parse_view_test_event_with_extra_spaces():
     input_str = "1. first_option -t  "
     input_event = parse(input_str)
+    assert_handled_by(HandlerType.DISPLAY_TEST, input_str)
 
-    assert InputEvent(first_option, HandlerType.VIEW_TEST) == input_event
 
 
 def test_parse_exit_event():

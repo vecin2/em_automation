@@ -77,6 +77,7 @@ class ContextBuilder(object):
                 "_RSQuery": QueryDict(
                     PropertiesFile(self.app.library().db_queries("rs"))
                 ),
+                "_app": self.app,
                 "_emprj": self.app.emproject,
                 "_props": self.app.em_config(),
             }

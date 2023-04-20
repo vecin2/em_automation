@@ -193,9 +193,9 @@ class RunOnDBTestBuilder(object):
         self.apprunner = apprunner
 
     def build(self, testfile, emprj_path=None):
-    
+
         return RunOnDBTestTemplate().render(
-            db_schema= testfile.top_folder(),
+            db_schema=testfile.top_folder(),
             template_name=testfile.template_name(),
             query=testfile.expected_sql(),
             emprj_path=self.emprj_path,
@@ -366,7 +366,7 @@ class FillTemplateAppRunner:
         self.user_inputs("x")
         return self
 
-    def select_template(self, template_name, values):
+    def select_template(self, template_name, values={}):
         self.user_inputs(template_name)
         if isinstance(values, dict):
             value_list = list(values.values())
@@ -402,6 +402,7 @@ class FileAppRunner(FillTemplateAppRunner):
             context_builder=context_builder,
             templates_path=templates_path,
             run_on_db=False,
+            project_root=emprj_path,
         )
 
     def run_test(self, testfile):

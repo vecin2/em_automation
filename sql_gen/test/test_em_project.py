@@ -1,8 +1,12 @@
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from sql_gen.emproject import EMProject
 from sql_gen.emproject.config import EMConfigID
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
+from sql_gen.test.utils.project_generator import QuickProjectGenerator
 
 
 def prj_builder(fs, root="/home/em"):
@@ -88,14 +92,19 @@ def make_emproject(root):
     return EMProject(emprj_path=root)
 
 
-def test_product_layout(fs):
-    config_id = EMConfigID("localdev", "localhost", "ad")
-    em_project = (
-        FakeEMProjectBuilder(fs)
-        .base_setup()
-        .add_config(local_config_id, "product.home=my_product/is/here")
-        .build()
-    )
+@pytest.fixture
+def root():
+    with tempfile.TemporaryDirectory() as root:
+        yield Path(root)
 
-    # em_project.set_default_config_id(config_id)
-    assert "my_product/is/here" == em_project.product_layout().root
+
+@pytest.fixture
+def project_generator(root):
+    quick_generator = QuickProjectGenerator(root / "trunk")
+    yield quick_generator.make_project_generator()
+
+
+def test_product_layout(project_generator):
+    project_generator.with_product_home("/products/my_product")
+    project = project_generator.generate()
+    assert "/products/my_product" == project.product_layout().root

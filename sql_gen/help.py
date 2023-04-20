@@ -1,12 +1,12 @@
 from sql_gen.main_menu import AbstractEventHandler, HandlerType
 
 
-class ViewTestHandler(AbstractEventHandler):
+class DisplayTemplateTestHandler(AbstractEventHandler):
     def __init__(self, library):
-        self.libary = library
+        self.library = library
 
     def type(self):
-        return HandlerType.VIEW_TEST
+        return HandlerType.DISPLAY_TEST
 
     def handles(self, input):
         return input.option and input.option.code != 'x' and input.params =="-t"

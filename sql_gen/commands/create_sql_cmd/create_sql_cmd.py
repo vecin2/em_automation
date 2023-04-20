@@ -9,11 +9,14 @@ from jinja2 import Environment
 from sql_gen.app_project import AppProject
 from sql_gen.commands.create_sql_cmd.task_prefix_generator import \
     TaskPrefixGenerator
-from sql_gen.commands.print_sql_cmd import (PrintSQLToConsoleCommand,
-                                            PrintSQLToConsoleDisplayer)
+from sql_gen.commands.print_sql_cmd import PrintSQLToConsoleCommand
 from sql_gen.emproject.emsvn import EMSvn
 from sql_gen.sqltask_jinja.context import ContextBuilder
 from sql_gen.ui.utils import prompt, prompt_suggestions, select_string_noprompt
+
+TaskPrefixGenerator
+
+TaskPrefixGenerator
 
 groovy_update_xml = """
 <project name="update" default="update">
@@ -188,11 +191,11 @@ class CreateSQLTaskCommand(object):
         return self.displayer.ask_to_override_task(self.path) != "n"
 
     def _create_sql(self):
-        displayer = PrintSQLToConsoleDisplayer()
         print_sql_cmd = PrintSQLToConsoleCommand(
             context_builder=self.context_builder,
             listener=self,
             templates_path=self.templates_path,
+            project_root=self.emprj_path,
         )
         print_sql_cmd.run()
         return print_sql_cmd.sql_printed()

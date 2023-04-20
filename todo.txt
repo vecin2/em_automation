@@ -1,13 +1,12 @@
-EXTEND_PROCESS
-test_returnserror_when_file_not_a_process
-should be run within em project
-src should be within a product project
-You can extend and OTB process. If the process is not OTB
+refactor tests:
+
+-->print-sql
+	-->validate project folder
+create-sql
+run-sql
+test-sql
 
 
-CONFIG
-def hotupdates_attachonstart_ced():
-	tooling/ced/ced.properties
-	config.add_block(("tooling/ced/ced/properties',
-			  'hotupdates.attachonstart=true')
-	config_prj.loadOrCreate("tooling/ced/ced/properties').add_block(
+Generator 
+with_connnection_details
+   Remove database_type is not part of the connection details

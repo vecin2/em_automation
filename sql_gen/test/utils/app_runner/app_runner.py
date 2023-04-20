@@ -23,6 +23,34 @@ class FakeLogger(object):
         """"""
 
 
+class ApplicationRunner(FillTemplateAppRunner):
+    def __init__(self):
+        super().__init__()
+        self._project = None
+
+    def _run(self, args, app=None):
+        sys.argv = args
+        sys.stdin = StringIO(self._user_input_to_str())
+        app.run()
+
+    def _user_input_to_str(self):
+        result = "\n".join([input for input in self.inputs])
+        self.inputs.clear()  # so if runs again it doe not repit inputs
+        return result
+
+    def build_app(self):
+        self.app = CommandLineSQLTaskApp.build_app(
+           self._project.emroot, logger= FakeLogger()
+        )
+        return self.app
+
+    def with_project(self, project):
+        self._project = project
+        # self.emprj_path = emproject.root
+        # self.emproject = emproject
+        # self._app_project = AppProject(self.emprj_path)
+
+
 class AppRunner(FillTemplateAppRunner):
     def __init__(self, fs=None):
         super().__init__()
@@ -50,6 +78,7 @@ class AppRunner(FillTemplateAppRunner):
         self.emprj_path = emproject.root
         self.emproject = emproject
         self._app_project = AppProject(self.emprj_path)
+
         os.chdir(emproject.root)
         return self
 

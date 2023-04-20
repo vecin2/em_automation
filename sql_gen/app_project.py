@@ -45,6 +45,10 @@ class AppProject(object):
         return AppProject(emprj_path=emprj_path)
 
     @property
+    def emroot(self):
+        return self.emproject.root
+
+    @property
     def emproject(self):
         if not self._emproject:
             self._emproject = EMProject(emprj_path=self.emprj_path)

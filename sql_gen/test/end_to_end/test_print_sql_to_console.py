@@ -1,114 +1,131 @@
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
-from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
+from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
+                                                  QuickProjectGenerator)
 
 
 @pytest.fixture
-def app_runner(fs):
-    app_runner = PrintSQLToConsoleAppRunner(fs=fs)
+def app_runner():
+    app_runner = PrintSQLToConsoleAppRunner()
     yield app_runner
     app_runner.teardown()
 
 
 @pytest.fixture
-def project_builder(fs):
-    em_root = "/fake/em/projects/my_project"
-    yield FakeEMProjectBuilder(fs, root=em_root)
+def root():
+    with tempfile.TemporaryDirectory() as root:
+        yield Path(root)
 
 
 @pytest.fixture
-def em_project(fs, project_builder):
-    em_project = project_builder.base_setup().build()
-    yield em_project
+def project_generator(root):
+    quick_generator = QuickProjectGenerator(root / "trunk")
+    yield quick_generator.make_project_generator()
 
 
-def test_it_throws_exception_when_no_templates_path_define(app_runner, em_project):
+@pytest.fixture
+def library_generator(project_generator):
+    quick_generator = QuickLibraryGenerator(project_generator.root.parent / "library")
+    library_generator = quick_generator.make_library_generator()
+    project_generator.with_library(library_generator)
+    yield library_generator
+
+
+def test_it_throws_exception_when_no_templates_path_define(
+    project_generator, app_runner
+):
+    project_generator.with_library_path(None)
+    app_runner.with_project(project_generator.generate())
+
     with pytest.raises(ValueError) as excinfo:
-        app_runner.with_emproject(em_project).print_sql()
+        app_runner.saveAndExit().print_sql()
     assert "'sqltask.library.path' property not set" in str(excinfo.value)
 
 
 def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
-    app_runner, em_project, project_builder
+    project_generator, library_generator, app_runner
 ):
-    project_builder.append_to_app_config("sqltask.library.path=/non/existing/path")
+    project_generator.with_library_path("/sfadasfd/asdfsad/asdf")
+    app_runner.with_project(project_generator.generate())
+
     with pytest.raises(ValueError) as excinfo:
-        app_runner.with_emproject(em_project).print_sql()
-    assert "sqltask.library.path' property points to an invalid path" in str(excinfo.value)
+        app_runner.saveAndExit().print_sql()
+    assert "sqltask.library.path' property points to an invalid path" in str(
+        excinfo.value
+    )
 
 
-def test_returns_empty_when_no_template_selected(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).with_task_library(
-        "/library"
-    ).saveAndExit().print_sql().assert_printed_sql("")
+def test_returns_empty_when_no_template_selected(project_generator, app_runner):
+    app_runner.with_project(project_generator.generate())
+    app_runner.saveAndExit().print_sql().assert_printed_sql("")
 
 
 def test_keeps_prompting_after_entering_non_existing_template(
-    app_runner, em_project, fs
+    project_generator, app_runner
 ):
-
-    app_runner.with_emproject(em_project).with_task_library("/library").select_template(
-        "abc", {}
-    ).saveAndExit().print_sql().assert_printed_sql("").assert_all_input_was_read()
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("abc").saveAndExit().print_sql().assert_printed_sql("")
 
 
-def test_prints_expected_text_when_a_valid_template_is_run(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "say_hello.txt", "hello!"
-    ).select_template(
-        "1. say_hello.txt", {}
-    ).saveAndExit().print_sql().assert_printed_sql(
-        "hello!"
-    ).assert_all_input_was_read()
+def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
+    project_generator, library_generator, app_runner
+):
+    library_generator.add_template("say_hello.txt", "hello!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "say_hello.txt"
+    ).saveAndExit().print_sql().assert_printed_sql("hello!")
 
 
 def test_prints_expected_text_when_a_valid_template_with_placeholders_is_run(
-    app_runner, em_project, fs
+    project_generator, library_generator, app_runner
 ):
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "say_hello.txt", "hello {{name}}"
-    ).select_template(
-        "1. say_hello.txt", {"name": "David"}
-    ).saveAndExit().print_sql().assert_printed_sql(
-        "hello David"
-    )
+    library_generator.add_template("say_hello.txt", "hello {{name}}!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "say_hello.txt", {"name": "Tony"}
+    ).saveAndExit().print_sql().assert_printed_sql("hello Tony!")
 
 
 def test_prints_expected_text_when_user_goes_back_select_a_different_value(
-    app_runner, em_project, fs
+    project_generator, library_generator, app_runner
 ):
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "greeting.txt", "hello {{name}} {{surname}}!"
-    ).select_template(
-        "1. greeting.txt", ["David", "<", "Juan", "Rodriguez"]
-    ).saveAndExit().print_sql().assert_printed_sql(
-        "hello Juan Rodriguez!"
-    )
+    library_generator.add_template("say_hello.txt", "hello {{name}} {{surname}}!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "say_hello.txt", ["Tony", "<", "Antonio", "Rodriguez"]
+    ).saveAndExit().print_sql().assert_printed_sql("hello Antonio Rodriguez!")
 
 
-def test_fills_two_templates_and_combines_output(app_runner, em_project, fs):
+def test_fills_two_templates_and_combines_output(
+    project_generator, library_generator, app_runner
+):
 
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "hello.txt", "hello {{name}}"
-    ).add_template("bye.txt", "bye {{name}}").select_template(
-        "hello.txt", {"name": "David"}
-    ).select_template(
-        "bye.txt", {"name": "John"}
-    ).saveAndExit().print_sql().assert_printed_sql(
-        "hello David\nbye John"
-    )
+    library_generator.add_template("say_hi.txt", "hi {{name}}")
+    library_generator.add_template("say_bye.txt", "bye {{name}}")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("say_hi.txt", {"name": "Marco"}).select_template(
+        "say_bye.txt", {"name": "Fernando"}
+    ).saveAndExit().print_sql().assert_printed_sql("hi Marco\nbye Fernando")
 
 
-@pytest.mark.skip
-def test_initial_context_is_used_when_filling_template(app_runner, fs):
-    initial_context = {"_dummy_note": "Dummy note"}
-    fs.create_file("/templates/hello.sql", contents="hello {{_dummy_note}}!")
-
-    app_runner.with_task_library("/library").with_template_API(
-        initial_context
-    ).select_template(
-        "hello.sql", {"dummy": "hello"}
-    ).saveAndExit().run().assert_rendered_sql(
-        "hello Dummy note!"
-    ).assert_all_input_was_read()
+# @pytest.mark.skip
+# def test_initial_context_is_used_when_filling_template(app_runner, fs):
+#     initial_context = {"_dummy_note": "Dummy note"}
+#     fs.create_file("/templates/hello.sql", contents="hello {{_dummy_note}}!")
+#
+#     app_runner.with_task_library("/library").with_template_API(
+#         initial_context
+#     ).select_template(
+#         "hello.sql", {"dummy": "hello"}
+#     ).saveAndExit().run().assert_rendered_sql(
+#         "hello Dummy note!"
+#     ).assert_all_input_was_read()

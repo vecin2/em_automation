@@ -1,9 +1,9 @@
+import os
 from collections import defaultdict
 
 import sql_gen
-from sql_gen.emproject.config import ProjectProperties
 from sql_gen.config.properties_file import PropertiesFile
-from sql_gen.emproject.config import EMEnvironmentConfig
+from sql_gen.emproject.config import ProjectProperties
 from sql_gen.exceptions import CCAdminException, ConfigException
 from sql_gen.utils.filesystem import ProjectLayout
 
@@ -28,7 +28,7 @@ class EMProject(object):
         self._ccadmin_client = ccadmin_client
         self.default_config_id = None
         self.emconfig = None
-        self._project_properties =None
+        self._project_properties = None
 
     @property
     def paths(self):
@@ -40,13 +40,15 @@ class EMProject(object):
     @property
     def ccadmin_client(self):
         if not self._ccadmin_client:
-            self._ccadmin_client = CCAdmin(self.paths["ccadmin"].path)
+            self._ccadmin_client = CCAdmin(self.root + os.sep + "bin")
 
         return self._ccadmin_client
 
     def config(self):
         if not self._project_properties:
-            self._project_properties = ProjectProperties(self.root,config_generator=self.ccadmin_client)
+            self._project_properties = ProjectProperties(
+                self.root, config_generator=self.ccadmin_client
+            )
         return self._project_properties
 
         if not self.config_path(config_id).exists():

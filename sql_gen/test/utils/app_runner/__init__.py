@@ -1,4 +1,5 @@
-from sql_gen.test.utils.app_runner.app_runner import (AppRunner,
+from sql_gen.test.utils.app_runner.app_runner import (ApplicationRunner,
+                                                      AppRunner,
                                                       TemplatesAppRunner)
 from sql_gen.test.utils.app_runner.create_sql import CreateSQLTaskAppRunner
 from sql_gen.test.utils.app_runner.print_sql import PrintSQLToConsoleAppRunner
@@ -10,4 +11,5 @@ __all__ = [
     "TemplatesAppRunner",
     "RunSQLAppRunner",
     "AppRunner",
+    "ApplicationRunner",
 ]

@@ -52,7 +52,7 @@ class CommandLineSQLTaskApp(object):
         self.last_command_run = None
 
     @staticmethod
-    def build_app(cwd, env_vars, logger=None):
+    def build_app(cwd, env_vars=None, logger=None):
         project_home = ProjectHome(cwd, env_vars)
         app = CommandLineSQLTaskApp(
             project_home=project_home,

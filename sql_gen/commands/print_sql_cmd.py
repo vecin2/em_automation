@@ -1,6 +1,8 @@
+from sql_gen.app_project import AppProject
 from sql_gen.database.sql_runner import SQLRunner
 from sql_gen.docugen.render_template_handler import RenderTemplateHandler
 from sql_gen.docugen.template_filler import TemplateFiller
+from sql_gen.help import DisplayTemplateTestHandler
 from sql_gen.main_menu import (ExitHandler, InputParser, MainMenu,
                                MainMenuDisplayer, MainMenuHandler, MenuOption)
 from sql_gen.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -38,6 +40,7 @@ class PrintSQLToConsoleCommand(object):
         templates_path=None,
         run_on_db=True,
         listener=None,
+        project_root=None
     ):
         self.templates_path = templates_path
         self.context_builder = context_builder
@@ -50,6 +53,13 @@ class PrintSQLToConsoleCommand(object):
         self.run_on_db = run_on_db
         self.sql_runner = None
         self.commit_changes = False
+        self.project_root = project_root
+        self._app_project = None
+    @property
+    def app_project(self):
+        if not self._app_project:
+            self._app_project = AppProject(emprj_path=self.project_root)
+        return self._app_project
 
     def run(self):
         if not self.context:
@@ -72,9 +82,12 @@ class PrintSQLToConsoleCommand(object):
             listener=self,
         )
         exit_handler = ExitHandler()
-        displayer = MainMenuDisplayer()
-        menu_handler = MainMenuHandler([render_template_handler, exit_handler])
+        # display_template_test_handler = DisplayTemplateTestHandler(self.app_project.library())
+        menu_handler = MainMenuHandler(
+            [render_template_handler,  exit_handler]
+        )
 
+        displayer = MainMenuDisplayer()
         return MainMenu(
             displayer=displayer,
             options=MenuOption.to_options(loader.list_visible_templates()),

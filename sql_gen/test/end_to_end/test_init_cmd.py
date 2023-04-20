@@ -6,8 +6,6 @@ from sql_gen.test.utils.emproject_test_util import (FakeCCAdminClient,
                                                     FakeEMProjectBuilder)
 from sql_gen.test.utils.init_runner import InitAppRunner
 
-FakeCCAdminClient
-FakeEMProjectBuilder
 
 root = "/home/em/my_prj"
 

@@ -23,6 +23,7 @@ class CommandFactory(object):
         return PrintSQLToConsoleCommand(
             templates_path=self.templates_path,
             context_builder=self.context_builder,
+            project_root=self.emprj_path
         )
 
     @property

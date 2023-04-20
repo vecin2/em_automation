@@ -42,7 +42,7 @@ class ProjectHome:
 
         if em_root:
             return em_root
-        elif ENV_VAR_NAME not in self.env_vars:
+        elif not self.env_vars or ENV_VAR_NAME not in self.env_vars:
             help_text = "fatal: This command should be run from a root EM project folder or any of the subfolders"
             raise ValueError(help_text)
             raise EnvVarNotFoundException(ENV_VAR_NAME, help_text)
@@ -63,6 +63,7 @@ class ProjectHome:
         return self._get_em_root_from_path(parent)
 
     def _is_em_root(self, path):
+
         return (
             os.path.exists(os.path.join(path, "bin"))
             and os.path.exists(os.path.join(path, "config"))

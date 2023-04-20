@@ -6,7 +6,7 @@ from sql_gen.ui import prompt_suggestions
 class HandlerType(Enum):
     RENDER = 1
     EXIT = 2
-    VIEW_TEST = 3
+    DISPLAY_TEST = 3
 
 
 class InputParser(object):
@@ -14,8 +14,6 @@ class InputParser(object):
         str_option, params = self.split(input_str)
         option = self._matches_any(str_option, option_list)
         return MainMenuInput(option, params)
-        # elif params and params == "-t":
-        #     event_type = HandlerType.VIEW_TEST
 
     def _matches_any(self, option_entered, option_list):
         for option in option_list:
