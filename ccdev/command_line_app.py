@@ -65,7 +65,7 @@ class CommandLineSQLTaskApp(object):
 
     def run(self):
         try:
-            self._dorun()
+            return self._dorun()
         except KeyboardInterrupt as excinfo:
             print("\n KeyboardInterrupt exception")
         except Exception as excinfo:

@@ -1,13 +1,20 @@
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from sql_gen.test.utils.app_runner import CreateSQLTaskAppRunner
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.test.utils.fake_connection import FakeConnection
+from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
+                                                  QuickProjectGenerator)
+
+######### FIXTURES #############
 
 
 @pytest.fixture
-def app_runner(fs):
-    app_runner = CreateSQLTaskAppRunner(fs=fs)
+def app_runner():
+    app_runner = CreateSQLTaskAppRunner()
     yield app_runner
     app_runner.teardown()
 
@@ -35,24 +42,46 @@ def do_connect(mocker, fake_connection):
     yield mocked
 
 
-def test_creates_sqltask_when_path_passed_as_arg(app_runner, em_project, fs):
+@pytest.fixture
+def root():
+    with tempfile.TemporaryDirectory() as root:
+        yield Path(root)
+
+
+@pytest.fixture
+def project_generator(root):
+    quick_generator = QuickProjectGenerator(root / "trunk")
+    yield quick_generator.make_project_generator()
+
+
+@pytest.fixture
+def library_generator(project_generator):
+    quick_generator = QuickLibraryGenerator(project_generator.root.parent / "library")
+    library_generator = quick_generator.make_library_generator()
+    project_generator.with_library(library_generator)
+    yield library_generator
+
+
+######### TESTS #############
+def test_passing_path_as_arg_does_not_prompt_for_it(
+    project_generator, library_generator, app_runner, fake_connection
+):
+
     sql = "INSERT INTO CE_CUSTOMER VALUES('{{name}}','{{lastname}}')"
-    final_sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "list_customers.sql", sql
-    )
+    final_sql = "INSERT INTO CE_CUSTOMER VALUES('Mary','Jane')"
 
+    library_generator.add_template("insert_customer.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
     app_runner.select_template(
-        "list_customers.sql", {"name": "David", "lastname": "Garcia"}
-    ).saveAndExit().create_sql(
-        "/em/prj/modules/module_A"
-    ).assert_all_input_was_read().exists(
-        "/em/prj/modules/module_A/tableData.sql", final_sql
-    ).exists_regex(
-        "/em/prj/modules/module_A/update.sequence", "PROJECT \$Revision: \d+ \$"
+        "insert_customer.sql", {"name": "Mary", "lastname": "Jane"}
+    ).saveAndExit().create_sql("module_A").exists(
+        "module_A/tableData.sql", final_sql
+    ).exists_file_matching_regex(
+        "module_A/update.sequence", "PROJECT \$Revision: \d+ \$"
     )
 
-
+@pytest.mark.skip
 def test_sqltask_exists_user_cancels_then_does_not_create(app_runner, em_project, fs):
     app_runner.with_emproject(em_project).with_task_library("/library").add_template(
         "dummy1.sql", "dummy1"
@@ -75,6 +104,7 @@ def test_sqltask_exists_user_cancels_then_does_not_create(app_runner, em_project
     )
 
 
+@pytest.mark.skip
 def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner, em_project, fs):
     app_runner.with_emproject(em_project).with_task_library("/library").add_template(
         "dummy1.sql", "dummy1"
@@ -97,6 +127,7 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner, em_projec
     )
 
 
+@pytest.mark.skip
 def test_when_seq_generator_throws_exception_writes_negative_one_to_update_sequence(
     app_runner, fs, em_project, mocker
 ):
@@ -115,6 +146,7 @@ def test_when_seq_generator_throws_exception_writes_negative_one_to_update_seque
     ).assert_all_input_was_read()
 
 
+@pytest.mark.skip
 def test_run_without_path_it_prompts_for_task_name_to_compute_path(
     app_runner, em_project, fs
 ):

@@ -32,7 +32,7 @@ class ApplicationRunner(FillTemplateAppRunner):
 
         sys.argv = args
         sys.stdin = StringIO(self._user_input_to_str())
-        self.build_app().run()
+        return self.build_app().run()
 
     def _user_input_to_str(self):
         result = "\n".join([input for input in self.inputs])

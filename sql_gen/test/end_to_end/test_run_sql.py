@@ -11,18 +11,10 @@ from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
 
 
 @pytest.fixture
-def app_runner(capsys):
+def app_runner():
     app_runner = RunSQLAppRunner()
     yield app_runner
     app_runner.teardown()
-
-
-@pytest.fixture
-def em_project(fs):
-    em_root = "/fake/em/projects/my_project"
-    em_project = FakeEMProjectBuilder(fs, root=em_root).base_setup().build()
-    yield em_project
-
 
 @pytest.fixture
 def fake_connection(mocker):
@@ -30,7 +22,7 @@ def fake_connection(mocker):
     yield fake_connection
 
 
-# autouse allows to run this fixture even if we are not passing to test
+# autouse allows to run this fixture even if we are not passing it to test
 # this allow us to mock the DB connection
 @pytest.fixture(autouse=True)
 def do_connect(mocker, fake_connection):
@@ -74,14 +66,6 @@ def test_select_stmt_does_not_need_confirmation_and_is_cached(
     app_runner.select_template(
         "list_customers.sql"
     ).saveAndExit().print_sql().assert_printed_sql(sql).assert_all_input_was_read()
-
-    # app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-    #     "list_customers.sql", sql
-    # ).select_template(
-    #     "list_customers.sql", {}
-    # ).saveAndExit().run_sql().assert_printed_sql(
-    #     sql
-    # ).assert_all_input_was_read()
 
     assert sql == fake_connection._cursor.executed_sql
 

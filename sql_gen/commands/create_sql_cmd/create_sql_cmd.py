@@ -289,3 +289,4 @@ class SQLTask(object):
         )
         with open(os.path.join(self.path, "update.sequence"), "w") as f:
             f.write(self.update_sequence)
+

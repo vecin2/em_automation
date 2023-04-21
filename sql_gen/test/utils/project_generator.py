@@ -90,6 +90,10 @@ class ProjectGenerator(PathGenerator):
         self._core_properties["environment.name"] = environment_name
         return self
 
+    def with_sequence_generator(self, sequence_generator):
+        self._core_properties["sequence.generator"] = sequence_generator
+        return self
+
     def with_db_type(self, dbtype):
         return self._update_ad_properties({"database.type": dbtype})
 
@@ -220,6 +224,7 @@ class QuickProjectGenerator(object):
         self.project_generator.with_library(
             self.library_generator.make_library_generator()
         )
+        self.project_generator.with_sequence_generator("timestamp")
         return self.project_generator
 
 

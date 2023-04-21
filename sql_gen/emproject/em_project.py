@@ -1,5 +1,6 @@
 import os
 from collections import defaultdict
+from pathlib import Path
 
 import sql_gen
 from sql_gen.config.properties_file import PropertiesFile
@@ -23,7 +24,7 @@ MANDATORY_KEYS = ["ccadmin", "repo_modules"]
 class EMProject(object):
     def __init__(self, ccadmin_client=None, emprj_path=None):
         self._config = None
-        self.root = emprj_path
+        self.root = Path(emprj_path)
         self._paths = None
         self._ccadmin_client = ccadmin_client
         self.default_config_id = None
@@ -40,7 +41,7 @@ class EMProject(object):
     @property
     def ccadmin_client(self):
         if not self._ccadmin_client:
-            self._ccadmin_client = CCAdmin(self.root + os.sep + "bin")
+            self._ccadmin_client = CCAdmin(self.root / "bin")
 
         return self._ccadmin_client
 
