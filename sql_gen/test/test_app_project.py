@@ -30,6 +30,7 @@ def test_instantiate_ad_queryrunner(project_generator, library_generator):
     library_generator.with_ad_queries(ad_queries)
     project_generator.with_library(library_generator)
 
+    project_generator.with_db_type("oracle")
     project_generator.with_environment_name("localdev")
     project_generator.with_ad_connection_details(
         host="localhost", port="1433", user="sa", password="admin!"

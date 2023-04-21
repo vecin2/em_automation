@@ -178,11 +178,12 @@ class ProjectGenerator(PathGenerator):
         return self._project_layout
 
     def generate(self):
-        super().generate()
         if self._library_generator:
             self._library_generator.generate()
-        self.project_layout.write_text(
-            "core_config", Properties(self._core_properties).to_text()
+
+        self.add_file(
+            "project/sqltask/config/core.properties",
+            Properties(self._core_properties).to_text(),
         )
 
         self.env_config_generator = EMEnvironmentConfigGenerator(
@@ -190,6 +191,7 @@ class ProjectGenerator(PathGenerator):
         )
         self.env_config_generator.add_properties_file("ad", self._ad_properties)
         self.env_config_generator.save(self.project_layout.show_config_txt)
+        super().generate()
         return AppProject(emprj_path=str(self.root))
 
 
@@ -221,7 +223,7 @@ class QuickProjectGenerator(object):
         return self.project_generator
 
 
-class Properties(dict):
+class Properties(object):
     def __init__(self, properties):
         if type(properties) == str:
             properties = self._to_dict(properties)
@@ -241,6 +243,9 @@ class Properties(dict):
             v = "=".join(segments[1:])  # e.g property=some property with = within value
             dict[k] = v
         return dict
+
+    def __contains__(self, key):
+        return key in self.config
 
     def put(self, property_name, property_value):
         self.config[property_name] = property_value
@@ -279,12 +284,11 @@ class LibraryGenerator(PathGenerator):
         self._templates["filename"] = content
 
     def generate(self):
-        super().generate()
         library = SQLTaskLib(self.root)
-        filepath = library.db_queries("ad")
-        filepath.parent.mkdir(parents=True, exist_ok=True)
         if self._ad_queries:
-            filepath.write_text(self._ad_queries.to_text())
+            filepath = library.db_queries("ad")
+            self.add_file(filepath, self._ad_queries.to_text())
+        super().generate()
         return library
 
 

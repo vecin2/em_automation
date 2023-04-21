@@ -2,6 +2,8 @@ refactor tests:
 
 -->print-sql
 	-->validate project folder
+	--> tps property should be added to tps file (no ad file), so we test that files are merge correctly
+	--> rs property should be added to rs file
 create-sql
 run-sql
 test-sql

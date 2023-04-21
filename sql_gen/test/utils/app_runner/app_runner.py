@@ -28,10 +28,11 @@ class ApplicationRunner(FillTemplateAppRunner):
         super().__init__()
         self._project = None
 
-    def _run(self, args, app=None):
+    def _run(self, args):
+
         sys.argv = args
         sys.stdin = StringIO(self._user_input_to_str())
-        app.run()
+        self.build_app().run()
 
     def _user_input_to_str(self):
         result = "\n".join([input for input in self.inputs])
@@ -46,9 +47,14 @@ class ApplicationRunner(FillTemplateAppRunner):
 
     def with_project(self, project):
         self._project = project
-        # self.emprj_path = emproject.root
-        # self.emproject = emproject
-        # self._app_project = AppProject(self.emprj_path)
+
+    def assert_all_input_was_read(self):
+        with pytest.raises(EOFError) as excinfo:
+            test = input()
+            print("Unexpected input: " + test)
+        assert "EOF" in str(excinfo.value)
+        return self
+
 
 
 class AppRunner(FillTemplateAppRunner):

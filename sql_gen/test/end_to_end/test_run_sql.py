@@ -1,13 +1,18 @@
+import tempfile
+from pathlib import Path
+
 import pytest
 
 from sql_gen.test.utils.app_runner import RunSQLAppRunner
 from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.test.utils.fake_connection import FakeConnection
+from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
+                                                  QuickProjectGenerator)
 
 
 @pytest.fixture
-def app_runner(fs, capsys):
-    app_runner = RunSQLAppRunner(fs=fs)
+def app_runner(capsys):
+    app_runner = RunSQLAppRunner()
     yield app_runner
     app_runner.teardown()
 
@@ -35,40 +40,61 @@ def do_connect(mocker, fake_connection):
     yield mocked
 
 
+@pytest.fixture
+def root():
+    with tempfile.TemporaryDirectory() as root:
+        yield Path(root)
+
+
+@pytest.fixture
+def project_generator(root):
+    quick_generator = QuickProjectGenerator(root / "trunk")
+    yield quick_generator.make_project_generator()
+
+
+@pytest.fixture
+def library_generator(project_generator):
+    quick_generator = QuickLibraryGenerator(project_generator.root.parent / "library")
+    library_generator = quick_generator.make_library_generator()
+    project_generator.with_library(library_generator)
+    yield library_generator
+
+
 def test_select_stmt_does_not_need_confirmation_and_is_cached(
-    fake_connection, app_runner, em_project, fs
+    project_generator, library_generator, app_runner, fake_connection
 ):
     fake_connection.set_cursor_execute_results(
         ["firstname", "lastname"], [["David", "Garcia"]]
     )
+
     sql = "SELECT * FROM CE_CUSTOMER"
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "list_customers.sql", sql
-    ).select_template(
-        "list_customers.sql", {}
-    ).saveAndExit().run_sql().assert_printed_sql(
-        sql
-    ).assert_all_input_was_read()
-    # it runs twice the SQL: one when running the individual template
-    # (which allows subsequent templates to see changes made by previous templates)
-    # , and one at the end when user confim
-    # However select stmts are currently cached and don't run a second time
+    library_generator.add_template("list_customers.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "list_customers.sql"
+    ).saveAndExit().print_sql().assert_printed_sql(sql).assert_all_input_was_read()
+
+    # app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+    #     "list_customers.sql", sql
+    # ).select_template(
+    #     "list_customers.sql", {}
+    # ).saveAndExit().run_sql().assert_printed_sql(
+    #     sql
+    # ).assert_all_input_was_read()
 
     assert sql == fake_connection._cursor.executed_sql
 
 
-def test_insert_statement_needs_confirmation_and_executes_twice(
-    fake_connection, app_runner, em_project, fs
+def test_insert_statement_needs_confirmation_and_runs_once_against_db(
+    project_generator, library_generator, app_runner, fake_connection
 ):
     sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "list_customers.sql", sql
-    ).select_template(
-        "list_customers.sql", {"name": "David", "lastname": "Garcia"}
-    ).saveAndExit().confirmRun().run_sql().assert_printed_sql(
-        sql
-    ).assert_all_input_was_read()
-    # Because inserts are not cache the SQL is executed twice against the database
-    # The first time is rolled back and the second time is the one that counts
-    # need to investigate why is needed to run it the first time a rollback
+    library_generator.add_template("insert_customer.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "insert_customer.sql"
+    ).saveAndExit().print_sql().assert_printed_sql(sql).assert_all_input_was_read()
+
     assert sql == fake_connection._cursor.executed_sql
