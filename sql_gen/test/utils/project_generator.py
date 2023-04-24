@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import yaml
 from st_librarian.sqltasklib import SQLTaskLib
 
 from sql_gen.app_project import AppProject
@@ -85,6 +86,7 @@ class ProjectGenerator(PathGenerator):
         self._project_layout = None
         self._core_properties = {}
         self._ad_properties = {}
+        self.releases = []
 
     def with_environment_name(self, environment_name):
         self._core_properties["environment.name"] = environment_name
@@ -93,6 +95,9 @@ class ProjectGenerator(PathGenerator):
     def with_sequence_generator(self, sequence_generator):
         self._core_properties["sequence.generator"] = sequence_generator
         return self
+
+    def with_release(self, release_name=None, after=None):
+        self.releases.append((release_name, after))
 
     def with_db_type(self, dbtype):
         return self._update_ad_properties({"database.type": dbtype})
@@ -195,8 +200,22 @@ class ProjectGenerator(PathGenerator):
         )
         self.env_config_generator.add_properties_file("ad", self._ad_properties)
         self.env_config_generator.save(self.project_layout.show_config_txt)
+        self._generate_releases()
         super().generate()
         return AppProject(emprj_path=str(self.root))
+
+    def _generate_releases(self):
+        if self.releases:
+            result = ["<releases>"]
+            for release in self.releases:
+                release_name, after = release[0], release[1]
+                release_xml_line = f'<release value="{release_name}" after="{after}"/>"'
+                result.append(release_xml_line)
+            result.append("</releases>")
+            self.add_file(
+                "config/releases.xml",
+                "".join(result),
+            )
 
 
 class QuickProjectGenerator(object):
@@ -225,6 +244,7 @@ class QuickProjectGenerator(object):
             self.library_generator.make_library_generator()
         )
         self.project_generator.with_sequence_generator("timestamp")
+        self.project_generator.with_release(release_name="PRJ_01", after="R8_5_0")
         return self.project_generator
 
 
@@ -267,6 +287,8 @@ class Properties(object):
 class LibraryGenerator(PathGenerator):
 
     TEMPLATES_PATH = Path("templates")
+    TEST_TEMPLATES_PATH = Path("test_templates")
+    CONFIG_PATH = Path("config")
 
     def __init__(self, root):
         super().__init__(root)
@@ -278,8 +300,22 @@ class LibraryGenerator(PathGenerator):
         self.add_file(self._template_path(filename), content)
         return self
 
+    def add_test(self, filename, content):
+        self.add_file(self._test_template_path(filename), content)
+        return self
+
+    def with_test_context_values(self, dict):
+        self.add_file(self._config_path("test_context_values.yaml"), yaml.dump(dict))
+        return self
+
     def _template_path(self, filename):
         return self.TEMPLATES_PATH / filename
+
+    def _test_template_path(self, filename):
+        return self.TEST_TEMPLATES_PATH / filename
+
+    def _config_path(self, filename):
+        return self.CONFIG_PATH / filename
 
     def with_ad_queries(self, file_content):
         self._ad_queries = Properties(file_content)

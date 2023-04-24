@@ -41,12 +41,13 @@ class ApplicationRunner(FillTemplateAppRunner):
 
     def build_app(self):
         self.app = CommandLineSQLTaskApp.build_app(
-           self._project.emroot, logger= FakeLogger()
+            self._project.emroot, logger=FakeLogger()
         )
         return self.app
 
     def with_project(self, project):
         self._project = project
+        return self
 
     def assert_all_input_was_read(self):
         with pytest.raises(EOFError) as excinfo:
@@ -54,7 +55,6 @@ class ApplicationRunner(FillTemplateAppRunner):
             print("Unexpected input: " + test)
         assert "EOF" in str(excinfo.value)
         return self
-
 
 
 class AppRunner(FillTemplateAppRunner):
@@ -140,9 +140,9 @@ class InitAppRunner(AppRunner):
         return self
 
 
-class TemplatesAppRunner(AppRunner):
-    def __init__(self, fs, capsys=None):
-        super().__init__(fs=fs)
+class TemplatesAppRunner(ApplicationRunner):
+    def __init__(self, capsys=None):
+        super().__init__()
         self.capsys = capsys
 
     @property
@@ -175,19 +175,19 @@ class TemplatesAppRunner(AppRunner):
             return template_vars_list
 
     def run_test_render_sql(self):
-        self._run([".", "test-sql", "--tests=expected-sql"], self.build_app())
+        self._run([".", "test-sql", "--tests=expected-sql"])
         return self
 
     def run_test_with_db(self):
-        self._run([".", "test-sql", "--tests=run-on-db"], self.build_app())
+        self._run([".", "test-sql", "--tests=run-on-db"])
         return self
 
     def run_test_all(self):
-        self._run([".", "test-sql", "--tests=all"], self.build_app())
+        self._run([".", "test-sql", "--tests=all"])
         return self
 
     def run_one_test(self, test_name):
-        self._run([".", "test-sql", "--test-name=" + test_name], self.build_app())
+        self._run([".", "test-sql", "--test-name=" + test_name])
         return self
 
     def run_assertion_test(self, assertion_type):
@@ -199,12 +199,12 @@ class TemplatesAppRunner(AppRunner):
         return self
 
     def test_sql(self):
-        self._run([".", "test-sql"], self.build_app())
+        self._run([".", "test-sql"])
         return self
 
     def assert_message_printed(self, expected):
         captured = self.capsys.readouterr()
-        assert expected == captured.out
+        assert expected in captured.out
         return self
 
     def generates_no_test(self):

@@ -141,7 +141,7 @@ class CreateSQLTaskCommand(object):
         self._create_sql()
         self.sqltask.update_sequence_no = self._compute_update_seq_no()
         self.sqltask.write("")  # creates update.sequence
-        # self.clipboard.copy(self.path)
+        self.clipboard.copy(self.path)
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
 
     @property
@@ -185,7 +185,10 @@ class CreateSQLTaskCommand(object):
         return result
 
     def _get_modules(self, key_path):
-        return next(os.walk(key_path))[1]
+        try:
+            next(os.walk(key_path))[1]
+        except StopIteration:
+            return []
 
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "n"
@@ -289,4 +292,3 @@ class SQLTask(object):
         )
         with open(os.path.join(self.path, "update.sequence"), "w") as f:
             f.write(self.update_sequence)
-

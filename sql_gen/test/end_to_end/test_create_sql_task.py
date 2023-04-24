@@ -64,7 +64,7 @@ def library_generator(project_generator):
 
 ######### TESTS #############
 def test_passing_path_as_arg_does_not_prompt_for_it(
-    project_generator, library_generator, app_runner, fake_connection
+    project_generator, library_generator, app_runner
 ):
 
     sql = "INSERT INTO CE_CUSTOMER VALUES('{{name}}','{{lastname}}')"
@@ -77,120 +77,84 @@ def test_passing_path_as_arg_does_not_prompt_for_it(
         "insert_customer.sql", {"name": "Mary", "lastname": "Jane"}
     ).saveAndExit().create_sql("module_A").exists(
         "module_A/tableData.sql", final_sql
-    ).exists_file_matching_regex(
+    ).exists(
         "module_A/update.sequence", "PROJECT \$Revision: \d+ \$"
     )
 
-@pytest.mark.skip
-def test_sqltask_exists_user_cancels_then_does_not_create(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "dummy1.sql", "dummy1"
-    ).add_template("dummy2.sql", "dummy2")
 
-    app_runner.select_template("dummy1.sql", {}).saveAndExit().create_sql(
-        "/em/prj/modules/module_A"
-    )
+def test_sqltask_exists_user_cancels_then_does_not_create(
+    project_generator, library_generator, app_runner
+):
+    library_generator.add_template("dummy1.sql", "dummy1")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "/em/prj/modules/module_A/tableData.sql", "dummy1"  # creates SQL
+        "module_A/tableData.sql", "dummy1"  # creates SQL first time
     )
 
-    # override sqltask folder
     override_task = "n"
-    app_runner.user_inputs(override_task).select_template(
-        "dummy2.sql", {}
-    ).saveAndExit().create_sql("/em/prj/modules/module_B")
+    app_runner.user_inputs(override_task).create_sql(
+        "module_A"
+    )  # try create on the smae localtion
+
     app_runner.assert_all_input_was_read().exists(
-        "/em/prj/modules/module_A/tableData.sql", "dummy1"  # was not overriden
+        "module_A/tableData.sql", "dummy1"  # was not overriden
     )
 
 
-@pytest.mark.skip
-def test_sqltask_exists_user_confirms_then_creates_sqltask(app_runner, em_project, fs):
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "dummy1.sql", "dummy1"
-    ).add_template("dummy2.sql", "dummy2")
-
-    app_runner.select_template("dummy1.sql", {}).saveAndExit().create_sql(
-        "/em/prj/modules/module_B"
+def test_sqltask_exists_user_confirms_then_creates_sqltask(
+    project_generator, library_generator, app_runner
+):
+    library_generator.add_template("dummy1.sql", "dummy1").add_template(
+        "dummy2.sql", "dummy2"
     )
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "/em/prj/modules/module_B/tableData.sql", "dummy1"  # creates SQL
+        "module_A/tableData.sql", "dummy1"  # creates SQL first time
     )
 
-    # override sqltask folder
     override_task = "y"
+    # app_runner.user_inputs(override_task).create_sql("module_A") #try create on the smae localtion
     app_runner.user_inputs(override_task).select_template(
-        "dummy2.sql", {}
-    ).saveAndExit().create_sql("/em/prj/modules/module_B")
+        "dummy2.sql"
+    ).saveAndExit().create_sql("module_A")
+
     app_runner.assert_all_input_was_read().exists(
-        "/em/prj/modules/module_B/tableData.sql", "dummy2"  # was not overriden
+        "module_A/tableData.sql", "dummy2"  # was overriden
     )
 
 
-@pytest.mark.skip
 def test_when_seq_generator_throws_exception_writes_negative_one_to_update_sequence(
-    app_runner, fs, em_project, mocker
+    project_generator, library_generator, app_runner, mocker
 ):
     mocked = mocker.patch(
         "sql_gen.commands.create_sql_cmd.TimeStampGenerator.generate_seq_no"
     )
     mocked.side_effect = ValueError("Some mocked error")
 
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "dummy1.sql", "dummy1"
-    ).select_template("dummy1.sql", {}).saveAndExit().create_sql(
-        "/em/prj/modules/moduleB"
+    library_generator.add_template("dummy1.sql", "dummy1")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
+    app_runner.assert_all_input_was_read().exists(
+        "module_A/tableData.sql", "dummy1"  # creates SQL first time
     )
-    app_runner.exists(
-        "/em/prj/modules/moduleB/update.sequence", "PROJECT $Revision: -1 $"
-    ).assert_all_input_was_read()
+
+    app_runner.exists("module_A/update.sequence", "PROJECT $Revision: -1 $")
 
 
-@pytest.mark.skip
-def test_run_without_path_it_prompts_for_task_name_to_compute_path(
-    app_runner, em_project, fs
+def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(
+    project_generator, library_generator, app_runner
 ):
-    sql = "INSERT INTO PERSON VALUES('{{name}}','{{lastname}}')"
-    final_sql = "INSERT INTO PERSON VALUES('John','Smith')"
+    library_generator.add_template("dummy1.sql", "dummy1")
+    app_runner.with_project(project_generator.generate())
 
-    sqltask_path = None
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "list_customers.sql", sql
-    )
-
-    app_runner.user_inputs("PRJCoreEmail").user_inputs(
+    app_runner.with_sql_module("PRJCoreEmail").and_task_name(
         "rewireEditEmail"
-    ).select_template(
-        "list_customers.sql", {"name": "John", "lastname": "Smith"}
-    ).saveAndExit().create_sql(
-        sqltask_path
-    ).assert_all_input_was_read().exists(
-        "/fake/em/projects/my_project/modules/PRJCoreEmail/sqlScripts/oracle/updates/PRJ01/rewireEditEmail/tableData.sql",
-        final_sql,
-    ).exists_regex(
-        "/fake/em/projects/my_project/modules/PRJCoreEmail/sqlScripts/oracle/updates/PRJ01/rewireEditEmail/update.sequence",
-        "PROJECT \$Revision: \d+ \$",
-    )
-
-
-# disable this feature until required
-@pytest.mark.skip
-def test_when_pass_template_does_not_prompt_for_template(app_runner, em_project, fs):
-    sql = "INSERT INTO PERSON VALUES('{{name}}','{{lastname}}')"
-    final_sql = "INSERT INTO PERSON VALUES('John','Smith')"
-
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "create_customer.sql", sql
-    )
-
-    app_runner.user_inputs("PRJCoreEmail").user_inputs("rewireEditEmail").user_inputs(
-        "John"
-    ).user_inputs("Smith").create_sql(
-        template="create_customer.sql"
-    ).assert_all_input_was_read().exists(
-        "/fake/em/projects/my_project/modules/PRJCoreEmail/sqlScripts/oracle/updates/PRJ01/rewireEditEmail/tableData.sql",
-        final_sql,
-    ).exists_regex(
-        "/fake/em/projects/my_project/modules/PRJCoreEmail/sqlScripts/oracle/updates/PRJ01/rewireEditEmail/update.sequence",
-        "PROJECT \$Revision: \d+ \$",
-    )
+    ).select_template("dummy1.sql").saveAndExit().create_sql(None)
+    app_runner.assert_all_input_was_read()
+    app_runner.exists_table_data(expected_content="dummy1")
+    app_runner.exists_update_seq().assert_path_copied_to_sys_clipboard()

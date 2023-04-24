@@ -63,7 +63,6 @@ class ProjectHome:
         return self._get_em_root_from_path(parent)
 
     def _is_em_root(self, path):
-
         return (
             os.path.exists(os.path.join(path, "bin"))
             and os.path.exists(os.path.join(path, "config"))
