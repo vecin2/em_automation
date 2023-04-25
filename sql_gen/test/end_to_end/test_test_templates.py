@@ -6,16 +6,8 @@ import pytest
 from sql_gen.commands.verify_templates_cmd import (ExpectedSQLTestTemplate,
                                                    RunOnDBTestTemplate)
 from sql_gen.test.utils.app_runner import TemplatesAppRunner
-from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
-
-
-@pytest.fixture
-def em_project(fs):
-    em_root = "/fake/em/projects/my_project"
-    em_project = FakeEMProjectBuilder(fs, root=em_root).base_setup().build()
-    yield em_project
 
 
 @pytest.fixture
@@ -233,4 +225,3 @@ def test_runs_using_context_values_from_library(
     )
     app_runner.with_project(project_generator.generate())
     app_runner.run_test_render_sql().assert_generated_tests(check_sql)
-
