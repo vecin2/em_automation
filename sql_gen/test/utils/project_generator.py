@@ -96,7 +96,7 @@ class ProjectGenerator(PathGenerator):
         self._core_properties["sequence.generator"] = sequence_generator
         return self
 
-    def with_release(self, release_name=None, after=None):
+    def append_release(self, release_name=None, after=None):
         self.releases.append((release_name, after))
 
     def with_db_type(self, dbtype):
@@ -189,17 +189,17 @@ class ProjectGenerator(PathGenerator):
     def generate(self):
         if self._library_generator:
             self._library_generator.generate()
+        if self._core_properties:
+            self.add_file(
+                "project/sqltask/config/core.properties",
+                Properties(self._core_properties).to_text(),
+            )
 
-        self.add_file(
-            "project/sqltask/config/core.properties",
-            Properties(self._core_properties).to_text(),
-        )
-
-        self.env_config_generator = EMEnvironmentConfigGenerator(
-            self._core_properties["environment.name"]
-        )
-        self.env_config_generator.add_properties_file("ad", self._ad_properties)
-        self.env_config_generator.save(self.project_layout.show_config_txt)
+            self.env_config_generator = EMEnvironmentConfigGenerator(
+                self._core_properties["environment.name"]
+            )
+            self.env_config_generator.add_properties_file("ad", self._ad_properties)
+            self.env_config_generator.save(self.project_layout.show_config_txt)
         self._generate_releases()
         super().generate()
         return AppProject(emprj_path=str(self.root))
@@ -209,9 +209,9 @@ class ProjectGenerator(PathGenerator):
             result = ["<releases>"]
             for release in self.releases:
                 release_name, after = release[0], release[1]
-                release_xml_line = f'<release value="{release_name}" after="{after}"/>"'
+                release_xml_line = f'\n<release value="{release_name}" after="{after}"/>"'
                 result.append(release_xml_line)
-            result.append("</releases>")
+            result.append("\n</releases>")
             self.add_file(
                 "config/releases.xml",
                 "".join(result),
@@ -244,7 +244,7 @@ class QuickProjectGenerator(object):
             self.library_generator.make_library_generator()
         )
         self.project_generator.with_sequence_generator("timestamp")
-        self.project_generator.with_release(release_name="PRJ_01", after="R8_5_0")
+        self.project_generator.append_release(release_name="PRJ_01", after="R8_5_0")
         return self.project_generator
 
 

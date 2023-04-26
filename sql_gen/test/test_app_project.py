@@ -40,3 +40,10 @@ def test_instantiate_ad_queryrunner(project_generator, library_generator):
         ad_queries["v_names__by_ed"]
         == project.ad_queryrunner.query_dict["v_names__by_ed"]
     )
+
+
+def test_product_layout(project_generator):
+    project_generator.with_environment_name("localdev")
+    project_generator.with_product_home("/products/my_product")
+    project = project_generator.generate()
+    assert "/products/my_product" == project.product_layout().root

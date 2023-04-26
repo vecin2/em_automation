@@ -1,4 +1,4 @@
-from sql_gen.emproject import CCAdmin
+from sql_gen.emproject.ccadmin import CCAdmin
 from sql_gen.exceptions import CCAdminException
 import pytest
 

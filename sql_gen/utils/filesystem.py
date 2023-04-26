@@ -1,26 +1,27 @@
 import os
+from pathlib import Path
+
 from sql_gen.exceptions import InvalidFileSystemPathException
 
-
-class Path(object):
-    def __init__(self, path=""):
-        self.path = path
-
-    def exists(self):
-        return os.path.exists(self.path)
-
-    def listdir(self):
-        if not self.exists() or not os.listdir(self.path):
-            return []
-        # if there is at least one module created
-        return [
-            name
-            for name in os.listdir(self.path)
-            if os.path.isdir(os.path.join(self.path, name))
-        ]
-
-    def join(self, str_path):
-        return Path(os.path.join(self.path, str_path))
+# class Path(object):
+#     def __init__(self, path=""):
+#         self.path = path
+#
+#     def exists(self):
+#         return os.path.exists(self.path)
+#
+#     def listdir(self):
+#         if not self.exists() or not os.listdir(self.path):
+#             return []
+#         # if there is at least one module created
+#         return [
+#             name
+#             for name in os.listdir(self.path)
+#             if os.path.isdir(os.path.join(self.path, name))
+#         ]
+#
+#     def join(self, str_path):
+#         return Path(os.path.join(self.path, str_path))
 
 
 class ProjectLayout(dict):

@@ -146,16 +146,16 @@ class CreateSQLTaskCommand(object):
 
     @property
     def emproject(self):
-        return self.app_project.emproject
+        return self.app_project
 
     def _compute_path(self):
-        prj_repo_modules_path = self.emproject.paths["sql_modules"].path
+        prj_repo_modules_path = self.emproject.paths["sql_modules"]
         options = self._get_modules(prj_repo_modules_path)
 
         module_name = self.displayer.ask_for_sqlmodulename(options)
         release_name = self.app_project.get_db_release_version()
         task_folder = os.path.join(
-            self.app_project.emproject.root,
+            self.app_project.emroot,
             "modules/"
             + module_name
             + "/sqlScripts/oracle/updates/"
@@ -185,10 +185,9 @@ class CreateSQLTaskCommand(object):
         return result
 
     def _get_modules(self, key_path):
-        try:
-            next(os.walk(key_path))[1]
-        except StopIteration:
+        if not key_path.exists():
             return []
+        return list(key_path.iterdir()) 
 
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "n"

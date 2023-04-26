@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 from sql_gen.emproject.config import ProjectProperties
-from sql_gen.emproject import EMProject
 from sql_gen.exceptions import CCAdminException
 
 
@@ -35,7 +34,7 @@ class FakeEMProjectBuilder:
         self.root = root
         self.ccadmin_client = FakeCCAdminClient(None)
         self.ccadmin_client.fake_emproject_builder = self
-        self.emproject = EMProject(emprj_path=root, ccadmin_client=self.ccadmin_client)
+        self.emproject = None
         self.config_map = {}
         self.environment_name = "localdev"
         self.container_name = "ad"

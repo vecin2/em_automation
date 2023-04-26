@@ -1,5 +1,7 @@
 refactor tests:
 
+run tenant_properties_views
+
 **test copy to clipboard crete-sql
 x-->print-sql
 x	-->validate project folder

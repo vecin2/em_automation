@@ -18,10 +18,7 @@ class InitAppRunner(object):
 
     def _run(self, args, app=None):
         sys.argv = args
-        # sys.stdin = StringIO(self._user_input_to_str())
         if not app:
-            app = CommandLineSQLTaskApp.build_app(os.getcwd(), os.environ)
+            app = CommandLineSQLTaskApp.build_app(self.project_home_path, None)
         app.run()
 
-    # def _user_input_to_str(self):
-    #     return "\n".join([input for input in self.inputs])

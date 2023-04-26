@@ -5,7 +5,7 @@ import pytest
 
 from sql_gen.commands.verify_templates_cmd import (ExpectedSQLTestTemplate,
                                                    RunOnDBTestTemplate)
-from sql_gen.test.utils.app_runner import TemplatesAppRunner
+from sql_gen.test.utils.app_runner.verify_sql import TemplatesAppRunner
 from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
 
@@ -15,13 +15,6 @@ def app_runner(capsys):
     app_runner = TemplatesAppRunner(capsys=capsys)
     yield app_runner
     app_runner.teardown()
-
-
-# autouse allows to run this fixture even if we are not passing to test
-@pytest.fixture(autouse=True)
-def fake_pytest(mocker):
-    make_pytest = mocker.patch("ccdev.command_factory.CommandFactory.make_pytest")
-    yield make_pytest
 
 
 @pytest.fixture
@@ -44,37 +37,40 @@ def library_generator(project_generator):
     yield library_generator
 
 
-def test_expects_test_folder_to_be_next_to_templates_folder_and_fails_if_not_exists(
+def test_test_name_not_matching(
     project_generator, app_runner
 ):
     app_runner.with_project(project_generator.generate())
 
-    app_runner.saveAndExit().test_sql()
+    app_runner.test_sql()
     expected = "library/test_templates' does not exist.\n"
     app_runner.assert_message_printed(expected)
 
-
+#fix this test
 @pytest.mark.skip
 def test_test_name_not_matching_template_generates_unable_to_find_template_test(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template()
-    app_runner.with_project(project_generator.generate())
-    app_runner.saveAndExit().test_sql()
+    library_generator.add_test("test_greeting.sql", 'Hi John')
+    project = project_generator.generate()
+
     expected_sql = ExpectedSQLTestTemplate().render(
-        template_name="greeting", expected="hello John!", actual=""
+        template_name="greeting", expected="Hi John!", actual=""
     )
     run_on_db = RunOnDBTestTemplate().render(
-        template_name="greeting", query="hello John!", emprj_path=em_project.root
+        template_name="greeting", query="Hi John!", emprj_path=project.emroot
     )
     check_sql = expected_sql.add(run_on_db)
-    app_runner.with_emproject(em_project).with_task_library("/library").add_template(
-        "other_name.sql", "some template"
-    ).make_test_dir().add_test(
-        "test_greeting.sql", {}, "hello John!"
-    ).test_sql().assert_generated_tests(
-        check_sql
-    )
+
+    app_runner.with_project(project)
+    app_runner.test_sql().assert_generated_tests(check_sql)
+    # app_runner.with_emproject(em_project).with_task_library("/library").add_template(
+    #     "other_name.sql", "some template"
+    # ).make_test_dir().add_test(
+    #     "test_greeting.sql", {}, "hello John!"
+    # ).test_sql().assert_generated_tests(
+    #     check_sql
+    # )
 
 
 def test_groovy_extension_does_generate_run_on_db(
@@ -87,7 +83,7 @@ def test_groovy_extension_does_generate_run_on_db(
         "test_greeting.groovy", "hello John!"
     )
     app_runner.with_project(project_generator.generate())
-    app_runner.saveAndExit().test_sql().assert_generated_tests(expected_sql)
+    app_runner.test_sql().assert_generated_tests(expected_sql)
 
 
 def test_testname_not_sql_ext_does_not_run(

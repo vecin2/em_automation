@@ -78,7 +78,6 @@ class ContextBuilder(object):
                     PropertiesFile(self.app.library().db_queries("rs"))
                 ),
                 "_app": self.app,
-                "_emprj": self.app.emproject,
                 "_props": self.app.em_config(),
             }
         return self.template_API

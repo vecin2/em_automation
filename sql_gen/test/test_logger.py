@@ -1,9 +1,8 @@
 import pytest
-from sql_gen.app_project import AppProject
-from sql_gen.emproject import EMProject
+
+from sql_gen.log import log
 
 # from sql_gen.loggu import log
-from sql_gen.log import log
 
 
 @pytest.mark.skip

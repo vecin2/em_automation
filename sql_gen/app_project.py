@@ -1,23 +1,25 @@
 import logging
-import os
 from pathlib import Path
 
 from st_librarian.sqltasklib import SQLTaskLib
 
 import sql_gen
 from sql_gen.database import Connector, EMDatabase, QueryRunner
-from sql_gen.emproject import EMProject
+from sql_gen.emproject.ccadmin import CCAdmin
+from sql_gen.emproject.config import ProjectProperties
 from sql_gen.log import log
 from sql_gen.utils.filesystem import ProjectLayout
 
 PATHS = {
-    "config": "config",
-    "core_config": "config/core.properties",
-    "logging_config": "config/logging.yaml",
-    "templates": "templates",
-    "test_templates": "test_templates",
-    "test_templates_tmp": "test_templates/.tmp",
-    "logs": "logs",
+    "config": "project/sqltask/config",
+    "core_config": "project/sqltask/config/core.properties",
+    "logging_config": "project/sqltask/config/logging.yaml",
+    "logs": "project/sqltask/logs",
+    "ccadmin": "bin",
+    "db_releases_file": "config/releases.xml",
+    "sql_modules": "modules",
+    "repo_modules": "repository/default",
+    "show_config_txt": "work/config/show-config-txt",
 }
 
 MANDATORY_KEYS = ["config", "core_config"]
@@ -40,36 +42,21 @@ class AppProject(object):
         self._library = None
         self._em_config = None
         self._project_properties = None
+        self._ccadmin_client = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
 
     @property
     def emroot(self):
+        return Path(self.emprj_path)
         return self.emproject.root
-
-    @property
-    def emproject(self):
-        if not self._emproject:
-            self._emproject = EMProject(emprj_path=self.emprj_path)
-        return self._emproject
 
     @property
     def paths(self):
         if not self._paths:
-            self._paths = ProjectLayout(self.root, PATHS, MANDATORY_KEYS)
+            self._paths = ProjectLayout(self.emroot, PATHS, MANDATORY_KEYS)
         return self._paths
-
-    @property
-    def root(self):
-        emprj_home = self.emproject.root
-        destask_filepath = os.path.join(emprj_home, sql_gen.appname)
-        if os.path.isfile(destask_filepath):
-            with open(destask_filepath) as f:
-                devtaskpath = f.readline().strip()
-        else:
-            devtaskpath = os.path.join("project", sql_gen.appname)
-        return os.path.join(self.emproject.root, devtaskpath)
 
     @property
     def ad_queryrunner(self):
@@ -99,20 +86,25 @@ class AppProject(object):
         return self._tps_query_runner
 
     def product_layout(self):
-        self.em_config()
-        return self.emproject.product_layout()
+        return ProjectLayout(self.em_config()["product.home"], PATHS)
 
     def em_config(self):
         return self.project_properties.em
-        # if not self.:
-        #     self._em_config = self.emproject.config(self.config["environment.name"])
-        # return self._em_config
+
+    @property
+    def ccadmin_client(self):
+        if not self._ccadmin_client:
+            self._ccadmin_client = CCAdmin(self.emroot / "bin")
+
+        return self._ccadmin_client
+
     @property
     def project_properties(self):
         if not self._project_properties:
-            self._project_properties = self.emproject.config()
+            self._project_properties = ProjectProperties(
+                self.emroot, config_generator=self.ccadmin_client
+            )
         return self._project_properties
-
 
     def get_schema(self, schema_name):
         if schema_name == "tenant_properties_service":
@@ -183,7 +175,6 @@ class AppProject(object):
         component_name="ad",
     ):
         emconfig = self.em_config()
-        # emconfig = self.em_config()[component_name]
         host = emconfig[host]
         username = emconfig[user]
         password = emconfig[password]
@@ -236,14 +227,18 @@ class AppProject(object):
 
     def _get_db_release_version_from_file(self):
         latest_release = ""
-        with open(self.emproject.paths["db_releases_file"].path) as f:
-            # Get value from last line of releases.xml
-            # Example release.xml line:
-            # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
-            for line in f:
-                splitted_value = line.split('value="')
-                if len(splitted_value) > 1:
-                    latest_release = splitted_value[1].split('"')[0]
+        # Get value from last line of releases.xml
+        # Example release.xml line:
+        # <release value="APSU_DHL22_03" after="APSU_DHL22_02"/>
+        reversed_lines = reversed(
+            self.paths["db_releases_file"].read_text().splitlines()
+        )
+        for line in reversed_lines:
+            splitted_value = line.split('value="')
+            if len(splitted_value) > 1:
+                latest_release = splitted_value[1].split('"')[0]
+                break
+
         return latest_release
 
     def task_library_path(self):

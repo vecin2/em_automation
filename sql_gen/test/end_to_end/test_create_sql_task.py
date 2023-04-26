@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from sql_gen.test.utils.app_runner import CreateSQLTaskAppRunner
-from sql_gen.test.utils.emproject_test_util import FakeEMProjectBuilder
 from sql_gen.test.utils.fake_connection import FakeConnection
 from sql_gen.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
@@ -17,13 +16,6 @@ def app_runner():
     app_runner = CreateSQLTaskAppRunner()
     yield app_runner
     app_runner.teardown()
-
-
-@pytest.fixture
-def em_project(fs):
-    em_root = "/fake/em/projects/my_project"
-    em_project = FakeEMProjectBuilder(fs, root=em_root).base_setup().build()
-    yield em_project
 
 
 @pytest.fixture
@@ -150,11 +142,14 @@ def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(
     project_generator, library_generator, app_runner
 ):
     library_generator.add_template("dummy1.sql", "dummy1")
+    project_generator.append_release("PRJ_01")
     app_runner.with_project(project_generator.generate())
 
     app_runner.with_sql_module("PRJCoreEmail").and_task_name(
         "rewireEditEmail"
     ).select_template("dummy1.sql").saveAndExit().create_sql(None)
     app_runner.assert_all_input_was_read()
-    app_runner.exists_table_data(expected_content="dummy1")
-    app_runner.exists_update_seq().assert_path_copied_to_sys_clipboard()
+    app_runner.exists_table_data(release_name="PRJ_01", expected_content="dummy1")
+    app_runner.exists_update_seq(
+        release_name="PRJ_01"
+    ).assert_path_copied_to_sys_clipboard("PRJ_01")

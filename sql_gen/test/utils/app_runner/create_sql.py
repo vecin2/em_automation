@@ -6,14 +6,6 @@ import pyperclip
 from sql_gen.test.utils.app_runner import PrintSQLToConsoleAppRunner
 
 
-class FakeClipboard:
-    def copy(self, text):
-        self.text = text
-
-    def paste(self):
-        return self.text
-
-
 class CreateSQLTaskAppRunner(PrintSQLToConsoleAppRunner):
     def __init__(self):
         super().__init__()
@@ -41,21 +33,24 @@ class CreateSQLTaskAppRunner(PrintSQLToConsoleAppRunner):
         self.task_name = task_name
         return self
 
-    def exists_table_data(self, expected_content=""):
-        self.exists(self.get_task_folder() / "tableData.sql", expected_content)
+    def exists_table_data(self, release_name=None, expected_content=""):
+        self.exists(
+            self.get_task_folder(release_name) / "tableData.sql", expected_content
+        )
         return self
 
-    def exists_update_seq(self, update_seq=None):
+    def exists_update_seq(self, release_name=None, update_seq=None):
         if not update_seq:
             expected_content = "PROJECT \$Revision: \d+ \$"  # regex
         else:
             expected_content = f"PROJECT $Revision: {update_seq} $"
 
-        self.exists(self.get_task_folder() / "update.sequence", expected_content)
+        self.exists(
+            self.get_task_folder(release_name) / "update.sequence", expected_content
+        )
         return self
 
-    def get_task_folder(self):
-        release_name = self._project.get_db_release_version()
+    def get_task_folder(self, release_name):
         return Path(
             f"modules/{self.module_name}/sqlScripts/oracle/updates/{release_name}/{self.task_name}"
         )
@@ -71,6 +66,6 @@ class CreateSQLTaskAppRunner(PrintSQLToConsoleAppRunner):
             assert match.group()
         return self
 
-    def assert_path_copied_to_sys_clipboard(self):
-        assert str(self.get_task_folder()) in pyperclip.paste()
+    def assert_path_copied_to_sys_clipboard(self,release_name):
+        assert str(release_name) in pyperclip.paste()
         return self

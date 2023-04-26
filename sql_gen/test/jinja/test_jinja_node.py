@@ -1,18 +1,9 @@
-from jinja2 import (
-    Environment,
-    meta,
-    Template,
-    nodes,
-    FileSystemLoader,
-    select_autoescape,
-)
-from jinja2.nodes import Stmt, Template, Output, Node
-from jinja2.visitor import NodeTransformer, NodeVisitor
-from anytree import Node as AnyTreeNode
-import pytest
+from jinja2 import Template
+from jinja2.nodes import Node, Output, Template
+from jinja2.visitor import NodeTransformer
+
 import sql_gen.sqltask_jinja.filters as filters_package
 from sql_gen.docugen.env_builder import EnvBuilder
-
 
 env = EnvBuilder().set_fs_path("templates").set_filters_package(filters_package).build()
 
