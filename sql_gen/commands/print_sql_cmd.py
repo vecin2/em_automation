@@ -84,7 +84,7 @@ class PrintSQLToConsoleCommand(object):
         exit_handler = ExitHandler()
         # display_template_test_handler = DisplayTemplateTestHandler(self.app_project.library())
         menu_handler = MainMenuHandler(
-            [render_template_handler,  exit_handler]
+            [render_template_handler, exit_handler]
         )
 
         displayer = MainMenuDisplayer()
