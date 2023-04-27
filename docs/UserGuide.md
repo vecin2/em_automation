@@ -190,7 +190,7 @@ handlers:
     stream: ext://sys.stdout
 
   info_file_handler:
-    class: sql_gen.log.handlers.MakeRotatingFileHandler
+    class: sqltask.log.handlers.MakeRotatingFileHandler
     level: INFO
     formatter: simple
     filename: information.log

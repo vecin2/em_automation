@@ -1,7 +1,7 @@
 import os
 
-import sql_gen
-from sql_gen.exceptions import EnvVarNotFoundException
+import sqltask
+from sqltask.exceptions import EnvVarNotFoundException
 
 ENV_VAR_NAME = "EM_CORE_HOME"
 
@@ -18,7 +18,7 @@ class ProjectHome:
         try:
             return self._get_prj_home()
         except Exception as excinfo:
-            sql_gen.logger.error(str(excinfo))
+            sqltask.logger.error(str(excinfo))
             exit(1)
 
     def _get_prj_home(self):

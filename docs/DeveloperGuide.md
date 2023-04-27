@@ -52,13 +52,13 @@ Filter can be either:
 
 Wrappers which part of the builtin jinja filters do not need to be added to the environment so implementing `apply` should be enough:
 
-_class_ sql_gen.filters.**DefaultFilter**()
+_class_ sqltask.filters.**DefaultFilter**()
 string :: **apply**(prompt_text)
 It takes the prompt text and it changes it accordingly to what it should be display to the user. Multiple filters can be concatenated.
 
 When creating a new filter we need to implement not only `apply` but `get_template_filter` which is invoked by the application to add the filter to the environment.
 
-_class_ sql_gen.filters.**DescriptionFilter**()
+_class_ sqltask.filters.**DescriptionFilter**()
 func :: **get_template_filter**()
 It returns the function which implements the jinja filter.
 

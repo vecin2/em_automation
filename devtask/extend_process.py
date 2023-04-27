@@ -3,8 +3,8 @@ import pathlib
 import sys
 from shutil import copyfile
 
-# from sql_gen.app_project import AppProject
-from sql_gen.ui.utils import select_string_noprompt
+# from sqltask.app_project import AppProject
+from sqltask.ui.utils import select_string_noprompt
 
 PurePosixPath = pathlib.PurePosixPath
 

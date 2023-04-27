@@ -4,11 +4,11 @@ from pathlib import Path
 import pytest
 
 from devtask.commands import ExtendProcessCommand
-from sql_gen.app_project import AppProject
-from sql_gen.commands import (CreateSQLTaskCommand, InitCommand,
+from sqltask.app_project import AppProject
+from sqltask.commands import (CreateSQLTaskCommand, InitCommand,
                               PrintSQLToConsoleCommand, RunSQLCommand,
                               TestTemplatesCommand)
-from sql_gen.sqltask_jinja.context import ContextBuilder
+from sqltask.sqltask_jinja.context import ContextBuilder
 
 
 class CommandFactory(object):

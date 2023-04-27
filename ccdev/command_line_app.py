@@ -1,10 +1,10 @@
 import sys
 
 import ccdev.docopt_parser as arg_parser
-import sql_gen
+import sqltask
 from ccdev import ProjectHome
 from ccdev.command_factory import CommandFactory
-from sql_gen.app_project import AppProject
+from sqltask.app_project import AppProject
 
 
 class SysArgParser(object):
@@ -72,7 +72,7 @@ class CommandLineSQLTaskApp(object):
             raise (excinfo)
 
     def _dorun(self):
-        sql_gen.logger.info("Starting application with params: " + str(sys.argv))
+        sqltask.logger.info("Starting application with params: " + str(sys.argv))
         command = SysArgParser(self.args_factory).parse()
         command.run()
         self.last_command_run = command

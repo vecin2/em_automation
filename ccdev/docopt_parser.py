@@ -1,6 +1,6 @@
 from docopt import docopt
 
-import sql_gen
+import sqltask
 
 help_message = """
 Usage:
@@ -25,7 +25,7 @@ Options:
 
 def parse():
     arguments = docopt(
-        help_message.format(appname=sql_gen.appname), version="{appname} 0.1"
+        help_message.format(appname=sqltask.appname), version="{appname} 0.1"
     )
     # print(arguments)
     return arguments
