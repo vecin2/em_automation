@@ -11,6 +11,10 @@ from sqltask.commands import (CreateSQLTaskCommand, InitCommand,
 from sqltask.sqltask_jinja.context import ContextBuilder
 
 
+class PrintSQLToConsoleCommandBuilder(object):
+    """"""
+
+
 class CommandFactory(object):
     def __init__(self, emprj_path=None):
         self.emprj_path = emprj_path
@@ -20,11 +24,16 @@ class CommandFactory(object):
         return InitCommand(AppProject(self.emprj_path))
 
     def make_print_sql_to_console_command(self):
+        builder = PrintSQLToConsoleCommandBuilder()
         return PrintSQLToConsoleCommand(
             templates_path=self.templates_path,
             context_builder=self.context_builder,
-            project_root=self.emprj_path
+            project_root=self.emprj_path,
+            main_menu=None,
         )
+
+    def get_context(self):
+        return self.context_builder.build()
 
     @property
     def templates_path(self):

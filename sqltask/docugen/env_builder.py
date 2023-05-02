@@ -34,27 +34,13 @@ class FileSystemLoader(JinjaFileSystemLoader):
         super().__init__(searchpath, encoding, followlinks)
 
     def list_templates(self):
-        found = set()
-        for searchpath in self.searchpath:
-            walk_dir = os.walk(searchpath, followlinks=self.followlinks)
-            for dirpath, dirnames, filenames in walk_dir:
-                for filename in filenames:
-                    template = (
-                        os.path.join(dirpath, filename)[len(searchpath) :]
-                        .strip(os.path.sep)
-                        .replace(os.path.sep, "/")
-                    )
-                    if template[:2] == "./":
-                        template = template[2:]
-                    extension = os.path.splitext(template)[1]
-                    if template not in found and (
-                        ".sql" == extension
-                        or ".txt" == extension
-                        or ".groovy" == extension
-                    ):
-                        found.add(template)
-
-        return sorted(found)
+        templates = super().list_templates()
+        result = set()
+        for template in templates:
+            extension = os.path.splitext(template)[1]
+            if ".sql" == extension or ".txt" == extension or ".groovy" == extension:
+                result.add(template)
+        return result
 
 
 class EnvBuilder(object):

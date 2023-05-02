@@ -112,7 +112,7 @@ class ContextBuilder(object):
                 context = {"_props": self.app.em_config()}
                 rendered_text = template_renderer.render(stream.read(), context)
                 return rendered_text
-        except FileNotFoundError as exc:
+        except FileNotFoundError:
             sqltask.logger.warning(
                 "No context values are added, context config file '"
                 + filepath
@@ -121,5 +121,5 @@ class ContextBuilder(object):
             return ""
 
 
-def init(app=None, emprj_path=None):
-    return ContextBuilder(app, emprj_path).build()
+# def init(app=None, emprj_path=None):
+#     return ContextBuilder(app, emprj_path).build()

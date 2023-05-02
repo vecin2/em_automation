@@ -21,7 +21,8 @@ class TemplateFiller(object):
                 "Instantiating TemplateFiller for template '" + template.name + "'"
             )
         self.set_template(template)
-        self.initial_context =initial_context
+        self.initial_context = initial_context
+        self.listeners = []
 
     def _get_prompt_visitor(self):
         if not self.prompt_visitor:
@@ -30,6 +31,9 @@ class TemplateFiller(object):
 
     def _get_ast(self):
         return self.inline_template().environment.parse(self._get_template_source())
+
+    def append_listener(self, listener):
+        self.listeners.append(listener)
 
     def set_template(self, template):
         self._template = template
@@ -49,7 +53,13 @@ class TemplateFiller(object):
     def fill_and_render(self, template):
         self.set_template(template)
         context = self.fill(dict(self.initial_context))
-        return self.inline_template().render(self._remove_empties(context))
+        result = self.inline_template().render(self._remove_empties(context))
+        self.notify_listeners(result, template)
+        return result
+
+    def notify_listeners(self, rendered_text, template):
+        for listener in self.listeners:
+            listener.write(rendered_text, template)
 
     def fill(self, initial_context):
         # every time we fill we clear global state with var names

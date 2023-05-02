@@ -207,11 +207,11 @@ class AppProject(object):
     def setup_logger(self):
         if not self._logger:
             if self.paths.exists("logging_config"):
-                log.setup_from_file(self.paths["logging_config"].path)
+                log.setup_from_file(str(self.paths["logging_config"]))
             else:
-                log.basic_setup(logs_dir=self.paths["logs"].path)
+                log.basic_setup(logs_dir=str(self.paths["logs"]))
             self._logger = logging.getLogger("app_logger")
-            print("Default logs dir is: " + self.paths["logs"].path)
+            print("Default logs dir is: " + str(self.paths["logs"]))
         return self._logger
 
     def get_db_release_version(self):

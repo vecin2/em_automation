@@ -1,10 +1,10 @@
 import sys
 
-import ccdev.docopt_parser as arg_parser
 import sqltask
-from ccdev import ProjectHome
-from ccdev.command_factory import CommandFactory
+import sqltask.main.docopt_parser as arg_parser
 from sqltask.app_project import AppProject
+from sqltask.main.command_factory import CommandFactory
+from sqltask.main.project_home import ProjectHome
 
 
 class SysArgParser(object):
@@ -66,7 +66,7 @@ class CommandLineSQLTaskApp(object):
     def run(self):
         try:
             return self._dorun()
-        except KeyboardInterrupt as excinfo:
+        except KeyboardInterrupt:
             print("\n KeyboardInterrupt exception")
         except Exception as excinfo:
             raise (excinfo)

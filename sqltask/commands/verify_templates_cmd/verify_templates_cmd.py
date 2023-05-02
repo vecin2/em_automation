@@ -236,7 +236,7 @@ class TestLoader(object):
             filepath = os.path.join(testpath, filename)
             if self._is_valid_test_file(filepath):
                 result.append(filepath)
-        return result
+        return sorted(result) #return tests in alfabetical order
 
     def _is_valid_test_file(self, filepath):
         filename = os.path.basename(filepath)

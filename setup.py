@@ -37,6 +37,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     entry_points={
-        "console_scripts": ["sqltask =ccdev.__main__:main"],
+        "console_scripts": ["sqltask =sqlask.main.__main__:main"],
     },
 )

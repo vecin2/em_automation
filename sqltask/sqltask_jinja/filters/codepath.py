@@ -1,6 +1,6 @@
 import os
 
-from ccdev import ProjectHome
+from sqltask.main.project_home import ProjectHome
 from sqltask import logger
 from sqltask.app_project import AppProject
 from sqltask.docugen.completer import PathCompleter

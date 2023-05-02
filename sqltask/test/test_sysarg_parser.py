@@ -1,6 +1,6 @@
 import sys
 import pytest
-from ccdev.command_line_app import SysArgParser, CommandFactory
+from sqltask.main.command_line_app import SysArgParser, CommandFactory
 from unittest.mock import Mock
 
 

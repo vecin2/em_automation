@@ -1,6 +1,6 @@
 import os
 
-from ccdev.command_line_app import CommandLineSQLTaskApp
+from sqltask.main.command_line_app import CommandLineSQLTaskApp
 
 
 def main():

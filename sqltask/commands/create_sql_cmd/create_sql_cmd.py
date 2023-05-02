@@ -202,7 +202,7 @@ class CreateSQLTaskCommand(object):
         print_sql_cmd.run()
         return print_sql_cmd.sql_printed()
 
-    def on_written(self, content, template):
+    def write(self, content, template):
         self.sqltask.write(content, template)
 
     def _compute_update_seq_no(self):

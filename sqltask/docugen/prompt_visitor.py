@@ -2,33 +2,22 @@ import importlib
 
 from jinja2 import meta
 from jinja2.nodes import Call
-from jinja2.visitor import NodeTransformer, NodeVisitor
+from jinja2.visitor import NodeVisitor
 
 from sqltask import logger
 from sqltask.docugen.env_builder import TraceUndefined
 from sqltask.docugen.prompt import Prompt
 
 
-# No longer used as TemplateInliner removes all the includes
-class TemplateJoiner(NodeTransformer):
-    def __init__(self, env):
-        self.env = env
-
-    def visit_Include(self, node):
-        template_name = node.template.value
-        source = self.env.loader.get_source(self.env, template_name)[0]
-        # swap the include node for the template tree recursively
-        ast1 = self.env.parse(source)
-        visited = self.visit(ast1)
-        return ast1.body
-
-
 class PromptVisitor(NodeVisitor):
+    """It visits the abstract syntax tree of a jinja template to parse all the
+    neccesary prompts which will capture the missing template values"""
+
     def __init__(self, ast):
         logger.debug("Instantiating Prompt visitor")
         self.ast = ast
         self._set_parent(self.ast, None)
-        # need to track visited names when the user enter blank
+        # we need to track visited names when the user enter blank
         # then the variable should not added to the values and
         # neither should be prompted again
         self.names_visited = []
@@ -80,8 +69,8 @@ class PromptVisitor(NodeVisitor):
             return None
 
     def visit_Name(self, node, template_values={}):
-        # Create a prompt for Name nodes which are in part of the undeclare vars
-        # and they are not the node value of CallNode
+        # Create a prompt for Name nodes which are undeclare vars
+        # and they are not the node value of a CallNode
         if (
             node.name not in template_values
             and node.name in meta.find_undeclared_variables(self.ast)

@@ -1,13 +1,11 @@
-import sys
-
-from prompt_toolkit.completion import Completer, Completion
-
 from sqltask import logger
 from sqltask.ui import prompt
-from sqltask.docugen.completer import SuggestionCompleter
 
 
 class Prompt:
+    """Prompts for a template value to the user. It contains a list of filters which are applied 
+    and can modified the prompt data, e.g. add completion, change display text, etc..."""
+
     def __init__(self, variable_name, filter_list):
         self.variable_name = variable_name
         self.filter_list = filter_list

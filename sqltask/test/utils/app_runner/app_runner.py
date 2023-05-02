@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from ccdev.command_line_app import CommandLineSQLTaskApp
+from sqltask.main.command_line_app import CommandLineSQLTaskApp
 from sqltask.app_project import AppProject
 from sqltask.commands.verify_templates_cmd import FillTemplateAppRunner
 from sqltask.test.utils.emproject_test_util import FakeEMProjectBuilder
@@ -32,7 +32,7 @@ class ApplicationRunner(FillTemplateAppRunner):
 
         sys.argv = args
         sys.stdin = StringIO(self._user_input_to_str())
-        return self.build_app().run()
+        self.build_app().run()
 
     def _user_input_to_str(self):
         result = "\n".join([input for input in self.inputs])
