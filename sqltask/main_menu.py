@@ -121,8 +121,11 @@ class AbstractEventHandler(object):
 
 
 class ExitHandler(AbstractEventHandler):
-    def __init__(self, listener=None):
-        self.listener = listener
+    def __init__(self):
+        self.listeners = []
+
+    def append_listeners(self, listener):
+        self.listeners.extend(listener)
 
     def type(self):
         return HandlerType.EXIT
@@ -131,8 +134,8 @@ class ExitHandler(AbstractEventHandler):
         return input.option and input.option.code == "x"
 
     def _do_handle(self, option, main_menu):
-        if self.listener:
-            self.listener.on_finish()
+        for listener in self.listeners:
+            listener.on_finish()
         main_menu.exit = True
         return True
 

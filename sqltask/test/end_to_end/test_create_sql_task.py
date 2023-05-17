@@ -74,6 +74,48 @@ def test_passing_path_as_arg_does_not_prompt_for_it(
     )
 
 
+def test_invalid_template_extension_fails(
+    project_generator, library_generator, app_runner
+):
+    message = "txt unsupported template extension"
+    with pytest.raises(ValueError,match=".txt unsupported template extension"):
+        sql = "INSERT INTO CE_CUSTOMER VALUES('{{name}}','{{lastname}}')"
+        final_sql = "INSERT INTO CE_CUSTOMER VALUES('Mary','Jane')"
+
+        library_generator.add_template("insert_customer.txt", sql)
+
+        app_runner.with_project(project_generator.generate())
+        app_runner.select_template(
+            "insert_customer.txt", {"name": "Mary", "lastname": "Jane"}
+        ).saveAndExit().create_sql("module_A").exists(
+            "module_A/tableData.txt", final_sql
+        ).exists(
+            "module_A/update.sequence", "PROJECT \$Revision: \d+ \$"
+        )
+
+
+def test_groovy_template_creates_groovy_task(
+    project_generator, library_generator, app_runner
+):
+    groovy = "groovy code to insert {{entity_name}} into a {{table_name}}"
+    final_groovy = "groovy code to insert customer into a ce_customer"
+
+    library_generator.add_template("insert_customer.groovy", groovy)
+    relative_path = (
+        "modules/module_A/sqlScripts/oracle/updates/release_01/insert_customer"
+    )
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "insert_customer.groovy", {"name": "customer", "table_name": "ce_customer"}
+    ).saveAndExit().create_sql(relative_path).exists(
+        f"{relative_path}/update.groovy", final_groovy
+    ).exists(
+        f"{relative_path}/update.sequence", "PROJECT \$Revision: \d+ \$"
+    ).exists(
+        f"{relative_path}/update.xml", 'value="module_A_release_01_insert_customer"'
+    )
+
+
 def test_sqltask_exists_user_cancels_then_does_not_create(
     project_generator, library_generator, app_runner
 ):
@@ -136,6 +178,26 @@ def test_when_seq_generator_throws_exception_writes_negative_one_to_update_seque
     )
 
     app_runner.exists("module_A/update.sequence", "PROJECT $Revision: -1 $")
+
+
+def test_when_svn_offset_applies_offset_to_seq_no(
+    project_generator, library_generator, app_runner, mocker
+):
+    mocked = mocker.patch("sqltask.emproject.emsvn.EMSvn.revision_number")
+    mocked.return_value = 5
+    offset = 10
+    project_generator.with_sequence_generator("svn")
+    project_generator.with_svn_rev_no_offset(offset)
+    library_generator.add_template("dummy1.sql", "dummy1")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
+    app_runner.assert_all_input_was_read().exists(
+        "module_A/tableData.sql", "dummy1"  # creates SQL first time
+    )
+
+    # update_sequence = next_revision_number(10 + 1) + offset (5)
+    app_runner.exists("module_A/update.sequence", "PROJECT $Revision: 16 $")
 
 
 def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(

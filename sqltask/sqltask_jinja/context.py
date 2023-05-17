@@ -1,7 +1,6 @@
 import yaml
 
 import sqltask
-from sqltask.app_project import AppProject
 from sqltask.config import PropertiesFile
 from sqltask.database.query_runner import QueryDict
 from sqltask.database.sqlparser import RelativeIdLoader
@@ -46,14 +45,12 @@ class Keynames(object):
 
 
 class ContextBuilder(object):
-    def __init__(self, app=None, emprj_path=None):
+    def __init__(self, app=None):
         self.app = app
         self.template_API = None
         self.context_values = None
         self.context_values_filepath = None
         self.addon_values = {}
-        if not self.app:
-            self.app = AppProject.make(emprj_path)
 
     def build(self):
         result = self.build_template_API()
@@ -82,15 +79,16 @@ class ContextBuilder(object):
             }
         return self.template_API
 
+    def build_context_values(self):
+        if self.context_values is None:
+            self.context_values = self.yaml_dict(self.get_context_values_filepath())
+        return self.context_values
+
     def get_context_values_filepath(self):
         if not self.context_values_filepath:
             self.context_values_filepath = self.app.library().context_values()
         return self.context_values_filepath
 
-    def build_context_values(self):
-        if self.context_values is None:
-            self.context_values = self.yaml_dict(self.get_context_values_filepath())
-        return self.context_values
 
     def yaml_dict(self, filepath):
         try:
@@ -119,7 +117,3 @@ class ContextBuilder(object):
                 + "' does not exist"
             )
             return ""
-
-
-# def init(app=None, emprj_path=None):
-#     return ContextBuilder(app, emprj_path).build()

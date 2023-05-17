@@ -18,9 +18,6 @@ class EMSvn(object):
         self.local_url = local_url
         self._svnclient_factory = svnclient_factory
 
-    def name(self):
-        return "SVN revision number"
-
     def local_client(self):
         return self.svnclient_factory.LocalClient(self.local_url)
 

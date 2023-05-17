@@ -13,12 +13,12 @@ class RenderTemplateHandler(AbstractEventHandler):
         return HandlerType.RENDER
 
     def handles(self, input):
-        return input.option and input.option.code != "x" and not input.params
+        result = input.option and input.option.code != "x" and not input.params
+        return result
 
     def _do_handle(self, option, main_menu):
         template = self.loader.get_template(option.name)
-        rendered_text = self.template_renderer.fill_and_render(
+        self.template_renderer.fill_and_render(
             template
         )
-        self.listener.write(rendered_text, template)
         return True

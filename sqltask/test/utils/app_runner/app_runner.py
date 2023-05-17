@@ -1,15 +1,11 @@
 import os
 import sys
 from io import StringIO
-from pathlib import Path
 
 import pytest
-import yaml
 
-from sqltask.main.command_line_app import CommandLineSQLTaskApp
-from sqltask.app_project import AppProject
 from sqltask.commands.verify_templates_cmd import FillTemplateAppRunner
-from sqltask.test.utils.emproject_test_util import FakeEMProjectBuilder
+from sqltask.main.default_app_config import DefaultAppContainer
 
 
 class FakeLogger(object):
@@ -29,7 +25,6 @@ class ApplicationRunner(FillTemplateAppRunner):
         self._project = None
 
     def _run(self, args):
-
         sys.argv = args
         sys.stdin = StringIO(self._user_input_to_str())
         self.build_app().run()
@@ -40,9 +35,7 @@ class ApplicationRunner(FillTemplateAppRunner):
         return result
 
     def build_app(self):
-        self.app = CommandLineSQLTaskApp.build_app(
-            self._project.emroot, logger=FakeLogger()
-        )
+        self.app = DefaultAppContainer().resolve(self._project.emroot)
         return self.app
 
     def with_project(self, project):
@@ -55,4 +48,3 @@ class ApplicationRunner(FillTemplateAppRunner):
             print("Unexpected input: " + test)
         assert "EOF" in str(excinfo.value)
         return self
-

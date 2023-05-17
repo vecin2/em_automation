@@ -1,11 +1,12 @@
 import os
 
-from sqltask.main.command_line_app import CommandLineSQLTaskApp
+from sqltask.main.default_app_config import DefaultAppContainer
 
 
 def main():
 
-    app = CommandLineSQLTaskApp.build_app(os.getcwd(), os.environ)
+    # app = CommandLineSQLTaskApp.build_app(os.getcwd(), os.environ)
+    app = DefaultAppContainer().resolve(os.getcwd(), os.environ)
     app.run()
 
 

@@ -65,19 +65,12 @@ class EnvBuilder(object):
         self.filters_package = package
         return self
 
-    def set_fs_path(self, path):
-        self.path = path
-        return self
-
     def set_loader(self, loader):
         self.loader = loader
         return self
 
     def _get_loader(self):
-        if self.loader:
-            return self.loader
-        else:
-            return FileSystemLoader(self.path)
+        return self.loader
 
     def build(self):
         env = Environment(

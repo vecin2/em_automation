@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
-from sqltask.test.utils.app_runner import ApplicationRunner
 
 import yaml
+
+from sqltask.main.default_app_config import DefaultAppContainer
+from sqltask.test.utils.app_runner import ApplicationRunner
 
 
 class TemplatesAppRunner(ApplicationRunner):
@@ -60,7 +62,9 @@ class TemplatesAppRunner(ApplicationRunner):
         return self
 
     def run(self, app=None):
-        self._run([".", "test-sql"], self.build_app())
+
+        app = DefaultAppContainer().resolve(os.getcwd(), os.environ)
+        self._run([".", "test-sql"], app)
         return self
 
     def test_sql(self):

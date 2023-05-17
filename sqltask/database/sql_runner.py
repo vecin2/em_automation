@@ -5,17 +5,31 @@ from sqltask.exceptions import DatabaseError
 from sqltask.ui.utils import select_string_noprompt
 
 
+class CommitTransactionExitListener(object):
+    def __init__(self, commitable):
+        self.commitable = commitable
+
+    def on_finish(self):
+        self.commitable.commit()
+
+
+class RollbackTransactionExitListener(object):
+    def __init__(self, commitable):
+        self.commitable = commitable
+
+    def on_finish(self):
+        self.commitable.rollback()
+
+
 class SQLRunner(object):
-    def __init__(self, context, run_on_db, commit_changes=True):
-        self.run_on_db = run_on_db
-        self.context = context
+    def __init__(self, project_db):
+        self.project_db = project_db
         self.modified_db = False
-        self.commit_changes = commit_changes
         self.db = None
 
     def run(self, content, template):
         result = None
-        if self.run_on_db and self._is_runnable_sql(template):
+        if self._is_runnable_sql(template):
             try:
                 self._get_db_schema(template)
                 result = self._run_content_on_db(content)
@@ -23,13 +37,11 @@ class SQLRunner(object):
             except (Exception, DatabaseError) as e:
                 if input("Do you want to continue (Y/N)?") == "N":
                     raise e
-
-        if result:
-            self.display_sqltable(result)
+            if result:
+                self.display_sqltable(result)
         return result
 
     def write(self, content, template=None):
-
         return self.run(content, template)
 
     def _get_db_schema(self, template):
@@ -50,20 +62,10 @@ class SQLRunner(object):
             return ""
 
     def _addb(self):
-        return self.context["_database"]
+        return self.project_db.addb
 
     def _tpsdb(self):
-        return self.context["_tpsdatabase"]
-
-    def on_finish(self):
-        if (
-            self.commit_changes
-            and self.modified_db  # dont prompt to user if only selects stmts
-            and self.user_confirms_run()
-        ):
-            self.commit()
-        else:
-            self.rollback()
+        return self.project_db.tpsdb
 
     def _is_runnable_sql(self, template):
         extension = os.path.splitext(template.filename)[1]
@@ -87,11 +89,14 @@ class SQLRunner(object):
     def display_sqltable(self, sqltable):
         print(str(sqltable))
 
-    def commit(self):
-        self.db and self.db.commit()
-
     def rollback(self):
+        # if not queries have run self.db is not initialized
         self.db and self.db.rollback()
+
+    def commit(self):
+        # if not queries have run self.db is not initialized
+        if self.modified_db and self.user_confirms_run():
+            self.db and self.db.commit()
 
     def user_confirms_run(self):
         return self.confirm_run_sql() == "y"

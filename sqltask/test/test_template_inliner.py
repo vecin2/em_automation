@@ -1,19 +1,14 @@
-import pytest
 import re
-from io import StringIO
-from jinja2 import Environment
 
-from sqltask.docugen.env_builder import EnvBuilder
-from sqltask.docugen.template_inliner import (
-    TemplateInliner,
-    IncludedTemplateParser,
-    IncludeClause,
-    PlainText,
-)
+from sqltask.docugen.env_builder import EnvBuilder, FileSystemLoader
+from sqltask.docugen.template_inliner import (IncludeClause,
+                                              IncludedTemplateParser,
+                                              PlainText, TemplateInliner)
+
 
 ######Test TemplateInliner####
 def make_template(source, filename, fs):
-    env = EnvBuilder().set_fs_path("/templates").build()
+    env = EnvBuilder().set_loader(FileSystemLoader("/templates")).build()
     fs.create_file("/templates/" + filename, contents=source)
     return env.get_template(filename)
 

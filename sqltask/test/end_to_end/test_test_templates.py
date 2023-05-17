@@ -37,21 +37,20 @@ def library_generator(project_generator):
     yield library_generator
 
 
-def test_test_name_not_matching(
-    project_generator, app_runner
-):
+def test_test_name_not_matching(project_generator, app_runner):
     app_runner.with_project(project_generator.generate())
 
     app_runner.test_sql()
     expected = "library/test_templates' does not exist.\n"
     app_runner.assert_message_printed(expected)
 
-#fix this test
+
+# fix this test
 @pytest.mark.skip
 def test_test_name_not_matching_template_generates_unable_to_find_template_test(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_test("test_greeting.sql", 'Hi John')
+    library_generator.add_test("test_greeting.sql", "Hi John")
     project = project_generator.generate()
 
     expected_sql = ExpectedSQLTestTemplate().render(
@@ -111,7 +110,7 @@ def test_render_sql_with_test_passing_list_params(
     app_runner.run_test_render_sql().assert_generated_tests(expected_sql)
 
 
-def test_render_sqltaskerates_multiple_testexpected_sql(
+def test_render_sql_run_multiple_testexpected_sql(
     project_generator, library_generator, app_runner
 ):
     hello_test = ExpectedSQLTestTemplate().render(
@@ -122,10 +121,10 @@ def test_render_sqltaskerates_multiple_testexpected_sql(
     )
     expected_source = bye_test.add(hello_test)
 
-    library_generator.add_template("hello.sql", "hello {{name}}!").add_test(
-        "test_hello.sql", '--{"name":"Fred"}\nhello Fred!'
-    ).add_template("bye.sql", "bye {{name}}!").add_test(
+    library_generator.add_template("bye.sql", "bye {{name}}!").add_test(
         "test_bye.sql", '--{"name":"Mark"}\nbye Mark!'
+    ).add_template("hello.sql", "hello {{name}}!").add_test(
+        "test_hello.sql", '--{"name":"Fred"}\nhello Fred!'
     )
     app_runner.with_project(project_generator.generate())
     app_runner.run_test_render_sql().assert_generated_tests(expected_source)
@@ -216,7 +215,7 @@ def test_runs_using_context_values_from_library(
         "verb.sql", "select name from verb where locale='{{_locale}}'"
     ).add_test(
         "test_verb.sql", "select name from verb where locale='en-GB'"
-    ).with_test_context_values(
+    ).with_context_values(
         data
     )
     app_runner.with_project(project_generator.generate())

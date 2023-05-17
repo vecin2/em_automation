@@ -9,9 +9,10 @@ import pytest
 from jinja2 import Template
 
 from sqltask.app_project import AppProject
-from sqltask.commands import PrintSQLToConsoleCommand
 from sqltask.commands.test_sql_file import TestFileParser, TestSQLFile
 from sqltask.docugen.env_builder import FileSystemLoader
+from sqltask.main.main_menu_builder import (PrintSQLToConsoleDisplayer,
+                                            VerifySQLConfig)
 from sqltask.sqltask_jinja.context import ContextBuilder
 
 
@@ -236,7 +237,7 @@ class TestLoader(object):
             filepath = os.path.join(testpath, filename)
             if self._is_valid_test_file(filepath):
                 result.append(filepath)
-        return sorted(result) #return tests in alfabetical order
+        return sorted(result)  # return tests in alfabetical order
 
     def _is_valid_test_file(self, filepath):
         filename = os.path.basename(filepath)
@@ -263,6 +264,7 @@ class TestTemplatesCommand(object):
         test_name=None,
         reuse_tests=False,
         args=None,
+        project=None
     ):
         self.reuse_tests = reuse_tests
         self.emprj_path = emprj_path
@@ -270,7 +272,9 @@ class TestTemplatesCommand(object):
         self.context_builder = self._init_context_builder(
             self.app_project, context_builder
         )
-        self.apprunner = FileAppRunner(templates_path, emprj_path, self.context_builder)
+        self.apprunner = FileAppRunner(
+            templates_path, emprj_path, self.context_builder, project=project
+        )
         self._test_generator = None
         self.pytest = pytest
         self.displayer = TestTemplatesCommandDisplayer()
@@ -393,25 +397,30 @@ class FillTemplateAppRunner:
 
 
 class FileAppRunner(FillTemplateAppRunner):
-    def __init__(self, templates_path, emprj_path, context_builder=None):
+    def __init__(self, templates_path, emprj_path, context_builder=None, project=None):
         super().__init__()
-        # Not run on db because we are only testing one template a time
-        # If we would be testing multiple templates combined we will changed
-        #'ru_on_db' to True
-        self.print_sql_cmd = PrintSQLToConsoleCommand(
-            context_builder=context_builder,
-            templates_path=templates_path,
-            run_on_db=False,
-            project_root=emprj_path,
-        )
+        self.project_root = emprj_path
+        self.templates_path = templates_path
+        self.console_printer = PrintSQLToConsoleDisplayer()
+        self.project = project
+        self.main_menu = self._build_main_menu()
 
     def run_test(self, testfile):
         self.clear_inputs()
         self.select_template(testfile.template_path(), testfile.values())
         self.saveAndExit()
         self.run()
-        return self.print_sql_cmd.sql_printed()
+        result = self.console_printer.rendered_sql
+        self.console_printer.rendered_sql = ""  # otherwise it keeps appending template
+        return result
+
+    def _build_main_menu(self):
+        config = VerifySQLConfig()
+        builder = config.get_builder(self.project)
+        self.console_printer = config.console_printer
+        return builder.build()
 
     def _run(self):
-        self.print_sql_cmd.run()
+        # self.print_sql_cmd.run()
+        self.main_menu.run()
         self.teardown()

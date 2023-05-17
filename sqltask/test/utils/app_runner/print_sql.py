@@ -8,4 +8,5 @@ class PrintSQLToConsoleAppRunner(ApplicationRunner):
 
     def assert_printed_sql(self, expected_sql):
         assert expected_sql == self.app.last_command_run.sql_printed()
+        # assert expected_sql == self.console_printer.rendered_sql
         return self

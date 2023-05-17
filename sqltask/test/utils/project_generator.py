@@ -96,6 +96,10 @@ class ProjectGenerator(PathGenerator):
         self._core_properties["sequence.generator"] = sequence_generator
         return self
 
+    def with_svn_rev_no_offset(self, offset):
+        self._core_properties["svn.rev.no.offset"] = offset
+        return self
+
     def append_release(self, release_name=None, after=None):
         self.releases.append((release_name, after))
 
@@ -209,7 +213,9 @@ class ProjectGenerator(PathGenerator):
             result = ["<releases>"]
             for release in self.releases:
                 release_name, after = release[0], release[1]
-                release_xml_line = f'\n<release value="{release_name}" after="{after}"/>"'
+                release_xml_line = (
+                    f'\n<release value="{release_name}" after="{after}"/>"'
+                )
                 result.append(release_xml_line)
             result.append("\n</releases>")
             self.add_file(
@@ -245,6 +251,7 @@ class QuickProjectGenerator(object):
         )
         self.project_generator.with_sequence_generator("timestamp")
         self.project_generator.append_release(release_name="PRJ_01", after="R8_5_0")
+
         return self.project_generator
 
 
@@ -304,8 +311,8 @@ class LibraryGenerator(PathGenerator):
         self.add_file(self._test_template_path(filename), content)
         return self
 
-    def with_test_context_values(self, dict):
-        self.add_file(self._config_path("test_context_values.yaml"), yaml.dump(dict))
+    def with_context_values(self, dict):
+        self.add_file(self._config_path("context_values.yaml"), yaml.dump(dict))
         return self
 
     def _template_path(self, filename):

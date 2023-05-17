@@ -1,25 +1,14 @@
-import os
-
-from sqltask.commands import PrintSQLToConsoleCommand
+from sqltask.main.main_menu_builder import RunSQLConfig
 
 
-class RunSQLCommand(PrintSQLToConsoleCommand):
-    def __init__(
-        self,
-        env_vars=os.environ,
-        templates_path=None,
-        context_builder=None,
-    ):
-        super().__init__(
-            templates_path=templates_path,
-            context_builder=context_builder,
-        )
-        # self.env_vars = env_vars
-        # self.commit_changes = True
+class RunSQLCommand:
+    def __init__(self, project=None):
+        self.project = project
 
     def run(self):
-        super().run()
+        main_menu = self.build_main_menu()
+        main_menu.run()
 
-    # def run_sql(self):
-    #     self._db().execute(self.sql_printed(), commit=True, verbose="v")
-    #
+    def build_main_menu(self):
+        builder = RunSQLConfig().get_builder(self.project)
+        return builder.build()

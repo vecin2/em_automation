@@ -65,7 +65,7 @@ def test_select_stmt_does_not_need_confirmation_and_is_cached(
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
         "list_customers.sql"
-    ).saveAndExit().print_sql().assert_printed_sql(sql).assert_all_input_was_read()
+    ).saveAndExit().run_sql().assert_all_input_was_read()
 
     assert sql == fake_connection._cursor.executed_sql
 
@@ -79,6 +79,6 @@ def test_insert_statement_needs_confirmation_and_runs_once_against_db(
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
         "insert_customer.sql"
-    ).saveAndExit().print_sql().assert_printed_sql(sql).assert_all_input_was_read()
+    ).saveAndExit().confirm_run().run_sql().assert_all_input_was_read()
 
     assert sql == fake_connection._cursor.executed_sql

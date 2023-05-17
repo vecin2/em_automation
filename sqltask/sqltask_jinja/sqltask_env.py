@@ -1,20 +1,25 @@
-from sqltask.docugen.env_builder import EnvBuilder
+from sqltask.docugen.env_builder import EnvBuilder, FileSystemLoader
 
 from . import filters as template_filters
 from . import globals as template_globals
 
 
-class EMTemplatesEnv:
-    def __init__(self, templates_path):
-        self.templates_path = templates_path
-        self._jinja_environment = None
-
-    def _make_env(self):
+class EnvironmentFactory:
+    def make_filesystem_env(self, templates_path):
         env_builder = EnvBuilder()
         env_builder.set_globals_module(template_globals).set_filters_package(
             template_filters
-        ).set_fs_path(self.templates_path)
+        ).set_loader(FileSystemLoader(templates_path))
         return env_builder.build()
+
+
+class EMTemplatesEnv:
+    def __init__(self, templates_path):
+        self.templates_path = str(templates_path)
+        self._jinja_environment = None
+
+    def _make_env(self):
+        return EnvironmentFactory().make_filesystem_env(self.templates_path)
 
     def _get_environment(self):
         if not self._jinja_environment:

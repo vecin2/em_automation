@@ -16,3 +16,13 @@ test-sql
 Generator 
 with_connnection_details
    Remove database_type is not part of the connection details
+
+
+	
+
+
+
+#####
+
+1. return path on get_logger_config (instead of string) and chec path.exists on cliente method
+2. Search on google "composition root runtime parameters", how do you handle passing a parameter that is computed a runtime and it is required by the method. SQLScriptedFolder.write - you will pass it on the method parameters but because write is implementing a framework

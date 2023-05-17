@@ -3,9 +3,9 @@ from jinja2.nodes import Node, Output, Template
 from jinja2.visitor import NodeTransformer
 
 import sqltask.sqltask_jinja.filters as filters_package
-from sqltask.docugen.env_builder import EnvBuilder
+from sqltask.docugen.env_builder import EnvBuilder,FileSystemLoader
 
-env = EnvBuilder().set_fs_path("templates").set_filters_package(filters_package).build()
+env = EnvBuilder().set_loader(FileSystemLoader("templates")).set_filters_package(filters_package).build()
 
 hello_welcome_output = (
     "Output(nodes=[TemplateData(data='Hello '), "

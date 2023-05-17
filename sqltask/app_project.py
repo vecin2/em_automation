@@ -50,7 +50,6 @@ class AppProject(object):
     @property
     def emroot(self):
         return Path(self.emprj_path)
-        return self.emproject.root
 
     @property
     def paths(self):
@@ -214,6 +213,15 @@ class AppProject(object):
             print("Default logs dir is: " + str(self.paths["logs"]))
         return self._logger
 
+    def logging_config_file(self):
+        logger_config_path = self.paths["logging_config"]
+        if logger_config_path.exists():
+            return logger_config_path
+        return None
+
+    def sqltask_logs_dir(self):
+        return str(self.paths["logs"])
+
     def get_db_release_version(self):
         db_release_version = self._get_db_release_version_from_properties()
         if db_release_version:
@@ -242,9 +250,18 @@ class AppProject(object):
         return latest_release
 
     def task_library_path(self):
-        return self.config["sqltask.library.path"]
+        try:
+            return Path(self.config["sqltask.library.path"])
+        except KeyError:
+            error_msg = """'sqltask.library.path' property not set.\nPlease add it to core.properties and make sure it points to the parent folder of your 'templates' folder."""
+            raise ValueError(error_msg)
 
     def library(self):
         if not self._library:
-            self._library = SQLTaskLib(Path(self.task_library_path()))
+            library_path = self.task_library_path()
+            if library_path.exists():
+                self._library = SQLTaskLib(library_path)
+            else:
+                error_msg = f"'sqltask.library.path' property points to an invalid path '{self.task_library_path()}'.\nPlease edit 'core.properties' file and make sure it points to the parent folder of your 'templates' folder."
+                raise ValueError(error_msg)
         return self._library

@@ -3,7 +3,7 @@ from sqltask.test.utils.app_runner import PrintSQLToConsoleAppRunner
 
 class RunSQLAppRunner(PrintSQLToConsoleAppRunner):
 
-    def confirmRun(self):
+    def confirm_run(self):
         self.user_inputs("y")
         return self
 

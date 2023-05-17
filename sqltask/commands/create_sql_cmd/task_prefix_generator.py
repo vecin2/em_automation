@@ -1,14 +1,3 @@
-# basepath = Path(
-#     "/mnt/c/em/projects/DU/du/modules/DuConfiguration/sqlScripts/oracle/updates/Du_01"
-# )
-# files_in_basepath = basepath.iterdir()
-# for item in files_in_basepath:
-#
-#     if item.is_dir():
-#         regex = "^\d+[-_.]"
-#         prefix_number_list = re.findall(regex, item.name)
-#         print(prefix_number_list[0])
-
 import re
 
 

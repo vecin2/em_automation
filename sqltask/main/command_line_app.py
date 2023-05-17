@@ -26,10 +26,6 @@ class SysArgParser(object):
             return self.command_factory.make_run_sql_command(args)
         elif args["import-templates"]:
             return self.command_factory.make_import_templates_command(args)
-        # elif args["extend-process"]:
-        #     return self.command_factory.make_extend_process_command(args)
-        # else:
-        #    return self.command_factory.make_interactive_shell_command(args)
 
 
 class CommandLineSQLTaskApp(object):
@@ -38,10 +34,10 @@ class CommandLineSQLTaskApp(object):
     def __init__(
         self,
         project_home=None,
-        args_factory=None,
+        args_parser=None,
         logger=None,
     ):
-        self.args_factory = args_factory
+        self.args_parser = args_parser
 
         self.emprj_path = project_home.path()
         if logger:
@@ -51,17 +47,6 @@ class CommandLineSQLTaskApp(object):
         self._logger = logger
         self.last_command_run = None
 
-    @staticmethod
-    def build_app(cwd, env_vars=None, logger=None):
-        project_home = ProjectHome(cwd, env_vars)
-        app = CommandLineSQLTaskApp(
-            project_home=project_home,
-            args_factory=CommandFactory(
-                project_home.path(),
-            ),
-            logger=logger,
-        )
-        return app
 
     def run(self):
         try:
@@ -73,6 +58,6 @@ class CommandLineSQLTaskApp(object):
 
     def _dorun(self):
         sqltask.logger.info("Starting application with params: " + str(sys.argv))
-        command = SysArgParser(self.args_factory).parse()
+        command = self.args_parser.parse()
         command.run()
         self.last_command_run = command
