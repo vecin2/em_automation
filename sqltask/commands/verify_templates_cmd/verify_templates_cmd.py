@@ -190,7 +190,7 @@ class ExpectedSQLTestBuilder(object):
 
 class RunOnDBTestBuilder(object):
     def __init__(self, emprj_path, apprunner):
-        self.emprj_path = emprj_path
+        self.emprj_path = str(emprj_path)
         self.apprunner = apprunner
 
     def build(self, testfile, emprj_path=None):
