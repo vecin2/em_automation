@@ -267,7 +267,7 @@ class TestTemplatesCommand(object):
         project=None
     ):
         self.reuse_tests = reuse_tests
-        self.emprj_path = emprj_path
+        self.emprj_path = str(emprj_path)
         self.app_project = AppProject(emprj_path=emprj_path)
         self.context_builder = self._init_context_builder(
             self.app_project, context_builder
