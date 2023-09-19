@@ -199,7 +199,7 @@ class RunOnDBTestBuilder(object):
             db_schema=testfile.top_folder(),
             template_name=testfile.template_name(),
             query=testfile.expected_sql(),
-            emprj_path=self.emprj_path,
+            emprj_path=str(self.emprj_path),
         )
 
 

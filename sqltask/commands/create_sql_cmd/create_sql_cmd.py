@@ -122,6 +122,8 @@ class ScriptedSQLFolder(object):
 
 
 class FileWritter(object):
+    ####################### RENAME TO STYLER (becasue \n\n\n)####
+    ### does groovy have same formatting probably not,since groovy tasks are unique
     def __init__(self, path=None):
         self.path = path
         self.sql = ""

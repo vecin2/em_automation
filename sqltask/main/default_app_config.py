@@ -10,8 +10,8 @@ class DefaultAppContainer(object):
 
     def resolve(self, cwd, env_vars=None):
         project_home = ProjectHome(cwd, env_vars)
-        project_path = project_home.path()
-        project = AppProject(project_path)  # fail if not valid project folder
+        project_path = project_home.path() # fail if not valid project folder
+        project = AppProject(project_path) 
         self.setup_logger(project)
         self.console_printer = PrintSQLToConsoleDisplayer()
         command_factory = CommandFactory(project,self.console_printer)

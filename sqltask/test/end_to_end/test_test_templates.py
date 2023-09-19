@@ -139,7 +139,7 @@ def test_generates_single_test_run_query(
     project = project_generator.generate()
 
     verb_test = RunOnDBTestTemplate().render(
-        template_name="verb", query="select name from verb", emprj_path=project.emroot
+        template_name="verb", query="select name from verb", emprj_path=str(project.emroot)
     )
 
     app_runner.with_project(project)
@@ -157,7 +157,7 @@ def test_generates_all(project_generator, library_generator, app_runner):
         actual="select name from verb",
     )
     run_on_db = RunOnDBTestTemplate().render(
-        template_name="verb", query="select name from verb", emprj_path=project.emroot
+        template_name="verb", query="select name from verb", emprj_path=str(project.emroot)
     )
     expected_source = check_sql.add(run_on_db)
 
@@ -179,7 +179,7 @@ def test_run_only_template(project_generator, library_generator, app_runner):
         actual="select name from verb",
     )
     run_on_db = RunOnDBTestTemplate().render(
-        template_name="verb", query="select name from verb", emprj_path=project.emroot
+        template_name="verb", query="select name from verb", emprj_path=str(project.emroot)
     )
     expected_source = check_sql.add(run_on_db)
 

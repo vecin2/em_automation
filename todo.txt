@@ -1,3 +1,7 @@
+*************
+  File "sqltask\sqltask_jinja\filters\codepath.py", line 26, in apply
+AttributeError: 'AppProject' object has no attribute 'emproject'
+********
 refactor tests:
 
 run tenant_properties_views
@@ -17,7 +21,7 @@ Generator
 with_connnection_details
    Remove database_type is not part of the connection details
 
-
+Multiple tests per one template, e.g. add_dynamic_entity_field can add string or tagset
 	
 
 
