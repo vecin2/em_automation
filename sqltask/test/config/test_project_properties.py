@@ -60,3 +60,12 @@ def test_get_core_and_emenvironment_properties():
         assert "en-GB" == project_props.em["preferred.default.locale"]
         assert "en-GB" == project_props.em.preferred_default_locale
         assert "1521" == project_props.em.tps_database_port
+
+
+def test_get_library_path():
+    with tempfile.TemporaryDirectory() as project_root:
+        project_props = ProjectProperties(project_root)
+        project_props.library_file_path.parent.mkdir(parents=True)
+        project_props.library_file_path.write_text("/mnt/c/em/sqltask-library")
+
+        assert "/mnt/c/em/sqltask-library" == str(project_props.library_path)

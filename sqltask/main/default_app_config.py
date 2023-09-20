@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from sqltask.app_project import AppProject
 from sqltask.log import log
 from sqltask.main.command_factory import CommandFactory
@@ -7,14 +9,15 @@ from sqltask.main.project_home import ProjectHome
 
 
 class DefaultAppContainer(object):
-
     def resolve(self, cwd, env_vars=None):
         project_home = ProjectHome(cwd, env_vars)
-        project_path = project_home.path() # fail if not valid project folder
-        project = AppProject(project_path) 
+        project = AppProject(project_home.path())
+        cwd_library = Path(cwd) / ".sqltask_library"
+        if cwd_library.exists():
+            project.set_library_path(Path(cwd_library.read_text().strip()))
         self.setup_logger(project)
         self.console_printer = PrintSQLToConsoleDisplayer()
-        command_factory = CommandFactory(project,self.console_printer)
+        command_factory = CommandFactory(project, self.console_printer)
         args_parser = SysArgParser(command_factory)
         application = CommandLineSQLTaskApp(project_home, args_parser)
         return application

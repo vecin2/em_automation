@@ -136,6 +136,7 @@ class PrintToConsoleConfig(object):
         self.register_render_listener(sql_runner)
 
     def get_exit_listeners(self, sql_runner):
+        #we do not want to commit when printing SQL
         return [RollbackTransactionExitListener(sql_runner)]
 
 

@@ -43,7 +43,7 @@ def test_it_throws_exception_when_no_templates_path_define(
 
     with pytest.raises(ValueError) as excinfo:
         app_runner.saveAndExit().print_sql()
-    assert "'sqltask.library.path' property not set" in str(excinfo.value)
+    assert "Library path not set for current project." in str(excinfo.value)
 
 
 def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(

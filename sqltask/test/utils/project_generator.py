@@ -85,6 +85,7 @@ class ProjectGenerator(PathGenerator):
         self._library_generator = None
         self._project_layout = None
         self._core_properties = {}
+        self._library_path = None  # Path
         self._ad_properties = {}
         self.releases = []
 
@@ -169,6 +170,8 @@ class ProjectGenerator(PathGenerator):
         return self
 
     def with_library_path(self, library_path):
+        self._library_path = library_path
+
         LIBRARY_PATH_KEY = "sqltask.library.path"
         if library_path is None:
             self._core_properties.pop(LIBRARY_PATH_KEY)
@@ -193,6 +196,13 @@ class ProjectGenerator(PathGenerator):
     def generate(self):
         if self._library_generator:
             self._library_generator.generate()
+
+        if self._library_path:
+            self.add_file(
+                "project/sqltask/config/.sqltask_library",
+                str(self._library_path),
+            )
+
         if self._core_properties:
             self.add_file(
                 "project/sqltask/config/core.properties",

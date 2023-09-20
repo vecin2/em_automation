@@ -43,6 +43,7 @@ class AppProject(object):
         self._em_config = None
         self._project_properties = None
         self._ccadmin_client = None
+        self._library_path = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -249,19 +250,27 @@ class AppProject(object):
 
         return latest_release
 
-    def task_library_path(self):
+    def library_path(self):
+        if not self._library_path:
+            self._library_path = self.compute_library_path()
+        return self._library_path
+
+    def set_library_path(self, library_path):
+        self._library_path = library_path
+
+    def compute_library_path(self):
         try:
-            return Path(self.config["sqltask.library.path"])
-        except KeyError:
-            error_msg = """'sqltask.library.path' property not set.\nPlease add it to core.properties and make sure it points to the parent folder of your 'templates' folder."""
+            return self.project_properties.library_path
+        except Exception:
+            error_msg = """Library path not set for current project. Create a .sql_library file in the root folder of your em project ({}), where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
             raise ValueError(error_msg)
 
     def library(self):
         if not self._library:
-            library_path = self.task_library_path()
+            library_path = self.library_path()
             if library_path.exists():
                 self._library = SQLTaskLib(library_path)
             else:
-                error_msg = f"'sqltask.library.path' property points to an invalid path '{self.task_library_path()}'.\nPlease edit 'core.properties' file and make sure it points to the parent folder of your 'templates' folder."
+                error_msg = f"'sqltask.library.path' property points to an invalid path '{self.library_path()}'.\nPlease edit 'core.properties' file and make sure it points to the parent folder of your 'templates' folder."
                 raise ValueError(error_msg)
         return self._library
