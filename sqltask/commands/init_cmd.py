@@ -72,7 +72,7 @@ class InitCommand(object):
 
         sqltask_library_path_info = """
 # sqltask points to library of SQL templates 
-# Please enter the library's filesystem path which contains folders "templates" and "test_templates".
+# Please enter the tasks library filesystem path where sqltask will be pointing to
 # For example: C:/em/sqltask-library
 # Windows path can also be entered with '/' separator - it will be converted to backslash when writing to file""".lstrip()
 
