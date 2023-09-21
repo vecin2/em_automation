@@ -70,17 +70,17 @@ class InitCommand(object):
 
     def init_sqltask_library_path(self):
 
-        sqltask_library_path_info = r"""
+        sqltask_library_path_info = """
 # sqltask points to library of SQL templates 
 # Please enter the library's filesystem path which contains folders "templates" and "test_templates".
-# For example: c:\\em\\sqltask-library""".lstrip()
+# For example: C:/em/sqltask-library""".lstrip()
         libray_path_template = """{{sqltask_library_path |
                        default(default_value) | filepath() |
                        print(sqltask_library_path_info)}}"""
         library_path_file = (
             self.app_project.emroot / "project/sqltask/config/.sqltask_library"
         )
-        default_value = r"c:\\em\\sqltask-library"
+        default_value = "C:/em/sqltask-library"
         if library_path_file.exists():
             keep_going = input(
                 f"{library_path_file} detected.\nThis will override the current file, do you want to continue (y/n): "
@@ -95,7 +95,7 @@ class InitCommand(object):
         }
         filled_template = template_renderer.render(libray_path_template, context)
         library_path = Path(filled_template.lstrip())
-        library_path_file.write_text(r"{}".format(library_path))
+        library_path_file.write_text(str(library_path).replace("\\","\\\\"))
         print(f"sqltask library path written to '{library_path_file}'")
 
     def init_core_properties(self):
