@@ -20,7 +20,6 @@ class ProjectHome:
 
     def _get_prj_home(self):
         result = self._current_prj_path()
-        print("**************************")
 
         if not os.path.exists(result):
             error_msg = (

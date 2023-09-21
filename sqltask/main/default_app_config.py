@@ -15,11 +15,11 @@ class DefaultAppContainer(object):
         cwd_library = Path(cwd) / ".sqltask_library"
         if cwd_library.exists():
             project.set_library_path(Path(cwd_library.read_text().strip()))
-        self.setup_logger(project)
+        logger = self.setup_logger(project)
         self.console_printer = PrintSQLToConsoleDisplayer()
         command_factory = CommandFactory(project, self.console_printer)
         args_parser = SysArgParser(command_factory)
-        application = CommandLineSQLTaskApp(project_home, args_parser)
+        application = CommandLineSQLTaskApp(project_home, args_parser, logger)
         return application
 
     def setup_logger(self, project):
