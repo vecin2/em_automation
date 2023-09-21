@@ -85,7 +85,7 @@ def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
 def test_prints_expected_text_when_a_valid_template_with_placeholders_is_run(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template("say_hello.txt", "hello {{name}}!")
+    library_generator.add_template("say_hello.txt", "hello {{name | codepath()}}!")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
