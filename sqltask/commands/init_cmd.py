@@ -92,7 +92,6 @@ class InitCommand(object):
             "default_value": default_value,
         }
         filled_template = template_renderer.render(libray_path_template, context)
-        __import__('pdb').set_trace()
         library_path_file.write_text(r"{}".format(filled_template.lstrip()))
         print(f"sqltask library path written to '{library_path_file}'")
 

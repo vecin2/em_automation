@@ -1,6 +1,7 @@
 import os
 
-from sqltask.docugen.completer import PathCompleter
+# from sqltask.docugen.completer import PathCompleter
+from prompt_toolkit.completion.filesystem import PathCompleter
 from sqltask.sqltask_jinja.filters import PromptFilter
 
 
@@ -17,5 +18,5 @@ class FilepathFilter(PromptFilter):
         self.filter = jinja_filter
 
     def apply(self, prompt, context):
-        get_paths_func = lambda: [""]
+        get_paths_func = lambda: ["/"]
         prompt.completer = PathCompleter(get_paths=get_paths_func)

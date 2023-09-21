@@ -45,6 +45,7 @@ class PathCompleter(Completer):
         file_filter=None,
         min_input_len=0,
         expanduser=False,
+        separator="."
     ):
         assert get_paths is None or callable(get_paths)
         assert file_filter is None or callable(file_filter)
