@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from sqltask.app_project import AppProject
 from sqltask.test.utils.app_runner import PrintSQLToConsoleAppRunner
 from sqltask.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
@@ -33,6 +34,14 @@ def library_generator(project_generator):
     library_generator = quick_generator.make_library_generator()
     project_generator.with_library(library_generator)
     yield library_generator
+
+
+def test_it_throws_exception_when_run_outside_em_project(app_runner,root):
+    app_runner.with_project(AppProject(root))
+
+    with pytest.raises(ValueError) as excinfo:
+        app_runner.print_sql()
+    assert "This command should be run from a root EM project folder or any of the subfolders" in str(excinfo.value)
 
 
 def test_it_throws_exception_when_no_templates_path_define(

@@ -16,11 +16,7 @@ class ProjectHome:
         return Path(self._emproject_home())
 
     def _emproject_home(self):
-        try:
-            return self._get_prj_home()
-        except Exception as excinfo:
-            sqltask.logger.error(str(excinfo))
-            exit(1)
+        return self._get_prj_home()
 
     def _get_prj_home(self):
         result = self._current_prj_path()

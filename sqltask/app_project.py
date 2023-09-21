@@ -262,7 +262,7 @@ class AppProject(object):
         try:
             return self.project_properties.library_path
         except Exception:
-            error_msg = """Library path not set for current project. Create a .sql_library file in the root folder of your em project ({}), where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
+            error_msg = """Library path not set for current project. Create a .sql_library file under {}/project/sqltask/config, where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
             raise ValueError(error_msg)
 
     def library(self):

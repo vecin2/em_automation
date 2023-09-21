@@ -7,6 +7,7 @@ from jinja2.runtime import missing
 
 from sqltask.sqltask_jinja import globals as globals_module
 from sqltask.sqltask_jinja.filters.codepath import codepath
+from sqltask.sqltask_jinja.filters.filepath import filepath
 from sqltask.sqltask_jinja.filters.description import description
 from sqltask.sqltask_jinja.filters.other import (objectdir, objectname,
                                                  split_uppercase)
@@ -30,7 +31,7 @@ class TraceUndefined(StrictUndefined):
 
 class FileSystemLoader(JinjaFileSystemLoader):
     def __init__(self, searchpath, encoding="utf-8", followlinks=False):
-        print(f"Templates will be loaded from '{searchpath}'")
+        print(f"Templates loaded from '{searchpath}'")
         super().__init__(searchpath, encoding, followlinks)
 
     def list_templates(self):
@@ -91,6 +92,7 @@ class EnvBuilder(object):
 
     def _build_filters(self, env):
         env.filters["codepath"] = codepath
+        env.filters["filepath"] = filepath
         env.filters["description"] = description
         env.filters["print"] = print_filter
         env.filters["suggest"] = suggest
