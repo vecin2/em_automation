@@ -85,6 +85,7 @@ class ProjectGenerator(PathGenerator):
         self._library_generator = None
         self._project_layout = None
         self._core_properties = {}
+        self._library_path = None  # Path
         self._ad_properties = {}
         self.releases = []
 
@@ -98,6 +99,10 @@ class ProjectGenerator(PathGenerator):
 
     def with_svn_rev_no_offset(self, offset):
         self._core_properties["svn.rev.no.offset"] = offset
+        return self
+
+    def clear_core_properties(self):
+        self._core_properties.clear()
         return self
 
     def append_release(self, release_name=None, after=None):
@@ -169,17 +174,17 @@ class ProjectGenerator(PathGenerator):
         return self
 
     def with_library_path(self, library_path):
-        LIBRARY_PATH_KEY = "sqltask.library.path"
-        if library_path is None:
-            self._core_properties.pop(LIBRARY_PATH_KEY)
-        else:
-            self._core_properties[LIBRARY_PATH_KEY] = str(library_path)
+        self._library_path = library_path
         return self
 
     def with_library(self, library_generator):
         self._library_generator = library_generator
         self.with_library_path(library_generator.root)
         return self
+
+    def clear_library(self):
+        self._library_generator = None
+        self.with_library_path(None)
 
     def get_library_path(self):
         return self._core_properties["sqltask.library.path"]
@@ -193,6 +198,13 @@ class ProjectGenerator(PathGenerator):
     def generate(self):
         if self._library_generator:
             self._library_generator.generate()
+
+        if self._library_path:
+            self.add_file(
+                "project/sqltask/config/.sqltask_library",
+                str(self._library_path),
+            )
+
         if self._core_properties:
             self.add_file(
                 "project/sqltask/config/core.properties",
@@ -330,6 +342,9 @@ class LibraryGenerator(PathGenerator):
 
     def append_template(self, filename, content):
         self._templates["filename"] = content
+
+    def override_root(self, root):
+        self.root = root
 
     def generate(self):
         library = SQLTaskLib(self.root)

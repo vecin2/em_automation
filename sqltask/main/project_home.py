@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import sqltask
 from sqltask.exceptions import EnvVarNotFoundException
@@ -12,7 +13,7 @@ class ProjectHome:
         self.env_vars = env_vars
 
     def path(self):
-        return self._emproject_home()
+        return Path(self._emproject_home())
 
     def _emproject_home(self):
         try:

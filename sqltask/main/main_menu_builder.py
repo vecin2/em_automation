@@ -95,9 +95,7 @@ class PrintToConsoleConfig(object):
         """"""
 
     def get_builder(self, project):
-        project_root = project.emroot
         templates_path = project.library().templates_path
-        project = AppProject.make(project_root)
         loader = EMTemplatesEnv(templates_path)
         context = ContextBuilder(project).build()
 
@@ -138,6 +136,7 @@ class PrintToConsoleConfig(object):
         self.register_render_listener(sql_runner)
 
     def get_exit_listeners(self, sql_runner):
+        #we do not want to commit when printing SQL
         return [RollbackTransactionExitListener(sql_runner)]
 
 

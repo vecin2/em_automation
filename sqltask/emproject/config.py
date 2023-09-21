@@ -96,12 +96,24 @@ class ProjectProperties(object):
         self.config_generator = config_generator
 
     @property
+    def config_folder(self):
+        return self.project_root / "project/sqltask/config"
+
+    @property
+    def library_file_path(self):
+        return self.config_folder / ".sqltask_library"
+
+    @property
     def core_properties_path(self):
-        return self.project_root / "project/sqltask/config/core.properties"
+        return self.config_folder / "core.properties"
 
     @property
     def environment_properties_path(self):
         return self.project_root / "work/config/show-config-txt"
+
+    @property
+    def library_path(self):
+        return Path(self.library_file_path.read_text().strip())
 
     @property
     def core(self):

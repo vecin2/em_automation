@@ -1,9 +1,9 @@
 import os
 
-from sqltask.main.project_home import ProjectHome
 from sqltask import logger
 from sqltask.app_project import AppProject
 from sqltask.docugen.completer import PathCompleter
+from sqltask.main.project_home import ProjectHome
 from sqltask.sqltask_jinja.filters import PromptFilter
 
 
@@ -23,8 +23,8 @@ class CodepathFilter(PromptFilter):
         project_home = ProjectHome(os.getcwd(), os.environ)
 
         app = AppProject(emprj_path=project_home.path())
-        logger.debug("Applying CodePath filter to project :" + app.emproject.root)
-        project_modules = app.emproject.paths["repo_modules"].path
-        product_modules = app.product_layout()["repo_modules"].path
+        logger.debug("Applying CodePath filter to project :" + str(app.emroot))
+        project_modules = str(app.paths["repo_modules"])
+        product_modules = str(app.product_layout()["repo_modules"])
         get_paths_func = lambda: [project_modules, product_modules]
         prompt.completer = PathCompleter(get_paths=get_paths_func)

@@ -38,12 +38,12 @@ def library_generator(project_generator):
 def test_it_throws_exception_when_no_templates_path_define(
     project_generator, app_runner
 ):
-    project_generator.with_library_path(None)
+    project_generator.clear_library()
     app_runner.with_project(project_generator.generate())
 
     with pytest.raises(ValueError) as excinfo:
         app_runner.saveAndExit().print_sql()
-    assert "'sqltask.library.path' property not set" in str(excinfo.value)
+    assert "Library path not set for current project." in str(excinfo.value)
 
 
 def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
@@ -85,7 +85,7 @@ def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
 def test_prints_expected_text_when_a_valid_template_with_placeholders_is_run(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template("say_hello.txt", "hello {{name}}!")
+    library_generator.add_template("say_hello.txt", "hello {{name | codepath()}}!")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
