@@ -1,5 +1,3 @@
-import os
-
 from sqltask.docugen.inmemory_template_renderer import InMemoryTemplateRenderer
 
 sqltask_config_props = """
@@ -66,20 +64,22 @@ class InitCommand(object):
 
     def run(self):
         self.init_core_properties()
-        self.init_sqltask_path()
+        self.init_sqltask_library_path()
 
-    def init_sqltask_path(self):
+    def init_sqltask_library_path(self):
+
         sqltask_library_path_info = """
 # sqltask points to library of SQL templates 
-# Please enter the library's filesystem path
-# This is the folder contanining "templates" and "test_templates" folders.
+# Please enter the library's filesystem path which contains folders "templates" and "test_templates".
 # For example: c:\\em\\sqltask-library""".lstrip()
         libray_path_template = """{{sqltask_library_path |
-                       default(defaults["sqltask.library.path"])|
-                       print(infos["sqltask.library.path"])}}"""
-        library_path_file = self.app_project.emroot / ".sqltask_library"
+                       default(default_value)|
+                       print(sqltask_library_path_info)}}"""
+        library_path_file = (
+            self.app_project.emroot / "project/sqltask/config/.sqltask_library"
+        )
         default_value = "c:\\em\\sqltask-library"
-        if library_path_file.exists:
+        if library_path_file.exists():
             keep_going = input(
                 f"{library_path_file} detected.\nThis will override the current file, do you want to continue (y/n): "
             )
@@ -93,7 +93,7 @@ class InitCommand(object):
         }
         filled_template = template_renderer.render(libray_path_template, context)
         library_path_file.write_text(filled_template.lstrip())
-        print(f"sqltask library path written to '{self.library_path_file}'")
+        print(f"sqltask library path written to '{library_path_file}'")
 
     def init_core_properties(self):
         defaults = self._get_defaults()
@@ -104,13 +104,15 @@ class InitCommand(object):
             filled_core_props = template_renderer.render(
                 core_properties_template, context
             )
-            self.core_properties_path.write_text(filled_core_props.lstrip())
-            # with open(self.core_properties_path, "+w") as f:
-            #     f.write(filled_template.lstrip())
+            self.write_text_to_file(filled_core_props, self.core_properties_path)
             print(f"Properties written to '{self.core_properties_path}'")
 
+    def write_text_to_file(self, text, path):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+
     def _get_defaults(self):
-        if os.path.exists(self.core_properties_path):
+        if self.core_properties_path.exists():
             keep_going = input(
                 f"{self.core_properties_path} detected.\nThis will override the current file, do you want to continue (y/n): "
             )

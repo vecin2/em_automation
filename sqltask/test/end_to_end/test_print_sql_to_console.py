@@ -38,7 +38,7 @@ def library_generator(project_generator):
 def test_it_throws_exception_when_no_templates_path_define(
     project_generator, app_runner
 ):
-    project_generator.with_library_path(None)
+    project_generator.clear_library()
     app_runner.with_project(project_generator.generate())
 
     with pytest.raises(ValueError) as excinfo:
