@@ -201,7 +201,7 @@ class ProjectGenerator(PathGenerator):
 
         if self._library_path:
             self.add_file(
-                "project/sqltask/config/.sqltask_library",
+                "project/sqltask/config/.library",
                 str(self._library_path),
             )
 

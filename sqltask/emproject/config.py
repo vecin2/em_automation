@@ -101,7 +101,7 @@ class ProjectProperties(object):
 
     @property
     def library_file_path(self):
-        return self.config_folder / ".sqltask_library"
+        return self.config_folder / ".library"
 
     @property
     def core_properties_path(self):

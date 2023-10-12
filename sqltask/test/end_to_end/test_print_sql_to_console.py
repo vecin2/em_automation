@@ -63,7 +63,7 @@ def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
 
     with pytest.raises(ValueError) as excinfo:
         app_runner.saveAndExit().print_sql()
-    assert "sqltask.library.path' property points to an invalid path '/sfa" in str(
+    assert "'.library' points to an invalid path '/sfa" in str(
         excinfo.value
     )
 
