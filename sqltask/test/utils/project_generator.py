@@ -362,3 +362,8 @@ class QuickLibraryGenerator(object):
     def make_library_generator(self):
         self.library_generator.add_folder("templates")
         return self.library_generator
+
+class DatabaseGenerator(object):
+    def with_schema(self,schema_name,valid_queries):
+        """"""
+

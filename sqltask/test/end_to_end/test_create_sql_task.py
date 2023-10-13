@@ -4,7 +4,8 @@ from pathlib import Path
 import pytest
 
 from sqltask.test.utils.app_runner import CreateSQLTaskAppRunner
-from sqltask.test.utils.fake_connection import FakeConnection
+from sqltask.test.utils.db_generator import QuickOracleDatabaseGenerator
+from sqltask.test.utils.fake_connection import FakeOracleClient
 from sqltask.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
 
@@ -19,17 +20,18 @@ def app_runner():
 
 
 @pytest.fixture
-def fake_connection(mocker):
-    fake_connection = FakeConnection()
-    yield fake_connection
+def database():
+    db_generator = QuickOracleDatabaseGenerator().generator()
+    database = db_generator.generate()
+    yield database
 
 
-# autouse allows to run this fixture even if we are not passing to test
+# autouse allows to run this fixture even if we are not passing it to test
 # this allow us to mock the DB connection
 @pytest.fixture(autouse=True)
-def do_connect(mocker, fake_connection):
-    mocked = mocker.patch("sqltask.database.Connector.do_connect")
-    mocked.return_value = fake_connection
+def do_connect(mocker, database):
+    mocked = mocker.patch("sqltask.database.Connector._oracleclient")
+    mocked.return_value = FakeOracleClient(database)
 
     yield mocked
 
@@ -78,7 +80,7 @@ def test_invalid_template_extension_fails(
     project_generator, library_generator, app_runner
 ):
     message = "txt unsupported template extension"
-    with pytest.raises(ValueError,match=".txt unsupported template extension"):
+    with pytest.raises(ValueError, match=".txt unsupported template extension"):
         sql = "INSERT INTO CE_CUSTOMER VALUES('{{name}}','{{lastname}}')"
         final_sql = "INSERT INTO CE_CUSTOMER VALUES('Mary','Jane')"
 
@@ -119,12 +121,12 @@ def test_groovy_template_creates_groovy_task(
 def test_sqltask_exists_user_cancels_then_does_not_create(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template("dummy1.sql", "dummy1")
+    library_generator.add_template("dummy1.sql", "select * from ce_customer")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy1"  # creates SQL first time
+        "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
     override_task = "n"
@@ -133,21 +135,21 @@ def test_sqltask_exists_user_cancels_then_does_not_create(
     )  # try create on the smae localtion
 
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy1"  # was not overriden
+        "module_A/tableData.sql", "select * from ce_customer"  # was not overriden
     )
 
 
 def test_sqltask_exists_user_confirms_then_creates_sqltask(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template("dummy1.sql", "dummy1").add_template(
-        "dummy2.sql", "dummy2"
-    )
+    library_generator.add_template(
+        "dummy1.sql", "select * from ce_customer"
+    ).add_template("dummy2.sql", "select name from ce_customer")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy1"  # creates SQL first time
+        "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
     override_task = "y"
@@ -157,7 +159,7 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(
     ).saveAndExit().create_sql("module_A")
 
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy2"  # was overriden
+        "module_A/tableData.sql", "select name from ce_customer"  # was overriden
     )
 
 
@@ -169,12 +171,12 @@ def test_when_seq_generator_throws_exception_writes_negative_one_to_update_seque
     )
     mocked.side_effect = ValueError("Some mocked error")
 
-    library_generator.add_template("dummy1.sql", "dummy1")
+    library_generator.add_template("dummy1.sql", "select * from ce_customer")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy1"  # creates SQL first time
+        "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
     app_runner.exists("module_A/update.sequence", "PROJECT $Revision: -1 $")
@@ -188,12 +190,12 @@ def test_when_svn_offset_applies_offset_to_seq_no(
     offset = 10
     project_generator.with_sequence_generator("svn")
     project_generator.with_svn_rev_no_offset(offset)
-    library_generator.add_template("dummy1.sql", "dummy1")
+    library_generator.add_template("dummy1.sql", "select * from ce_customer")
 
     app_runner.with_project(project_generator.generate())
     app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "dummy1"  # creates SQL first time
+        "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
     # update_sequence = next_revision_number(10 + 1) + offset (5)
@@ -203,7 +205,7 @@ def test_when_svn_offset_applies_offset_to_seq_no(
 def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(
     project_generator, library_generator, app_runner
 ):
-    library_generator.add_template("dummy1.sql", "dummy1")
+    library_generator.add_template("dummy1.sql", "select name from ce_customer")
     project_generator.append_release("PRJ_01")
     app_runner.with_project(project_generator.generate())
 
@@ -211,7 +213,9 @@ def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(
         "rewireEditEmail"
     ).select_template("dummy1.sql").saveAndExit().create_sql(None)
     app_runner.assert_all_input_was_read()
-    app_runner.exists_table_data(release_name="PRJ_01", expected_content="dummy1")
+    app_runner.exists_table_data(
+        release_name="PRJ_01", expected_content="select name from ce_customer"
+    )
     app_runner.exists_update_seq(
         release_name="PRJ_01"
     ).assert_path_copied_to_sys_clipboard("PRJ_01")

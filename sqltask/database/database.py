@@ -68,13 +68,20 @@ class Connector(object):
 
     def do_connect(self):
         if self.dbtype == "sqlServer":
-            return pyodbc.connect(self._get_sqlserver_conn_str())
+            return self._sqlserverclient().connect(self._get_sqlserver_conn_str())
         elif self.dbtype == "oracle":
             dsn_tns = self.server + ":" + self.port + "/" + self.database
 
-            return cx_Oracle.connect(self.user, self.password, dsn_tns)
+            oc =self._oracleclient()
+            return oc.connect(self.user, self.password, dsn_tns)
         else:
-            return None
+            return Exception("dbtype must 'sqlserver' or 'oracle'") 
+
+    def _sqlserverclient(self):
+        return pyodbc
+
+    def _oracleclient(self):
+        return cx_Oracle
 
     def _get_sqlserver_conn_str(self):
         if self.sqlserver_conn_str:
