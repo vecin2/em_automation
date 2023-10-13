@@ -94,3 +94,16 @@ def test_ad_template_run_against_ad_database(
     ).saveAndExit().confirm_run().run_sql()
 
     assert sql == database.executed_sql("ad")
+
+def test_tps_template_run_against_tps_database(
+    project_generator, library_generator, app_runner, database
+):
+    sql = "INSERT INTO TENANT_PROPERTY VALUES('max.no.chats','5')"
+    library_generator.add_tps_template("add_property.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_tps_template(
+        "add_property.sql"
+    ).saveAndExit().confirm_run().run_sql()
+
+    assert sql == database.executed_sql("tps")

@@ -49,7 +49,7 @@ class FakeDBSchema:
         self._executed_sql += sql
         table_name = self.get_table_name(sql)
         if table_name not in self.tables:
-            raise Exception("FakeDB: table or view does not exist")
+            raise Exception(f"Table or view does not exist on schema {self.name}")
 
     def get_table_name(self, sql):
         words = sql.upper().split()

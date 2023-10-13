@@ -24,5 +24,6 @@ class QuickOracleDatabaseGenerator:
 
     def generator(self):
         self.dbgenerator.add_schema("ad", {"CE_CUSTOMER"})
+        self.dbgenerator.add_schema("tps", {"TENANT_PROPERTY"})
 
         return self.dbgenerator

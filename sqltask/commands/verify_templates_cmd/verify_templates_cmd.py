@@ -264,7 +264,7 @@ class TestTemplatesCommand(object):
         test_name=None,
         reuse_tests=False,
         args=None,
-        project=None
+        project=None,
     ):
         self.reuse_tests = reuse_tests
         self.emprj_path = str(emprj_path)
@@ -368,6 +368,10 @@ class FillTemplateAppRunner:
 
     def saveAndExit(self):
         self.user_inputs("x")
+        return self
+
+    def select_tps_template(self, template_name, values={}):
+        self.select_template("tenant_properties_service/" + template_name, values)
         return self
 
     def select_template(self, template_name, values={}):
