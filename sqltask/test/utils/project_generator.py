@@ -201,7 +201,7 @@ class ProjectGenerator(PathGenerator):
 
         if self._library_path:
             self.add_file(
-                "project/sqltask/config/.sqltask_library",
+                "project/sqltask/config/.library",
                 str(self._library_path),
             )
 
@@ -319,6 +319,10 @@ class LibraryGenerator(PathGenerator):
         self.add_file(self._template_path(filename), content)
         return self
 
+    def add_tps_template(self, filename, content):
+        self.add_file(self._template_path(filename, "tenant_properties_service"), content)
+        return self
+
     def add_test(self, filename, content):
         self.add_file(self._test_template_path(filename), content)
         return self
@@ -327,7 +331,9 @@ class LibraryGenerator(PathGenerator):
         self.add_file(self._config_path("context_values.yaml"), yaml.dump(dict))
         return self
 
-    def _template_path(self, filename):
+    def _template_path(self, filename, schema=None):
+        if schema:
+            return self.TEMPLATES_PATH/ schema / filename
         return self.TEMPLATES_PATH / filename
 
     def _test_template_path(self, filename):
@@ -362,3 +368,8 @@ class QuickLibraryGenerator(object):
     def make_library_generator(self):
         self.library_generator.add_folder("templates")
         return self.library_generator
+
+
+class DatabaseGenerator(object):
+    def with_schema(self, schema_name, valid_queries):
+        """"""

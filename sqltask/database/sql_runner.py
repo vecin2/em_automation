@@ -35,6 +35,7 @@ class SQLRunner(object):
                 result = self._run_content_on_db(content)
                 self.db.clearcache()
             except (Exception, DatabaseError) as e:
+                print(e)
                 if input("Do you want to continue (Y/N)?") == "N":
                     raise e
             if result:

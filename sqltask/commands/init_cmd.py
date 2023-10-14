@@ -80,7 +80,7 @@ class InitCommand(object):
                        default(default_value) | filepath() |
                        print(sqltask_library_path_info)}}"""
         library_path_file = (
-            self.app_project.emroot / "project/sqltask/config/.sqltask_library"
+            self.app_project.emroot / "project/sqltask/config/.library"
         )
         default_value = "C:/em/sqltask-library"
         if library_path_file.exists():

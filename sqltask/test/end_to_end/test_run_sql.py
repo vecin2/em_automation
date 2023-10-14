@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 
 from sqltask.test.utils.app_runner import RunSQLAppRunner
-from sqltask.test.utils.emproject_test_util import FakeEMProjectBuilder
-from sqltask.test.utils.fake_connection import FakeConnection
+from sqltask.test.utils.db_generator import QuickOracleDatabaseGenerator
+from sqltask.test.utils.fake_connection import FakeOracleClient
 from sqltask.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
 
@@ -16,18 +16,20 @@ def app_runner():
     yield app_runner
     app_runner.teardown()
 
+
 @pytest.fixture
-def fake_connection(mocker):
-    fake_connection = FakeConnection()
-    yield fake_connection
+def database():
+    db_generator = QuickOracleDatabaseGenerator().generator()
+    database = db_generator.generate()
+    yield database
 
 
 # autouse allows to run this fixture even if we are not passing it to test
 # this allow us to mock the DB connection
 @pytest.fixture(autouse=True)
-def do_connect(mocker, fake_connection):
-    mocked = mocker.patch("sqltask.database.Connector.do_connect")
-    mocked.return_value = fake_connection
+def do_connect(mocker, database):
+    mocked = mocker.patch("sqltask.database.Connector._oracleclient")
+    mocked.return_value = FakeOracleClient(database)
 
     yield mocked
 
@@ -53,12 +55,8 @@ def library_generator(project_generator):
 
 
 def test_select_stmt_does_not_need_confirmation_and_is_cached(
-    project_generator, library_generator, app_runner, fake_connection
+    project_generator, library_generator, app_runner, database
 ):
-    fake_connection.set_cursor_execute_results(
-        ["firstname", "lastname"], [["David", "Garcia"]]
-    )
-
     sql = "SELECT * FROM CE_CUSTOMER"
     library_generator.add_template("list_customers.sql", sql)
 
@@ -67,11 +65,11 @@ def test_select_stmt_does_not_need_confirmation_and_is_cached(
         "list_customers.sql"
     ).saveAndExit().run_sql().assert_all_input_was_read()
 
-    assert sql == fake_connection._cursor.executed_sql
+    assert sql == database.executed_sql("ad")
 
 
 def test_insert_statement_needs_confirmation_and_runs_once_against_db(
-    project_generator, library_generator, app_runner, fake_connection
+    project_generator, library_generator, app_runner, database
 ):
     sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
     library_generator.add_template("insert_customer.sql", sql)
@@ -81,4 +79,31 @@ def test_insert_statement_needs_confirmation_and_runs_once_against_db(
         "insert_customer.sql"
     ).saveAndExit().confirm_run().run_sql().assert_all_input_was_read()
 
-    assert sql == fake_connection._cursor.executed_sql
+    assert sql == database.executed_sql("ad")
+
+
+def test_ad_template_run_against_ad_database(
+    project_generator, library_generator, app_runner, database
+):
+    sql = "INSERT INTO CE_CUSTOMER VALUES('David','Garcia')"
+    library_generator.add_template("insert_customer.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template(
+        "insert_customer.sql"
+    ).saveAndExit().confirm_run().run_sql()
+
+    assert sql == database.executed_sql("ad")
+
+def test_tps_template_run_against_tps_database(
+    project_generator, library_generator, app_runner, database
+):
+    sql = "INSERT INTO TENANT_PROPERTY VALUES('max.no.chats','5')"
+    library_generator.add_tps_template("add_property.sql", sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_tps_template(
+        "add_property.sql"
+    ).saveAndExit().confirm_run().run_sql()
+
+    assert sql == database.executed_sql("tps")

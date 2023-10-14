@@ -12,7 +12,7 @@ class DefaultAppContainer(object):
     def resolve(self, cwd, env_vars=None):
         project_home = ProjectHome(cwd, env_vars)
         project = AppProject(project_home.path())
-        cwd_library = Path(cwd) / ".sqltask_library"
+        cwd_library = Path(cwd) / ".library"
         if cwd_library.exists():
             project.set_library_path(Path(cwd_library.read_text().strip()))
         logger = self.setup_logger(project)

@@ -36,12 +36,15 @@ def library_generator(project_generator):
     yield library_generator
 
 
-def test_it_throws_exception_when_run_outside_em_project(app_runner,root):
+def test_it_throws_exception_when_run_outside_em_project(app_runner, root):
     app_runner.with_project(AppProject(root))
 
     with pytest.raises(ValueError) as excinfo:
         app_runner.print_sql()
-    assert "This command should be run from a root EM project folder or any of the subfolders" in str(excinfo.value)
+    assert (
+        "This command should be run from a root EM project folder or any of the subfolders"
+        in str(excinfo.value)
+    )
 
 
 def test_it_throws_exception_when_no_templates_path_define(
@@ -63,9 +66,7 @@ def test_it_throws_exception_when_templates_path_points_to_non_existing_folder(
 
     with pytest.raises(ValueError) as excinfo:
         app_runner.saveAndExit().print_sql()
-    assert "sqltask.library.path' property points to an invalid path '/sfa" in str(
-        excinfo.value
-    )
+    assert "'.library' points to an invalid path '/sfa" in str(excinfo.value)
 
 
 def test_returns_empty_when_no_template_selected(project_generator, app_runner):
@@ -124,6 +125,8 @@ def test_fills_two_templates_and_combines_output(
     app_runner.select_template("say_hi.txt", {"name": "Marco"}).select_template(
         "say_bye.txt", {"name": "Fernando"}
     ).saveAndExit().print_sql().assert_printed_sql("hi Marco\nbye Fernando")
+
+
 
 
 # @pytest.mark.skip

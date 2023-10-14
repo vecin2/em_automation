@@ -32,3 +32,18 @@ Multiple tests per one template, e.g. add_dynamic_entity_field can add string or
 
 1. return path on get_logger_config (instead of string) and chec path.exists on cliente method
 2. Search on google "composition root runtime parameters", how do you handle passing a parameter that is computed a runtime and it is required by the method. SQLScriptedFolder.write - you will pass it on the method parameters but because write is implementing a framework
+
+
+properties -->*connection_details
+^
+|
+|
+project --> library
+|
+|
+database(connection) --> connection_details
+
+connector_factory.get(connection_details)
+
+
+

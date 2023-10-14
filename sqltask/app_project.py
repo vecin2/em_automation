@@ -262,7 +262,7 @@ class AppProject(object):
         try:
             return self.project_properties.library_path
         except Exception:
-            error_msg = """Library path not set for current project. Create a .sql_library file under {}/project/sqltask/config, where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
+            error_msg = """Library path not set for current project. Create a .library file under {}/project/sqltask/config, where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
             raise ValueError(error_msg)
 
     def library(self):
@@ -271,6 +271,6 @@ class AppProject(object):
             if library_path.exists():
                 self._library = SQLTaskLib(library_path)
             else:
-                error_msg = f"'sqltask.library.path' property points to an invalid path '{self.library_path()}'.\nPlease edit 'core.properties' file and make sure it points to the parent folder of your 'templates' folder."
+                error_msg = f"'.library' points to an invalid path '{self.library_path()}'.\nPlease edit '.library' file and make sure it points to the parent folder of your 'templates' folder."
                 raise ValueError(error_msg)
         return self._library
