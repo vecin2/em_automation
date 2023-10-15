@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import sqltask
 from sqltask.database.sqlparser import SQLParser
@@ -49,23 +50,21 @@ class SQLRunner(object):
     def _get_db_schema(self, template):
         if not self.db:
             schema_name = self._top_folder(template)
-            sqltask.logger.info("schema for this template:"+ schema_name)
+            sqltask.logger.info("schema for this template:" + schema_name)
             if schema_name == "tenant_properties_service":
-                sqltask.logger.info("tps template will run on tps db")
-
                 self.db = self._tpsdb()
             else:
-                sqltask.logger.info("template will run on ad db")
                 self.db = self._addb()
 
         return self.db
 
     def _top_folder(self, template):
-        template_path = template.name.split(os.sep)
-        if len(template_path) > 1:
-            return template_path[0]
-        else:
-            return ""
+        template_path = Path(template.name)
+        parent_folder = ""
+        if len(template_path.parts) > 1:  # has at least a parent folder
+            parent_folder = template_path.parts[0]
+        sqltask.logger.debug("Template's parent folder: " + parent_folder)
+        return parent_folder
 
     def _addb(self):
         return self.project_db.addb
