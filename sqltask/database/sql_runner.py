@@ -50,10 +50,11 @@ class SQLRunner(object):
         if not self.db:
             schema_name = self._top_folder(template)
             if schema_name == "tenant_properties_service":
-                sqltask.logger.debug("tps template will run on tps db")
+                sqltask.logger.info("tps template will run on tps db")
 
                 self.db = self._tpsdb()
             else:
+                sqltask.logger.info("template will run on ad db")
                 self.db = self._addb()
 
         return self.db
