@@ -49,6 +49,7 @@ class SQLRunner(object):
     def _get_db_schema(self, template):
         if not self.db:
             schema_name = self._top_folder(template)
+            sqltask.logger.info("schema for this template:"+ schema_name)
             if schema_name == "tenant_properties_service":
                 sqltask.logger.info("tps template will run on tps db")
 
