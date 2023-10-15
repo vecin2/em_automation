@@ -1,5 +1,6 @@
 import os
 
+import sqltask
 from sqltask.database.sqlparser import SQLParser
 from sqltask.exceptions import DatabaseError
 from sqltask.ui.utils import select_string_noprompt
@@ -49,6 +50,8 @@ class SQLRunner(object):
         if not self.db:
             schema_name = self._top_folder(template)
             if schema_name == "tenant_properties_service":
+                sqltask.logger.debug("tps template will run on tps db")
+
                 self.db = self._tpsdb()
             else:
                 self.db = self._addb()
