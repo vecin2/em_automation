@@ -15,3 +15,4 @@ sqltask/test_templates/.tmp/
 **/.tempfolder/
 **/test_templates
 sqltask.spec
+.library
