@@ -72,10 +72,10 @@ class Connector(object):
         elif self.dbtype == "oracle":
             dsn_tns = self.server + ":" + self.port + "/" + self.database
 
-            oc =self._oracleclient()
+            oc = self._oracleclient()
             return oc.connect(self.user, self.password, dsn_tns)
         else:
-            return Exception("dbtype must 'sqlserver' or 'oracle'") 
+            return Exception("dbtype must 'sqlserver' or 'oracle'")
 
     def _sqlserverclient(self):
         return pyodbc
@@ -115,7 +115,99 @@ class Connector(object):
         return error_msg
 
 
-class EMDatabase(object):
+class Database:
+    def __init__(self, config=None):
+        self.config = config
+        self._addb = None
+        self._tpsdb = None
+        self._rsdb = None
+
+    @property
+    def addb(self):
+        if not self._addb:
+            self._addb = self._get_database(
+                host="database.host",
+                user="database.user",
+                password="database.pass",
+                dbname="database.name",
+                port="database.port",
+                dbtype="database.type",
+                sqlserver_driver_name="sqlServer.driver",
+                sqlserver_conn_str_name="sqlServer.conn.str",
+            )
+        return self._addb
+
+    @property
+    def tpsdb(self):
+        if not self._tpsdb:
+            self._tpsdb = self._get_database(
+                host="database.host",
+                user="database.tenant-properties-service.user",
+                password="database.tenant-properties-service.pass",
+                dbname="database.name",
+                port="database.port",
+                dbtype="database.type",
+                sqlserver_driver_name="sqlServer.driver",
+                sqlserver_conn_str_name="sqlServer.conn.str",
+                component_name="tenant-properties-service",
+            )
+        return self._tpsdb
+
+    @property
+    def rsdb(self):
+        if not self._rsdb:
+            self._rsdb = self._get_database(
+                host="database.host",
+                user="database.reporting.user",
+                password="database.reporting.pass",
+                dbname="database.name",
+                port="database.port",
+                dbtype="database.type",
+                sqlserver_driver_name="sqlServer.driver",
+                sqlserver_conn_str_name="sqlServer.conn.str",
+            )
+        return self._rsdb
+
+    def _get_database(
+        self,
+        host=None,
+        user=None,
+        password=None,
+        dbname=None,
+        port=None,
+        dbtype=None,
+        sqlserver_driver_name=None,
+        sqlserver_conn_str_name=None,
+        component_name="ad",
+    ):
+
+        host = self.config[host]
+        username = self.config[user]
+        password = self.config[password]
+        database = self.config[dbname]
+        port = self.config[port]
+        dbtype = self.config[dbtype]
+        sqlserver_driver = ""
+        sqlserver_conn_str = ""
+        if dbtype == "sqlServer":
+            if sqlserver_conn_str_name in self.config:
+                sqlserver_conn_str = self.config[sqlserver_conn_str_name]
+            else:
+                sqlserver_driver = self.config[sqlserver_driver_name]
+        connector = Connector(
+            host,
+            username,
+            password,
+            database,
+            port,
+            dbtype,
+            sqlserver_driver,
+            sqlserver_conn_str,
+        )
+        return DBSchema(connector)
+
+
+class DBSchema:
     def __init__(self, connector=None):
         self.connector = connector
         self._connection = None

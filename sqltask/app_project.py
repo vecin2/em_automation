@@ -4,7 +4,7 @@ from pathlib import Path
 from st_librarian.sqltasklib import SQLTaskLib
 
 import sqltask
-from sqltask.database import Connector, EMDatabase, QueryRunner
+from sqltask.database import Connector, DBSchema, Database, QueryRunner
 from sqltask.emproject.ccadmin import CCAdmin
 from sqltask.emproject.config import ProjectProperties
 from sqltask.log import log
@@ -44,6 +44,7 @@ class AppProject(object):
         self._project_properties = None
         self._ccadmin_client = None
         self._library_path = None
+        self._db = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -113,50 +114,22 @@ class AppProject(object):
             return self.addb
 
     @property
+    def db(self):
+        if not self._db:
+            self._db = Database(self.em_config())
+        return self._db
+
+    @property
     def addb(self):
-        if not self._addb:
-            self._addb = self._get_database(
-                host="database.host",
-                user="database.user",
-                password="database.pass",
-                dbname="database.name",
-                port="database.port",
-                dbtype="database.type",
-                sqlserver_driver_name="sqlServer.driver",
-                sqlserver_conn_str_name="sqlServer.conn.str",
-            )
-        return self._addb
+        return self.db.addb
 
     @property
     def tpsdb(self):
-        if not self._tpsdb:
-            self._tpsdb = self._get_database(
-                host="database.host",
-                user="database.tenant-properties-service.user",
-                password="database.tenant-properties-service.pass",
-                dbname="database.name",
-                port="database.port",
-                dbtype="database.type",
-                sqlserver_driver_name="sqlServer.driver",
-                sqlserver_conn_str_name="sqlServer.conn.str",
-                component_name="tenant-properties-service",
-            )
-        return self._tpsdb
+        return self.db.tpsdb
 
     @property
     def rsdb(self):
-        if not self._rsdb:
-            self._rsdb = self._get_database(
-                host="database.host",
-                user="database.reporting.user",
-                password="database.reporting.pass",
-                dbname="database.name",
-                port="database.port",
-                dbtype="database.type",
-                sqlserver_driver_name="sqlServer.driver",
-                sqlserver_conn_str_name="sqlServer.conn.str",
-            )
-        return self._rsdb
+        return self.db.rsdb
 
     @property
     def config(self):
@@ -198,7 +171,7 @@ class AppProject(object):
             sqlserver_driver,
             sqlserver_conn_str,
         )
-        return EMDatabase(connector)
+        return DBSchema(connector)
 
     @staticmethod
     def set_logger(logger):
@@ -262,7 +235,9 @@ class AppProject(object):
         try:
             return self.project_properties.library_path
         except Exception:
-            error_msg = """Library path not set for current project. Create a .library file under {}/project/sqltask/config, where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(str(self.emroot))
+            error_msg = """Library path not set for current project. Create a .library file under {}/project/sqltask/config, where the content of the file is the path to a sqltask library, e.g c:\\em\\sqltask_library""".format(
+                str(self.emroot)
+            )
             raise ValueError(error_msg)
 
     def library(self):

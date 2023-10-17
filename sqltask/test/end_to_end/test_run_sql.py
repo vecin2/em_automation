@@ -95,6 +95,7 @@ def test_ad_template_run_against_ad_database(
 
     assert sql == database.executed_sql("ad")
 
+
 def test_tps_template_run_against_tps_database(
     project_generator, library_generator, app_runner, database
 ):
@@ -107,3 +108,21 @@ def test_tps_template_run_against_tps_database(
     ).saveAndExit().confirm_run().run_sql()
 
     assert sql == database.executed_sql("tps")
+
+
+@pytest.mark.skip
+def test_run_ad_template_follow_by_tps_template(
+    project_generator, library_generator, app_runner, database
+):
+    ad_sql = "INSERT INTO CE_CUSTOMER (FIRSNAME,LASTNAME) VALUES('Robert','Dubrey')"
+    library_generator.add_template("add_customer.sql", ad_sql)
+    tps_sql = "INSERT INTO TENANT_PROPERTY (NAME,VALUE) VALUES('max.no.chats','5')"
+    library_generator.add_tps_template("add_property.sql", tps_sql)
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("add_customer.sql").select_tps_template(
+        "add_property.sql"
+    ).saveAndExit().confirm_run().run_sql()
+
+    assert ad_sql == database.executed_sql("ad")
+    assert tps_sql == database.executed_sql("tps")

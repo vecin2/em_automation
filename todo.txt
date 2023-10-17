@@ -1,9 +1,3 @@
-AppProject invalid sqltask.library.path still says to change on core.properties
-
-*************
-  File "sqltask\sqltask_jinja\filters\codepath.py", line 26, in apply
-AttributeError: 'AppProject' object has no attribute 'emproject'
-********
 refactor tests:
 
 run tenant_properties_views

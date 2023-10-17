@@ -107,7 +107,7 @@ class PrintToConsoleConfig(object):
         self.console_printer = PrintSQLToConsoleDisplayer()
         self.template_filler.append_listener(self.console_printer)
 
-        sql_runner = SQLRunner(project)
+        sql_runner = SQLRunner(project.db)
         self.append_other_renderer_listeners(sql_runner)
         self.builder = MainMenuBuilder()
         self.builder.append_handler(render_template_handler)

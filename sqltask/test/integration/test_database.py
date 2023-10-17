@@ -1,4 +1,4 @@
-from sqltask.database import EMDatabase, Connector
+from sqltask.database import DBSchema, Connector
 from sqltask.exceptions import DatabaseError
 import cx_Oracle
 import pytest
@@ -20,7 +20,7 @@ sqlserver_conn = Connector(
     sqlserver_port,
     "sqlServer",
 )
-sqlserver_db = EMDatabase(sqlserver_conn)
+sqlserver_db = DBSchema(sqlserver_conn)
 
 oracle_host = "oracle"
 oracle_username = "SPEN_3PD"
@@ -35,7 +35,7 @@ oracle_conn = Connector(
     oracle_port,
     "oracle",
 )
-oracle_db = EMDatabase(oracle_conn)
+oracle_db = DBSchema(oracle_conn)
 
 testdata = [oracle_db, sqlserver_db]
 
