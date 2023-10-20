@@ -97,6 +97,10 @@ class ProjectGenerator(PathGenerator):
         self._core_properties["sequence.generator"] = sequence_generator
         return self
 
+    def with_project_prefix(self, prefix):
+        self._core_properties["project.prefix"] = prefix
+        return self
+
     def with_svn_rev_no_offset(self, offset):
         self._core_properties["svn.rev.no.offset"] = offset
         return self
@@ -262,6 +266,7 @@ class QuickProjectGenerator(object):
             self.library_generator.make_library_generator()
         )
         self.project_generator.with_sequence_generator("timestamp")
+        self.project_generator.with_project_prefix("PRJ")
         self.project_generator.append_release(release_name="PRJ_01", after="R8_5_0")
 
         return self.project_generator

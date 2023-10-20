@@ -406,6 +406,7 @@ class FileAppRunner(FillTemplateAppRunner):
         self.project_root = emprj_path
         self.templates_path = templates_path
         self.console_printer = PrintSQLToConsoleDisplayer()
+        self.context_builder = context_builder
         self.project = project
         self.main_menu = self._build_main_menu()
 
@@ -420,7 +421,7 @@ class FileAppRunner(FillTemplateAppRunner):
 
     def _build_main_menu(self):
         config = VerifySQLConfig()
-        builder = config.get_builder(self.project)
+        builder = config.get_builder(self.project,self.context_builder)
         self.console_printer = config.console_printer
         return builder.build()
 

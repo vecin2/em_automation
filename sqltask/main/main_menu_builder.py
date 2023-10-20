@@ -94,10 +94,12 @@ class PrintToConsoleConfig(object):
     def __init__(self):
         """"""
 
-    def get_builder(self, project):
+    def get_builder(self, project, context_builder=None):
         templates_path = project.library().templates_path
         loader = EMTemplatesEnv(templates_path)
-        context = ContextBuilder(project).build()
+        if not context_builder:
+            context_builder = ContextBuilder(project)
+        context = context_builder.build()
 
         self.template_filler = TemplateFiller(initial_context=context)
         render_template_handler = RenderTemplateHandler(

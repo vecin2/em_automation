@@ -12,9 +12,14 @@ sequence_generator = """
 # - svn: uses the revision number as update.sequence
 # - timestamp: uses the timestamp, equivalent to run 'date +%s' on linux""".lstrip()
 
+project_prefix_info ="""
+# Used by sqltask library to set context value '_prjprefix' which is useful to compute process paths or entities relative ids
+# This is two or three letters which precede project modules or project entities, 
+# For example when EJCustomer""".lstrip()
 infos = {
     "sqltask.config.props": sqltask_config_props,
     "sequence.generator": sequence_generator,
+    "project.prefix": project_prefix_info,
 }
 core_properties_template = """
 #######################################################################################
@@ -28,7 +33,7 @@ environment.name={{environment_name |
 container.name=ad
 machine.name=localhost
 
-######################################################################################
+#####################################################################################
 # sequence.generator
 #####################################################################################
 {{infos["sequence.generator"]}}
@@ -37,6 +42,14 @@ sequence.generator={{sequence_generator |
                      default(defaults["sequence.generator"]) |
                      print(infos["sequence.generator"])}}
 
+#####################################################################################
+# project.prefix
+#####################################################################################
+{{infos["project.prefix"]}}
+#####################################################################################
+project.prefix={{ project_prefix | 
+                     default(defaults["project.prefix"]) |
+                     print(infos["project.prefix"])}}
 #####################################################################################
 # svn.rev.no.offset
 #####################################################################################
@@ -56,6 +69,7 @@ sequence.generator={{sequence_generator |
 # Uncomment this property to override computation from release.xml file
 ######################################################################################
 #db.release.version=PC_01
+
 """
 
 
@@ -87,8 +101,10 @@ class InitCommand(object):
             keep_going = input(
                 f"{library_path_file} detected.\nThis will override the current file, do you want to continue (y/n): "
             )
-            if keep_going == "y":
-                default_value = library_path_file.read_text().strip()
+            __import__('pdb').set_trace()
+            if keep_going != "y":
+                return
+            default_value = library_path_file.read_text().strip()
 
         template_renderer = InMemoryTemplateRenderer()
         context = {
@@ -129,4 +145,5 @@ class InitCommand(object):
             return {
                 "environment.name": "localdev",
                 "sequence.generator": "timestamp",
+                "project.prefix": "",#need to be set so it doesn't error and works when file exists
             }
