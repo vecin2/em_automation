@@ -156,7 +156,7 @@ class CreateSQLConfig(PrintToConsoleConfig):
         self.update_seq_writer = update_seq_writer
 
     def get_exit_listeners(self, sql_runner):
-        return [RollbackTransactionExitListener(sql_runner), self.update_seq_writer]
+        return [RollbackTransactionExitListener(sql_runner)]
 
     def append_other_renderer_listeners(self, sql_runner):
         super().append_other_renderer_listeners(sql_runner)

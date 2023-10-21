@@ -114,11 +114,8 @@ class ScriptedSQLFolder(object):
     def set_root(self, path):
         self.path = path
 
-    def on_finish(self):  # ExitHandler listener
-        """"""
-        ##do nothing because update seq is written after each template just in case a template breaks
-
     def write(self, content, template=None):
+        #update seq is written after each template just in case a template breaks
         if not self.path.exists():
             self.path.mkdir(parents=True)
         self.file_writter.write(content, template)
