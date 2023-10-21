@@ -38,8 +38,8 @@ class PropertiesFile(object):
             parser = self._init_parser()
             result = parser["DEFAULT"]
         except InterpolationMissingOptionError:
+            self.log.error("InterpolationMissingOptionError")
             # self.args = (option, section, rawval, reference)
-            self.logger.warning("hi")
             # we should log this as a warning
         return result
 

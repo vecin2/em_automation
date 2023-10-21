@@ -60,18 +60,18 @@ class EMEnvironmentConfig(object):
     def _merge_env_property_files(self):
         items = []
         for file in self._env_property_files():
-            items.append(self.merge_properties_file(PropertiesFile(file)))
-        # do not resolve items otherwise we might get interpolation errors
-        result = ChainMap(*items)
-        return result
+            items.append((PropertiesFile(file)))
+        return self._merge_avoiding_interpolation_errors(items)
 
     def merge_properties_file(self, properties_file):
         items = []
-        for file in self._env_property_files():
-            items.append(properties_file.properties)
+        items.append(self.properties)
+        items.append(properties_file.properties)
+        return self._merge_avoiding_interpolation_errors(items)
+
+    def _merge_avoiding_interpolation_errors(self, list_of_maps):
         # do not resolve items otherwise we might get interpolation errors
-        result = ChainMap(*items)
-        return result
+        return ChainMap(*list_of_maps)
 
     def _env_property_files(self):
         result = []
