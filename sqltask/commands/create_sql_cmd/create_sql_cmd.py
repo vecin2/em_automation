@@ -37,8 +37,8 @@ update_xml_template = Environment().from_string(groovy_update_xml)
 
 class CreateSQLTaskDisplayer(object):
     def ask_to_override_task(self, path):
-        text = f"Are you sure you want to override the task '{path}' (y/n): "
-        return select_string_noprompt(text, ["y", "n"])
+        text = f"SQL task already exist at '{path}'. Append/Override/Cancel (a/o/c): "
+        return select_string_noprompt(text, ["a", "o", "c"])
 
     def display_sqltask_created_and_path_in_clipboard(self, filepath):
         print(f"\nSQL task created under '{filepath}' and path copied to clipboard\n")
@@ -67,10 +67,11 @@ class CreateSQLTaskCommand(object):
 
     def run(self):
         if self._get_path().exists():
-            if self._user_wants_to_override():
-                shutil.rmtree(self.path)  # remove task folder
-            else:
+            action = self.displayer.ask_to_override_task(self.path)
+            if action == "c":
                 return
+            elif action == "o":
+                shutil.rmtree(self.path)  # remove task folder
         self.main_menu = self._build_main_menu()
         self.main_menu.run()
         self.clipboard.copy(str(self.path))
@@ -82,12 +83,13 @@ class CreateSQLTaskCommand(object):
         return self.path
 
     def _user_wants_to_override(self):
-        return self.displayer.ask_to_override_task(self.path) != "n"
+        return self.displayer.ask_to_override_task(self.path) != "c"
 
     def _build_main_menu(self):
         self.sqltask = FileWritter(self.path)
 
         update_seq_writer = UpdateSequenceWriter(self._get_seq_generator())
+
         scripted_sql_folder = ScriptedSQLFolder(self.sqltask, update_seq_writer)
         scripted_sql_folder.set_root(self.path)
         config = CreateSQLConfig(scripted_sql_folder)
@@ -104,8 +106,8 @@ class CreateSQLTaskCommand(object):
 
 
 class ScriptedSQLFolder(object):
-    def __init__(self, sqltask, update_seq_writer):
-        self.file_writter = sqltask
+    def __init__(self, file_writter, update_seq_writer):
+        self.file_writter = file_writter
         self.update_seq_writer = update_seq_writer
         # self.runnable_sql_writer =
 
@@ -113,23 +115,25 @@ class ScriptedSQLFolder(object):
         self.path = path
 
     def on_finish(self):  # ExitHandler listener
-        self.update_seq_writer.write(self.path)
+        """"""
+        ##do nothing because update seq is written after each template just in case a template breaks
 
     def write(self, content, template=None):
         if not self.path.exists():
             self.path.mkdir(parents=True)
         self.file_writter.write(content, template)
+        self.update_seq_writer.write(self.path)
 
 
 class FileWritter(object):
     ####################### RENAME TO STYLER (becasue \n\n\n)####
     ### does groovy have same formatting probably not,since groovy tasks are unique
-    def __init__(self, path=None):
+    def __init__(self, path):
         self.path = path
         self.sql = ""
 
     def write(self, content, template=None):
-        self.get_file_writer(template).write(self.append(content), self.path)
+        self.get_file_writer(template).write(content, self.path)
 
     def get_file_writer(self, template):
         if self.get_extension(template) == ".groovy":
@@ -167,7 +171,13 @@ class TableDataWritter(object):
         self.filename = "tableData.sql"
 
     def write(self, content, path):
-        (path / self.filename).write_text(content)
+        filepath = path / self.filename
+        if filepath.exists() and filepath.stat().st_size >0: #this includes also the first template run if the file already exist
+            content = "\n\n\n" + content
+
+        with open(filepath, "a") as file:
+            file.write(content)
+        print(filepath.read_text())
 
 
 class UpdateGroovyWriter(object):

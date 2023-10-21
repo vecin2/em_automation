@@ -56,6 +56,18 @@ class CreateSQLTaskAppRunner(PrintSQLToConsoleAppRunner):
         )
 
     def exists(self, filepath, expected_content):
+        #accepts also regex and retrieves true if regex fully matches file content
+        filepath = str(self._project.emroot / filepath)
+        with open(filepath) as f:
+            text = f.read()
+        match = re.search(expected_content, text)
+        if not match:
+            assert expected_content == text, "do not match"
+        else:
+            assert match.group() == text
+        return self
+
+    def exists_file_containing_text(self, filepath, expected_content):
         filepath = str(self._project.emroot / filepath)
         with open(filepath) as f:
             text = f.read()
@@ -66,6 +78,6 @@ class CreateSQLTaskAppRunner(PrintSQLToConsoleAppRunner):
             assert match.group()
         return self
 
-    def assert_path_copied_to_sys_clipboard(self,release_name):
+    def assert_path_copied_to_sys_clipboard(self, release_name):
         assert str(release_name) in pyperclip.paste()
         return self

@@ -113,8 +113,26 @@ def test_groovy_template_creates_groovy_task(
         f"{relative_path}/update.groovy", final_groovy
     ).exists(
         f"{relative_path}/update.sequence", "PROJECT \$Revision: \d+ \$"
-    ).exists(
+    )
+    app_runner.exists_file_containing_text(
         f"{relative_path}/update.xml", 'value="module_A_release_01_insert_customer"'
+    )
+
+
+def test_multiple_templates_append_sql(
+    project_generator, library_generator, app_runner
+):
+    library_generator.add_template(
+        "dummy1.sql", "select * from ce_customer"
+    ).add_template("dummy2.sql", "select name from ce_customer")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").select_template(
+        "dummy2.sql"
+    ).saveAndExit().create_sql("module_A")
+    app_runner.assert_all_input_was_read().exists(
+        "module_A/tableData.sql",
+        "select * from ce_customer\n\n\nselect name from ce_customer",  # creates SQL first time
     )
 
 
@@ -129,8 +147,8 @@ def test_sqltask_exists_user_cancels_then_does_not_create(
         "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
-    override_task = "n"
-    app_runner.user_inputs(override_task).create_sql(
+    cancel_task = "c"
+    app_runner.user_inputs(cancel_task).create_sql(
         "module_A"
     )  # try create on the smae localtion
 
@@ -139,7 +157,7 @@ def test_sqltask_exists_user_cancels_then_does_not_create(
     )
 
 
-def test_sqltask_exists_user_confirms_then_creates_sqltask(
+def test_file_exists_user_overrides_then_replaces_sqltask(
     project_generator, library_generator, app_runner
 ):
     library_generator.add_template(
@@ -152,14 +170,38 @@ def test_sqltask_exists_user_confirms_then_creates_sqltask(
         "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
     )
 
-    override_task = "y"
-    # app_runner.user_inputs(override_task).create_sql("module_A") #try create on the smae localtion
+    override_task = "o"
     app_runner.user_inputs(override_task).select_template(
+        "dummy2.sql"
+    ).saveAndExit().create_sql("module_A")
+    app_runner.assert_all_input_was_read()
+    app_runner.exists(
+        "module_A/tableData.sql", "select name from ce_customer"  # was overriden
+    )
+    app_runner.exists("module_A/update.sequence", "PROJECT \$Revision: \d+ \$")
+
+
+def test_file_exists_user_appends_then_appends_sqltask(
+    project_generator, library_generator, app_runner
+):
+    library_generator.add_template(
+        "dummy1.sql", "select * from ce_customer"
+    ).add_template("dummy2.sql", "select name from ce_customer")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.select_template("dummy1.sql").saveAndExit().create_sql("module_A")
+    app_runner.assert_all_input_was_read().exists(
+        "module_A/tableData.sql", "select * from ce_customer"  # creates SQL first time
+    )
+
+    append_task = "a"
+    app_runner.user_inputs(append_task).select_template(
         "dummy2.sql"
     ).saveAndExit().create_sql("module_A")
 
     app_runner.assert_all_input_was_read().exists(
-        "module_A/tableData.sql", "select name from ce_customer"  # was overriden
+        "module_A/tableData.sql",
+        "select * from ce_customer\n\n\nselect name from ce_customer",  # was overriden
     )
 
 
