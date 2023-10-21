@@ -59,9 +59,16 @@ class EMEnvironmentConfig(object):
 
     def _merge_env_property_files(self):
         items = []
-
         for file in self._env_property_files():
-            items.append(PropertiesFile(file).properties)
+            items.append(self.merge_properties_file(PropertiesFile(file)))
+        # do not resolve items otherwise we might get interpolation errors
+        result = ChainMap(*items)
+        return result
+
+    def merge_properties_file(self, properties_file):
+        items = []
+        for file in self._env_property_files():
+            items.append(properties_file.properties)
         # do not resolve items otherwise we might get interpolation errors
         result = ChainMap(*items)
         return result
@@ -132,5 +139,28 @@ class ProjectProperties(object):
         return self._em_properties
 
     @property
+    def merged_config(self):
+        return AttributeBasedConfig(self.em.merge_properties_file(self.core))
+
+    @property
     def environment_name(self):
         return self.core["environment.name"]
+
+
+class AttributeBasedConfig(object):
+    def __init__(self, properties_map):
+        self.properties_map = properties_map
+
+    def __getitem__(self, property_name):  # self.<<attribute_name>>
+        return self.properties_map[property_name]
+
+    def __contains__(self, item):
+        return item in self.properties_map
+
+    def __getattr__(self, property_name):  # self[]
+        attr = property_name.replace("_", ".")
+        property_value = self.properties_map[attr]
+        if property_value:
+            return property_value
+        else:
+            super().__getattribute__(attr)

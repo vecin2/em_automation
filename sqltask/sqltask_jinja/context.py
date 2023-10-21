@@ -75,7 +75,7 @@ class ContextBuilder(object):
                     PropertiesFile(self.app.library().db_queries("rs"))
                 ),
                 "_app": self.app,
-                "_props": self.app.em_config(),
+                "_config": self.app.merged_config(),
             }
         return self.template_API
 
@@ -107,7 +107,8 @@ class ContextBuilder(object):
         try:
             with open(filepath, "r") as stream:
                 template_renderer = InMemoryTemplateRenderer()
-                context = {"_props": self.app.em_config()}
+                
+                context = {"_config": self.app.merged_config()}
                 rendered_text = template_renderer.render(stream.read(), context)
                 return rendered_text
         except FileNotFoundError:

@@ -91,6 +91,9 @@ class AppProject(object):
 
     def em_config(self):
         return self.project_properties.em
+    
+    def merged_config(self):
+        return self.project_properties.merged_config
 
     @property
     def ccadmin_client(self):

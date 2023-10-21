@@ -1,3 +1,4 @@
+merge _prj_config and core_config on context
 refactor tests:
 
 run tenant_properties_views

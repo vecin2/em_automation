@@ -101,7 +101,6 @@ class InitCommand(object):
             keep_going = input(
                 f"{library_path_file} detected.\nThis will override the current file, do you want to continue (y/n): "
             )
-            __import__('pdb').set_trace()
             if keep_going != "y":
                 return
             default_value = library_path_file.read_text().strip()
