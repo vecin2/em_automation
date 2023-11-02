@@ -5,8 +5,7 @@ import pytest
 
 from sqltask.app_project import AppProject
 from sqltask.test.utils.app_runner import PrintSQLToConsoleAppRunner
-from sqltask.test.utils.project_generator import (ProjectGenerator,
-                                                  QuickLibraryGenerator,
+from sqltask.test.utils.project_generator import (QuickLibraryGenerator,
                                                   QuickProjectGenerator)
 
 
@@ -82,7 +81,7 @@ def test_keeps_prompting_after_entering_non_existing_template(
     app_runner.select_template("abc").saveAndExit().print_sql().assert_printed_sql("")
 
 
-def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
+def test_prints_and_adds_to_system_clipboard_expected_text_when_a_valid_template_is_run(
     project_generator, library_generator, app_runner
 ):
     library_generator.add_template("say_hello.txt", "hello!")
@@ -90,13 +89,17 @@ def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
         "say_hello.txt"
-    ).saveAndExit().print_sql().assert_printed_sql("hello!")
+    ).saveAndExit().print_sql().assert_printed_sql("hello!").assert_clipboard_content(
+        "hello!"
+    )
 
 
 def test_prints_expected_text_when_a_valid_template_with_placeholders_is_run(
     project_generator, library_generator, app_runner
 ):
-    project_generator.with_product_home("some/path/for/product/so/codepath/filter/works")
+    project_generator.with_product_home(
+        "some/path/for/product/so/codepath/filter/works"
+    )
     library_generator.add_template("say_hello.txt", "hello {{name | codepath()}}!")
 
     app_runner.with_project(project_generator.generate())

@@ -4,7 +4,7 @@ from sqltask.app_project import AppProject
 from sqltask.log import log
 from sqltask.main.command_factory import CommandFactory
 from sqltask.main.command_line_app import CommandLineSQLTaskApp, SysArgParser
-from sqltask.main.main_menu_builder import PrintSQLToConsoleDisplayer
+from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
 from sqltask.main.project_home import ProjectHome
 
 

@@ -7,7 +7,9 @@ from jinja2 import Environment
 from sqltask.commands.create_sql_cmd.path_selector import SQLPathSelector
 from sqltask.commands.create_sql_cmd.update_sequence import (
     SVNRevNoGenerator, TimeStampGenerator, UpdateSequenceWriter)
-from sqltask.main.main_menu_builder import CreateSQLConfig
+from sqltask.commands.print_sql_cmd import PrintToConsoleConfig
+from sqltask.database.sql_runner import RollbackTransactionExitListener
+from sqltask.ui.sql_styler import SQLStyler
 from sqltask.ui.utils import select_string_noprompt
 
 groovy_update_xml = """
@@ -115,7 +117,7 @@ class ScriptedSQLFolder(object):
         self.path = path
 
     def write(self, content, template=None):
-        #update seq is written after each template just in case a template breaks
+        # update seq is written after each template just in case a template breaks
         if not self.path.exists():
             self.path.mkdir(parents=True)
         self.file_writter.write(content, template)
@@ -168,13 +170,18 @@ class TableDataWritter(object):
         self.filename = "tableData.sql"
 
     def write(self, content, path):
-        filepath = path / self.filename
-        if filepath.exists() and filepath.stat().st_size >0: #this includes also the first template run if the file already exist
-            content = "\n\n\n" + content
+        styler = SQLStyler(self._get_existing_text(path))
+        styler.append_sql(content)
 
-        with open(filepath, "a") as file:
-            file.write(content)
-        print(filepath.read_text())
+        with open(path / self.filename, "w") as file:
+            file.write(styler.text())
+
+    def _get_existing_text(self, path):
+        filepath = path / self.filename
+        if filepath.exists():
+            return filepath.read_text()
+        else:
+            return ""
 
 
 class UpdateGroovyWriter(object):
@@ -215,3 +222,21 @@ class SQLPath(object):
 
     def upgrade_file_base(self):
         return f"{self.module_name()}_{self.release_name()}_{self.task_name()}"
+
+
+class CreateSQLConfig(PrintToConsoleConfig):
+    def __init__(self, update_seq_writer):
+        super().__init__()
+        self.update_seq_writer = update_seq_writer
+
+    def get_exit_listeners(self, sql_runner):
+        return [RollbackTransactionExitListener(sql_runner)]
+
+    def append_other_renderer_listeners(self, sql_runner):
+        # If we are printing two templates, sql_runner
+        # allows the second template to see the modification made
+        # by the first template  (kenyames, entities inserted, etc)
+        # builder.register_handler(ExitHandler())
+        self.register_render_listener(sql_runner)
+        self.template_filler.append_listener(self.update_seq_writer)
+        return self.template_filler

@@ -9,10 +9,11 @@ import pytest
 from jinja2 import Template
 
 from sqltask.app_project import AppProject
+from sqltask.commands.print_sql_cmd import PrintToConsoleConfig
 from sqltask.commands.test_sql_file import TestFileParser, TestSQLFile
+from sqltask.database.sql_runner import RollbackTransactionExitListener
 from sqltask.docugen.env_builder import FileSystemLoader
-from sqltask.main.main_menu_builder import (PrintSQLToConsoleDisplayer,
-                                            VerifySQLConfig)
+from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
 from sqltask.sqltask_jinja.context import ContextBuilder
 
 
@@ -421,7 +422,7 @@ class FileAppRunner(FillTemplateAppRunner):
 
     def _build_main_menu(self):
         config = VerifySQLConfig()
-        builder = config.get_builder(self.project,self.context_builder)
+        builder = config.get_builder(self.project, self.context_builder)
         self.console_printer = config.console_printer
         return builder.build()
 
@@ -429,3 +430,19 @@ class FileAppRunner(FillTemplateAppRunner):
         # self.print_sql_cmd.run()
         self.main_menu.run()
         self.teardown()
+
+
+class VerifySQLConfig(PrintToConsoleConfig):
+    def __init__(self):
+        super().__init__()
+
+    def append_other_renderer_listeners(self, project):
+        """"""
+        # Not run on db because we are only testing one template a time
+
+    def append_exit_handler(self, exit_handler, sql_runner):
+        """"""
+
+    def get_exit_listeners(self, sql_runner):
+        # we do not want to commit when printing SQL
+        return [RollbackTransactionExitListener(sql_runner)]
