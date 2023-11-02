@@ -55,9 +55,9 @@ def test_init_generates_config_and_sets_sqltask_lib_path(
     ).run()
 
     project = AppProject(project_generator.root)
-    assert "localtest" == project.config["environment.name"]  
-    assert "svn" == project.config["sequence.generator"]  
-    assert "MP" == project.config["project.prefix"]  
+    assert "localtest" == project.config["environment.name"]
+    assert "svn" == project.config["sequence.generator"]
+    assert "MP" == project.config["project.prefix"]
     assert "ad" == project.config["container.name"]  # defaults to ad
     assert "localhost" == project.config["machine.name"]  # default to localhost
     assert str(root / "library") == str(project.library().rootpath)
@@ -68,6 +68,37 @@ def test_init_when_files_exist_ask_for_confirmation(
 ):
     library_generator.override_root(root / "mylibrary")
     app_runner.with_project(project_generator.generate())
+    properties = {
+        "environment_name": "localtest",
+        "sequence_generator": "svn",
+        "project_prefix": "MP",
+    }
+
+    app_runner.confirm_save().with_properties(
+        properties
+    ).confirm_save().with_properties(
+        {"sqltask_task_lib": str(root / "mylibrary")}
+    ).run()
+
+    project = AppProject(project_generator.root)
+    assert "localtest" == project.config["environment.name"]  # computes localdev
+    assert "svn" == project.config["sequence.generator"]  # computes localdev
+    assert "ad" == project.config["container.name"]  # defaults to ad
+    assert "localhost" == project.config["machine.name"]  # default to localhost
+    assert str(root / "mylibrary") == str(project.library().rootpath)
+
+
+def test_init_use_existing_empty_props_file(
+    project_generator, library_generator, app_runner, root
+):
+    # removes properties
+    project_generator.with_core_property("random.prop.so.it.creates.file", "4")
+    project_generator.with_project_prefix(None)
+    project_generator.with_environment_name(None)
+    project_generator.with_sequence_generator(None)
+    library_generator.override_root(root / "mylibrary")
+    app_runner.with_project(project_generator.generate())
+
     properties = {
         "environment_name": "localtest",
         "sequence_generator": "svn",

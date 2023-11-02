@@ -5,7 +5,8 @@ import pytest
 
 from sqltask.app_project import AppProject
 from sqltask.test.utils.app_runner import PrintSQLToConsoleAppRunner
-from sqltask.test.utils.project_generator import (QuickLibraryGenerator,
+from sqltask.test.utils.project_generator import (ProjectGenerator,
+                                                  QuickLibraryGenerator,
                                                   QuickProjectGenerator)
 
 
@@ -95,6 +96,7 @@ def test_prints_expected_text_when_a_valid_template_without_placeholders_is_run(
 def test_prints_expected_text_when_a_valid_template_with_placeholders_is_run(
     project_generator, library_generator, app_runner
 ):
+    project_generator.with_product_home("some/path/for/product/so/codepath/filter/works")
     library_generator.add_template("say_hello.txt", "hello {{name | codepath()}}!")
 
     app_runner.with_project(project_generator.generate())
@@ -125,8 +127,6 @@ def test_fills_two_templates_and_combines_output(
     app_runner.select_template("say_hi.txt", {"name": "Marco"}).select_template(
         "say_bye.txt", {"name": "Fernando"}
     ).saveAndExit().print_sql().assert_printed_sql("hi Marco\nbye Fernando")
-
-
 
 
 # @pytest.mark.skip

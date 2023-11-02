@@ -12,7 +12,7 @@ sequence_generator = """
 # - svn: uses the revision number as update.sequence
 # - timestamp: uses the timestamp, equivalent to run 'date +%s' on linux""".lstrip()
 
-project_prefix_info ="""
+project_prefix_info = """
 # Used by sqltask library to set context value '_prjprefix' which is useful to compute process paths or entities relative ids
 # This is two or three letters which precede project modules or project entities, 
 # For example when EJCustomer""".lstrip()
@@ -27,8 +27,9 @@ core_properties_template = """
 #######################################################################################
 {{infos["sqltask.config.props"]}}
 #######################################################################################
+{% set default_env_name= defaults.get("environment.name",None)%}
 environment.name={{environment_name | 
-                   default(defaults["environment.name"]) |
+                   default(default_env_name) |
                    print(infos["sqltask.config.props"])}}
 container.name=ad
 machine.name=localhost
@@ -38,8 +39,9 @@ machine.name=localhost
 #####################################################################################
 {{infos["sequence.generator"]}}
 #####################################################################################
+{% set default_seq_gen= defaults.get("sequence.generator",None)%}
 sequence.generator={{sequence_generator | 
-                     default(defaults["sequence.generator"]) |
+                     default(default_seq_gen) |
                      print(infos["sequence.generator"])}}
 
 #####################################################################################
@@ -47,8 +49,9 @@ sequence.generator={{sequence_generator |
 #####################################################################################
 {{infos["project.prefix"]}}
 #####################################################################################
+{% set default_project_prefix= defaults.get("project.prefix",None)%}
 project.prefix={{ project_prefix | 
-                     default(defaults["project.prefix"]) |
+                     default(default_project_prefix) |
                      print(infos["project.prefix"])}}
 #####################################################################################
 # svn.rev.no.offset
@@ -93,9 +96,7 @@ class InitCommand(object):
         libray_path_template = """{{sqltask_library_path |
                        default(default_value) | filepath() |
                        print(sqltask_library_path_info)}}"""
-        library_path_file = (
-            self.app_project.emroot / "project/sqltask/config/.library"
-        )
+        library_path_file = self.app_project.emroot / "project/sqltask/config/.library"
         default_value = "C:/em/sqltask-library"
         if library_path_file.exists():
             keep_going = input(
@@ -112,7 +113,7 @@ class InitCommand(object):
         }
         filled_template = template_renderer.render(libray_path_template, context)
         library_path = Path(filled_template.lstrip())
-        library_path_file.write_text(str(library_path).replace("\\","\\\\"))
+        library_path_file.write_text(str(library_path).replace("\\", "\\\\"))
         print(f"sqltask library path written to '{library_path_file}'")
 
     def init_core_properties(self):
@@ -144,5 +145,5 @@ class InitCommand(object):
             return {
                 "environment.name": "localdev",
                 "sequence.generator": "timestamp",
-                "project.prefix": "",#need to be set so it doesn't error and works when file exists
+                "project.prefix": "",  # need to be set so it doesn't error and works when file exists
             }

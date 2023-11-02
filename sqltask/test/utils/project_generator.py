@@ -90,15 +90,26 @@ class ProjectGenerator(PathGenerator):
         self.releases = []
 
     def with_environment_name(self, environment_name):
-        self._core_properties["environment.name"] = environment_name
+        self._updateOrRemoveCoreProperty("environment.name", environment_name)
         return self
 
     def with_sequence_generator(self, sequence_generator):
-        self._core_properties["sequence.generator"] = sequence_generator
+        self._updateOrRemoveCoreProperty("sequence.generator", sequence_generator)
         return self
 
     def with_project_prefix(self, prefix):
-        self._core_properties["project.prefix"] = prefix
+        self._updateOrRemoveCoreProperty("project.prefix", prefix)
+        return self
+
+    def with_core_property(self, name, value):
+        self._updateOrRemoveCoreProperty(name, value)
+        return self
+
+    def _updateOrRemoveCoreProperty(self, key, value):
+        if value is None:
+            self._core_properties.pop(key, None)
+        else:
+            self._core_properties[key] = value
         return self
 
     def with_svn_rev_no_offset(self, offset):
@@ -214,12 +225,12 @@ class ProjectGenerator(PathGenerator):
                 "project/sqltask/config/core.properties",
                 Properties(self._core_properties).to_text(),
             )
-
-            self.env_config_generator = EMEnvironmentConfigGenerator(
-                self._core_properties["environment.name"]
-            )
-            self.env_config_generator.add_properties_file("ad", self._ad_properties)
-            self.env_config_generator.save(self.project_layout.show_config_txt)
+            if self._core_properties.get("environment.name", None):
+                self.env_config_generator = EMEnvironmentConfigGenerator(
+                    self._core_properties["environment.name"]
+                )
+                self.env_config_generator.add_properties_file("ad", self._ad_properties)
+                self.env_config_generator.save(self.project_layout.show_config_txt)
         self._generate_releases()
         super().generate()
         return AppProject(emprj_path=str(self.root))
@@ -325,7 +336,9 @@ class LibraryGenerator(PathGenerator):
         return self
 
     def add_tps_template(self, filename, content):
-        self.add_file(self._template_path(filename, "tenant_properties_service"), content)
+        self.add_file(
+            self._template_path(filename, "tenant_properties_service"), content
+        )
         return self
 
     def add_test(self, filename, content):
@@ -338,7 +351,7 @@ class LibraryGenerator(PathGenerator):
 
     def _template_path(self, filename, schema=None):
         if schema:
-            return self.TEMPLATES_PATH/ schema / filename
+            return self.TEMPLATES_PATH / schema / filename
         return self.TEMPLATES_PATH / filename
 
     def _test_template_path(self, filename):

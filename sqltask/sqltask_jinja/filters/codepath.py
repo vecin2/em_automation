@@ -22,7 +22,7 @@ class CodepathFilter(PromptFilter):
     def apply(self, prompt, context):
         project_home = ProjectHome(os.getcwd(), os.environ)
 
-        app = AppProject(emprj_path=project_home.path())
+        app = context._vars["_app"] #AppProject(emprj_path=project_home.path())
         logger.debug("Applying CodePath filter to project :" + str(app.emroot))
         project_modules = str(app.paths["repo_modules"])
         product_modules = str(app.product_layout()["repo_modules"])
