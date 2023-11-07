@@ -12,8 +12,8 @@ class Keynames(object):
         self.dbfactory = dbfactory
         self._id_loader = None
 
-    def __getitem__(self, name):
-        return self.list(name)
+    def __getitem__(self, keyset):
+        return self.list(keyset)
 
     def full_keyname(self, keyset, id):
         return self.id_loader().full_keyname_by_id(keyset, id)
@@ -21,16 +21,16 @@ class Keynames(object):
     def keyname(self, keyset, id):
         return self.id_loader().keyname_by_id(keyset, id)
 
-    def __getattr__(self, name):
-        if name.startswith("FULL_"):
-            name = name.replace("FULL_", "")
-            prefix = "@" + name + "."
-            keynames = self.list(name)
+    def __getattr__(self, keyset):
+        if keyset.startswith("FULL_"):
+            keyset = keyset.replace("FULL_", "")
+            prefix = "@" + keyset + "."
+            keynames = self.list(keyset)
             result = [prefix + keyname for keyname in keynames]
             result.append("NULL")
             return result
         else:
-            return self.list(name)
+            return self.list(keyset)
 
     def id_loader(self):
         if not self._id_loader:
