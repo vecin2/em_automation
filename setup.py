@@ -1,4 +1,5 @@
 import setuptools
+import sqltask
 
 REQUIREMENTS = [i.strip() for i in open("requirements.txt").readlines()]
 with open("README.md", "r") as fh:
@@ -6,9 +7,9 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="em-sqltask",
-    version="0.0.1a48",
+    version=sqltask.version,
     author="David Alvarez Garcia",
-    author_email="david.avgarcia@gmail.com",
+    author_email="david.garcia@verint.com",
     description="A helper to populate jinja templates",
     long_description=long_description,
     long_description_content_type="text/markdown",

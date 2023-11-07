@@ -5,3 +5,4 @@ import pytest
 
 pytest.register_assert_rewrite("sqltask.commands")
 appname = "sqltask"
+version = "1.0.1a"

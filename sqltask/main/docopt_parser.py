@@ -25,7 +25,7 @@ Options:
 
 def parse():
     arguments = docopt(
-        help_message.format(appname=sqltask.appname), version="{appname} 0.1"
+        help_message.format(appname=sqltask.appname), version=f"{sqltask.appname} {sqltask.version}"
     )
     # print(arguments)
     return arguments
