@@ -37,17 +37,17 @@ def assert_handled_by(handler_type, input_str):
 
 
 def test_parse_render_event():
-    input_str = "1. first_option"
+    input_str = "first_option"
     assert_handled_by(HandlerType.RENDER, input_str)
 
 
 def test_parse_view_test_event():
-    input_str = "1. first_option -t"
+    input_str = "first_option -t"
     assert_handled_by(HandlerType.DISPLAY_TEST, input_str)
 
 
 def test_parse_view_test_event_with_extra_spaces():
-    input_str = "1. first_option -t  "
+    input_str = "first_option -t  "
     input_event = parse(input_str)
     assert_handled_by(HandlerType.DISPLAY_TEST, input_str)
 

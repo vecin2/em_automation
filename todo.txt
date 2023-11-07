@@ -4,16 +4,7 @@ run tenant_properties_views
 keynames are always load from ad
 remove option numbers
 -d or -v to show _db.fetch.queries
-print version
-
-x-->print-sql
-x	-->validate project folder
-x	--> tps property should be added to tps file (no ad file), so we test that files are merge correctly
-x	--> rs property should be added to rs file
-x --> create-sql
-
-run-sql
-test-sql
+x print version
 
 
 Generator 

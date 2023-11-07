@@ -1,10 +1,10 @@
 import pytest
 
-from sqltask.test.utils.main_menu_runner import MainMenuRunner
 from sqltask.main_menu import MenuOption
+from sqltask.test.utils.main_menu_runner import MainMenuRunner
 
-first_option = MenuOption("1", "first option")
-second_option = MenuOption("2", "second option")
+first_option = MenuOption("first option")
+second_option = MenuOption("second option", "2")
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ def test_correct_input_resets_no_of_trials(main_menu_runner):
 
 def test_multiple_render_templates_then_exit(main_menu_runner):
     main_menu_runner.with_selections(
-        ["1. first option", "2. second option", "x. Save && Exit"]
+        ["first option", "second option", "x. Save && Exit"]
     )
     main_menu_runner.run()
 

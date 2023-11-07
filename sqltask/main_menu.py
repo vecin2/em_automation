@@ -141,20 +141,19 @@ class ExitHandler(AbstractEventHandler):
 
 
 class MenuOption(object):
-    def __init__(self, code, name, info=False):
+    def __init__(self, name, code=""):
         self.code = code
         self.name = name
-        self.info = info
 
     @staticmethod
     def saveAndExit():
-        return MenuOption("x", "Save && Exit")
+        return MenuOption("Save && Exit", "x")
 
     @staticmethod
     def to_options(names):
         template_option_list = []
         for counter, name in enumerate(names):
-            template_option = MenuOption(counter + 1, name)
+            template_option = MenuOption(name)
             template_option_list.append(template_option)
         return template_option_list
 
@@ -168,11 +167,10 @@ class MenuOption(object):
         return False
 
     def __repr__(self):
-        return str(self.code) + ". " + self.name
+        if not self.code:
+            return self.name
+
+        return f"{self.code}. {self.name}"
 
     def __eq__(self, other):
-        return (
-            self.code == other.code
-            and self.name == other.name
-            and self.info == other.info
-        )
+        return self.code == other.code and self.name == other.name
