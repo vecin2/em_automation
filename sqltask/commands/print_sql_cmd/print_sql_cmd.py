@@ -22,7 +22,6 @@ class ClipboardCopier:
         return pyperclip.copy(self.styler.text())
 
 
-
 class PrintSQLToConsoleDisplayer(object):
     """Prints to console the command output"""
 
@@ -93,28 +92,36 @@ class PrintToConsoleConfig(object):
     def get_builder(self, project, context_builder=None):
         templates_path = project.library().templates_path
         loader = EMTemplatesEnv(templates_path)
-        if not context_builder:
-            context_builder = ContextBuilder(project)
-        context = context_builder.build()
 
-        self.template_filler = TemplateFiller(initial_context=context)
-        render_template_handler = RenderTemplateHandler(
-            self.template_filler,
-            loader=loader,
-        )
+        self.builder = MainMenuBuilder()
+        self.builder.options = MenuOption.to_options(loader.list_visible_templates())
+
+        self.template_filler = self.make_template_filler(project, context_builder)
         self.console_printer = PrintSQLToConsoleDisplayer()
         self.template_filler.append_listener(self.console_printer)
 
         sql_runner = SQLRunner(project.db)
         self.append_other_renderer_listeners(sql_runner)
-        self.builder = MainMenuBuilder()
-        self.builder.append_handler(render_template_handler)
+        self.builder.append_handler(
+            self.make_template_renderer_handler(self.template_filler, loader)
+        )
         exit_handler = ExitHandler()
         self.append_exit_handler(exit_handler, sql_runner)
         self.builder.append_handler(exit_handler)
-        self.builder.options = MenuOption.to_options(loader.list_visible_templates())
 
         return self.builder
+
+    def make_template_filler(self, project, context_builder):
+        if not context_builder:
+            context_builder = ContextBuilder(project)
+        context = context_builder.build()
+        return TemplateFiller(initial_context=context)
+
+    def make_template_renderer_handler(self, template_filler, loader):
+        return RenderTemplateHandler(
+            self.template_filler,
+            loader=loader,
+        )
 
     def append_exit_handler(self, exit_handler, sql_runner):
         exit_handler.append_listeners(self.get_exit_listeners(sql_runner))
