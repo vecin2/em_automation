@@ -3,13 +3,6 @@ from collections import defaultdict
 
 import sqlparse
 
-storage_table = {
-    "CC": {"Home": 100},
-    "ENV": {"Dflt": 666},
-    "RELEASE": {"ID": 1},
-    "ET": {"Agent": 602},
-}
-
 
 class RelativeIdLoader(object):
     keynames_cache = {}
