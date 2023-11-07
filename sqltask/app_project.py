@@ -187,7 +187,6 @@ class AppProject(object):
             else:
                 log.basic_setup(logs_dir=str(self.paths["logs"]))
             self._logger = logging.getLogger("app_logger")
-            print("Default logs dir is: " + str(self.paths["logs"]))
         return self._logger
 
     def logging_config_file(self):
