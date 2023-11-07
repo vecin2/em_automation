@@ -1,3 +1,5 @@
+do not print update.sequence copied on each write to file
+invalid table name error does not show schema name
 merge _prj_config and core_config on context
 refactor tests:
 

@@ -61,7 +61,7 @@ class CreateSQLTaskCommand(object):
         self.path = path
         self.displayer = CreateSQLTaskDisplayer()
         self.clipboard = pyperclip
-        self.sqltask = None
+        self.file_writter = None
         self.path_selector = SQLPathSelector(
             self.emproject.paths["sql_modules"],
             self.emproject.get_db_release_version(),
@@ -88,11 +88,11 @@ class CreateSQLTaskCommand(object):
         return self.displayer.ask_to_override_task(self.path) != "c"
 
     def _build_main_menu(self):
-        self.sqltask = FileWritter(self.path)
+        self.file_writter = FileWritter(self.path)
 
         update_seq_writer = UpdateSequenceWriter(self._get_seq_generator())
 
-        scripted_sql_folder = ScriptedSQLFolder(self.sqltask, update_seq_writer)
+        scripted_sql_folder = ScriptedSQLFolder(self.file_writter, update_seq_writer)
         scripted_sql_folder.set_root(self.path)
         config = CreateSQLConfig(scripted_sql_folder)
         builder = config.get_builder(self.emproject)
@@ -115,6 +115,9 @@ class ScriptedSQLFolder(object):
 
     def set_root(self, path):
         self.path = path
+
+    def on_finish(self):
+        self.update_seq_writer.on_finish()
 
     def write(self, content, template=None):
         # update seq is written after each template just in case a template breaks
@@ -225,18 +228,17 @@ class SQLPath(object):
 
 
 class CreateSQLConfig(PrintToConsoleConfig):
-    def __init__(self, update_seq_writer):
+    def __init__(self, scripted_sql_folder):
         super().__init__()
-        self.update_seq_writer = update_seq_writer
+        self.scripted_sql_folder = scripted_sql_folder
 
     def get_exit_listeners(self, sql_runner):
         return [RollbackTransactionExitListener(sql_runner)]
 
+    def append_exit_handler(self, exit_handler, sql_runner):
+        exit_handler.append_listeners([self.scripted_sql_folder])
+
     def append_other_renderer_listeners(self, sql_runner):
-        # If we are printing two templates, sql_runner
-        # allows the second template to see the modification made
-        # by the first template  (kenyames, entities inserted, etc)
-        # builder.register_handler(ExitHandler())
         self.register_render_listener(sql_runner)
-        self.template_filler.append_listener(self.update_seq_writer)
+        self.template_filler.append_listener(self.scripted_sql_folder)
         return self.template_filler
