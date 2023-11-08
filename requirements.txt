@@ -18,7 +18,7 @@ pathlib2==2.3.2
 pefile==2018.8.8
 pluggy==0.7.1
 prettytable==0.7.2
-prompt-toolkit==2.0.6
+prompt-toolkit==3.0.39
 py==1.5.4
 pyfakefs==3.4.3
 pyperclip==1.7.0

@@ -4,11 +4,6 @@ from sqltask.docugen.render_template_handler import RenderTemplateHandler
 from sqltask.help import DisplayTemplateTestHandler
 from sqltask.main_menu import ExitHandler, HandlerType, InputParser, MenuOption
 
-first_option = MenuOption("1", "first_option")
-second_option = MenuOption("2", "second_option")
-option_list = [first_option, second_option, MenuOption.saveAndExit()]
-
-
 class HandlerFactory(object):
     def make(self, handler_type):
         if handler_type == HandlerType.RENDER:
@@ -25,6 +20,11 @@ handler_factory = HandlerFactory()
 parser = InputParser()
 
 
+first_option = MenuOption("first_option")
+second_option = MenuOption("second_option")
+option_list = [first_option, second_option, MenuOption.saveAndExit()]
+
+
 def parse(input_str):
     return parser.parse(input_str, option_list)
 
@@ -35,6 +35,11 @@ def assert_handled_by(handler_type, input_str):
 
     assert handler.handles(input)
 
+@pytest.mark.skip
+def test_parse_invalid_option_returns_none():
+    input_str = "zzzzzz"
+    result = parse(input_str)
+    assert result is None
 
 def test_parse_render_event():
     input_str = "first_option"

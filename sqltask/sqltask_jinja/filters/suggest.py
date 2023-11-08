@@ -1,5 +1,5 @@
-from sqltask.sqltask_jinja.filters import PromptFilter
 from sqltask.docugen.completer import SuggestionCompleter
+from sqltask.sqltask_jinja.filters import PromptFilter
 
 
 def suggest(value, suggestions):
@@ -8,6 +8,8 @@ def suggest(value, suggestions):
 
 def get_template_filter():
     return suggest
+
+
 
 
 class SuggestFilter(PromptFilter):

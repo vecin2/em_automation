@@ -7,8 +7,8 @@ from jinja2.runtime import missing
 
 from sqltask.sqltask_jinja import globals as globals_module
 from sqltask.sqltask_jinja.filters.codepath import codepath
-from sqltask.sqltask_jinja.filters.filepath import filepath
 from sqltask.sqltask_jinja.filters.description import description
+from sqltask.sqltask_jinja.filters.filepath import filepath
 from sqltask.sqltask_jinja.filters.other import (objectdir, objectname,
                                                  split_uppercase)
 from sqltask.sqltask_jinja.filters.print import print as print_filter
@@ -29,6 +29,21 @@ class TraceUndefined(StrictUndefined):
         TraceUndefined.executed_vars = {}
 
 
+class TemplateLibraryLoader(JinjaFileSystemLoader):
+    def __init__(self, library, encoding="utf-8", followlinks=False):
+        print(f"Templates loaded from '{library.templates_path}'")
+        self.library = library
+        super().__init__(str(library.templates_path), encoding, followlinks)
+
+    def list_templates(self):
+        templates = super().list_templates()
+        result = set()
+        for template in templates:
+            if self.library.is_template_path(template):
+                result.add(template)
+        return result
+
+
 class FileSystemLoader(JinjaFileSystemLoader):
     def __init__(self, searchpath, encoding="utf-8", followlinks=False):
         print(f"Templates loaded from '{searchpath}'")
@@ -37,6 +52,7 @@ class FileSystemLoader(JinjaFileSystemLoader):
     def list_templates(self):
         templates = super().list_templates()
         result = set()
+
         for template in templates:
             extension = os.path.splitext(template)[1]
             if ".sql" == extension or ".txt" == extension or ".groovy" == extension:

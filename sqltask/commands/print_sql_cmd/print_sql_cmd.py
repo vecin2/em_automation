@@ -90,8 +90,7 @@ class PrintToConsoleConfig(object):
         """"""
 
     def get_builder(self, project, context_builder=None):
-        templates_path = project.library().templates_path
-        loader = EMTemplatesEnv(templates_path)
+        loader = EMTemplatesEnv(project.library())
 
         self.builder = MainMenuBuilder()
         self.builder.options = MenuOption.to_options(loader.list_visible_templates())

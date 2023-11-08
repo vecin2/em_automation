@@ -1,4 +1,4 @@
-from sqltask.docugen.env_builder import EnvBuilder, FileSystemLoader
+from sqltask.docugen.env_builder import EnvBuilder, FileSystemLoader, TemplateLibraryLoader
 
 from . import filters as template_filters
 from . import globals as template_globals
@@ -12,14 +12,20 @@ class EnvironmentFactory:
         ).set_loader(FileSystemLoader(templates_path))
         return env_builder.build()
 
+    def make_library_env(self, library):
+        env_builder = EnvBuilder()
+        env_builder.set_globals_module(template_globals).set_filters_package(
+            template_filters
+        ).set_loader(TemplateLibraryLoader(library))
+        return env_builder.build()
 
 class EMTemplatesEnv:
-    def __init__(self, templates_path):
-        self.templates_path = str(templates_path)
+    def __init__(self, library):
+        self.library = library
         self._jinja_environment = None
 
     def _make_env(self):
-        return EnvironmentFactory().make_filesystem_env(self.templates_path)
+        return EnvironmentFactory().make_library_env(self.library)
 
     def _get_environment(self):
         if not self._jinja_environment:

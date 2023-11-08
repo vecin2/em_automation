@@ -1,3 +1,5 @@
+import argparse
+
 import pytest
 
 from sqltask.main_menu import MenuOption
@@ -48,3 +50,26 @@ def test_multiple_render_templates_then_exit(main_menu_runner):
         "first option",
         "second option",
     ] == main_menu_runner.rendered_templates()
+
+
+def printText(args):
+    print(args)
+
+
+@pytest.mark.skip
+def test_arg_parse():
+    parser = argparse.ArgumentParser()
+    subparser = parser.add_subparsers()
+    task_parser = subparser.add_parser("taskname")
+    #     prog="",
+    #     description="What the program does",
+    #     epilog="Text at the bottom of help",
+    # )
+    # parser.add_argument('taskname')
+    task_parser.add_argument("-d", action="store_true")
+    task_parser.set_defaults(func=printText)
+    args = parser.parse_args(["","template.sql", "-d"])
+    assert "template.sql" == args.taskname
+    assert True == args.d
+    # args = parser.parse_args(["-h"])
+    # assert True == args.h

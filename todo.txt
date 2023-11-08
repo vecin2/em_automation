@@ -2,9 +2,9 @@ remove numbers
 Run out of schema task
 run tenant_properties_views
 keynames are always load from ad
-remove option numbers
 -d or -v to show _db.fetch.queries
 x print version
+do not add select stmts to tableData.sql
 
 
 Generator 

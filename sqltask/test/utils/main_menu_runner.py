@@ -38,7 +38,7 @@ class MainMenuRunner(object):
             [self.render_template_handler, self.exit_handler]
         )
 
-        self.input_parser = parser = InputParser()
+        self.input_parser = InputParser()
 
         self.max_no_of_trials = 10
 
