@@ -10,8 +10,6 @@ def get_template_filter():
     return suggest
 
 
-
-
 class SuggestFilter(PromptFilter):
     def __init__(self, jinja_filter):
         self.filter = jinja_filter

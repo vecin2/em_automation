@@ -1,4 +1,5 @@
-from sqltask.commands.print_sql_cmd import PrintToConsoleConfig,PrintSQLToConsoleDisplayer
+from sqltask.commands.print_sql_cmd import (PrintSQLToConsoleDisplayer,
+                                            PrintToConsoleConfig)
 from sqltask.database.sql_runner import (CommitTransactionExitListener,
                                          SQLRunner)
 from sqltask.docugen.render_template_handler import RenderTemplateHandler
@@ -30,6 +31,7 @@ class RunSQLConfig(PrintToConsoleConfig):
         loader = EMTemplatesEnv(project.library())
 
         self.builder = MainMenuBuilder()
+        # self.builder = RenderLibraryTemplateShell()
         self.builder.options = MenuOption.to_options(loader.list_visible_templates())
 
         self.template_filler = self.make_template_filler(project, context_builder)
@@ -37,7 +39,7 @@ class RunSQLConfig(PrintToConsoleConfig):
         self.template_filler.append_listener(self.console_printer)
 
         sql_runner = SQLRunner(project.db)
-        self.append_other_renderer_listeners(sql_runner)
+        self.template_filler.append_listener(sql_runner)
         self.builder.append_handler(
             self.make_template_renderer_handler(self.template_filler, loader)
         )

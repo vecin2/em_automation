@@ -1,4 +1,5 @@
-from sqltask.docugen.env_builder import EnvBuilder, FileSystemLoader, TemplateLibraryLoader
+from sqltask.docugen.env_builder import (EnvBuilder, FileSystemLoader,
+                                         TemplateLibraryLoader)
 
 from . import filters as template_filters
 from . import globals as template_globals
@@ -18,6 +19,7 @@ class EnvironmentFactory:
             template_filters
         ).set_loader(TemplateLibraryLoader(library))
         return env_builder.build()
+
 
 class EMTemplatesEnv:
     def __init__(self, library):

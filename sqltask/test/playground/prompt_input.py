@@ -60,8 +60,8 @@ print("You said: %s" % text)
 # elif cursor_at_second_word() and first_word_matches_a_valid_option():
 #     suggest_parameters()
 
-d = Document(text="this is mark = test", cursor_position=16)
-print(f"word_under_cursor: {d.get_word_under_cursor()}")
+d = Document(text="this is mark.sql = test", cursor_position=15)
+print(f"word_under_cursor: {d.get_word_under_cursor(WORD=True)}")
 print(f"word_before_cursor: {d.get_word_before_cursor()}")
 print(f"current_line: {d.current_line}")
 print(f"current_line_length:{len(d.current_line)}")

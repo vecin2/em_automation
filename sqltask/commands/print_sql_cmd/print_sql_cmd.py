@@ -1,4 +1,6 @@
 import pyperclip
+from rich.console import Console
+from rich.syntax import Syntax
 
 from sqltask.database.sql_runner import (RollbackTransactionExitListener,
                                          SQLRunner)
@@ -33,6 +35,9 @@ class PrintSQLToConsoleDisplayer(object):
 
     def render_sql(self, sql_to_render):
         print("\n")
+        syntax = Syntax(sql_to_render, "sql", theme="monokai", line_numbers=True)
+        console = Console()
+        console.print(syntax)
         print(sql_to_render)
         self._append_rendered_text(sql_to_render)
 
