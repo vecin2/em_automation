@@ -35,7 +35,9 @@ class PrintSQLToConsoleDisplayer(object):
 
     def render_sql(self, sql_to_render):
         print("\n")
-        syntax = Syntax(sql_to_render, "sql", theme="monokai", line_numbers=True)
+        syntax = Syntax(
+            sql_to_render, "sql", theme="monokai", line_numbers=False, word_wrap=True
+        )
         console = Console()
         console.print(syntax)
         print("\n")
