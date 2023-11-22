@@ -1,8 +1,77 @@
 from argparse import ArgumentParser
 
 from prompt_toolkit.completion import Completer, FuzzyWordCompleter
+from rich.console import Console
+from rich.markdown import Markdown
+from rich.syntax import Syntax
 
 from sqltask.ui.utils import prompt
+
+
+class ViewTemplateInfoDisplayer:
+    def display(self, inline_info):
+        console = Console()
+        with console.pager(styles=True):
+            console.print(*inline_info.displayable_segments())
+
+
+class TemplateInlineInfo:
+    def __init__(self, template):
+        self.template = template
+
+    def displayable_segments(self):
+        segments = []
+        self._append_metadata_segments(segments)
+        self._append_body_segments(segments)
+        return segments
+
+    def _append_metadata_segments(self, segments):
+        segments.append(Markdown(self.metadata()))
+
+    def metadata(self):
+        sb = []
+        template_info = self.template.info()
+        self._append_lines_with_header(
+            "Short Description", sb, template_info.oneline_description()
+        )
+        self._append_lines_with_header(
+            "Description", sb, template_info.long_description()
+        )
+        self._append_lines_with_header(
+            "Related Tasks", sb, template_info.related_tasks()
+        )
+        self._append_lines_with_header(
+            "Related Views", sb, template_info.related_views()
+        )
+        return "".join(sb)
+
+    def _append_body_segments(self, segments):
+        if self.template.has_test():
+            segments.append(Markdown("## Test"))
+            segments.append(self.sql_syntax(self.template.test_content()))
+        else:
+            segments.append(Markdown("## Template"))
+            segments.append(self.sql_syntax(self.template.content()))
+
+    def sql_syntax(self, sql_text):
+        return Syntax(
+            sql_text,
+            "sql",
+            theme="monokai",
+            line_numbers=False,
+            word_wrap=True,
+        )
+
+    def _append_lines_with_header(self, header, sb, text):
+        if len(text) > 0:
+            self._append_line(sb, f"## {header}")
+            self._append_line(sb, text)
+
+    def _append_line(self, sb, line):
+        sb.append(line + "\n")
+
+    def _append_text(self, sb, text):
+        sb.append(text)
 
 
 class ViewTemplateInfoAction:
@@ -11,8 +80,9 @@ class ViewTemplateInfoAction:
     on the prompt
     """
 
-    def __init__(self, displayer=None):
-        self.displayer = displayer
+    def __init__(self, library=None):
+        self.library = library
+        self.displayer = ViewTemplateInfoDisplayer()
 
     def append_args(self, argparser):
         argparser.add_argument("--view", action="store_true")
@@ -21,7 +91,8 @@ class ViewTemplateInfoAction:
         return args.view
 
     def run(self, template):
-        self.displayer.display_info(template)
+        template = self.library.load_template(template)
+        self.displayer.display(TemplateInlineInfo(template))
 
 
 class RenderTemplateAction:

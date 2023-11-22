@@ -79,7 +79,7 @@ class PrintSQLToConsoleCommand(object):
         render_template_action = RenderTemplateAction(template_filler, loader)
         process_template_action = ProcessTemplateAction(loader, render_template_action)
         registry.register(process_template_action)
-        process_template_action.register("--info", ViewTemplateInfoAction())
+        process_template_action.register("--info", ViewTemplateInfoAction(library))
         exit_action = ExitAction()
         exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
         exit_action.append_listener(clipboard_copier)
