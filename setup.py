@@ -26,6 +26,7 @@ setuptools.setup(
         "PyYAML",
         "cx-Oracle",
         "prettytable",
+        "rich",
         "sqlparse",
         "pytest",
         "docopt",
