@@ -74,11 +74,37 @@ def test_returns_empty_when_no_template_selected(project_generator, app_runner):
     app_runner.saveAndExit().print_sql().assert_printed_sql("")
 
 
-def test_keeps_prompting_after_entering_non_existing_template(
+def test_keeps_prompting_until_max_retrials_when_entering_non_existing_template(
     project_generator, app_runner
 ):
+    # default max no of trials is 10
     app_runner.with_project(project_generator.generate())
-    app_runner.select_template("abc").saveAndExit().print_sql().assert_printed_sql("")
+    for iter in range(0, 11):
+        app_runner.select_template("abc")
+    # should exit and dont remain blocked
+    try:
+        app_runner.saveAndExit().print_sql()
+        assert (
+            False
+        ), "A ValueError should have been raised due to Valid attemps execedeed to select a valid option "
+    except ValueError as excinfo:
+        assert "Attempts to select a valid option exceeded." == str(excinfo)
+
+
+def test_correct_input_resets_no_of_trials(
+    library_generator, project_generator, app_runner
+):
+    library_generator.add_template("say_hi.txt", "hi!")
+    # default max no of trials is 10
+    app_runner.with_project(project_generator.generate())
+    for iter in range(0, 10):
+        app_runner.select_template("abc")
+    
+    app_runner.select_template("say_hi.txt").select_template(
+        "abc"
+    ).saveAndExit().print_sql()
+
+    assert True #should not though exception
 
 
 def test_prints_and_adds_to_system_clipboard_expected_text_when_a_valid_template_is_run(

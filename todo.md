@@ -44,3 +44,15 @@ A template action runs and it prompts again
 
 Input string is parsed into action
 An action runs
+
+
+GroovySQLTemplate
+- Renderer template is groovy 
+PrintSQLProcessor
+- All .sql, .groovy and .txt are available
+- responsible for copying the rendered SQL into clipboard and print to screen
+RunSQLProcessor
+- only .sql files are available (.groovy is not supporter and txt is not runnable)
+- responsible for running the rendered SQL against DB
+CreateSQLProcessor
+- responsible for creating the SQL as file for commit

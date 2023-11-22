@@ -11,6 +11,7 @@ Generator
 with_connnection_details
    Remove database_type is not part of the connection details
 
+<<<<<<< Updated upstream
 Multiple tests per one template, e.g. add_dynamic_entity_field can add string or tagset
 	
 
@@ -35,3 +36,9 @@ connector_factory.get(connection_details)
 
 
 
+=======
+
+## SQLRunner takes context, but only uses tps db and addb
+## PrintToconsoleDisplayer move to a different file. Print will be basic
+and current print command will copy to clipboard
+>>>>>>> Stashed changes

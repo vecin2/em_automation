@@ -9,12 +9,15 @@ import pytest
 from jinja2 import Template
 
 from sqltask.app_project import AppProject
-from sqltask.commands.print_sql_cmd import PrintToConsoleConfig
-from sqltask.commands.test_sql_file import TestFileParser, TestSQLFile
-from sqltask.database.sql_runner import RollbackTransactionExitListener
-from sqltask.docugen.env_builder import FileSystemLoader
 from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
+from sqltask.commands.verify_templates_cmd.test_sql_file import TestFileParser, TestSQLFile
+from sqltask.docugen.env_builder import FileSystemLoader
+from sqltask.docugen.template_filler import TemplateFiller
+from sqltask.shell.prompt import (ActionRegistry, ExitAction,
+                                  InteractiveTaskFinder, ProcessTemplateAction,
+                                  RenderTemplateAction, ViewTemplateInfoAction)
 from sqltask.sqltask_jinja.context import ContextBuilder
+from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
 class SourceCode(object):
@@ -368,7 +371,7 @@ class FillTemplateAppRunner:
         self.inputs = []
 
     def saveAndExit(self):
-        self.user_inputs("x")
+        self.user_inputs("exit")
         return self
 
     def select_tps_template(self, template_name, values={}):
@@ -409,7 +412,6 @@ class FileAppRunner(FillTemplateAppRunner):
         self.console_printer = PrintSQLToConsoleDisplayer()
         self.context_builder = context_builder
         self.project = project
-        self.main_menu = self._build_main_menu()
 
     def run_test(self, testfile):
         self.clear_inputs()
@@ -420,29 +422,29 @@ class FileAppRunner(FillTemplateAppRunner):
         self.console_printer.rendered_sql = ""  # otherwise it keeps appending template
         return result
 
-    def _build_main_menu(self):
-        config = VerifySQLConfig()
-        builder = config.get_builder(self.project, self.context_builder)
-        self.console_printer = config.console_printer
-        return builder.build()
-
     def _run(self):
-        # self.print_sql_cmd.run()
-        self.main_menu.run()
+        finder = InteractiveTaskFinder(self._create_actions_registry())
+        finder.run()
         self.teardown()
 
+    def _create_actions_registry(self):
+        registry = ActionRegistry()
+        library = self.project.library()
+        loader = EMTemplatesEnv(library)
+        context_builder = ContextBuilder(self.project)
+        context = context_builder.build()
+        template_filler = TemplateFiller(initial_context=context)
+        # sql_runner = SQLRunner(self.project.db)
+        # template_filler.append_listener(sql_runner)
+        self.console_printer = PrintSQLToConsoleDisplayer()
+        template_filler.append_listener(self.console_printer)
 
-class VerifySQLConfig(PrintToConsoleConfig):
-    def __init__(self):
-        super().__init__()
+        render_template_action = RenderTemplateAction(template_filler, loader)
+        process_template_action = ProcessTemplateAction(loader, render_template_action)
+        registry.register(process_template_action)
+        process_template_action.register("--info", ViewTemplateInfoAction())
+        exit_action = ExitAction()
+        # exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
+        registry.register(exit_action)
 
-    def append_other_renderer_listeners(self, project):
-        """"""
-        # Not run on db because we are only testing one template a time
-
-    def append_exit_handler(self, exit_handler, sql_runner):
-        """"""
-
-    def get_exit_listeners(self, sql_runner):
-        # we do not want to commit when printing SQL
-        return [RollbackTransactionExitListener(sql_runner)]
+        return registry

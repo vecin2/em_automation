@@ -1,6 +1,6 @@
 from sqltask.commands.verify_templates_cmd.verify_templates_cmd import (
     ExpectedSQLTestTemplate, FillTemplateAppRunner, PythonModuleTemplate,
-    RunOnDBTestBuilder, RunOnDBTestTemplate, SourceCode, TestFileParser,
+    RunOnDBTestBuilder, RunOnDBTestTemplate, SourceCode, TestSQLFile,
     TestTemplatesCommand, UnableToFindTemplateTestTemplate)
 
 __all__ = [
@@ -10,7 +10,7 @@ __all__ = [
     "RunOnDBTestTemplate",
     "ExpectedSQLTestTemplate",
     "UnableToFindTemplateTestTemplate",
-    "TestFileParser",
+    "TestSQLFile",
     "SourceCode",
     "PythonModuleTemplate",
 ]

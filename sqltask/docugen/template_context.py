@@ -1,7 +1,5 @@
 from jinja2.utils import concat
 
-from sqltask import logger
-
 
 class TemplateContext:
     def __init__(self, template, vars={}):

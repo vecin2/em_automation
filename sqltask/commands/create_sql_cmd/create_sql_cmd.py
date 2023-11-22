@@ -7,8 +7,15 @@ from jinja2 import Environment
 from sqltask.commands.create_sql_cmd.path_selector import SQLPathSelector
 from sqltask.commands.create_sql_cmd.update_sequence import (
     SVNRevNoGenerator, TimeStampGenerator, UpdateSequenceWriter)
-from sqltask.commands.print_sql_cmd import PrintToConsoleConfig
-from sqltask.database.sql_runner import RollbackTransactionExitListener
+from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
+from sqltask.database.sql_runner import (RollbackTransactionExitListener,
+                                         SQLRunner)
+from sqltask.docugen.template_filler import TemplateFiller
+from sqltask.shell.prompt import (ActionRegistry, ExitAction,
+                                  InteractiveTaskFinder, ProcessTemplateAction,
+                                  RenderTemplateAction, ViewTemplateInfoAction)
+from sqltask.sqltask_jinja.context import ContextBuilder
+from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sqltask.ui.sql_styler import SQLStyler
 from sqltask.ui.utils import select_string_noprompt
 
@@ -55,7 +62,7 @@ class CreateSQLTaskCommand(object):
         path=None,
         project=None,
     ):
-        self.emproject = project
+        self.project = project
         if path:
             path = Path(path)
         self.path = path
@@ -63,8 +70,8 @@ class CreateSQLTaskCommand(object):
         self.clipboard = pyperclip
         self.file_writter = None
         self.path_selector = SQLPathSelector(
-            self.emproject.paths["sql_modules"],
-            self.emproject.get_db_release_version(),
+            self.project.paths["sql_modules"],
+            self.project.get_db_release_version(),
         )
 
     def run(self):
@@ -74,35 +81,51 @@ class CreateSQLTaskCommand(object):
                 return
             elif action == "o":
                 shutil.rmtree(self.path)  # remove task folder
-        self.main_menu = self._build_main_menu()
-        self.main_menu.run()
+        finder = InteractiveTaskFinder(self._create_actions_registry())
+        finder.run()
         self.clipboard.copy(str(self.path))
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
 
+    def _create_actions_registry(self):
+        registry = ActionRegistry()
+        library = self.project.library()
+        loader = EMTemplatesEnv(library)
+        context_builder = ContextBuilder(self.project)
+        context = context_builder.build()
+        template_filler = TemplateFiller(initial_context=context)
+        sql_runner = SQLRunner(self.project.db)
+        template_filler.append_listener(sql_runner)
+        self.console_printer = PrintSQLToConsoleDisplayer()
+        template_filler.append_listener(self.console_printer)
+        scripted_sql_folder = ScriptedSQLFolder(
+            FileWritter(self.path), UpdateSequenceWriter(self._get_seq_generator())
+        )
+        scripted_sql_folder.set_root(self.path)
+        template_filler.append_listener(scripted_sql_folder)
+
+        render_template_action = RenderTemplateAction(template_filler, loader)
+        process_template_action = ProcessTemplateAction(loader, render_template_action)
+        registry.register(process_template_action)
+        process_template_action.register("--info", ViewTemplateInfoAction())
+        exit_action = ExitAction()
+        exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
+        registry.register(exit_action)
+
+        return registry
+
     def _get_path(self):
         if not self.path:
-            self.path = self.emproject.emroot / self.path_selector.compute_path()
+            self.path = self.project.emroot / self.path_selector.compute_path()
         return self.path
 
     def _user_wants_to_override(self):
         return self.displayer.ask_to_override_task(self.path) != "c"
 
-    def _build_main_menu(self):
-        self.file_writter = FileWritter(self.path)
-
-        update_seq_writer = UpdateSequenceWriter(self._get_seq_generator())
-
-        scripted_sql_folder = ScriptedSQLFolder(self.file_writter, update_seq_writer)
-        scripted_sql_folder.set_root(self.path)
-        config = CreateSQLConfig(scripted_sql_folder)
-        builder = config.get_builder(self.emproject)
-        return builder.build()
-
     def _get_seq_generator(self):
-        svn_rev_no_offset = self.emproject.config.get("svn.rev.no.offset", "0")
-        sequence_generator_type = self.emproject.config["sequence.generator"]
+        svn_rev_no_offset = self.project.config.get("svn.rev.no.offset", "0")
+        sequence_generator_type = self.project.config["sequence.generator"]
         if sequence_generator_type == "svn":
-            return SVNRevNoGenerator(self.emproject.emroot, svn_rev_no_offset)
+            return SVNRevNoGenerator(self.project.emroot, svn_rev_no_offset)
         else:  # if "sequence.generator==timestamp"
             return TimeStampGenerator()
 
@@ -225,20 +248,3 @@ class SQLPath(object):
 
     def upgrade_file_base(self):
         return f"{self.module_name()}_{self.release_name()}_{self.task_name()}"
-
-
-class CreateSQLConfig(PrintToConsoleConfig):
-    def __init__(self, scripted_sql_folder):
-        super().__init__()
-        self.scripted_sql_folder = scripted_sql_folder
-
-    def get_exit_listeners(self, sql_runner):
-        return [RollbackTransactionExitListener(sql_runner)]
-
-    def append_exit_handler(self, exit_handler, sql_runner):
-        exit_handler.append_listeners([self.scripted_sql_folder])
-
-    def append_other_renderer_listeners(self, sql_runner):
-        self.register_render_listener(sql_runner)
-        self.template_filler.append_listener(self.scripted_sql_folder)
-        return self.template_filler

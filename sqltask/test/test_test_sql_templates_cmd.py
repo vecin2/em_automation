@@ -1,5 +1,5 @@
-from sqltask.commands.verify_templates_cmd import (PythonModuleTemplate,
-                                                   TestFileParser)
+from sqltask.commands.verify_templates_cmd import PythonModuleTemplate
+from sqltask.commands.verify_templates_cmd.test_sql_file import TestFileParser
 
 
 def test_parse_template_values():
