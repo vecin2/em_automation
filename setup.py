@@ -10,7 +10,7 @@ setuptools.setup(
     version=sqltask.version,
     author="David Alvarez Garcia",
     author_email="david.garcia@verint.com",
-    description="A helper to populate jinja templates",
+    description="A SQL Generator for EM projects",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://bfs-eng-can05.kana-test.com/dgarcia/em_automation",
