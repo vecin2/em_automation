@@ -17,3 +17,7 @@ class InitAppRunner(ApplicationRunner):
         for k, v in properties.items():
             self.user_inputs(v)
         return self
+
+    def with_library_path(self, library_path):
+        self.user_inputs(library_path)
+        return self

@@ -121,6 +121,10 @@ class ProjectGenerator(PathGenerator):
         self._core_properties.clear()
         return self
 
+    def clear_local_properties(self):
+        self._local_properties.clear()
+        return self
+
     def append_release(self, release_name=None, after=None):
         self.releases.append((release_name, after))
 
@@ -288,6 +292,7 @@ class QuickProjectGenerator(object):
         )
         self.project_generator.with_sequence_generator("timestamp")
         self.project_generator.with_project_prefix("PRJ")
+        self.project_generator.with_edit_cmd("vim -O {}") #so it creates local.properties by default
         self.project_generator.append_release(release_name="PRJ_01", after="R8_5_0")
 
         return self.project_generator

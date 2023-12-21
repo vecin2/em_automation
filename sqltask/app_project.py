@@ -13,6 +13,7 @@ from sqltask.utils.filesystem import ProjectLayout
 PATHS = {
     "config": "project/sqltask/config",
     "core_config": "project/sqltask/config/core.properties",
+    "local_config": "project/sqltask/config/local.properties",
     "logging_config": "project/sqltask/config/logging.yaml",
     "logs": "project/sqltask/logs",
     "ccadmin": "bin",
