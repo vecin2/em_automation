@@ -79,8 +79,10 @@ def test_keeps_prompting_until_max_retrials_when_entering_non_existing_template(
 ):
     # default max no of trials is 10
     app_runner.with_project(project_generator.generate())
-    for iter in range(0, 11):
+    for iter in range(0, 6):
         app_runner.select_template("abc")
+    for iter in range(0, 5):
+        app_runner.select_template("abc with some spaces should also be handle gracefully")
     # should exit and dont remain blocked
     try:
         app_runner.saveAndExit().print_sql()

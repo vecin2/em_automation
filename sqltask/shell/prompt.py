@@ -1,4 +1,7 @@
+import os
 from argparse import ArgumentParser
+from pathlib import Path
+from subprocess import check_output
 
 from prompt_toolkit.completion import Completer, FuzzyWordCompleter
 from rich.console import Console
@@ -8,18 +11,15 @@ from rich.syntax import Syntax
 from sqltask.ui.utils import prompt
 
 
-class ViewTemplateInfoDisplayer:
-    def display(self, inline_info):
-        console = Console()
-        with console.pager(styles=True):
-            console.print(*inline_info.displayable_segments())
-
-
-class TemplateInlineInfo:
+class TemplateInlineInfoView:
     def __init__(self, template):
         self.template = template
 
-    def displayable_segments(self):
+    def display(self):
+        console = Console()
+        console.print(*self._displayable_segments())
+
+    def _displayable_segments(self):
         segments = []
         self._append_metadata_segments(segments)
         self._append_body_segments(segments)
@@ -74,6 +74,142 @@ class TemplateInlineInfo:
         sb.append(text)
 
 
+class Git:
+    def __init__(self, rootpath):
+        self.rootpath = rootpath
+
+    def remote_origin_url(self):
+        output = self._run(
+            "-C", str(self.rootpath), "config", "--get", "remote.origin.url"
+        )
+        return output.splitlines()[0]
+
+    def show_current_branch(self):
+        output = self._run("-C", str(self.rootpath), "branch", "--show-current")
+        return output.splitlines()[0]
+
+    def _run(self, *args):
+        return check_output(["git"] + list(args)).decode("utf-8")
+        # return subprocess.check_call(["git"] + list(args))
+
+
+class Browser:
+    def __init__(self, browse_cmd):
+        self.browse_cmd = browse_cmd
+
+    def open(self, url):
+        print("Browsing " + url)
+        os.system(self.browse_cmd + " " + url)
+
+
+class ViewTemplateDocsAction:
+    """
+    Wraps a template displayer into action to it can when the template is selected
+    on the prompt
+    """
+
+    def __init__(self, library=None):
+        self.library = library
+
+    def append_args(self, argparser):
+        argparser.add_argument("--docs", action="store_true")
+
+    def handles(self, args):
+        return args.docs
+
+    def run(self, template):
+        git = Git(self.library.rootpath)
+        github_url = self.get_library_repo_url(git)
+
+        docs_url = (
+            github_url
+            + "/tree/"
+            + git.show_current_branch()
+            + "/docs/LibraryByFolder.md"
+            + self._md_anchor(template)
+        )
+        Browser("x-www-browser").open(docs_url)
+
+    def get_library_repo_url(self, git):
+        remote_library_url = git.remote_origin_url()
+        if remote_library_url.startswith("http"):
+            github_url = remote_library_url
+        else:
+            # remote_lib_url like git@github.com-verint:verint-CME/sqltask-library.git
+            ssh_at_split = remote_library_url.split("@")
+            if len(ssh_at_split) > 1:
+                repo_split = ssh_at_split[1].split(":")
+                if len(repo_split) > 1:
+                    repo_path = repo_split[1]
+                    github_url = "https://github.com/" + repo_path.split(".git")[0]
+        return github_url
+
+    def _md_anchor(self, template):
+        template_name = str(Path(template).stem)
+        return "#" + template_name.lower().replace("_", "-")
+
+
+class SystemCmdRunner:
+    """
+    Abstraction that allows testing edit,info and docs command by intercepting the command that is passed to it
+
+    """
+
+    def execute(self, command_to_run):
+        os.system(command_to_run)
+
+
+class Editor:
+    """It takes two string commands with a place holder for the file paths that wil be editing:
+    - edit_str_cmd: is the actual command that runs, e.g. vim {}
+    - path_converter_cmd: it allows to put a wrapper around each path.
+                        Useful to convert linux path into windows, if you are using WSL for example
+    """
+
+    def __init__(
+        self, edit_str_cmd, path_converter_cmd="{}", cmd_runner=SystemCmdRunner()
+    ):
+        self.edit_str_cmd = edit_str_cmd
+        if not path_converter_cmd:
+            # make sure it has one place holder even if it is passed as None
+            path_converter_cmd = "{}"
+        self.path_converter_cmd = path_converter_cmd
+        self.cmd_runner = cmd_runner
+
+    def edit(self, template):
+        paths_to_open = str(template.abspath())
+        if template.has_test():
+            paths_to_open += " " + str(template.abstestpath())
+
+        converted_paths = []
+        for path_to_open in paths_to_open.split():
+            converted_paths.append(self.path_converter_cmd.format(path_to_open))
+
+        command_to_run = self.edit_str_cmd.format(" ".join(converted_paths))
+        self.cmd_runner.execute(command_to_run)
+
+
+class EditTemplateAction:
+    """
+    Wraps a template displayer into action to it can when the template is selected
+    on the prompt
+    """
+
+    def __init__(self, library, editor):
+        self.library = library
+        self.editor = editor
+
+    def append_args(self, argparser):
+        argparser.add_argument("--edit", action="store_true")
+
+    def handles(self, args):
+        return args.docs
+
+    def run(self, template):
+        template = self.library.load_template(template)
+        self.editor.edit(template)
+
+
 class ViewTemplateInfoAction:
     """
     Wraps a template displayer into action to it can when the template is selected
@@ -82,7 +218,6 @@ class ViewTemplateInfoAction:
 
     def __init__(self, library=None):
         self.library = library
-        self.displayer = ViewTemplateInfoDisplayer()
 
     def append_args(self, argparser):
         argparser.add_argument("--view", action="store_true")
@@ -92,7 +227,7 @@ class ViewTemplateInfoAction:
 
     def run(self, template):
         template = self.library.load_template(template)
-        self.displayer.display(TemplateInlineInfo(template))
+        TemplateInlineInfoView(template).display()
 
 
 class RenderTemplateAction:

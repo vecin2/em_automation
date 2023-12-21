@@ -3,7 +3,7 @@ import os
 from collections import ChainMap
 from pathlib import Path
 
-from sqltask.config.properties_file import PropertiesFile
+from sqltask.config.properties_file import NullPropertiesFile, PropertiesFile
 
 
 class EMConfigID(object):
@@ -63,10 +63,11 @@ class EMEnvironmentConfig(object):
             items.append((PropertiesFile(file)))
         return self._merge_avoiding_interpolation_errors(items)
 
-    def merge_properties_file(self, properties_file):
+    def merge_properties_file(self, *properties_files):
         items = []
         items.append(self.properties)
-        items.append(properties_file.properties)
+        for properties_file in properties_files:
+            items.append(properties_file.properties)
         return self._merge_avoiding_interpolation_errors(items)
 
     def _merge_avoiding_interpolation_errors(self, list_of_maps):
@@ -99,6 +100,7 @@ class ProjectProperties(object):
             project_root = Path(project_root)
         self.project_root = project_root
         self._core_properties = None
+        self._local_properties = None
         self._em_properties = None
         self.config_generator = config_generator
 
@@ -115,6 +117,10 @@ class ProjectProperties(object):
         return self.config_folder / "core.properties"
 
     @property
+    def local_properties_path(self):
+        return self.config_folder / "local.properties"
+
+    @property
     def environment_properties_path(self):
         return self.project_root / "work/config/show-config-txt"
 
@@ -129,6 +135,16 @@ class ProjectProperties(object):
         return self._core_properties
 
     @property
+    def local(self):
+        if not self._local_properties:
+            # local properties not mandatory
+            if not os.path.exists(self.local_properties_path):
+                self._local_properties = NullPropertiesFile()
+            else:
+                self._local_properties = PropertiesFile(self.local_properties_path)
+        return self._local_properties
+
+    @property
     def em(self):
         if not self._em_properties:
             self._em_properties = EMEnvironmentConfig(
@@ -140,7 +156,9 @@ class ProjectProperties(object):
 
     @property
     def merged_config(self):
-        return AttributeBasedConfig(self.em.merge_properties_file(self.core))
+        return AttributeBasedConfig(
+            self.em.merge_properties_file(self.core, self.local)
+        )
 
     @property
     def environment_name(self):

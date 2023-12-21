@@ -28,7 +28,7 @@ class PropertiesFile(object):
 
     @property
     def properties(self):
-        if not self._properties:
+        if self._properties is None:
             self._properties = self._parse_file()
         return self._properties
 
@@ -68,3 +68,9 @@ class PropertiesFile(object):
 
     def __len__(self):
         return len(self.properties)
+
+
+class NullPropertiesFile(PropertiesFile):
+    def __init__(self):
+        self._properties = {}
+

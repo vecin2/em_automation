@@ -45,6 +45,7 @@ class AppProject(object):
         self._ccadmin_client = None
         self._library_path = None
         self._db = None
+        self._merged_config = None
 
     def make(emprj_path=None):
         return AppProject(emprj_path=emprj_path)
@@ -93,7 +94,9 @@ class AppProject(object):
         return self.project_properties.em
     
     def merged_config(self):
-        return self.project_properties.merged_config
+        if not self._merged_config:
+            self._merged_config = self.project_properties.merged_config
+        return self._merged_config
 
     @property
     def ccadmin_client(self):

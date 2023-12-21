@@ -388,6 +388,10 @@ class FillTemplateAppRunner:
             self.user_inputs(value)
         return self
 
+    def edit_template(self,template_name):
+        self.user_inputs(f"{template_name} --edit")
+        return self
+
     def user_inputs(self, user_input):
         self.inputs.append(user_input)
         return self

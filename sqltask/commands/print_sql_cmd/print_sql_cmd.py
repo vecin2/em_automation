@@ -5,9 +5,11 @@ from rich.syntax import Syntax
 from sqltask.database.sql_runner import (RollbackTransactionExitListener,
                                          SQLRunner)
 from sqltask.docugen.template_filler import TemplateFiller
-from sqltask.shell.prompt import (ActionRegistry, ExitAction,
-                                  InteractiveTaskFinder, ProcessTemplateAction,
-                                  RenderTemplateAction, ViewTemplateInfoAction)
+from sqltask.shell.prompt import (ActionRegistry, Editor, EditTemplateAction,
+                                  ExitAction, InteractiveTaskFinder,
+                                  ProcessTemplateAction, RenderTemplateAction,
+                                  ViewTemplateDocsAction,
+                                  ViewTemplateInfoAction)
 from sqltask.sqltask_jinja.context import ContextBuilder
 from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sqltask.ui.sql_styler import SQLStyler
@@ -79,7 +81,19 @@ class PrintSQLToConsoleCommand(object):
         render_template_action = RenderTemplateAction(template_filler, loader)
         process_template_action = ProcessTemplateAction(loader, render_template_action)
         registry.register(process_template_action)
+        if "edit.template.cmd" in self.project.merged_config():
+            editor_cmd = self.project.merged_config()["edit.template.cmd"]
+            path_converter = (
+                self.project.merged_config()["editor.path.converter"]
+                if "editor.path.converter" in self.project.merged_config()
+                else None
+            )
+            editor = Editor(editor_cmd, path_converter)
+            process_template_action.register(
+                "--edit", EditTemplateAction(library, editor)
+            )
         process_template_action.register("--info", ViewTemplateInfoAction(library))
+        process_template_action.register("--docs", ViewTemplateDocsAction(library))
         exit_action = ExitAction()
         exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
         exit_action.append_listener(clipboard_copier)

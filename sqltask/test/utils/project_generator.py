@@ -85,6 +85,7 @@ class ProjectGenerator(PathGenerator):
         self._library_generator = None
         self._project_layout = None
         self._core_properties = {}
+        self._local_properties = {}
         self._library_path = None  # Path
         self._ad_properties = {}
         self.releases = []
@@ -105,15 +106,15 @@ class ProjectGenerator(PathGenerator):
         self._updateOrRemoveCoreProperty(name, value)
         return self
 
+    def with_svn_rev_no_offset(self, offset):
+        self._core_properties["svn.rev.no.offset"] = offset
+        return self
+
     def _updateOrRemoveCoreProperty(self, key, value):
         if value is None:
             self._core_properties.pop(key, None)
         else:
             self._core_properties[key] = value
-        return self
-
-    def with_svn_rev_no_offset(self, offset):
-        self._core_properties["svn.rev.no.offset"] = offset
         return self
 
     def clear_core_properties(self):
@@ -204,6 +205,10 @@ class ProjectGenerator(PathGenerator):
     def get_library_path(self):
         return self._core_properties["sqltask.library.path"]
 
+    def with_edit_cmd(self, str_cmd):
+        self._local_properties["edit.template.cmd"] = str_cmd
+        return self
+
     @property
     def project_layout(self):
         if not self._project_layout:
@@ -231,6 +236,11 @@ class ProjectGenerator(PathGenerator):
                 )
                 self.env_config_generator.add_properties_file("ad", self._ad_properties)
                 self.env_config_generator.save(self.project_layout.show_config_txt)
+        if self._local_properties:
+            self.add_file(
+                "project/sqltask/config/local.properties",
+                Properties(self._local_properties).to_text(),
+            )
         self._generate_releases()
         super().generate()
         return AppProject(emprj_path=str(self.root))
