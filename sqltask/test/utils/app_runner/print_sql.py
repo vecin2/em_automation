@@ -1,6 +1,7 @@
+import pyperclip
+
 from sqltask.test.utils.app_runner import ApplicationRunner
 
-import pyperclip
 
 class PrintSQLToConsoleAppRunner(ApplicationRunner):
     def print_sql(self, app=None):

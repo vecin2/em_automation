@@ -10,7 +10,12 @@ def prompt(text, completer=None, default=""):
         if not sys.stdout.isatty() or not sys.stdin.isatty():
             # return input(text)
             print(text)
-            user_input = sys.stdin.readline().strip()
+            if default:
+                print("using default")
+                user_input = default
+            else:
+                print("not using default")
+                user_input = sys.stdin.readline().strip()
             print(user_input)
             return user_input
         else:

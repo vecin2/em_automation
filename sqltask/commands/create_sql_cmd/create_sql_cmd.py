@@ -7,7 +7,7 @@ from jinja2 import Environment
 from sqltask.commands.create_sql_cmd.path_selector import SQLPathSelector
 from sqltask.commands.create_sql_cmd.update_sequence import (
     SVNRevNoGenerator, TimeStampGenerator, UpdateSequenceWriter)
-from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
+from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
 from sqltask.database.sql_runner import (RollbackTransactionExitListener,
                                          SQLRunner)
 from sqltask.docugen.template_filler import TemplateFiller

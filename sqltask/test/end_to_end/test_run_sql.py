@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -111,6 +112,8 @@ def test_tps_template_run_against_tps_database(
 
 
 @pytest.mark.skip
+# run multiple templates for different schemas
+# within the same session is currently not supported
 def test_run_ad_template_follow_by_tps_template(
     project_generator, library_generator, app_runner, database
 ):
@@ -126,3 +129,30 @@ def test_run_ad_template_follow_by_tps_template(
 
     assert ad_sql == database.executed_sql("ad")
     assert tps_sql == database.executed_sql("tps")
+
+
+@pytest.fixture
+def spy_os_system(mocker):
+    spy_os_system = mocker.spy(os, "system")
+    yield spy_os_system
+
+
+@pytest.mark.skip
+def test_when_runsql_select_template_with_edit_flag_keeps_selection_and_runs_edit_configured_command(
+    project_generator, library_generator, app_runner, spy_os_system
+):
+    text_to_print = "I am testing the edit command!!!!"
+    project_generator.with_edit_cmd(f'echo "{text_to_print}"')
+    library_generator.add_template("say_hello.txt", "hello!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.edit_template(
+        "say_hello.txt"
+    ).confirm().saveAndExit().run_sql().assert_printed_sql(
+        "hello!"
+    ).assert_clipboard_content(
+        "hello!"
+    )
+
+    expected_cmd = f'echo "{text_to_print}"'
+    spy_os_system.assert_called_once_with(expected_cmd)

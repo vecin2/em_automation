@@ -1,4 +1,4 @@
-from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
+from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
 from sqltask.database.sql_runner import (CommitTransactionExitListener,
                                          SQLRunner)
 from sqltask.docugen.template_filler import TemplateFiller

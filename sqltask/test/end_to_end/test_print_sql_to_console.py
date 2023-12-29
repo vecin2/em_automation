@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -79,10 +80,14 @@ def test_keeps_prompting_until_max_retrials_when_entering_non_existing_template(
 ):
     # default max no of trials is 10
     app_runner.with_project(project_generator.generate())
-    for iter in range(0, 6):
+    for iter in range(0, 3):
+        app_runner.confirm()
+    for iter in range(0, 3):
         app_runner.select_template("abc")
     for iter in range(0, 5):
-        app_runner.select_template("abc with some spaces should also be handle gracefully")
+        app_runner.select_template(
+            "abc with some spaces should also be handle gracefully"
+        )
     # should exit and dont remain blocked
     try:
         app_runner.saveAndExit().print_sql()
@@ -101,12 +106,12 @@ def test_correct_input_resets_no_of_trials(
     app_runner.with_project(project_generator.generate())
     for iter in range(0, 10):
         app_runner.select_template("abc")
-    
+
     app_runner.select_template("say_hi.txt").select_template(
         "abc"
     ).saveAndExit().print_sql()
 
-    assert True #should not though exception
+    assert True  # should not though exception
 
 
 def test_prints_and_adds_to_system_clipboard_expected_text_when_a_valid_template_is_run(
@@ -117,7 +122,9 @@ def test_prints_and_adds_to_system_clipboard_expected_text_when_a_valid_template
     app_runner.with_project(project_generator.generate())
     app_runner.select_template(
         "say_hello.txt"
-    ).saveAndExit().print_sql().assert_printed_sql("hello!").assert_clipboard_content(
+    ).confirm().saveAndExit().print_sql().assert_printed_sql(
+        "hello!"
+    ).assert_clipboard_content(
         "hello!"
     )
 
@@ -160,15 +167,27 @@ def test_fills_two_templates_and_combines_output(
     ).saveAndExit().print_sql().assert_printed_sql("hi Marco\nbye Fernando")
 
 
-# @pytest.mark.skip
-# def test_initial_context_is_used_when_filling_template(app_runner, fs):
-#     initial_context = {"_dummy_note": "Dummy note"}
-#     fs.create_file("/templates/hello.sql", contents="hello {{_dummy_note}}!")
-#
-#     app_runner.with_task_library("/library").with_template_API(
-#         initial_context
-#     ).select_template(
-#         "hello.sql", {"dummy": "hello"}
-#     ).saveAndExit().run().assert_rendered_sql(
-#         "hello Dummy note!"
-#     ).assert_all_input_was_read()
+@pytest.fixture
+def spy_os_system(mocker):
+    spy_os_system = mocker.spy(os, "system")
+    yield spy_os_system
+
+
+def test_when_printsql_select_template_with_edit_flag_keeps_selection_and_runs_edit_configured_command(
+    project_generator, library_generator, app_runner, spy_os_system
+):
+    text_to_print = "I am testing the edit command!!!!"
+    project_generator.with_edit_cmd(f'echo "{text_to_print}"')
+    library_generator.add_template("say_hello.txt", "hello!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.edit_template(
+        "say_hello.txt"
+    ).confirm().saveAndExit().print_sql().assert_printed_sql(
+        "hello!"
+    ).assert_clipboard_content(
+        "hello!"
+    )
+
+    expected_cmd = f'echo "{text_to_print}"'
+    spy_os_system.assert_called_once_with(expected_cmd)

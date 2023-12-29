@@ -4,8 +4,8 @@ from sqltask.app_project import AppProject
 from sqltask.log import log
 from sqltask.main.command_factory import CommandFactory
 from sqltask.main.command_line_app import CommandLineSQLTaskApp, SysArgParser
-from sqltask.commands.print_sql_cmd import PrintSQLToConsoleDisplayer
 from sqltask.main.project_home import ProjectHome
+from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
 
 
 class DefaultAppContainer(object):

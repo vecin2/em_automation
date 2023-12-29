@@ -376,6 +376,8 @@ class InteractiveTaskFinder:
         self.action_registry = registry
         self._completer = InteractiveTaskCompleter(self.action_registry)
         self.max_no_trials = 10
+        self.default_prompt_value = ""
+        self.default_selection = ""
 
     def run(self):
         try:
@@ -389,16 +391,28 @@ class InteractiveTaskFinder:
         trial = 0
         while trial <= self.max_no_trials:
             trial += 1
-            raw_input = prompt("Choose template: ", completer=self._completer)
+            raw_input = prompt(
+                "Choose template: ",
+                completer=self._completer,
+                default=self.default_selection,
+            )
             if self.parse_and_evaluate(raw_input):
                 return True
         raise ValueError("Attempts to select a valid option exceeded.")
 
     def parse_and_evaluate(self, raw_input):
         input_words = raw_input.split()
+        if len(input_words) == 0:
+            return False
         action = self.action_registry.find(input_words[0].strip())
         if not action:
             return False
 
+        self._compute_default_selection(input_words)
         action.run(input_words)
         return True
+
+    def _compute_default_selection(self, input_words):
+        self.default_selection = ""
+        if len(input_words) > 1:
+            self.default_selection = input_words[0]
