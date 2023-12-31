@@ -371,7 +371,7 @@ class InteractiveTaskCompleter(Completer):
         return args_completer
 
 
-class InteractiveTaskFinder:
+class InteractiveSQLTemplateRunner:
     def __init__(self, registry):
         self.action_registry = registry
         self._completer = InteractiveTaskCompleter(self.action_registry)

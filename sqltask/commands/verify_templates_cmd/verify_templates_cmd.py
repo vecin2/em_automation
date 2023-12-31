@@ -9,14 +9,13 @@ import pytest
 from jinja2 import Template
 
 from sqltask.app_project import AppProject
-from sqltask.commands.verify_templates_cmd.test_sql_file import (
-    TestFileParser, TestSQLFile)
+from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
+from sqltask.commands.verify_templates_cmd.test_sql_file import TestFileParser, TestSQLFile
 from sqltask.docugen.env_builder import FileSystemLoader
 from sqltask.docugen.template_filler import TemplateFiller
 from sqltask.shell.prompt import (ActionRegistry, ExitAction,
-                                  InteractiveTaskFinder, ProcessTemplateAction,
+                                  InteractiveSQLTemplateRunner, ProcessTemplateAction,
                                   RenderTemplateAction, ViewTemplateInfoAction)
-from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
 from sqltask.sqltask_jinja.context import ContextBuilder
 from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
@@ -389,7 +388,7 @@ class FillTemplateAppRunner:
             self.user_inputs(value)
         return self
 
-    def edit_template(self, template_name):
+    def edit_template(self,template_name):
         self.user_inputs(f"{template_name} --edit")
         return self
 
@@ -432,7 +431,7 @@ class FileAppRunner(FillTemplateAppRunner):
         return result
 
     def _run(self):
-        finder = InteractiveTaskFinder(self._create_actions_registry())
+        finder = InteractiveSQLTemplateRunner(self._create_actions_registry())
         finder.run()
         self.teardown()
 

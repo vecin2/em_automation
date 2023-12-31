@@ -7,13 +7,15 @@ from jinja2 import Environment
 from sqltask.commands.create_sql_cmd.path_selector import SQLPathSelector
 from sqltask.commands.create_sql_cmd.update_sequence import (
     SVNRevNoGenerator, TimeStampGenerator, UpdateSequenceWriter)
-from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
 from sqltask.database.sql_runner import (RollbackTransactionExitListener,
                                          SQLRunner)
 from sqltask.docugen.template_filler import TemplateFiller
 from sqltask.shell.prompt import (ActionRegistry, ExitAction,
-                                  InteractiveTaskFinder, ProcessTemplateAction,
-                                  RenderTemplateAction, ViewTemplateInfoAction)
+                                  InteractiveSQLTemplateRunner,
+                                  ProcessTemplateAction, RenderTemplateAction,
+                                  ViewTemplateInfoAction)
+from sqltask.shell.shell_factory import (InteractiveSQLTemplateRunnerBuilder,
+                                         PrintSQLToConsoleDisplayer)
 from sqltask.sqltask_jinja.context import ContextBuilder
 from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 from sqltask.ui.sql_styler import SQLStyler
@@ -81,37 +83,21 @@ class CreateSQLTaskCommand(object):
                 return
             elif action == "o":
                 shutil.rmtree(self.path)  # remove task folder
-        finder = InteractiveTaskFinder(self._create_actions_registry())
-        finder.run()
+
+        builder = InteractiveSQLTemplateRunnerBuilder.default(self.project)
+        builder.append_template_rendered_listener(self.make_scripted_sql_folder())
+        shell = builder.build()
+        self.console_printer = builder.displayer
+        shell.run()
         self.clipboard.copy(str(self.path))
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)
 
-    def _create_actions_registry(self):
-        registry = ActionRegistry()
-        library = self.project.library()
-        loader = EMTemplatesEnv(library)
-        context_builder = ContextBuilder(self.project)
-        context = context_builder.build()
-        template_filler = TemplateFiller(initial_context=context)
-        sql_runner = SQLRunner(self.project.db)
-        template_filler.append_listener(sql_runner)
-        self.console_printer = PrintSQLToConsoleDisplayer()
-        template_filler.append_listener(self.console_printer)
+    def make_scripted_sql_folder(self):
         scripted_sql_folder = ScriptedSQLFolder(
             FileWritter(self.path), UpdateSequenceWriter(self._get_seq_generator())
         )
         scripted_sql_folder.set_root(self.path)
-        template_filler.append_listener(scripted_sql_folder)
-
-        render_template_action = RenderTemplateAction(template_filler, loader)
-        process_template_action = ProcessTemplateAction(loader, render_template_action)
-        registry.register(process_template_action)
-        process_template_action.register("--info", ViewTemplateInfoAction())
-        exit_action = ExitAction()
-        exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
-        registry.register(exit_action)
-
-        return registry
+        return scripted_sql_folder
 
     def _get_path(self):
         if not self.path:

@@ -7,7 +7,7 @@ from sqltask.database.sql_runner import (CommitTransactionExitListener,
 from sqltask.docugen.template_filler import TemplateFiller
 from sqltask.main.project_home import ProjectHome
 from sqltask.shell.prompt import (ActionRegistry, ExitAction,
-                                  InteractiveTaskFinder, ProcessTemplateAction,
+                                  InteractiveSQLTemplateRunner, ProcessTemplateAction,
                                   RenderTemplateAction, ViewTemplateInfoAction)
 from sqltask.sqltask_jinja.context import ContextBuilder
 from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
@@ -37,5 +37,5 @@ exit_action.append_listener(CommitTransactionExitListener(sql_runner))
 registry.register(exit_action)
 
 
-finder = InteractiveTaskFinder(registry)
+finder = InteractiveSQLTemplateRunner(registry)
 finder.run()

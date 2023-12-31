@@ -1,17 +1,6 @@
 import pyperclip
-from rich.console import Console
-from rich.syntax import Syntax
 
-from sqltask.database.sql_runner import (RollbackTransactionExitListener,
-                                         SQLRunner)
-from sqltask.docugen.template_filler import TemplateFiller
-from sqltask.shell.prompt import (ActionRegistry, Editor, EditTemplateAction,
-                                  ExitAction, ProcessTemplateAction,
-                                  RenderTemplateAction, ViewTemplateDocsAction,
-                                  ViewTemplateInfoAction)
-from sqltask.shell.shell_factory import ShellBuilder, PrintSQLToConsoleDisplayer
-from sqltask.sqltask_jinja.context import ContextBuilder
-from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
+from sqltask.shell.shell_factory import InteractiveSQLTemplateRunnerBuilder
 from sqltask.ui.sql_styler import SQLStyler
 
 
@@ -26,7 +15,6 @@ class ClipboardCopier:
         return pyperclip.copy(self.styler.text())
 
 
-
 class PrintSQLToConsoleCommand(object):
     """Command which generates a SQL script from a template and it prints the output to console"""
 
@@ -37,10 +25,10 @@ class PrintSQLToConsoleCommand(object):
         return self.displayer.rendered_sql
 
     def run(self):
-        self.displayer = PrintSQLToConsoleDisplayer()
-        builder = ShellBuilder()
-        builder.project(self.project)
-        builder.displayer(self.displayer)
+        builder = InteractiveSQLTemplateRunnerBuilder.default(self.project)
+        clipboard_copier = ClipboardCopier()
+        builder.append_template_rendered_listener(clipboard_copier)
+        builder.append_exit_listener(clipboard_copier)
         shell = builder.build()
+        self.displayer = builder.displayer
         shell.run()
-
