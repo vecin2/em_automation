@@ -14,7 +14,6 @@ def prompt(text, completer=None, default=""):
                 print("using default")
                 user_input = default
             else:
-                print("not using default")
                 user_input = sys.stdin.readline().strip()
             print(user_input)
             return user_input

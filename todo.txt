@@ -1,3 +1,14 @@
+move command to properties: commands can be personal, so create a new file local.properties which be vcs ignored
+Move the string command into that file
+Also add this file to the git init template, possible with the name of the program as opposed to the full command give (notepad++ and vim as options)
+
+Create local.properties file
+ Read from local.properites when creating merge config
+
+
+
+
+
 remove numbers
 Run out of schema task
 run tenant_properties_views

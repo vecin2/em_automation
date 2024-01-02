@@ -148,7 +148,8 @@ class InteractiveSQLTemplateRunnerBuilder:
         context = context_builder.build()
         template_filler = TemplateFiller(initial_context=context)
 
-        template_filler.append_listener(self.sql_runner)
+        if self.sql_runner:
+            template_filler.append_listener(self.sql_runner)
         for listener in self.template_rendered_listeners:
             template_filler.append_listener(listener)
         return RenderTemplateAction(template_filler, loader)
@@ -163,6 +164,3 @@ class InteractiveSQLTemplateRunnerBuilder:
                 RollbackTransactionExitListener(self.sql_runner)
             )
         return exit_action
-
-    def make_transaction_decorator(self, sql_runner):
-        return RollbackTransactionExitListener(sql_runner)

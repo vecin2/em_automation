@@ -9,15 +9,12 @@ import pytest
 from jinja2 import Template
 
 from sqltask.app_project import AppProject
-from sqltask.shell.shell_factory import PrintSQLToConsoleDisplayer
-from sqltask.commands.verify_templates_cmd.test_sql_file import TestFileParser, TestSQLFile
+from sqltask.commands.verify_templates_cmd.test_sql_file import (
+    TestFileParser, TestSQLFile)
 from sqltask.docugen.env_builder import FileSystemLoader
-from sqltask.docugen.template_filler import TemplateFiller
-from sqltask.shell.prompt import (ActionRegistry, ExitAction,
-                                  InteractiveSQLTemplateRunner, ProcessTemplateAction,
-                                  RenderTemplateAction, ViewTemplateInfoAction)
+from sqltask.shell.shell_factory import (InteractiveSQLTemplateRunnerBuilder,
+                                         PrintSQLToConsoleDisplayer)
 from sqltask.sqltask_jinja.context import ContextBuilder
-from sqltask.sqltask_jinja.sqltask_env import EMTemplatesEnv
 
 
 class SourceCode(object):
@@ -92,8 +89,8 @@ def test_{{template_name}}_runs_succesfully():
  
     except:
         #if we do not close the connection we get locks issues when test are failing
-        #app_project.addb._conn().close() 
-        db._conn().close() 
+        #app_project.addb._conn().close()
+        db._conn().close()
         raise
 
 """
@@ -184,7 +181,6 @@ class ExpectedSQLTestBuilder(object):
 
     def build(self, testfile, emprj_path=None):
         expected = testfile.expected_sql()
-        app_project = AppProject(emprj_path=self.emprj_path)
         actual = self.apprunner.run_test(testfile)
         template_name = testfile.template_name()
         return ExpectedSQLTestTemplate().render(
@@ -388,7 +384,7 @@ class FillTemplateAppRunner:
             self.user_inputs(value)
         return self
 
-    def edit_template(self,template_name):
+    def edit_template(self, template_name):
         self.user_inputs(f"{template_name} --edit")
         return self
 
@@ -431,28 +427,9 @@ class FileAppRunner(FillTemplateAppRunner):
         return result
 
     def _run(self):
-        finder = InteractiveSQLTemplateRunner(self._create_actions_registry())
-        finder.run()
+        builder = InteractiveSQLTemplateRunnerBuilder.default(self.project)
+        builder.sql_runner = None
+        shell = builder.build()
+        self.console_printer = builder.displayer
+        shell.run()
         self.teardown()
-
-    def _create_actions_registry(self):
-        registry = ActionRegistry()
-        library = self.project.library()
-        loader = EMTemplatesEnv(library)
-        context_builder = ContextBuilder(self.project)
-        context = context_builder.build()
-        template_filler = TemplateFiller(initial_context=context)
-        # sql_runner = SQLRunner(self.project.db)
-        # template_filler.append_listener(sql_runner)
-        self.console_printer = PrintSQLToConsoleDisplayer()
-        template_filler.append_listener(self.console_printer)
-
-        render_template_action = RenderTemplateAction(template_filler, loader)
-        process_template_action = ProcessTemplateAction(loader, render_template_action)
-        registry.register(process_template_action)
-        process_template_action.register("--info", ViewTemplateInfoAction())
-        exit_action = ExitAction()
-        # exit_action.append_listener(RollbackTransactionExitListener(sql_runner))
-        registry.register(exit_action)
-
-        return registry

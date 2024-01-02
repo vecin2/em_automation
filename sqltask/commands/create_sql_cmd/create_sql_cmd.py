@@ -87,7 +87,6 @@ class CreateSQLTaskCommand(object):
         builder = InteractiveSQLTemplateRunnerBuilder.default(self.project)
         builder.append_template_rendered_listener(self.make_scripted_sql_folder())
         shell = builder.build()
-        self.console_printer = builder.displayer
         shell.run()
         self.clipboard.copy(str(self.path))
         self.displayer.display_sqltask_created_and_path_in_clipboard(self.path)

@@ -1,3 +1,15 @@
+- composition Root
+
+PrintSQLCommand
+   Displayer
+|  SQLTaskShell
+
+handle library not a git repo browse file
+if property not exist do not show edit or docs
+prompt with current template without option
+handle empty input
+
+
 ## Show Info about Template
 It is run when prompt: <template> -i (info)
 It displays template metadata is exist and the test_template if exist otherwise displays the actual template
