@@ -108,7 +108,7 @@ class ViewTemplateDocsAction:
     on the prompt
     """
 
-    def __init__(self, library=None):
+    def __init__(self, library=None, browse_cmd=None):
         self.library = library
 
     def append_args(self, argparser):
@@ -262,7 +262,10 @@ class ProcessTemplateAction:
             registry.add_entry(str(template), self)
 
     def run(self, input):
-        action = self.actions[self.get_action_name(input)]
+        action = self.actions.get(self.get_action_name(input), None)
+        if not action:
+            # keep prompting
+            return
         template_location = input[0]
         action.run(template_location)
 

@@ -210,7 +210,14 @@ class ProjectGenerator(PathGenerator):
         return self._core_properties["sqltask.library.path"]
 
     def with_edit_cmd(self, str_cmd):
-        self._local_properties["edit.template.cmd"] = str_cmd
+        self._updateOrRemoveLocalProperty("edit.template.cmd", str_cmd)
+        return self
+
+    def _updateOrRemoveLocalProperty(self, key, value):
+        if value is None:
+            self._local_properties.pop(key, None)
+        else:
+            self._local_properties[key] = value
         return self
 
     @property
@@ -292,7 +299,9 @@ class QuickProjectGenerator(object):
         )
         self.project_generator.with_sequence_generator("timestamp")
         self.project_generator.with_project_prefix("PRJ")
-        self.project_generator.with_edit_cmd("vim -O {}") #so it creates local.properties by default
+        self.project_generator.with_edit_cmd(
+            "vim -O {}"
+        )  # so it creates local.properties by default
         self.project_generator.append_release(release_name="PRJ_01", after="R8_5_0")
 
         return self.project_generator

@@ -191,3 +191,22 @@ def test_when_printsql_select_template_with_edit_flag_keeps_selection_and_runs_e
 
     expected_cmd = f'echo "{text_to_print}"'
     spy_os_system.assert_called_once_with(expected_cmd)
+
+
+def test_when_printsql_without_edit_cmd_configured_then_select_template_with_edit_flag_is_ignored_until_flag_is_removed(
+    project_generator, library_generator, app_runner, spy_os_system
+):
+    project_generator.with_edit_cmd(None)
+    library_generator.add_template("say_hello.txt", "hello!")
+
+    app_runner.with_project(project_generator.generate())
+    # confirm after edit, keeps the name of the template as default
+    app_runner.edit_template(
+        "say_hello.txt"
+    ).confirm().saveAndExit().print_sql().assert_printed_sql(
+        "hello!"
+    ).assert_clipboard_content(
+        "hello!"
+    )
+
+    spy_os_system.assert_not_called()

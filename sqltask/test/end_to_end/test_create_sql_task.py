@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 
@@ -261,3 +262,32 @@ def test_run_prompts_module_task_name_and_creates_modules_dir_when_not_exist(
     app_runner.exists_update_seq(
         release_name="PRJ_01"
     ).assert_path_copied_to_sys_clipboard("PRJ_01")
+
+
+@pytest.fixture
+def spy_os_system(mocker):
+    spy_os_system = mocker.spy(os, "system")
+    yield spy_os_system
+
+
+def test_when_createsql_select_template_with_edit_flag_keeps_selection_and_runs_edit_configured_command(
+    project_generator, library_generator, app_runner, database, spy_os_system
+):
+    text_to_print = "I am testing the edit command!!!!"
+    project_generator.with_edit_cmd(f'echo "{text_to_print}"')
+    library_generator.add_template("dummy1.sql", "select name from ce_customer")
+    project_generator.append_release("PRJ_01")
+
+    app_runner.with_project(project_generator.generate())
+
+    # confirm after edit, keeps the name of the template as default
+    app_runner.edit_template("dummy1.sql").confirm().saveAndExit().create_sql(
+        "module_A"
+    )
+
+    app_runner.assert_all_input_was_read().exists(
+        "module_A/tableData.sql",
+        "select name from ce_customer",  # was overriden
+    )
+    expected_cmd = f'echo "{text_to_print}"'
+    spy_os_system.assert_called_once_with(expected_cmd)

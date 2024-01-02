@@ -137,22 +137,38 @@ def spy_os_system(mocker):
     yield spy_os_system
 
 
-@pytest.mark.skip
 def test_when_runsql_select_template_with_edit_flag_keeps_selection_and_runs_edit_configured_command(
-    project_generator, library_generator, app_runner, spy_os_system
+    project_generator, library_generator, app_runner, database, spy_os_system
 ):
     text_to_print = "I am testing the edit command!!!!"
+    ad_sql = "INSERT INTO CE_CUSTOMER (FIRSNAME,LASTNAME) VALUES('Robert2','Dubrey')"
     project_generator.with_edit_cmd(f'echo "{text_to_print}"')
-    library_generator.add_template("say_hello.txt", "hello!")
+    library_generator.add_template("add_cust.sql", ad_sql)
 
     app_runner.with_project(project_generator.generate())
-    app_runner.edit_template(
-        "say_hello.txt"
-    ).confirm().saveAndExit().run_sql().assert_printed_sql(
-        "hello!"
-    ).assert_clipboard_content(
-        "hello!"
-    )
 
+    # confirm after edit, keeps the name of the template as default
+    app_runner.edit_template(
+        "add_cust.sql"
+    ).confirm().saveAndExit().confirm_run().run_sql()
+
+    assert ad_sql == database.executed_sql("ad")
     expected_cmd = f'echo "{text_to_print}"'
     spy_os_system.assert_called_once_with(expected_cmd)
+
+
+def test_when_runsql_without_edit_cmd_configured_then_select_template_with_edit_flag_is_ignored_until_flag_is_removed(
+    project_generator, library_generator, app_runner, database, spy_os_system
+):
+    project_generator.with_edit_cmd(None)
+    ad_sql = "INSERT INTO CE_CUSTOMER (FIRSNAME,LASTNAME) VALUES('Robert2','Dubrey')"
+    library_generator.add_template("add_cust.sql", ad_sql)
+
+    app_runner.with_project(project_generator.generate())
+    # confirm after edit, keeps the name of the template as default
+    app_runner.edit_template(
+        "add_cust.sql"
+    ).confirm().saveAndExit().confirm_run().run_sql()
+
+    assert ad_sql == database.executed_sql("ad")
+    spy_os_system.assert_not_called()
