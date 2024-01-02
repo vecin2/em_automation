@@ -124,12 +124,22 @@ class InteractiveSQLTemplateRunnerBuilder:
                 "--edit", self.make_edit_template_action(library, editor_cmd)
             )
         process_template_action.register("--info", ViewTemplateInfoAction(library))
-        process_template_action.register("--docs", ViewTemplateDocsAction(library))
+        docs_cmd = self.get_docs_cmd()
+        if docs_cmd:
+            # "x-www-browser"
+            process_template_action.register(
+                "--docs", ViewTemplateDocsAction(library, docs_cmd)
+            )
         return process_template_action
 
     def get_editor_cmd(self):
         if "edit.template.cmd" in self.project.merged_config():
             return self.project.merged_config()["edit.template.cmd"]
+        return None
+
+    def get_docs_cmd(self):
+        if "docs.template.cmd" in self.project.merged_config():
+            return self.project.merged_config()["docs.template.cmd"]
         return None
 
     def make_edit_template_action(self, library, editor_cmd):

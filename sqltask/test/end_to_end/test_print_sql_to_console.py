@@ -210,3 +210,42 @@ def test_when_printsql_without_edit_cmd_configured_then_select_template_with_edi
     )
 
     spy_os_system.assert_not_called()
+
+
+class FakeGit:
+    def __init__(self, remote_origin_url, branch):
+        self._remote_origin_url = remote_origin_url
+        self._branch = branch
+
+    def remote_origin_url(self):
+        return self._remote_origin_url
+
+    def show_current_branch(self):
+        return self._branch
+
+
+@pytest.fixture(autouse=True)
+def git(mocker):
+    mocked = mocker.patch("sqltask.shell.prompt.ViewTemplateDocsAction.make_git")
+    mocked.return_value = FakeGit(
+        "git@github.com-verint:verint-CME/sqltask-library.git", "master"
+    )
+    yield mocked
+
+
+def test_when_printsql_select_template_with_docs_flag_keeps_selection_and_runs_docs_configured_command(
+    project_generator, library_generator, app_runner, spy_os_system, git
+):
+    expected_url_to_open = "https://github.com/verint-CME/sqltask-library/tree/master/docs/LibraryByFolder.md#say-hello"
+    project_generator.with_docs_cmd("google")
+    library_generator.add_template("say_hello.txt", "hello!")
+
+    app_runner.with_project(project_generator.generate())
+    app_runner.docs_template(
+        "say_hello.txt"
+    ).confirm().saveAndExit().print_sql().assert_printed_sql(
+        "hello!"
+    ).assert_clipboard_content(
+        "hello!"
+    )
+    spy_os_system.assert_called_once_with(f"google {expected_url_to_open}")

@@ -213,6 +213,11 @@ class ProjectGenerator(PathGenerator):
         self._updateOrRemoveLocalProperty("edit.template.cmd", str_cmd)
         return self
 
+    def with_docs_cmd(self, str_cmd):
+        self._updateOrRemoveLocalProperty("docs.template.cmd", str_cmd)
+        return self
+
+
     def _updateOrRemoveLocalProperty(self, key, value):
         if value is None:
             self._local_properties.pop(key, None)

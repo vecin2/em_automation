@@ -110,6 +110,7 @@ class ViewTemplateDocsAction:
 
     def __init__(self, library=None, browse_cmd=None):
         self.library = library
+        self.browse_cmd = browse_cmd
 
     def append_args(self, argparser):
         argparser.add_argument("--docs", action="store_true")
@@ -118,7 +119,7 @@ class ViewTemplateDocsAction:
         return args.docs
 
     def run(self, template):
-        git = Git(self.library.rootpath)
+        git = self.make_git()
         github_url = self.get_library_repo_url(git)
 
         docs_url = (
@@ -128,7 +129,11 @@ class ViewTemplateDocsAction:
             + "/docs/LibraryByFolder.md"
             + self._md_anchor(template)
         )
-        Browser("x-www-browser").open(docs_url)
+        Browser(self.browse_cmd).open(docs_url)
+
+    def make_git(self):
+        # to allow mocks override this method
+        return Git(self.library.rootpath)
 
     def get_library_repo_url(self, git):
         remote_library_url = git.remote_origin_url()

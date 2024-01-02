@@ -388,6 +388,10 @@ class FillTemplateAppRunner:
         self.user_inputs(f"{template_name} --edit")
         return self
 
+    def docs_template(self, template_name):
+        self.user_inputs(f"{template_name} --docs")
+        return self
+
     def confirm(self):
         self.user_inputs("\n")
         return self

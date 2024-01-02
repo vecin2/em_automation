@@ -50,7 +50,7 @@ def test_init_generates_config_and_sets_sqltask_lib_path_with_no_config_files_ex
         "sequence_generator": "svn",
         "project_prefix": "MP",
     }
-    typed_local_properties = {"template_editor": "vim"}
+    typed_local_properties = {"template_editor": "vim", "shell": "WSL"}
 
     app_runner.with_library_path(str(library_generator.root)).with_properties(
         typed_core_properties
@@ -65,6 +65,7 @@ def test_init_generates_config_and_sets_sqltask_lib_path_with_no_config_files_ex
     assert "ad" == project.config["container.name"]  # defaults to ad
     assert "localhost" == project.config["machine.name"]  # default to localhost
     assert "vim -O {}" == config["edit.template.cmd"]
+    assert "x-www-browser {}" == config["docs.template.cmd"]
 
 
 def test_init_when_files_exist_ask_for_confirmation(
@@ -79,7 +80,7 @@ def test_init_when_files_exist_ask_for_confirmation(
         "project_prefix": "MP",
     }
 
-    typed_local_properties = {"template_editor": "vim"}
+    typed_local_properties = {"template_editor": "vim", "shell": "WSL"}
 
     app_runner.confirm_save().with_library_path(
         "/a/new/path"
@@ -95,6 +96,7 @@ def test_init_when_files_exist_ask_for_confirmation(
     assert "localhost" == project.config["machine.name"]  # default to localhost
     assert "/a/new/path" == str(project.library_path())
     assert "vim -O {}" == config["edit.template.cmd"]
+    assert "x-www-browser {}" == config["docs.template.cmd"]
 
 
 def test_init_use_existing_empty_props_file(
@@ -113,8 +115,7 @@ def test_init_use_existing_empty_props_file(
         "sequence_generator": "svn",
         "project_prefix": "MP",
     }
-
-    typed_local_properties = {"template_editor": "vim"}
+    typed_local_properties = {"template_editor": "vim", "shell": "WSL"}
 
     app_runner.confirm_save().with_library_path(
         str(root / "mylibrary")
@@ -130,4 +131,4 @@ def test_init_use_existing_empty_props_file(
     assert "localhost" == project.config["machine.name"]  # default to localhost
     assert str(root / "mylibrary") == str(project.library().rootpath)
     assert "vim -O {}" == config["edit.template.cmd"]
-
+    assert "x-www-browser {}" == config["docs.template.cmd"]
