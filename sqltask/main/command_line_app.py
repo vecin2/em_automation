@@ -24,8 +24,8 @@ class SysArgParser(object):
             return self.command_factory.make_test_sql_templates_command(args)
         elif args["run-sql"]:
             return self.command_factory.make_run_sql_command(args)
-        elif args["import-templates"]:
-            return self.command_factory.make_import_templates_command(args)
+        elif args["generate-libdocs"]:
+            return self.command_factory.make_generate_libdocs_command(args)
 
 
 class CommandLineSQLTaskApp(object):

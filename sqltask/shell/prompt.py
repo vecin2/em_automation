@@ -216,11 +216,6 @@ class EditTemplateAction:
 
 
 class ViewTemplateInfoAction:
-    """
-    Wraps a template displayer into action to it can when the template is selected
-    on the prompt
-    """
-
     def __init__(self, library=None):
         self.library = library
 

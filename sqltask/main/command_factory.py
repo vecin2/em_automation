@@ -5,6 +5,7 @@ from sqltask.app_project import AppProject
 from sqltask.commands import (CreateSQLTaskCommand, InitCommand,
                               PrintSQLToConsoleCommand, RunSQLCommand,
                               TestTemplatesCommand)
+from sqltask.commands.generate_libdocs_cmd.generate_libdocs_cmd import GenerateLibDocsCommand
 
 
 class CommandFactory(object):
@@ -59,3 +60,6 @@ class CommandFactory(object):
 
     def make_extend_process_command(self, args):
         return ExtendProcessCommand()
+
+    def make_generate_libdocs_command(self, args):
+        return GenerateLibDocsCommand(self.project.library_path())
